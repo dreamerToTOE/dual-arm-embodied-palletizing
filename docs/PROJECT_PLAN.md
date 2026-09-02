@@ -107,19 +107,19 @@ FR3 仿真执行
 - 释放可行性；
 - 退出可行性。
 
-例如，将箱体 A 放置在已有箱体 B、C 之间时，可用简化的横向空间条件表示：
+例如，将箱体 A 放置在已有箱体 B、C 之间时，可用简化条件表示：
 
 ```text
 d_BC >= w_A + 2 t_g + 2 delta
 ```
 
-完整放置过程定义为：
+完整放置过程：
 
 ```text
 T_pre → T_insert → T_place → Release → T_retreat
 ```
 
-放置可执行性可以写成：
+放置可执行性：
 
 ```text
 C_place = C_reach * C_insert * C_release * C_retreat
@@ -164,8 +164,8 @@ J^T 力/力矩到关节力矩映射
 |---|---|---|---|
 | 00 | FR3 + Isaac + ROS 2 + MoveIt 基线 | MoveIt 轨迹可在 Isaac FR3 上执行 | ✅ 已完成 |
 | 01 | 单机械臂 Pick & Place | 完整稳定的确定性抓放循环 | ✅ 已完成 |
-| 02 | Placement Skill | 预放置 / 插入 / 放置 / 释放 / 退出，并返回可执行性结果 | 🟡 进行中 |
-| 03 | B-A-C 放置可执行性 | 检测夹爪 / 箱体插入不可行情况 | 计划中 |
+| 02 | Placement Skill | 参数化目标、到达/插入/释放/退出阶段判定、结构化结果 | ✅ 已完成 |
+| 03 | B-A-C 放置可执行性 | 检测“箱体可放但夹爪不可插”的真实邻箱干涉 | 🟡 进行中 |
 | 04 | 放置顺序调整 | 后续插入被阻挡时自动调整顺序 | 计划中 |
 | 05 | 双 FR3 基线 | 两台 FR3、命名空间、规划组和控制链 | 计划中 |
 | 06 | 松协调并行执行 | 两机械臂并行执行独立任务 | 计划中 |
@@ -186,74 +186,69 @@ J^T 力/力矩到关节力矩映射
 
 ---
 
-## 5. 当前 Task 02 路线
+## 5. 当前 Task 03 路线
 
-Task 01 已完整验证：
-
-```text
-HOME
-→ ALIGNED_APPROACH
-→ GRASP
-→ LIFT
-→ TRANSFER
-→ PLACE
-→ RELEASE
-→ RETREAT
-→ HOME
-```
-
-Task 02 的重点不是再次证明一个固定放置点可以执行，而是把放置过程升级为可复用的 `PlacementSkill`。
-
-核心输入：
-
-```text
-PlacementTarget = {
-  x,
-  y,
-  cube_z,
-  yaw,
-  pre_place_tcp_z,
-  place_tcp_z,
-  retreat_tcp_z
-}
-```
-
-核心执行链：
+Task 02 已经建立：
 
 ```text
 PlacementTarget
-      ↓
-C_reach
-      ↓
-PRE_PLACE
-      ↓
-C_insert
-      ↓
-PLACE
-      ↓
-C_release
-      ↓
-RELEASE
-      ↓
-C_retreat
-      ↓
-RETREAT
-      ↓
-SUCCESS / FAILURE + 失败原因
+→ C_reach
+→ C_insert
+→ C_release
+→ C_retreat
+→ PlacementSkillResult
 ```
 
-可执行性定义：
+Task 03 不再单独制造简单人工失败案例，而是在真实邻箱条件下直接验证失败语义。
+
+第一版 B-A-C 场景：
 
 ```text
-C_place = C_reach * C_insert * C_release * C_retreat
+A target = (0.65, -0.15, 0.065) m
+A size   = 30 mm
+
+B center = (0.65, -0.115, 0.065) m
+C center = (0.65, -0.185, 0.065) m
+B/C size = 30 mm
+
+B-C 净间距 d_BC = 40 mm
 ```
 
-第一阶段场景保持与 Task 01 相同，先把固定参数改成结构化输入，并把放置段封装成独立函数；Task 03 再加入 B-A-C 邻近箱体和夹爪插入空间约束。
-
-详细实现见：
+因此：
 
 ```text
-docs/tasks/TASK02_PLACEMENT_SKILL.md
+d_BC = 40 mm > w_A = 30 mm
+```
+
+A 本体从几何上可以放入，左右各约有 5 mm 空隙。
+
+但携带 A 的 FR3 两指夹爪实际包络更宽，预期垂直插入时与 B/C 发生碰撞：
+
+```text
+C_reach = PASS
+C_insert = FAIL
+RESULT = INSERT_FAILED
+```
+
+Task 03 的第一目标就是直接证明：
+
+```text
+几何可放置 ≠ 机器人可执行放置
+```
+
+B/C 必须同时存在于：
+
+```text
+Isaac Sim 物理场景
+MoveIt Planning Scene
+```
+
+仅在 Isaac 中添加邻箱不能用于 MoveIt 插入可执行性判定。
+
+详细实现与实验参数见：
+
+```text
+docs/tasks/TASK03_BAC_EXECUTABILITY.md
 ```
 
 ---
