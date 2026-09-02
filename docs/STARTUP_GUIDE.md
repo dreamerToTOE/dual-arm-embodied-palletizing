@@ -16,10 +16,14 @@ ROS 2 工作空间：
 ~/lmy/dual-arm-embodied-palletizing/ros_ws
 ```
 
-当前单臂抓放节点源码：
+当前主要源码：
 
 ```text
+Task 01 稳定基线：
 ros_ws/src/fr3_moveit_test/src/single_arm_pick_place.cpp
+
+Task 02 Placement Skill：
+ros_ws/src/fr3_moveit_test/src/placement_skill_demo.cpp
 ```
 
 ## 2. 当前稳定环境
@@ -83,7 +87,7 @@ RRTConnectkConfigDefault
 
 ## 4. Isaac Sim 启动要求
 
-打开当前 Task 01 场景，场景中至少需要包含：
+当前 Task 01 / Task 02 共用同一基础场景，至少包含：
 
 ```text
 /World/fr3
@@ -92,7 +96,7 @@ RRTConnectkConfigDefault
 ActionGraph
 ```
 
-ActionGraph 已验证的 ROS 2 通信包括：
+ActionGraph 已验证 ROS 2 通信：
 
 ```text
 /clock
@@ -119,11 +123,11 @@ Isaac Articulation Controller
 /World/fr3
 ```
 
-运行 ROS 控制时，Isaac 中本地 `Position_Controller` 保持关闭，避免与 ROS 指令冲突。
+运行 ROS 控制时，Isaac 本地 `Position_Controller` 保持关闭，避免与 ROS 指令冲突。
 
 启动仿真后点击 **Play**。
 
-## 5. 当前 Task 01 场景参数
+## 5. 当前场景参数
 
 ### FR3
 
@@ -149,22 +153,22 @@ Yaw    = 0 rad
 Mass   = 0.2 kg
 ```
 
-当前 MoveIt 的统一规划参考坐标系使用：
+当前 MoveIt 的统一规划参考坐标系：
 
 ```text
 base
 ```
 
-不要再把 Cartesian Path 的参考系单独设为 `fr3_link0`。此前已经确认 `fr3_link0 -> base` 的转换会导致：
+不要再把 Cartesian Path 的参考系单独设为 `fr3_link0`。此前已经确认 `fr3_link0 -> base` 会导致：
 
 ```text
 MoveIt error_code = -21
 FRAME_TRANSFORM_FAILURE
 ```
 
-## 6. 终端 2：编译当前节点
+## 6. 编译 fr3_moveit_test
 
-修改 `single_arm_pick_place.cpp` 后执行：
+修改 Task 01 或 Task 02 源码后统一执行：
 
 ```bash
 cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
@@ -179,43 +183,87 @@ colcon build \
 source install/setup.bash
 ```
 
-## 7. 终端 2：运行单臂 Pick & Place
+## 7. Task 01：运行稳定 Pick & Place 基线
 
 ```bash
 ros2 run fr3_moveit_test single_arm_pick_place
 ```
 
-当前已经重复验证稳定的前半段为：
+Task 01 已完整验证：
 
 ```text
 HOME
-  ↓
-ALIGNED_APPROACH
-  ↓
-OPEN_GRIPPER
-  ↓
-Cartesian Z-only GRASP
-  ↓
-CLOSE_GRIPPER
-  ↓
-MoveIt ATTACH
-  ↓
-Cartesian Z-only LIFT
+→ APPROACH
+→ GRASP
+→ LIFT
+→ TRANSFER
+→ PLACE
+→ RELEASE
+→ RETREAT
+→ HOME
 ```
 
-30 mm Cube 已多次重试稳定夹起并提升。
+关键释放状态切换：
 
-## 8. 运行前检查
+```text
+DETACH
+→ removeWorldCube
+→ OPEN
+→ RETREAT
+→ addPlacedCubeToWorld
+```
 
-每次重新测试前建议确认：
+详细原因见 `docs/KEY_ISSUES.md`。
+
+## 8. Task 02：运行 Placement Skill
+
+Task 02 新节点：
+
+```bash
+ros2 run fr3_moveit_test placement_skill_demo
+```
+
+默认 PlacementTarget：
+
+```text
+place_x          = 0.65
+place_y          = -0.15
+place_cube_z     = 0.065
+place_yaw        = 0.0
+pre_place_tcp_z  = 0.175
+place_tcp_z      = 0.076
+retreat_tcp_z    = 0.175
+```
+
+可以通过 ROS 2 参数覆盖，而不修改源码。例如：
+
+```bash
+ros2 run fr3_moveit_test placement_skill_demo --ros-args \
+  -p place_x:=0.70 \
+  -p place_y:=-0.10
+```
+
+Task 02 第一版最终应打印：
+
+```text
+[PlacementSkill] C_reach   = PASS / FAIL
+[PlacementSkill] C_insert  = PASS / FAIL
+[PlacementSkill] C_release = PASS / FAIL
+[PlacementSkill] C_retreat = PASS / FAIL
+[PlacementSkill] RESULT    = ...
+```
+
+## 9. 运行前检查
+
+每次重新测试前确认：
 
 ```text
 1. MoveIt /move_group 正常运行
 2. Isaac Sim 已点击 Play
 3. /joint_command 有 Isaac subscriber
-4. FR3 恢复初始 HOME 状态
+4. FR3 恢复 HOME
 5. PickCube 恢复到 (0.45, 0.15, 0.065)
-6. Cube 尺寸仍为 30 mm
+6. Cube 尺寸为 30 mm
 ```
 
 可检查 ROS topic：
@@ -224,7 +272,7 @@ Cartesian Z-only LIFT
 ros2 topic list | grep -E 'clock|joint_states|tf|joint_command'
 ```
 
-## 9. 手动测试夹爪
+## 10. 手动测试夹爪
 
 打开夹爪：
 
@@ -234,14 +282,14 @@ ros2 topic pub --once \
   "{name: ['fr3_finger_joint1','fr3_finger_joint2'], position: [0.04,0.04]}"
 ```
 
-Task 01 当前闭合目标：
+当前闭合目标：
 
 ```text
 fr3_finger_joint1 = 0.014
 fr3_finger_joint2 = 0.014
 ```
 
-## 10. 已知但暂不需要处理的提示
+## 11. 已知但暂不阻塞的提示
 
 本地 `MoveGroupInterface` 初始化时可能出现：
 
@@ -249,13 +297,31 @@ fr3_finger_joint2 = 0.014
 No kinematics plugins defined. Fill and load kinematics.yaml!
 ```
 
-目前实际 `/move_group` 的 OMPL / RRTConnect 规划和 Cartesian Path 均已验证可以正常工作，因此该提示暂不作为 Task 01 的阻塞问题。
+目前实际 `/move_group` 的 OMPL / RRTConnect 和 Cartesian Path 已验证可以正常工作，因此暂不作为阻塞问题。
 
-## 11. 文档维护规则
+## 12. GitHub 包配置同步提醒
+
+当前 GitHub 中 `ros_ws/src/fr3_moveit_test/` 只同步了 `src/`，本地真实 `CMakeLists.txt` 和 `package.xml` 尚未进入仓库。
+
+因此：
+
+```text
+不要用 GitHub 中不存在的包配置覆盖本地文件。
+```
+
+Task 02 本地需要在现有 CMake 中增加 `placement_skill_demo` executable。对应片段已记录在：
+
+```text
+docs/tasks/TASK02_PLACEMENT_SKILL.md
+```
+
+后续应把本地真实 CMakeLists.txt/package.xml 原样同步到 GitHub，确保仓库可以独立复现。
+
+## 13. 文档维护规则
 
 每完成一个可重复验证的阶段：
 
-1. 更新对应的 `docs/tasks/TASKxx_*.md`；
+1. 更新对应 `docs/tasks/TASKxx_*.md`；
 2. 更新 `docs/PROJECT_PLAN.md` 中的状态；
 3. 重大进展同步更新 `README.md`；
 4. 启动方式、关键场景参数、必要命令的变化同步更新本文件；
