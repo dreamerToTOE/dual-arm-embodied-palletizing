@@ -163,8 +163,8 @@ J^T 力/力矩到关节力矩映射
 | Task | 工程里程碑 | 主要验收目标 | 状态 |
 |---|---|---|---|
 | 00 | FR3 + Isaac + ROS 2 + MoveIt 基线 | MoveIt 轨迹可在 Isaac FR3 上执行 | ✅ 已完成 |
-| 01 | 单机械臂 Pick & Place | 完整稳定的确定性抓放循环 | 🟡 进行中：稳定抓取与提升已验证 |
-| 02 | Placement Skill | 预放置 / 插入 / 放置 / 释放 / 退出 | 计划中 |
+| 01 | 单机械臂 Pick & Place | 完整稳定的确定性抓放循环 | ✅ 已完成 |
+| 02 | Placement Skill | 预放置 / 插入 / 放置 / 释放 / 退出，并返回可执行性结果 | 🟡 进行中 |
 | 03 | B-A-C 放置可执行性 | 检测夹爪 / 箱体插入不可行情况 | 计划中 |
 | 04 | 放置顺序调整 | 后续插入被阻挡时自动调整顺序 | 计划中 |
 | 05 | 双 FR3 基线 | 两台 FR3、命名空间、规划组和控制链 | 计划中 |
@@ -186,58 +186,75 @@ J^T 力/力矩到关节力矩映射
 
 ---
 
-## 5. 当前 Task 01 路线
+## 5. 当前 Task 02 路线
 
-当前单臂抓放使用 30 mm Cube，已经多次重复验证以下阶段稳定成功：
+Task 01 已完整验证：
 
 ```text
 HOME
-  ↓
-ALIGNED_APPROACH
-  ↓
-OPEN_GRIPPER
-  ↓
-Cartesian Z-only GRASP
-  ↓
-CLOSE_GRIPPER
-  ↓
-MoveIt ATTACH
-  ↓
-Cartesian Z-only LIFT
+→ ALIGNED_APPROACH
+→ GRASP
+→ LIFT
+→ TRANSFER
+→ PLACE
+→ RELEASE
+→ RETREAT
+→ HOME
 ```
 
-下一步直接完成：
+Task 02 的重点不是再次证明一个固定放置点可以执行，而是把放置过程升级为可复用的 `PlacementSkill`。
+
+核心输入：
 
 ```text
-LIFT
-  ↓
-TRANSFER
-  ↓
-PRE_PLACE
-  ↓
-Cartesian Z-only PLACE
-  ↓
-MoveIt DETACH
-  ↓
-OPEN / RELEASE
-  ↓
-Cartesian Z-only RETREAT
-  ↓
-HOME / DONE
+PlacementTarget = {
+  x,
+  y,
+  cube_z,
+  yaw,
+  pre_place_tcp_z,
+  place_tcp_z,
+  retreat_tcp_z
+}
 ```
 
-当前抓取策略的重要原则：
+核心执行链：
 
-- 已知物体位姿；
-- 抓取目标是完整 6D 末端位姿，不只是 TCP 位置；
-- TCP Z 轴保持竖直向下；
-- 两指方向与箱体侧面方向平齐；
-- 最终接近、抓取和提升采用 Cartesian 直线运动；
-- Isaac Sim 当前依靠真实夹爪-方块接触，不使用 FixedJoint；
-- MoveIt 使用 AttachedCollisionObject 表示携带物；
-- 统一使用 MoveIt 模型参考坐标系 `base`。
+```text
+PlacementTarget
+      ↓
+C_reach
+      ↓
+PRE_PLACE
+      ↓
+C_insert
+      ↓
+PLACE
+      ↓
+C_release
+      ↓
+RELEASE
+      ↓
+C_retreat
+      ↓
+RETREAT
+      ↓
+SUCCESS / FAILURE + 失败原因
+```
 
-Task 01 完成后应进行多次重复循环测试。重复次数属于实验验收标准，不提前作为论文结果声明。
+可执行性定义：
+
+```text
+C_place = C_reach * C_insert * C_release * C_retreat
+```
+
+第一阶段场景保持与 Task 01 相同，先把固定参数改成结构化输入，并把放置段封装成独立函数；Task 03 再加入 B-A-C 邻近箱体和夹爪插入空间约束。
+
+详细实现见：
+
+```text
+docs/tasks/TASK02_PLACEMENT_SKILL.md
+```
 
 ---
 
@@ -307,6 +324,7 @@ dual-arm-embodied-palletizing/
 ├── docs/
 │   ├── PROJECT_PLAN.md
 │   ├── STARTUP_GUIDE.md
+│   ├── KEY_ISSUES.md
 │   └── tasks/
 ├── configs/
 ├── assets/
@@ -354,6 +372,6 @@ docs/STARTUP_GUIDE.md
 2. 如果 Task 状态发生变化，更新本文件中的路线表；
 3. 重大进展同步更新 `README.md`；
 4. 启动方式与关键命令同步更新 `docs/STARTUP_GUIDE.md`；
-5. 对后续复现有价值的失败原因和调试结论保留记录。
+5. 对后续复现有价值的失败原因和调试结论保留在 `docs/KEY_ISSUES.md`。
 
 目标是让整个工程即使失去聊天上下文，也可以仅依靠 GitHub 文档继续恢复和推进。
