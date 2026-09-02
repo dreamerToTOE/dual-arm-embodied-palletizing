@@ -1,31 +1,29 @@
-# Task 00 — FR3 + Isaac Sim + ROS 2 + MoveIt 2 Baseline
+# Task 00 — FR3 + Isaac Sim + ROS 2 + MoveIt 2 基线
 
-## Status
+## 状态
 
-✅ **Complete**
+✅ **已完成**
 
-This task establishes the minimum verified simulation and motion-planning pipeline for the thesis project before starting palletizing skills.
+本任务用于建立论文工程开始码垛技能开发前最小且可重复验证的仿真与运动规划链路。
 
 ---
 
-## 1. Environment
-
-Validated environment:
+## 1. 已验证环境
 
 - Ubuntu 22.04.5 LTS
 - ROS 2 Humble
-- Python 3.10.12 (`/usr/bin/python3`)
+- Python 3.10.12（`/usr/bin/python3`）
 - Isaac Sim 4.5.0
 - NVIDIA GeForce RTX 3070 8 GB
-- NVIDIA 580-series driver
+- NVIDIA 580 系列驱动
 - MoveIt 2 / OMPL
-- Franka ROS 2: `humble` branch
-- `franka_description`: 2.8.1
-- `libfranka`: 0.20.4
+- Franka ROS 2：`humble` 分支
+- `franka_description`：2.8.1
+- `libfranka`：0.20.4
 
-### Python environment isolation
+### Python 环境隔离
 
-ROS 2 is run outside Conda. The validated ROS terminal is:
+ROS 2 在 Conda 环境之外运行。已经验证的检查命令：
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -34,7 +32,7 @@ python3 --version
 which ros2
 ```
 
-Expected output:
+预期：
 
 ```text
 /usr/bin/python3
@@ -42,55 +40,55 @@ Python 3.10.12
 /opt/ros/humble/bin/ros2
 ```
 
-This avoids mixing Miniconda Python with ROS 2 Humble system packages.
+这样可以避免 Miniconda Python 与 ROS 2 Humble 系统包混用。
 
 ---
 
-## 2. Isaac Sim stability
+## 2. Isaac Sim 稳定基线
 
-Isaac Sim 5.1 previously crashed during RTX renderer initialization. After switching the NVIDIA driver and using Isaac Sim 4.5.0, the simulator starts normally and remains stable.
+Isaac Sim 5.1 曾在 RTX 渲染初始化阶段崩溃。切换 NVIDIA 驱动并使用 Isaac Sim 4.5.0 后，仿真器可以稳定启动与运行。
 
-The project therefore freezes the current simulation baseline at:
+因此当前工程固定采用：
 
 ```text
 Ubuntu 22.04.5
 + ROS 2 Humble
 + Isaac Sim 4.5.0
-+ NVIDIA 580-series driver
++ NVIDIA 580 系列驱动
 ```
 
-No further driver or Isaac Sim upgrades should be made unless required by a later task.
+除非后续任务确实需要，否则不再主动升级 Isaac Sim 或 NVIDIA 驱动。
 
 ---
 
-## 3. FR3 model in Isaac Sim
+## 3. Isaac Sim 中的 FR3 模型
 
-The built-in Isaac Sim FR3 asset is used directly instead of re-importing URDF:
+直接使用 Isaac Sim 内置 FR3 USD，而不是重新导入 URDF：
 
 ```text
 Robots/Franka/FR3/fr3.usd
 ```
 
-Validated properties:
+已经验证：
 
-- Articulation Root exists.
-- `fr3_joint1` through `fr3_joint7` exist.
-- Franka hand and finger joints exist.
-- `fr3_hand_tcp` exists.
-- Fixed base behaves correctly.
-- Play/Stop is stable.
-- Joint-position controller can independently move all seven arm joints.
-- Gripper open/close motion works.
+- Articulation Root 正常；
+- `fr3_joint1` 到 `fr3_joint7` 存在；
+- Franka hand 与两根 finger joint 存在；
+- `fr3_hand_tcp` 存在；
+- 固定底座正常；
+- Play / Stop 稳定；
+- 七个机械臂关节可独立位置控制；
+- 夹爪开合正常。
 
-The project scene uses the Isaac asset as a reference rather than modifying the original asset.
+工程场景以引用方式使用该 Isaac 资产，不修改原始 FR3 USD。
 
 ---
 
 ## 4. ROS 2 Bridge
 
-The Isaac ROS 2 Action Graph was configured and validated.
+Isaac ROS 2 Action Graph 已配置并验证。
 
-Validated topics:
+已验证 topic：
 
 ```text
 /clock
@@ -101,7 +99,7 @@ Validated topics:
 
 ### `/joint_states`
 
-The actual joint order published by Isaac Sim is:
+Isaac Sim 实际发布的关节顺序：
 
 ```text
 fr3_joint1
@@ -115,25 +113,23 @@ fr3_finger_joint1
 fr3_finger_joint2
 ```
 
-This naming is used as the reference when connecting MoveIt 2 to Isaac Sim.
+该命名作为 MoveIt 2 与 Isaac Sim 对接时的统一参考。
 
-### Joint command path
+### 关节命令链路
 
-Isaac subscribes to:
+Isaac 订阅：
 
 ```text
 /joint_command
 ```
 
-with message type:
+消息类型：
 
 ```text
 sensor_msgs/msg/JointState
 ```
 
-The command is passed to the Isaac Articulation Controller.
-
-Validated command path:
+控制链：
 
 ```text
 ROS 2 /joint_command
@@ -147,28 +143,28 @@ FR3 articulation
 
 ---
 
-## 5. Franka ROS 2 and MoveIt installation
+## 5. Franka ROS 2 与 MoveIt 安装记录
 
-The official Franka ROS 2 Humble repository is used:
+使用 Franka ROS 2 官方 Humble 仓库：
 
 ```bash
 git clone -b humble https://github.com/frankarobotics/franka_ros2.git
 ```
 
-The official dependency file is used to keep compatible versions:
+使用官方依赖文件保持版本兼容：
 
 ```bash
 vcs import src < src/franka_ros2/dependency.repos --recursive --skip-existing
 ```
 
-Relevant pinned dependencies:
+关键版本：
 
 ```text
 franka_description 2.8.1
 libfranka          0.20.4
 ```
 
-`libfranka` requires its `common` Git submodule. If the build reports that `libfranka/common` has no `CMakeLists.txt`, initialize it with:
+如果编译提示 `libfranka/common` 缺少 `CMakeLists.txt`，初始化 Git submodule：
 
 ```bash
 cd src/libfranka
@@ -176,7 +172,7 @@ git submodule sync --recursive
 git submodule update --init --recursive
 ```
 
-Workspace dependencies are installed with:
+安装依赖：
 
 ```bash
 rosdep install \
@@ -186,7 +182,7 @@ rosdep install \
   -r -y
 ```
 
-The workspace is then built using:
+完整工作空间构建方式：
 
 ```bash
 colcon build \
@@ -196,21 +192,19 @@ colcon build \
   -DBUILD_TESTS=OFF
 ```
 
-The complete workspace compiled successfully.
+该工作空间已经完整编译成功。
 
 ---
 
-## 6. Official FR3 MoveIt configuration
+## 6. 官方 FR3 MoveIt 配置
 
-No custom MoveIt Setup Assistant configuration is required.
-
-The official package is used directly:
+不需要使用 MoveIt Setup Assistant 重新制作配置，直接使用：
 
 ```text
 franka_fr3_moveit_config
 ```
 
-Validated launch command:
+### 已验证启动命令
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -221,49 +215,53 @@ ros2 launch franka_fr3_moveit_config moveit.launch.py \
   use_fake_hardware:=true
 ```
 
-Validated results:
+已经验证：
 
-- RViz starts normally.
-- `/move_group` is available.
-- Planning group `fr3_arm` is available.
-- FR3 robot model loads correctly.
-- OMPL planning succeeds.
-- `RRTConnectkConfigDefault` is present.
-- RViz `Plan` succeeds.
+- RViz 正常启动；
+- `/move_group` 正常；
+- `fr3_arm` 规划组正常；
+- FR3 RobotModel 正常加载；
+- OMPL 可以规划；
+- `RRTConnectkConfigDefault` 存在；
+- RViz 中 `Plan` 成功。
 
-The command:
+执行：
 
 ```bash
 ros2 param get /move_group planning_pipelines
 ```
 
-returns `Parameter not set` in this configuration. This is not treated as an error because `/move_group` contains the OMPL planner configuration and RRTConnect is explicitly present:
+可能返回：
+
+```text
+Parameter not set
+```
+
+当前不视为错误，因为 `/move_group` 中实际存在 OMPL 的 RRTConnect 配置：
 
 ```text
 RRTConnectkConfigDefault:
   type: geometric::RRTConnect
 ```
 
-and actual planning succeeds.
+并且真实规划已经成功。
 
 ---
 
-## 7. MoveIt → Isaac trajectory adapter
+## 7. MoveIt → Isaac 轨迹执行链
 
-The project reuses the already validated `moveit_to_isaac` architecture from the previous FR3 integration prototype.
+工程沿用已经验证的 `moveit_to_isaac` 思路：
 
-The node performs the following steps:
+1. 等待 `/move_group` 参数服务；
+2. 从 `/move_group` 复制 `robot_description` 和 `robot_description_semantic`；
+3. 创建 `MoveGroupInterface("fr3_arm")`；
+4. 选择 `RRTConnectkConfigDefault`；
+5. 生成带碰撞约束的 `RobotTrajectory / JointTrajectory`；
+6. 按 `time_from_start` 以 100 Hz 插值；
+7. 将关节位置发布到 `/joint_command`；
+8. Isaac Sim 通过 Articulation Controller 执行。
 
-1. Wait for `/move_group` parameter service.
-2. Copy `robot_description` and `robot_description_semantic` from `/move_group` into the adapter node.
-3. Create `MoveGroupInterface("fr3_arm")`.
-4. Select `RRTConnectkConfigDefault`.
-5. Plan a collision-aware `RobotTrajectory` / `JointTrajectory`.
-6. Interpolate trajectory points according to `time_from_start` at 100 Hz.
-7. Publish the interpolated joint positions to `/joint_command`.
-8. Isaac Sim receives the commands through the Articulation Controller.
-
-Validated pipeline:
+已验证链路：
 
 ```text
 MoveIt 2 / OMPL
@@ -272,9 +270,7 @@ RRTConnect
         ↓
 RobotTrajectory / JointTrajectory
         ↓
-moveit_to_isaac
-        ↓
-100 Hz interpolation
+100 Hz 插值执行节点
         ↓
 /joint_command
         ↓
@@ -282,65 +278,71 @@ Isaac ROS 2 Bridge
         ↓
 Articulation Controller
         ↓
-FR3 physical simulation
+FR3 物理仿真
 ```
 
-### Baseline test configuration
+### 基线测试关节配置
 
-Start configuration:
+起点：
 
 ```text
 HOME = [0.0, -0.7, 0.0, -2.2, 0.0, 2.0, 0.8]
 ```
 
-Goal configuration:
+目标：
 
 ```text
 Pose A = [0.3, -0.8, 0.2, -2.3, 0.2, 2.1, 0.6]
 ```
 
-### Result
+### 结果
 
-✅ MoveIt planning succeeded.
+✅ MoveIt 规划成功。
 
-✅ `/joint_command` was received by Isaac Sim.
+✅ Isaac Sim 成功接收 `/joint_command`。
 
-✅ The FR3 in Isaac Sim moved smoothly from HOME toward Pose A.
+✅ FR3 从 HOME 平滑运动到 Pose A。
 
-✅ Behavior matched the previously validated FR3 + Isaac + MoveIt prototype.
+✅ 与此前 FR3 + Isaac + MoveIt 原型结果一致。
 
-Therefore the motion-planning-to-simulation execution chain is considered restored and validated on the new workstation.
+因此，新电脑上的“规划 → ROS 2 → Isaac 执行”链路已经恢复并验证。
 
 ---
 
-## 8. Task 00 acceptance
+## 8. Task 00 验收结果
 
-| Item | Result |
+| 项目 | 结果 |
 |---|---|
-| Isaac Sim 4.5 starts stably | ✅ |
-| Built-in FR3 asset loads correctly | ✅ |
+| Isaac Sim 4.5 稳定启动 | ✅ |
+| 内置 FR3 资产正常 | ✅ |
 | FR3 Articulation Root | ✅ |
-| Seven arm joints controllable | ✅ |
-| Gripper controllable | ✅ |
+| 七个机械臂关节可控 | ✅ |
+| 夹爪可控 | ✅ |
 | ROS 2 `/clock` | ✅ |
 | ROS 2 `/joint_states` | ✅ |
 | ROS 2 `/tf` | ✅ |
 | ROS 2 `/joint_command` | ✅ |
-| Franka ROS 2 Humble builds | ✅ |
-| Official `franka_fr3_moveit_config` launches | ✅ |
-| `fr3_arm` planning group | ✅ |
-| OMPL / RRTConnect planning | ✅ |
-| MoveIt trajectory converted to `/joint_command` | ✅ |
-| Isaac FR3 executes planned trajectory | ✅ |
+| Franka ROS 2 Humble 编译 | ✅ |
+| 官方 `franka_fr3_moveit_config` 启动 | ✅ |
+| `fr3_arm` 规划组 | ✅ |
+| OMPL / RRTConnect 规划 | ✅ |
+| MoveIt 轨迹转换为 `/joint_command` | ✅ |
+| Isaac FR3 执行规划轨迹 | ✅ |
 
-## Conclusion
+## 结论
 
-**Task 00 is complete.**
+**Task 00 已完成。**
 
-The project now has a validated baseline for the next engineering stage:
+项目已经具备后续所有技能开发所需的基础运动规划与仿真执行链路。
+
+当前进入：
 
 ```text
-Task 01 — Single-Arm Pick & Place
+Task 01 — 单机械臂 Pick & Place
 ```
 
-The first Pick & Place version will use a known cube pose and deterministic attach/detach behavior before introducing real contact grasping or RGB-D perception.
+完整启动与运行方式统一维护在：
+
+```text
+docs/STARTUP_GUIDE.md
+```
