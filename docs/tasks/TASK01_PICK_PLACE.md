@@ -47,13 +47,23 @@ Center = (0.55, 0.00, 0.025) m
 Size   = (1.20, 0.80, 0.05) m
 ```
 
-### PickCube
+### PickCube — revised deterministic test geometry
+
+The original 0.08 m cube is unnecessarily close to the Franka gripper maximum opening. For the first deterministic Pick & Place baseline, reduce the cube to 0.06 m.
 
 ```text
-Center = (0.45, 0.15, 0.09) m
-Size   = (0.08, 0.08, 0.08) m
+Center = (0.45, 0.15, 0.08) m
+Size   = (0.06, 0.06, 0.06) m
 Mass   = 0.2 kg
 ```
+
+With the table top at `z = 0.05 m`, a 0.06 m cube resting on the table has center height:
+
+```text
+z = 0.05 + 0.06 / 2 = 0.08 m
+```
+
+If desired, initialize Isaac slightly above this value (for example `z = 0.082 m`) and let PhysX settle it onto the table; MoveIt should use the settled nominal center `z = 0.08 m`.
 
 ---
 
@@ -64,19 +74,6 @@ Current ROS 2 executable:
 ```text
 fr3_moveit_test single_arm_pick_place
 ```
-
-Current implementation:
-
-1. connect to `/move_group`;
-2. copy `robot_description` and `robot_description_semantic`;
-3. create `MoveGroupInterface("fr3_arm")`;
-4. select `RRTConnectkConfigDefault`;
-5. add Table and PickCube to the MoveIt Planning Scene;
-6. plan HOME → PRE_GRASP;
-7. execute through `/joint_command`;
-8. use the previous trajectory endpoint as the next MoveIt start state;
-9. plan PRE_GRASP → APPROACH;
-10. execute APPROACH on Isaac.
 
 Trajectory execution uses the validated 100 Hz interpolation adapter.
 
@@ -90,65 +87,36 @@ Trajectory execution uses the validated 100 Hz interpolation adapter.
 [0.0, -0.7, 0.0, -2.2, 0.0, 2.0, 0.8]
 ```
 
-### PRE_GRASP
+### Current validated near-object motion
 
-```text
-TCP = (0.45, 0.15, 0.24) m
-```
-
-### APPROACH / open-gripper pose
-
-```text
-TCP = (0.45, 0.15, 0.17) m
-```
-
-This pose is now treated as the practical near-object pose at which the gripper is explicitly opened.
+The existing PRE_GRASP and APPROACH motions have been validated in RViz and Isaac Sim. The next implementation should not add multiple extra descent waypoints.
 
 ---
 
 ## 4. Latest validation
 
-```text
-Planning HOME -> PRE_GRASP...
-PRE_GRASP planning SUCCESS.
-PRE_GRASP execution COMPLETE.
-
-Planning PRE_GRASP -> APPROACH...
-APPROACH planning SUCCESS.
-APPROACH execution COMPLETE.
-```
-
 Validated:
 
 - Planning Scene accepted Table + PickCube.
-- RRTConnect successfully planned both motion stages.
-- RViz and Isaac Sim reached the same expected pose above the cube.
-- Gripper opening was manually validated with:
-
-```bash
-ros2 topic pub --once \
-/ joint_command sensor_msgs/msg/JointState \
-"{name: ['fr3_finger_joint1','fr3_finger_joint2'], position: [0.04,0.04]}"
-```
-
-Both finger joints opened correctly.
+- RRTConnect successfully planned the near-object motion.
+- RViz and Isaac Sim reached the expected pose above the cube.
+- Gripper opening was manually validated using the two finger joint names.
+- Both finger joints opened correctly.
 
 ---
 
-## 5. Final grasp-sequence decision
+## 5. Simplified grasp-sequence decision
 
-The grasp sequence is simplified to one near-object pose plus one final descent. No redundant intermediate descent stages are required.
+Avoid over-segmenting the first Pick & Place baseline. Use a simple sequence:
 
 ```text
 HOME
   ↓
-PRE_GRASP
-  ↓
-APPROACH / near-object pose
+NEAR_OBJECT
   ↓
 OPEN_GRIPPER
   ↓
-DESCEND_TO_GRASP
+ONE DESCENT TO GRASP HEIGHT
   ↓
 CLOSE_GRIPPER
   ↓
@@ -157,9 +125,32 @@ ATTACH
 LIFT
 ```
 
-The current `APPROACH` pose at `z = 0.17 m` is used as the gripper-opening pose. After opening, the robot performs exactly one final vertical descent to the calibrated grasp height, then closes the fingers.
+The earlier 0.08 m test cube is replaced with a 0.06 m cube to leave meaningful finger clearance.
 
-The logical attach operation will provide reliable object transport in the first deterministic demo; finger closure is still commanded for visually and logically consistent manipulation.
+For the revised cube:
+
+```text
+CUBE_SIZE = 0.06 m
+CUBE_Z    = 0.08 m
+```
+
+A practical first final-grasp TCP target is approximately:
+
+```text
+z_grasp ≈ 0.10 m
+```
+
+This corresponds to:
+
+```text
+GRASP_Z_OFFSET = 0.02 m
+```
+
+The exact value can be adjusted once if the visual finger depth is slightly high or low, but the project should not introduce additional intermediate stages merely for tuning.
+
+For a 0.06 m cube, the symmetric finger displacement corresponding to roughly a 0.06 m opening is about 0.03 m per finger. The first close command can therefore target approximately `0.028–0.030 m` per finger rather than the previous 0.039 m value.
+
+Logical attach/detach remains the authoritative grasp mechanism for this first deterministic simulation baseline.
 
 ---
 
@@ -167,10 +158,9 @@ The logical attach operation will provide reliable object transport in the first
 
 ```text
 HOME                         ✅
-PRE_GRASP                    ✅
-APPROACH                     ✅
+NEAR_OBJECT                  ✅ baseline motion validated
 OPEN_GRIPPER                 ✅ manually validated
-DESCEND_TO_GRASP             Next
+DESCEND_TO_GRASP             Next — use one descent only
 CLOSE_GRIPPER                Pending
 ISAAC + MOVEIT ATTACH        Pending
 LIFT                         Pending
