@@ -1,14 +1,15 @@
 # 关键问题与排错记录
 
-本文件专门记录项目开发过程中具有复用价值的关键问题，包括：**现象、日志、根本原因、错误理解、解决方案、验证方法和后续工程意义**。
+本文件专门记录项目开发过程中具有复用价值的关键问题，包括：**现象、日志、根本原因、错误理解、解决方案、验证方法、最终结果和工程意义**。
 
 原则：
 
 ```text
 1. 只要问题会影响后续复现、规划逻辑、仿真物理或论文方法设计，就记录在这里；
 2. 不只记录“怎么修”，还要记录“为什么出错”；
-3. 区分 MoveIt 规划层和 Isaac Sim 物理层；
-4. 关键修复同时同步到对应 Task 文档和源码注释。
+3. 明确区分 MoveIt 规划层和 Isaac Sim 物理层；
+4. 关键修复同时同步到对应 Task 文档和源码注释；
+5. 只有用户实际验证通过后，才把解决方案标记为“已验证”。
 ```
 
 ---
@@ -17,13 +18,13 @@
 
 ## 现象
 
-在 Task 01 中，HOME 到抓取上方的 RRTConnect 规划可以成功，但从 APPROACH 向 GRASP 做 Cartesian 直线下降时出现：
+在 Task 01 中，HOME 到抓取上方的 RRTConnect 规划可以成功，但 APPROACH 向 GRASP 做 Cartesian 直线下降时出现：
 
 ```text
 Robot model frame = 'base'
 Current pose reference frame = 'fr3_link0'
 
-APPROACH -> GRASP [Cartesian Z-only]
+APPROACH -> GRASP
 Cartesian fraction = -1.0000
 Cartesian MoveIt error_code = -21
 ```
@@ -36,27 +37,27 @@ Cartesian MoveIt error_code = -21
 FRAME_TRANSFORM_FAILURE
 ```
 
-当前 RobotModel 的模型参考坐标系是：
+RobotModel 的模型坐标系是：
 
 ```text
 base
 ```
 
-但代码曾设置：
+但程序曾设置：
 
 ```cpp
 move_group.setPoseReferenceFrame("fr3_link0");
 ```
 
-Cartesian Path 服务需要把 waypoint 从 `fr3_link0` 转换到 RobotModel 的 `base` 坐标系。当前 MoveIt/TF 环境没有提供这条服务所需的有效变换，因此整个 Cartesian 请求在轨迹计算前就失败。
+Cartesian Path 服务需要把 waypoint 从 `fr3_link0` 转换到 `base`。当前规划环境没有提供该服务所需的有效变换，因此请求在真正计算笛卡尔轨迹之前就失败。
 
-这里的：
+这里：
 
 ```text
 fraction = -1
 ```
 
-不是“轨迹完成了 -100%”，而是表示 Cartesian 服务调用本身发生错误。
+不是“完成比例为 -100%”，而是表示 Cartesian 请求本身发生错误。
 
 ## 解决方案
 
@@ -72,16 +73,11 @@ Cube CollisionObject Frame  = base
 
 ```cpp
 move_group.setPoseReferenceFrame("base");
-```
-
-Planning Scene 中：
-
-```cpp
 table.header.frame_id = "base";
 cube.header.frame_id  = "base";
 ```
 
-## 验证结果
+## 最终验证
 
 修复后：
 
@@ -90,43 +86,44 @@ Cartesian fraction = 1.0000
 MoveIt error_code = 1
 ```
 
-抓取垂直下降和垂直提升均可稳定执行。
+并且后续抓取下降、提升、水平搬运、放置下降和退出均可以正常计算 Cartesian Path。
 
 ## 工程意义
 
-后续所有 Cartesian Skill 在定义 waypoint 时，应优先使用统一、明确、稳定的规划参考系。不要仅因为两个坐标系在仿真场景中“看起来重合”，就假设 MoveIt 服务一定能完成二者之间的 TF 转换。
+后续所有 Cartesian Skill 应统一、明确地定义规划参考坐标系。两个坐标系在 Isaac 场景里“看起来重合”，不代表 MoveIt 服务一定能够完成对应 TF 转换。
 
 ---
 
-# 问题 02：仅保证 TCP 到达抓取点，仍会出现抓取失败
+# 问题 02：仅保证 TCP 到达抓取点，仍然抓取不稳定
 
 ## 现象
 
-最初使用约 60 mm Cube。TCP 虽然可以移动到 Cube 上方并下降，但只要末端 yaw 略有偏差，两个手指就不能同时、对称地接触 Cube 两侧，导致：
+最初采用约 60 mm Cube。TCP 虽然能够到达 Cube 上方并下降，但只要末端 yaw 有一定偏差，两根手指就不能同时、对称地接触 Cube 两侧，出现：
 
 ```text
-- 一侧先接触；
-- 另一侧接触不足；
-- Cube 偏转；
-- 抬升时脱落；
-- 多次运行成功率不稳定。
+一侧先接触
+另一侧接触不足
+Cube 偏转
+Cube 被弹开
+Lift 时脱落
+重复运行稳定性差
 ```
 
 ## 根本原因
 
-抓取目标不能只定义为三维位置：
+抓取目标不能只定义三维位置：
 
 ```text
 (x, y, z)
 ```
 
-而必须定义完整的 6D 抓取位姿：
+而应定义完整的 6D 抓取位姿：
 
 ```text
 位置 + 姿态
 ```
 
-对于平行两指夹爪，除了 TCP 到达 Cube 中心上方外，还必须满足：
+对于平行两指夹爪，至少需要：
 
 ```text
 1. TCP 工具轴竖直向下；
@@ -135,7 +132,7 @@ MoveIt error_code = 1
 4. 只沿抓取方向直线下降。
 ```
 
-当前轴对齐 Cube 的抓取姿态定义为：
+当前轴对齐 Cube：
 
 ```text
 R_grasp = Rz(cube_yaw) * Rx(pi)
@@ -153,15 +150,15 @@ cube_yaw = 0
 Quaternion (x,y,z,w) = (1,0,0,0)
 ```
 
-## 同时采取的基线简化
+## 基线简化
 
-Task 01 当前目标是先打通完整 Pick & Place 链，因此 Cube 从 60 mm 缩小为：
+Task 01 的目标是先稳定打通完整 Pick & Place，因此 Cube 缩小为：
 
 ```text
 30 mm × 30 mm × 30 mm
 ```
 
-Isaac 中当前参数：
+Isaac 参数：
 
 ```text
 Center = (0.45, 0.15, 0.065) m
@@ -176,33 +173,33 @@ OPEN  = 0.040 m / finger
 CLOSE = 0.014 m / finger
 ```
 
-## 运动策略修正
+## 运动策略修改
 
-原来：
+原方式：
 
 ```text
-RRTConnect 到 Approach
+RRTConnect -> Approach
 ↓
-再次自由规划到 Grasp
+再次自由规划 -> Grasp
 ```
 
 修改为：
 
 ```text
-RRTConnect 到“完整姿态已经对齐”的 Approach
+RRTConnect -> 已完成姿态对齐的 Approach
 ↓
 Cartesian：保持 X / Y / orientation
 ↓
-只改变 Z
+只降低 Z
 ↓
-垂直下降到 Grasp
+GRASP
 ```
 
-Lift 同样采用保持姿态不变的 Cartesian Z-only 上升。
+Lift 同样保持姿态不变，只提高 Z。
 
-## 验证结果
+## 最终验证
 
-30 mm Cube + 完整末端姿态 + Cartesian Z-only 抓取后，多次重复测试仍可稳定：
+30 mm Cube + 完整末端姿态 + Cartesian Z-only 抓取以后，多次重复测试均能够稳定：
 
 ```text
 抓住 Cube
@@ -210,17 +207,21 @@ Lift 同样采用保持姿态不变的 Cartesian Z-only 上升。
 不弹飞
 ↓
 稳定提升
+↓
+继续完成搬运和放置
 ```
 
 ## 工程意义
 
-该问题直接对应后续抓取技能的基本定义：
+抓取目标不是一个“点”，而是：
 
 ```text
-抓取目标不是“一个点”，而是“一个满足几何约束的末端位姿 + 接近方向”。
+满足几何约束的末端位姿
++
+明确的接近方向
 ```
 
-未来对于有 yaw 的箱体，应由箱体姿态动态生成抓取姿态，而不是永久硬编码一个四元数。
+后续有 yaw 的箱体应由箱体位姿动态生成抓取姿态，而不是永久硬编码一个四元数。
 
 ---
 
@@ -253,9 +254,9 @@ PLACE -> RETREAT：Cartesian fraction = 0.0000
 PLACE -> RETREAT：MoveIt error_code = 1
 ```
 
-## 首先要区分：这不是 Isaac Sim 拒绝了运动
+## 首先区分：不是 Isaac Sim 拒绝了运动
 
-该失败发生在：
+失败发生在：
 
 ```text
 MoveIt Cartesian Path 规划阶段
@@ -263,40 +264,40 @@ MoveIt Cartesian Path 规划阶段
 
 而不是 Isaac Sim 的 PhysX 执行阶段。
 
-两层职责：
+职责区分：
 
 ```text
 MoveIt
-  → 维护 Planning Scene
-  → 判断几何碰撞
-  → 生成轨迹
+→ RobotState
+→ Planning Scene
+→ 几何碰撞判断
+→ 路径规划
 
 Isaac Sim
-  → 真实执行关节运动
-  → 计算接触、摩擦、重力和刚体运动
+→ 实际执行关节运动
+→ 接触
+→ 摩擦
+→ 重力
+→ 刚体动力学
 ```
 
-因此这里的 `fraction = 0` 是 MoveIt 认为起点附近没有有效的无碰撞 Cartesian 路径，不是 Isaac Sim 直接阻止了机械臂。
+所以 `fraction = 0` 表示 MoveIt 从规划起点开始就无法生成有效无碰撞 Cartesian Path，而不是 Isaac Sim 主动阻止了机械臂。
 
-## DETACH 的真实含义
+## ATTACH / DETACH 的真实含义
 
 ### ATTACH
-
-抓取后：
 
 ```text
 World CollisionObject
 ↓
 AttachedCollisionObject
 ↓
-MoveIt 认为 Cube 随机器人运动
+MoveIt 把 Cube 当作机器人携带物体参与规划
 ```
-
-它主要是规划模型中的附着关系。
 
 ### DETACH
 
-DETACH 不只是“删除 attached object”。
+DETACH 不是简单删除 attached object。
 
 MoveIt 在 `AttachedCollisionObject::REMOVE` 时会：
 
@@ -309,23 +310,22 @@ MoveIt 在 `AttachedCollisionObject::REMOVE` 时会：
 因此：
 
 ```text
-DETACH = 解除机器人与物体的规划附着关系
-       + 让物体重新成为环境中的 World CollisionObject
+DETACH
+= 解除机器人与物体的规划附着关系
++ 让物体重新成为环境中的 World CollisionObject
 ```
 
-这与 Isaac Sim 中夹爪是否已经物理张开是两个不同层面的状态。
+这与 Isaac 中夹爪是否已经张开属于不同层面的状态。
 
 ## 根本原因
 
-本轮原代码的错误假设是：
+原代码错误假设：
 
 ```text
-DETACH 后 Cube 暂时不在 MoveIt World 中
+DETACH 后 Cube 暂时不在 MoveIt World
 ```
 
-实际上 MoveIt 会自动把它加回 World。
-
-于是实际状态为：
+实际：
 
 ```text
 PLACE
@@ -334,15 +334,15 @@ DETACH
 ↓
 MoveIt 自动把 Cube 加回 World
 ↓
-夹爪仍处在刚完成放置的接触区域
+夹爪仍处于刚完成放置的释放接触区域
 ↓
 OPEN / RELEASE
 ↓
-开始规划 RETREAT
+规划 RETREAT
 ↓
-MoveIt Planning Scene 中起点附近夹爪与 World Cube 接触 / 碰撞
+Planning Scene 认为起点附近夹爪与 World Cube 接触 / 碰撞
 ↓
-Cartesian Path 从第一个插值点就无法前进
+Cartesian Path 从第一个插值点就不能前进
 ↓
 fraction = 0.0000
 ```
@@ -353,11 +353,11 @@ fraction = 0.0000
 MoveIt error_code = 1
 ```
 
-说明 Cartesian 服务本身是正常执行的；与此前 `-21 FRAME_TRANSFORM_FAILURE` 不同。本次是路径有效性/碰撞层面的问题。
+说明 Cartesian 服务调用本身正常，与问题 01 的 `-21 FRAME_TRANSFORM_FAILURE` 完全不同。本次问题在路径有效性 / 碰撞层面。
 
-## 为什么 Isaac 已经张开夹爪，MoveIt 仍可能认为有碰撞
+## 为什么 Isaac 已经张开夹爪，MoveIt 仍可能判断碰撞
 
-当前程序自己构造 Cartesian 起始 RobotState：
+当前 Cartesian 起始状态由程序构造：
 
 ```cpp
 start_state.setToDefaultValues();
@@ -370,29 +370,36 @@ start_state.setJointGroupPositions(joint_model_group, start_q);
 joint_model_group = fr3_arm
 ```
 
-只包含机械臂 7 个关节。
+只显式设置机械臂 7 个关节。
 
-Isaac 中两个 finger joint 的实际张开状态并没有在这里显式写入当前 MoveIt start_state。
+Isaac 中：
 
-因此：
+```text
+fr3_finger_joint1
+fr3_finger_joint2
+```
+
+的真实张开状态并没有在这里显式写入本次 MoveIt `start_state`。
+
+所以：
 
 ```text
 Isaac 中真实夹爪状态
 ```
 
-与：
+和：
 
 ```text
-MoveIt 在本次规划中使用的夹爪状态
+MoveIt 本次规划使用的夹爪状态
 ```
 
-并不一定完全同步。
+并不保证完全一致。
 
-所以不能用“Isaac 画面中已经张开”来证明 MoveIt Planning Scene 的起点一定无碰撞。
+不能仅根据 Isaac 画面里“夹爪已经张开”推断 MoveIt Planning Scene 起点必然无碰撞。
 
-## Task 01 当前解决方案
+## 最终解决方案
 
-在基线 Task 01 中采用确定性释放流程：
+Task 01 使用确定性的释放状态切换：
 
 ```text
 PLACE
@@ -401,26 +408,26 @@ MoveIt DETACH
 ↓
 MoveIt 自动把 Cube 放回 World
 ↓
-立即 removeWorldCube()
+removeWorldCube()
 ↓
 暂时从 MoveIt World 删除 Cube
 ↓
 Isaac OPEN / RELEASE
 ↓
-Cube 在真实物理仿真中落到桌面
+Cube 在 PhysX 中落到桌面
 ↓
 MoveIt 规划 Cartesian Z-only RETREAT
 ↓
-夹爪安全退出
+机械臂退出
 ↓
 addPlacedCubeToWorld()
 ↓
-按目标位置把 Cube 重新加入 MoveIt Planning Scene
+按目标位置重新把 Cube 加入 MoveIt Planning Scene
 ↓
 RRTConnect -> HOME
 ```
 
-对应代码关键修复：
+关键代码：
 
 ```cpp
 if (!detachCubeFromTcp())
@@ -429,22 +436,21 @@ if (!detachCubeFromTcp())
 }
 
 // DETACH 会自动把 Cube 放回 MoveIt World。
-// 释放瞬间属于有意接触阶段，为避免 RETREAT 起点碰撞，
-// 先暂时从 Planning Scene 删除。
+// 释放瞬间属于有意接触阶段，先临时从 Planning Scene 删除。
 removeWorldCube();
 
 commandGripper(GRIPPER_OPEN_POS, 1.0);
 
-// ... RETREAT ...
+// Cartesian RETREAT
 
 addPlacedCubeToWorld();
 ```
 
 ## 为什么这不是“关闭碰撞检测”
 
-这里不是永久忽略 Cube，而是只在**释放接触过渡阶段**暂时不让 Cube 参与 MoveIt 的退出路径碰撞判断。
+Cube 只在“释放接触 -> 夹爪退出”的短暂过渡阶段被临时移出 Planning Scene。
 
-状态机可理解为：
+状态可以理解为：
 
 ```text
 环境物体
@@ -458,24 +464,60 @@ Attached Object
 环境物体
 ```
 
-机械臂退出以后 Cube 会重新加入 MoveIt World，后续规划仍会把它作为障碍物。
+机械臂退出以后，Cube 马上重新加入 MoveIt World，后续规划仍然会把它当作障碍物。
 
-## 后续更正式的处理方向
+## 最终验证结果
 
-Task 01 只要求建立稳定基线，因此采用上面的确定性状态切换。
+加入：
 
-进入 Task 02 Placement Skill 后，应进一步研究：
-
-```text
-- release contact 的允许碰撞策略；
-- 夹爪真实 joint state 与 MoveIt RobotState 同步；
-- 放置后的物体真实位姿更新；
-- retreat swept volume；
-- 释放方向和退出方向；
-- 周围箱体对夹爪退出空间的限制。
+```cpp
+removeWorldCube();
 ```
 
-这也是“几何可放置”与“机器人实际可执行放置”之间的重要区别。
+后重新完整运行，用户确认：
+
+```text
+“这遍完美，完整执行了”
+```
+
+最终实际验证：
+
+```text
+PLACE -> RETREAT          ✅
+Cartesian RETREAT         ✅
+Cube 留在目标放置位置      ✅
+addPlacedCubeToWorld      ✅
+RETREAT -> HOME           ✅
+完整 Pick & Place 闭环     ✅
+```
+
+因此该问题正式标记为：
+
+```text
+✅ 已解决并实机仿真验证
+```
+
+## 工程意义
+
+这是后续 Placement Skill 非常重要的基础问题：
+
+```text
+几何上能放下物体
+≠
+机器人能够完成插入、释放和退出
+```
+
+后续 Task 02 应正式考虑：
+
+```text
+release contact 的允许碰撞策略
+夹爪真实 joint state 与 MoveIt RobotState 同步
+放置后的物体真实位姿更新
+retreat swept volume
+释放方向
+退出方向
+周围箱体对夹爪退出空间的限制
+```
 
 ---
 
@@ -488,7 +530,7 @@ MoveIt：
 规划、RobotState、Planning Scene、CollisionObject、AttachedCollisionObject
 
 Isaac Sim：
-刚体、碰撞接触、摩擦、重力、关节动力学、真实运动结果
+刚体、接触、摩擦、重力、关节动力学、真实运动结果
 ```
 
 ## ATTACH / DETACH
@@ -503,7 +545,7 @@ DETACH
 
 ## 有意接触与非法碰撞
 
-后续操作规划必须区分：
+机器人操作规划必须区分：
 
 ```text
 非法碰撞：
@@ -513,24 +555,26 @@ DETACH
 抓取接触、夹持接触、放置接触、释放接触
 ```
 
-机器人操作任务不能简单采用“任何接触都禁止”的碰撞逻辑。
+不能简单使用“所有接触都禁止”的策略处理完整操作任务。
 
 ---
 
 # 文档维护规则
 
-后续遇到以下类型问题时继续追加本文件：
+后续出现以下类型问题时继续追加到本文件：
 
 ```text
-- 坐标系 / TF；
-- Planning Scene；
-- CollisionObject / AttachedCollisionObject；
-- 抓取失败；
-- 接触与摩擦；
-- Cartesian Path / RRT 失败；
-- 双臂碰撞；
-- 轨迹时序；
-- 力控；
-- Isaac / ROS 2 状态不同步；
-- 论文方法中具有解释价值的失败案例。
+TF / 坐标系
+Planning Scene
+CollisionObject
+AttachedCollisionObject
+抓取失败
+接触 / 摩擦
+Cartesian Path
+RRT / RRT-Connect
+双臂碰撞
+轨迹时序
+Isaac 与 MoveIt 状态不同步
+力控 / wrench / internal force
+具有论文方法价值的失败案例
 ```
