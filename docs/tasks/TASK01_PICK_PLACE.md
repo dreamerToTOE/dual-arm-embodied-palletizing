@@ -4,23 +4,25 @@
 
 🟡 **In progress**
 
-Validated so far:
+The baseline manipulation strategy has been revised after the 60 mm cube lift test exposed sensitivity to small end-effector yaw/alignment errors.
+
+Current test chain:
 
 ```text
 HOME
   ↓
-PRE_GRASP
-  ↓
-APPROACH
+ALIGNED_APPROACH
   ↓
 OPEN_GRIPPER
   ↓
-GRASP
+CARTESIAN_Z_DESCENT
   ↓
 CLOSE_GRIPPER
+  ↓
+MOVEIT_ATTACH
+  ↓
+CARTESIAN_Z_LIFT
 ```
-
-The 60 mm cube can be grasped when alignment is good, but the lift test exposed insufficient robustness: small end-effector yaw/alignment errors can cause the fingers to miss or lose the cube.
 
 ---
 
@@ -34,121 +36,133 @@ Translate = (0, 0, 0)
 Rotate    = (0, 0, 0)
 ```
 
-Isaac `World` and MoveIt `fr3_link0` are treated as aligned in this scene.
+Isaac `World` and MoveIt `fr3_link0` are treated as aligned in the current baseline scene.
 
 ### Table
 
 ```text
 Center = (0.55, 0.00, 0.025) m
 Size   = (1.20, 0.80, 0.05) m
+Top Z  = 0.05 m
 ```
+
+### PickCube — current baseline
+
+The user has now changed the Isaac Sim cube to the 30 mm baseline geometry.
+
+```text
+Center = (0.45, 0.15, 0.065) m
+Size   = (0.03, 0.03, 0.03) m
+Yaw    = 0 rad
+```
+
+The 30 mm cube is intentionally easy to grasp. Task 01 is intended to validate the complete manipulation pipeline first; larger boxes will be reintroduced later for palletizing and placement-executability experiments.
 
 ---
 
-## Revised grasp design decision
+## Grasp-orientation rule
 
-Two changes are adopted before continuing the lift/transfer sequence.
+A valid grasp is treated as a full 6D pose, not only a TCP position.
 
-### 1. Reduce the test cube size
-
-The current 60 mm cube is still too sensitive to small orientation errors for the baseline Pick & Place task.
-
-For Task 01, the cube may be reduced to approximately half the current width:
+For the current axis-aligned cube:
 
 ```text
-Recommended baseline cube size = 0.03 x 0.03 x 0.03 m
+TCP +Z axis        -> vertically downward
+Finger motion axis -> parallel to cube Y axis
+Finger faces       -> aligned with the two cube side faces being grasped
 ```
 
-With the current table top at `z = 0.05 m`, the nominal cube center becomes:
+The Franka hand description defines both prismatic finger joints along the hand local Y axis. Therefore the current top-down orientation uses:
 
 ```text
-Cube center z = 0.05 + 0.03 / 2 = 0.065 m
+R_grasp = Rz(cube_yaw) * Rx(pi)
 ```
 
-This is a deliberate baseline simplification. The purpose of Task 01 is to validate the complete manipulation pipeline first; larger and more demanding box sizes will be reintroduced in later palletizing/executability experiments.
-
-### 2. Treat grasp orientation as a first-class constraint
-
-Reaching the target TCP position is not sufficient for a reliable two-finger grasp.
-
-The grasp target must specify the full end-effector pose:
+For `cube_yaw = 0`:
 
 ```text
-position + orientation
+Quaternion (x,y,z,w) = (1,0,0,0)
 ```
 
-For the axis-aligned cube, the desired grasp geometry is:
-
-```text
-1. TCP/tool Z axis points vertically downward.
-2. The gripper finger opening/closing axis is parallel to a pair of cube side-face normals.
-3. The finger faces are parallel to the two cube side faces being grasped.
-4. X/Y and orientation remain fixed during the final descent.
-```
-
-The grasp orientation should be derived from the cube orientation plus a fixed gripper grasp-frame offset rather than treating yaw as arbitrary.
+The code parameterizes the quaternion from `CUBE_YAW`, so a later rotated box can reuse the same grasp-frame rule instead of hard-coding an arbitrary yaw.
 
 ---
 
 ## Revised motion strategy
 
-The preferred grasp approach becomes:
+The old final grasp step used a new unconstrained pose plan. It has now been replaced by a Cartesian straight-line motion.
 
 ```text
 HOME
   ↓
-PRE_GRASP
-  ↓
-APPROACH WITH FULL GRASP ORIENTATION
+RRTConnect -> ALIGNED_APPROACH
   ↓
 OPEN_GRIPPER
   ↓
-CARTESIAN STRAIGHT-LINE DESCENT
+remove pick_cube from MoveIt world for intentional contact
+  ↓
+Cartesian path: only Z decreases
   ↓
 CLOSE_GRIPPER
   ↓
-ATTACH / LIFT
+MoveIt AttachedCollisionObject
+  ↓
+Cartesian path: only Z increases
 ```
 
-The final descent should no longer be a new unconstrained RRTConnect pose-planning problem. Instead, use a Cartesian path from the aligned approach pose to the grasp pose while keeping orientation and X/Y fixed.
-
-Conceptually:
+Current TCP targets:
 
 ```text
-Approach pose:
-(xg, yg, z_pre, R_grasp)
-
-Final grasp pose:
-(xg, yg, z_grasp, R_grasp)
+APPROACH z = 0.140 m
+GRASP    z = 0.075 m
+LIFT     z = 0.175 m
 ```
 
-Only `z` changes.
+During Cartesian descent and lift:
 
-This directly enforces the intended behavior: once the gripper is correctly aligned above the object, it only moves vertically downward before closure.
+```text
+X           fixed
+Y           fixed
+orientation fixed
+only Z      changes
+```
+
+Cartesian interpolation step:
+
+```text
+2 mm
+```
+
+The code requires an essentially complete Cartesian path (`fraction >= 0.999`) before execution.
 
 ---
 
-## Why this change matters
-
-The previous implementation guaranteed a target TCP pose numerically, but grasp success was still sensitive to the relative orientation between the two finger faces and the cube faces.
-
-For a parallel-jaw gripper, robust grasping depends on both:
+## Gripper commands
 
 ```text
-TCP position accuracy
-+
-end-effector orientation / finger-face alignment
+OPEN  = 0.040 m per finger joint  (~80 mm total opening)
+CLOSE = 0.014 m per finger joint  (~28 mm total target opening)
 ```
 
-This will also be important later for palletizing placement executability, where the box and gripper swept volume must remain aligned with insertion clearances.
+The 28 mm target gives a small preload against the 30 mm test cube.
+
+During the Cartesian descent the code continuously holds the gripper open; during the Cartesian lift it continuously holds the closed command while publishing the arm trajectory.
 
 ---
 
-## MoveIt grasp-contact handling
+## MoveIt attached object
 
-Before intentional finger/object contact, the cube may still be removed from the MoveIt world collision objects or handled with an appropriate attached/touch-link representation.
+After the physical fingers close, `pick_cube` is represented as an attached collision object for carried-object collision checking.
 
-After closure, the object should be represented as an attached collision object for subsequent lift/transfer collision checking.
+```text
+attached link = fr3_hand_tcp
+object size   = 0.03 x 0.03 x 0.03 m
+touch links   = fr3_hand_tcp, fr3_hand, fr3_leftfinger, fr3_rightfinger
+```
+
+At the current grasp pose, the physical cube center is 10 mm below the TCP. The MoveIt attached model uses a 9 mm TCP-frame offset so its lower face begins approximately 1 mm above the table and does not start the lift in an exact table-contact collision state.
+
+Isaac Sim still uses physical finger/cube contact for this test. No FixedJoint is added yet. If the aligned 30 mm grasp still slips during lift, the first deterministic Pick & Place demo will use an Isaac logical attachment / Physics FixedJoint rather than spending time tuning contact indefinitely.
 
 ---
 
@@ -158,15 +172,16 @@ After closure, the object should be represented as an attached collision object 
 ros_ws/src/fr3_moveit_test/src/single_arm_pick_place.cpp
 ```
 
-The next code revision should implement:
+Current implementation includes:
 
 ```text
-30 mm baseline cube parameters
-+ explicit grasp orientation
-+ aligned approach pose
-+ Cartesian final Z descent
+30 mm cube parameters
++ grasp orientation derived from cube yaw
++ RRTConnect to aligned approach
++ Cartesian Z-only descent
 + close gripper
-+ lift test
++ MoveIt attach
++ Cartesian Z-only lift
 ```
 
 ---
@@ -174,22 +189,21 @@ The next code revision should implement:
 ## Validation status
 
 ```text
-HOME                         ✅
-PRE_GRASP                    ✅
-APPROACH                     ✅
-OPEN_GRIPPER                 ✅
-60 mm cube grasp             ✅ when alignment is favorable
-Robustness issue identified  ✅
-30 mm baseline cube          Next
-Explicit grasp orientation   Next
-Cartesian Z-only descent     Next
-CLOSE_GRIPPER                Retest after revision
-MOVEIT ATTACH                Pending after revision
-LIFT                         Pending after revision
-TRANSFER                     Pending
-PRE_PLACE                    Pending
-PLACE                        Pending
-DETACH                       Pending
-RETREAT                      Pending
-HOME / DONE                  Pending
+Task 00 MoveIt -> Isaac baseline      ✅
+60 mm cube grasp                      ✅ when well aligned
+60 mm robustness issue identified     ✅
+30 mm Isaac cube scene                ✅
+Explicit grasp-orientation design      ✅ implemented
+Cartesian Z-only descent               Testing
+CLOSE_GRIPPER on 30 mm cube            Testing
+MOVEIT ATTACH                           Testing
+Cartesian Z-only LIFT                   Testing
+TRANSFER                                Pending
+PRE_PLACE                               Pending
+PLACE                                   Pending
+DETACH                                  Pending
+RETREAT                                 Pending
+HOME / DONE                             Pending
 ```
+
+Immediate acceptance criterion: the FR3 reaches the aligned approach, descends vertically without changing yaw/orientation, closes around the 30 mm cube, and lifts it approximately 100 mm without losing the object.
