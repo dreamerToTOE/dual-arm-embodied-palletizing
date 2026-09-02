@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **进行中 — 第一版参数化 Placement Skill 源码已建立，待本地编译与仿真验证**
+🟡 **进行中 — 第一版参数化 Placement Skill 正常目标已在 Isaac Sim 中完整验证成功，下一步验证失败分类**
 
 Task 01 已完整验证：
 
@@ -69,8 +69,6 @@ single_arm_pick_place.cpp
 ```
 
 继续作为稳定基线，不直接在其上重构。
-
-第一版源码已经提交到 GitHub。
 
 ---
 
@@ -139,7 +137,7 @@ WORLD_UPDATE_FAILED
 [PlacementSkill] RESULT    = ...
 ```
 
-这使 Placement Skill 从一个固定动作脚本，升级为可以做“可执行性判定”的工程模块。
+这使 Placement Skill 从固定动作脚本升级为可以做可执行性判定的工程模块。
 
 ---
 
@@ -149,7 +147,7 @@ WORLD_UPDATE_FAILED
 
 携带 Cube，从 LIFT 状态使用 RRTConnect 到达 PRE_PLACE 完整 6D 位姿。
 
-如果无法规划：
+失败：
 
 ```text
 RESULT = REACH_FAILED
@@ -157,15 +155,7 @@ RESULT = REACH_FAILED
 
 ### C_insert
 
-从 PRE_PLACE 到 PLACE 保持：
-
-```text
-x 不变
-y 不变
-orientation 不变
-```
-
-只沿 Z 做 Cartesian 直线下降。
+从 PRE_PLACE 到 PLACE 保持 x、y、orientation 不变，只沿 Z 做 Cartesian 直线下降。
 
 要求：
 
@@ -173,10 +163,10 @@ orientation 不变
 Cartesian fraction >= 0.999
 ```
 
-失败返回：
+失败：
 
 ```text
-INSERT_FAILED
+RESULT = INSERT_FAILED
 ```
 
 ### C_release
@@ -193,13 +183,13 @@ removeWorldCube
 OPEN / RELEASE
 ```
 
-这里暂时属于“命令层释放确认”。后续可加入 finger joint / 接触反馈形成更严格的闭环释放判定。
+当前属于“命令层释放确认”。后续可加入 finger joint / 接触反馈形成更严格的闭环释放判定。
 
 ### C_retreat
 
 释放后保持 x/y/姿态，只沿 Z 轴向上退出。
 
-目标 Cube 在释放接触过渡期间被临时从 MoveIt World 移除，但其他环境障碍物仍参与碰撞检测。
+目标 Cube 在释放接触过渡期间临时从 MoveIt World 移除，但其他环境障碍物仍参与碰撞检测。
 
 退出完成后：
 
@@ -233,42 +223,7 @@ RESULT = INVALID_TARGET
 
 ---
 
-## 7. CMakeLists 本地修改
-
-当前 GitHub 的 `fr3_moveit_test` 目录还没有同步本地 `CMakeLists.txt/package.xml`，因此本轮不要用 GitHub 中不存在的配置覆盖本地包。
-
-在本地现有 `CMakeLists.txt` 中，为新节点增加一个 executable。依赖与已经能编译的 `single_arm_pick_place` 保持一致。
-
-推荐新增：
-
-```cmake
-add_executable(placement_skill_demo
-  src/placement_skill_demo.cpp
-)
-
-ament_target_dependencies(placement_skill_demo
-  rclcpp
-  sensor_msgs
-  geometry_msgs
-  shape_msgs
-  trajectory_msgs
-  moveit_msgs
-  moveit_ros_planning_interface
-)
-
-install(TARGETS
-  placement_skill_demo
-  DESTINATION lib/${PROJECT_NAME}
-)
-```
-
-如果本地 CMake 已经使用统一 `${dependencies}` 变量，则直接复用原有依赖写法，不要重复改 `find_package(...)`。
-
-后续应把本地真实 `CMakeLists.txt` 和 `package.xml` 同步到 GitHub，避免仓库只保存 `src/`。
-
----
-
-## 8. 编译与运行
+## 7. 编译与运行
 
 ```bash
 cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
@@ -288,11 +243,11 @@ Isaac 场景仍使用 Task 01 的 FR3、Table、30 mm PickCube，运行前恢复
 
 ---
 
-## 9. 第一轮验收标准
+## 8. 正常目标验证结果
 
-默认目标先只验证正常情况。
+2026-09-02，默认 PlacementTarget 已在 Isaac Sim 中完整执行成功。
 
-预期完整链：
+验证链：
 
 ```text
 HOME
@@ -305,7 +260,7 @@ HOME
 → HOME
 ```
 
-终端应最终出现：
+终端最终确认：
 
 ```text
 [PlacementSkill] C_reach   = PASS
@@ -315,21 +270,60 @@ HOME
 [PlacementSkill] RESULT    = SUCCESS
 ```
 
-且 Isaac 中 Cube 应稳定落在：
+Isaac 中 Cube 成功完成搬运、放置和释放，机械臂安全退出并返回 HOME。
+
+---
+
+## 9. Task 02 与 Task 01 的本质区别
+
+两者在当前空桌面正常目标下的物理动作看起来非常接近，这是有意设计的：Task 02 复用 Task 01 已验证动作，不重复发明新的运动原语。
+
+Task 01 的定位是：
 
 ```text
-(0.65, -0.15, 0.065)
+固定场景 + 固定目标
+→ 按既定流程完整执行
+→ 最终返回 true / false
 ```
 
-附近，机械臂安全退出并返回 HOME。
+它回答：
+
+> 这套单臂 Pick & Place 链能不能跑通？
+
+Task 02 的定位是：
+
+```text
+PlacementTarget
+→ 目标合法性检查
+→ 分阶段可执行性判断
+→ SUCCESS / 明确失败原因
+```
+
+它回答：
+
+> 对于“这个”放置目标，究竟能不能执行？如果不能，是在哪个阶段失败？
+
+除 ROS 参数化外，Task 02 还新增了：
+
+```text
+1. PlacementTarget 作为独立技能输入接口；
+2. 运动前目标合法性检查；
+3. C_reach / C_insert / C_release / C_retreat 四阶段显式判定；
+4. REACH_FAILED / INSERT_FAILED / RETREAT_FAILED 等失败语义；
+5. PlacementSkillResult 作为高层决策可读取的技能输出；
+6. 放置后按目标参数更新 MoveIt World，而不是依赖固定常量；
+7. 为 Task 03 的邻箱干涉和 Task 16 的技能路由提供统一接口。
+```
+
+因此，Task 02 当前最重要的进步是“软件架构和可执行性判定能力”，而不是新增一种机械臂运动。
+
+真正明显的算法行为差异会在 Task 03 加入 B/C 邻箱以后出现：某些目标虽然几何上有空位，但 C_insert 或 C_retreat 会因为夹爪扫掠体与邻箱碰撞而失败。
 
 ---
 
 ## 10. 后续验证
 
-第一轮 SUCCESS 后，再做失败案例，而不是同时引入多个变量。
-
-计划依次验证：
+正常目标已经 SUCCESS。下一步依次验证：
 
 ```text
 A. INVALID_TARGET：目标直接超出桌面；
@@ -338,4 +332,4 @@ C. INSERT_FAILED：PRE_PLACE 可达，但插入路径被阻挡；
 D. RETREAT_FAILED：可放入但夹爪无法安全退出。
 ```
 
-其中 C/D 需要在后续加入障碍物，最终自然衔接 Task 03 B-A-C 放置可执行性。
+其中 C/D 需要加入障碍物，最终自然衔接 Task 03 B-A-C 放置可执行性。
