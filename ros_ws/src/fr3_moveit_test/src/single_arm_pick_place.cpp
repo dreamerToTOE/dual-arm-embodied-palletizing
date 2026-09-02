@@ -32,36 +32,32 @@ constexpr double TABLE_SIZE_X = 1.20;
 constexpr double TABLE_SIZE_Y = 0.80;
 constexpr double TABLE_SIZE_Z = 0.05;
 
+// PickCube was reduced from 80 mm to 60 mm.
 constexpr double CUBE_X = 0.45;
 constexpr double CUBE_Y = 0.15;
-constexpr double CUBE_Z = 0.09;
-constexpr double CUBE_SIZE = 0.08;
+constexpr double CUBE_Z = 0.08;
+constexpr double CUBE_SIZE = 0.06;
 
-constexpr double PRE_GRASP_Z_OFFSET = 0.15;   // TCP z = 0.24 m
-constexpr double APPROACH_Z_OFFSET = 0.08;    // TCP z = 0.17 m
-constexpr double GRASP_Z_OFFSET = 0.06;       // TCP z = 0.15 m
+// TCP heights: 0.23 -> 0.16 -> 0.10 m
+constexpr double PRE_GRASP_Z_OFFSET = 0.15;
+constexpr double APPROACH_Z_OFFSET = 0.08;
+constexpr double GRASP_Z_OFFSET = 0.02;
 
-constexpr double GRIPPER_OPEN_POS = 0.04;
-// Current cube is 0.08 m wide, equal to the nominal full gripper opening.
-// Keep the first close command conservative. Logical attach will be used later.
-constexpr double GRIPPER_CLOSE_POS = 0.039;
-
-// ============================================================
-// Copy URDF/SRDF from /move_group
-// ============================================================
+// Franka finger joint position is approximately half of total opening.
+constexpr double GRIPPER_OPEN_POS = 0.040;   // total opening ~80 mm
+constexpr double GRIPPER_CLOSE_POS = 0.030;  // total opening ~60 mm
 
 bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
 {
     RCLCPP_INFO(node->get_logger(), "Waiting for /move_group parameter service...");
 
-    auto parameter_client = std::make_shared<rclcpp::SyncParametersClient>(
-        node, "/move_group");
+    auto parameter_client =
+        std::make_shared<rclcpp::SyncParametersClient>(node, "/move_group");
 
     if (!parameter_client->wait_for_service(10s))
     {
         RCLCPP_ERROR(node->get_logger(),
                      "Cannot connect to /move_group parameter service.");
-        RCLCPP_ERROR(node->get_logger(), "Make sure MoveIt2 is running first.");
         return false;
     }
 
@@ -79,7 +75,7 @@ bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
     catch (const std::exception& e)
     {
         RCLCPP_ERROR(node->get_logger(),
-                     "Failed to read /move_group parameters: %s", e.what());
+                     "Failed to read MoveIt parameters: %s", e.what());
         return false;
     }
 
@@ -104,9 +100,6 @@ bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
     node->declare_parameter<std::string>("robot_description_semantic", srdf);
 
     RCLCPP_INFO(node->get_logger(), "Robot model parameters copied successfully.");
-    RCLCPP_INFO(node->get_logger(), "URDF size = %zu bytes", urdf.size());
-    RCLCPP_INFO(node->get_logger(), "SRDF size = %zu bytes", srdf.size());
-
     return true;
 }
 
@@ -122,15 +115,17 @@ public:
     explicit SingleArmPickPlace(const rclcpp::Node::SharedPtr& node)
         : node_(node)
     {
-        command_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>(
-            "/joint_command", 10);
+        command_pub_ =
+            node_->create_publisher<sensor_msgs::msg::JointState>(
+                "/joint_command", 10);
     }
 
     bool run()
     {
         RCLCPP_INFO(node_->get_logger(), "Creating MoveGroupInterface...");
 
-        moveit::planning_interface::MoveGroupInterface move_group(node_, "fr3_arm");
+        moveit::planning_interface::MoveGroupInterface move_group(
+            node_, "fr3_arm");
 
         move_group.setPlannerId("RRTConnectkConfigDefault");
         move_group.setPlanningTime(5.0);
@@ -138,17 +133,13 @@ public:
         move_group.setPoseReferenceFrame("fr3_link0");
         move_group.setEndEffectorLink("fr3_hand_tcp");
 
-        RCLCPP_INFO(node_->get_logger(), "MoveGroupInterface created.");
-
         if (!addPlanningScene())
-        {
             return false;
-        }
 
         if (command_pub_->get_subscription_count() == 0)
         {
-            RCLCPP_ERROR(node_->get_logger(), "No /joint_command subscriber detected.");
-            RCLCPP_ERROR(node_->get_logger(), "Check Isaac Sim Action Graph and press Play.");
+            RCLCPP_ERROR(node_->get_logger(),
+                         "No /joint_command subscriber detected.");
             return false;
         }
 
@@ -157,7 +148,8 @@ public:
 
         if (joint_model_group == nullptr)
         {
-            RCLCPP_ERROR(node_->get_logger(), "Cannot find planning group fr3_arm.");
+            RCLCPP_ERROR(node_->get_logger(),
+                         "Cannot find planning group fr3_arm.");
             return false;
         }
 
@@ -165,16 +157,9 @@ public:
             0.0, -0.7, 0.0, -2.2, 0.0, 2.0, 0.8
         };
 
-        if (joint_model_group->getVariableCount() != q_home.size())
-        {
-            RCLCPP_ERROR(node_->get_logger(), "Unexpected fr3_arm joint count.");
-            return false;
-        }
-
         // ----------------------------------------------------
-        // Stage 1: HOME -> PRE_GRASP
+        // 1. HOME -> PRE_GRASP
         // ----------------------------------------------------
-
         geometry_msgs::msg::Pose pre_grasp_pose;
         pre_grasp_pose.position.x = CUBE_X;
         pre_grasp_pose.position.y = CUBE_Y;
@@ -185,24 +170,20 @@ public:
         pre_grasp_pose.orientation.w = 0.0;
 
         trajectory_msgs::msg::JointTrajectory pre_grasp_trajectory;
-
         if (!planPoseStage(move_group,
                            joint_model_group,
                            q_home,
                            pre_grasp_pose,
                            "HOME -> PRE_GRASP",
                            pre_grasp_trajectory))
-        {
             return false;
-        }
 
         executeTrajectory(pre_grasp_trajectory);
         RCLCPP_INFO(node_->get_logger(), "PRE_GRASP execution COMPLETE.");
 
         // ----------------------------------------------------
-        // Stage 2: PRE_GRASP -> APPROACH
+        // 2. PRE_GRASP -> APPROACH
         // ----------------------------------------------------
-
         const std::vector<double> pre_grasp_final_q =
             pre_grasp_trajectory.points.back().positions;
 
@@ -210,32 +191,34 @@ public:
         approach_pose.position.z = CUBE_Z + APPROACH_Z_OFFSET;
 
         trajectory_msgs::msg::JointTrajectory approach_trajectory;
-
         if (!planPoseStage(move_group,
                            joint_model_group,
                            pre_grasp_final_q,
                            approach_pose,
                            "PRE_GRASP -> APPROACH",
                            approach_trajectory))
-        {
             return false;
-        }
 
         executeTrajectory(approach_trajectory);
         RCLCPP_INFO(node_->get_logger(), "APPROACH execution COMPLETE.");
 
         // ----------------------------------------------------
-        // Stage 3: OPEN_GRIPPER at the near-object pose
+        // 3. OPEN_GRIPPER
         // ----------------------------------------------------
-
         RCLCPP_INFO(node_->get_logger(), "Opening gripper...");
         commandGripper(GRIPPER_OPEN_POS, 1.0);
         RCLCPP_INFO(node_->get_logger(), "OPEN_GRIPPER COMPLETE.");
 
         // ----------------------------------------------------
-        // Stage 4: one final descent to grasp height
+        // 4. Remove cube from MoveIt world before intentional
+        //    grasp contact. The cube remains physically present
+        //    in Isaac Sim. The table remains a collision object.
         // ----------------------------------------------------
+        removePickCubeFromPlanningScene();
 
+        // ----------------------------------------------------
+        // 5. APPROACH -> GRASP
+        // ----------------------------------------------------
         const std::vector<double> approach_final_q =
             approach_trajectory.points.back().positions;
 
@@ -243,33 +226,29 @@ public:
         grasp_pose.position.z = CUBE_Z + GRASP_Z_OFFSET;
 
         trajectory_msgs::msg::JointTrajectory grasp_trajectory;
-
         if (!planPoseStage(move_group,
                            joint_model_group,
                            approach_final_q,
                            grasp_pose,
-                           "APPROACH -> FINAL_DESCENT_TO_GRASP",
+                           "APPROACH -> GRASP",
                            grasp_trajectory))
-        {
             return false;
-        }
 
         executeTrajectory(grasp_trajectory);
-        RCLCPP_INFO(node_->get_logger(), "FINAL_DESCENT_TO_GRASP execution COMPLETE.");
+        RCLCPP_INFO(node_->get_logger(), "GRASP descent execution COMPLETE.");
 
         // ----------------------------------------------------
-        // Stage 5: CLOSE_GRIPPER
+        // 6. CLOSE_GRIPPER
         // ----------------------------------------------------
-
-        RCLCPP_INFO(node_->get_logger(), "Closing gripper conservatively...");
+        RCLCPP_INFO(node_->get_logger(), "Closing gripper...");
         commandGripper(GRIPPER_CLOSE_POS, 1.0);
         RCLCPP_INFO(node_->get_logger(), "CLOSE_GRIPPER COMPLETE.");
 
         RCLCPP_INFO(node_->get_logger(), "========================================");
-        RCLCPP_INFO(node_->get_logger(), "Current Task 01 stage COMPLETE:");
+        RCLCPP_INFO(node_->get_logger(), "Task 01 current stage COMPLETE:");
         RCLCPP_INFO(node_->get_logger(),
-                    "HOME -> PRE_GRASP -> APPROACH -> OPEN_GRIPPER -> FINAL_DESCENT -> CLOSE_GRIPPER");
-        RCLCPP_INFO(node_->get_logger(), "Next stage: ISAAC + MOVEIT ATTACH");
+                    "HOME -> PRE_GRASP -> APPROACH -> OPEN -> GRASP -> CLOSE");
+        RCLCPP_INFO(node_->get_logger(), "Next: ATTACH -> LIFT");
         RCLCPP_INFO(node_->get_logger(), "========================================");
 
         return true;
@@ -278,7 +257,7 @@ public:
 private:
     bool addPlanningScene()
     {
-        moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+        moveit::planning_interface::PlanningSceneInterface psi;
         std::vector<moveit_msgs::msg::CollisionObject> objects;
 
         moveit_msgs::msg::CollisionObject table;
@@ -308,9 +287,7 @@ private:
 
         shape_msgs::msg::SolidPrimitive cube_shape;
         cube_shape.type = shape_msgs::msg::SolidPrimitive::BOX;
-        cube_shape.dimensions = {
-            CUBE_SIZE, CUBE_SIZE, CUBE_SIZE
-        };
+        cube_shape.dimensions = {CUBE_SIZE, CUBE_SIZE, CUBE_SIZE};
 
         geometry_msgs::msg::Pose cube_pose;
         cube_pose.orientation.w = 1.0;
@@ -323,23 +300,27 @@ private:
         cube.operation = moveit_msgs::msg::CollisionObject::ADD;
         objects.push_back(cube);
 
-        if (!planning_scene_interface.applyCollisionObjects(objects))
+        if (!psi.applyCollisionObjects(objects))
         {
-            RCLCPP_ERROR(node_->get_logger(), "Failed to update Planning Scene.");
+            RCLCPP_ERROR(node_->get_logger(),
+                         "Failed to update Planning Scene.");
             return false;
         }
 
-        RCLCPP_INFO(node_->get_logger(), "Planning scene updated.");
         RCLCPP_INFO(node_->get_logger(),
-                    "Table: center=(%.3f, %.3f, %.3f), size=(%.2f, %.2f, %.2f)",
-                    TABLE_X, TABLE_Y, TABLE_Z,
-                    TABLE_SIZE_X, TABLE_SIZE_Y, TABLE_SIZE_Z);
-        RCLCPP_INFO(node_->get_logger(),
-                    "PickCube: center=(%.3f, %.3f, %.3f), size=%.2f",
-                    CUBE_X, CUBE_Y, CUBE_Z, CUBE_SIZE);
-
+                    "Planning Scene updated: cube=%.2f m, center z=%.3f m",
+                    CUBE_SIZE, CUBE_Z);
         rclcpp::sleep_for(1s);
         return true;
+    }
+
+    void removePickCubeFromPlanningScene()
+    {
+        moveit::planning_interface::PlanningSceneInterface psi;
+        psi.removeCollisionObjects({"pick_cube"});
+        RCLCPP_INFO(node_->get_logger(),
+                    "pick_cube removed from MoveIt world for intentional grasp contact.");
+        rclcpp::sleep_for(500ms);
     }
 
     bool planPoseStage(
@@ -358,26 +339,21 @@ private:
         if (!start_state.satisfiesBounds())
         {
             RCLCPP_ERROR(node_->get_logger(),
-                         "%s: start state violates joint limits.",
+                         "%s start state violates joint limits.",
                          stage_name.c_str());
             return false;
         }
 
         move_group.setStartState(start_state);
         move_group.clearPoseTargets();
+        move_group.setPoseTarget(target_pose, "fr3_hand_tcp");
 
-        if (!move_group.setPoseTarget(target_pose, "fr3_hand_tcp"))
-        {
-            RCLCPP_ERROR(node_->get_logger(),
-                         "%s: invalid pose target.", stage_name.c_str());
-            return false;
-        }
-
-        RCLCPP_INFO(node_->get_logger(), "%s target:", stage_name.c_str());
-        RCLCPP_INFO(node_->get_logger(), "  x = %.3f", target_pose.position.x);
-        RCLCPP_INFO(node_->get_logger(), "  y = %.3f", target_pose.position.y);
-        RCLCPP_INFO(node_->get_logger(), "  z = %.3f", target_pose.position.z);
-        RCLCPP_INFO(node_->get_logger(), "Planning %s...", stage_name.c_str());
+        RCLCPP_INFO(node_->get_logger(),
+                    "%s target = (%.3f, %.3f, %.3f)",
+                    stage_name.c_str(),
+                    target_pose.position.x,
+                    target_pose.position.y,
+                    target_pose.position.z);
 
         moveit::planning_interface::MoveGroupInterface::Plan plan;
         const auto result = move_group.plan(plan);
@@ -398,22 +374,19 @@ private:
             return false;
         }
 
-        RCLCPP_INFO(node_->get_logger(), "%s planning SUCCESS.", stage_name.c_str());
         RCLCPP_INFO(node_->get_logger(),
-                    "Trajectory waypoints = %zu", trajectory_out.points.size());
-        RCLCPP_INFO(node_->get_logger(),
-                    "Trajectory duration = %.3f s",
+                    "%s planning SUCCESS. waypoints=%zu duration=%.3f s",
+                    stage_name.c_str(),
+                    trajectory_out.points.size(),
                     pointTime(trajectory_out.points.back()));
-
         return true;
     }
 
-    void executeTrajectory(const trajectory_msgs::msg::JointTrajectory& trajectory)
+    void executeTrajectory(
+        const trajectory_msgs::msg::JointTrajectory& trajectory)
     {
         if (trajectory.points.empty())
-        {
             return;
-        }
 
         const double total_time = pointTime(trajectory.points.back());
         size_t segment = 0;
@@ -421,13 +394,11 @@ private:
 
         while (true)
         {
-            const auto now = std::chrono::steady_clock::now();
-            const double t = std::chrono::duration<double>(now - start_time).count();
+            const double t = std::chrono::duration<double>(
+                std::chrono::steady_clock::now() - start_time).count();
 
             if (t > total_time)
-            {
                 break;
-            }
 
             while (segment + 1 < trajectory.points.size() &&
                    pointTime(trajectory.points[segment + 1]) < t)
@@ -445,22 +416,21 @@ private:
             {
                 const auto& p0 = trajectory.points[segment];
                 const auto& p1 = trajectory.points[segment + 1];
-
                 const double t0 = pointTime(p0);
                 const double t1 = pointTime(p1);
 
                 double alpha = 0.0;
                 if (t1 > t0)
-                {
                     alpha = (t - t0) / (t1 - t0);
-                }
-                alpha = std::clamp(alpha, 0.0, 1.0);
 
+                alpha = std::clamp(alpha, 0.0, 1.0);
                 q_command.resize(p0.positions.size());
+
                 for (size_t j = 0; j < q_command.size(); ++j)
                 {
-                    q_command[j] = p0.positions[j] +
-                                   alpha * (p1.positions[j] - p0.positions[j]);
+                    q_command[j] =
+                        p0.positions[j] +
+                        alpha * (p1.positions[j] - p0.positions[j]);
                 }
             }
 
@@ -469,7 +439,7 @@ private:
         }
 
         const auto& final_q = trajectory.points.back().positions;
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < 50; ++i)
         {
             publishJointCommand(trajectory.joint_names, final_q);
             std::this_thread::sleep_for(10ms);
@@ -516,11 +486,11 @@ int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
 
-    auto node = std::make_shared<rclcpp::Node>("single_arm_pick_place");
+    auto node =
+        std::make_shared<rclcpp::Node>("single_arm_pick_place");
 
     if (!copyRobotModelParameters(node))
     {
-        RCLCPP_FATAL(node->get_logger(), "Failed to initialize robot model.");
         rclcpp::shutdown();
         return 1;
     }
@@ -528,7 +498,9 @@ int main(int argc, char** argv)
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
 
-    std::thread spin_thread([&executor]() { executor.spin(); });
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
 
     bool success = false;
 
@@ -540,15 +512,11 @@ int main(int argc, char** argv)
     catch (const std::exception& e)
     {
         RCLCPP_FATAL(node->get_logger(), "Exception: %s", e.what());
-        success = false;
     }
 
     executor.cancel();
-
     if (spin_thread.joinable())
-    {
         spin_thread.join();
-    }
 
     rclcpp::shutdown();
     return success ? 0 : 1;
