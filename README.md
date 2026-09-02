@@ -8,17 +8,29 @@
 
 - [总体项目规划](docs/PROJECT_PLAN.md)
 - [启动与运行指南](docs/STARTUP_GUIDE.md)
+- [关键问题与排错记录](docs/KEY_ISSUES.md)
 - [Task 00 — FR3 / Isaac / ROS 2 / MoveIt 基线](docs/tasks/TASK00_BASELINE.md)
 - [Task 01 — 单机械臂 Pick & Place](docs/tasks/TASK01_PICK_PLACE.md)
 
-其中 `docs/PROJECT_PLAN.md` 是项目总体路线的主要记录文件；`docs/STARTUP_GUIDE.md` 用于长期保存已经验证过的启动顺序、编译方式、运行命令和关键场景参数。
+其中：
+
+```text
+docs/PROJECT_PLAN.md
+→ 项目总体路线和论文映射
+
+docs/STARTUP_GUIDE.md
+→ 长期保存已经验证过的启动顺序、编译方式、运行命令和场景参数
+
+docs/KEY_ISSUES.md
+→ 长期保存关键故障的现象、原因、错误理解、解决方案、验证结果和工程意义
+```
 
 ## 当前进度
 
 | 任务 | 内容 | 状态 |
 |---|---|---|
 | Task 00 | FR3 + Isaac Sim + ROS 2 + MoveIt 2 基线 | ✅ 已完成 |
-| Task 01 | 单机械臂 Pick & Place | 🟡 进行中：稳定抓取与提升已验证，正在完成搬运与放置 |
+| Task 01 | 单机械臂 Pick & Place | 🟡 进行中：抓取、提升、搬运、放置和释放已验证到位，正在完成释放后的退出与回 HOME |
 | Task 02 | Placement Skill / 机器人可执行放置 | 计划中 |
 | Task 03 | B-A-C 放置可执行性 | 计划中 |
 | Task 04 | 放置顺序调整 | 计划中 |
@@ -137,6 +149,22 @@ MoveIt ATTACH
 Cartesian Z-only LIFT
 ```
 
+完整链路当前已经继续验证到：
+
+```text
+LIFT
+↓
+TRANSFER
+↓
+PLACE
+↓
+DETACH
+↓
+OPEN / RELEASE
+```
+
+释放后的 `PLACE -> RETREAT` 曾出现 `Cartesian fraction = 0.0000`。已确认原因为 MoveIt 在 DETACH 时会自动把 Attached Object 重新加入 collision world，导致退出规划起点仍处于释放接触区域。当前采用 `DETACH -> removeWorldCube -> OPEN -> RETREAT -> addPlacedCubeToWorld` 的基线释放状态切换方案。详细原因见 [关键问题与排错记录](docs/KEY_ISSUES.md)。
+
 抓取采用完整 6D 末端位姿约束，而不是只要求 TCP 到达目标位置：
 
 ```text
@@ -155,24 +183,14 @@ base
 
 ## 下一步
 
-继续完成 Task 01：
+完成 Task 01 最后两段：
 
 ```text
-LIFT
-↓
-TRANSFER
-↓
-PRE_PLACE
-↓
-PLACE
-↓
-DETACH
-↓
-OPEN / RELEASE
+RELEASE
 ↓
 RETREAT
 ↓
 HOME
 ```
 
-Task 01 完成后进入 **Task 02：机器人可执行 Placement Skill**，进一步研究抓取器空间、插入方向、周围箱体干涉、释放与退出可执行性。
+Task 01 完成后进入 **Task 02：机器人可执行 Placement Skill**，进一步研究抓取器空间、插入方向、周围箱体干涉、释放接触与退出可执行性。
