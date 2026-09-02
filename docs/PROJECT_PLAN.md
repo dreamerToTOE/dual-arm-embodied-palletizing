@@ -1,48 +1,48 @@
-# Master Project Plan — Dual-Arm Embodied Palletizing
+# 总体项目规划 — 双机械臂具身智能码垛
 
-> **Source of truth for the project roadmap.**
+> **本文件作为项目总体路线的主要记录。**
 >
-> This document records the intended research architecture, implementation sequence, task boundaries, and thesis mapping. When the project direction changes, update this file first so later work can recover the plan directly from GitHub.
+> 用于长期保存研究架构、实现顺序、各任务边界以及与硕士论文的对应关系。后续如果项目方向发生变化，应优先更新本文件，确保即使对话上下文丢失，也可以直接通过 GitHub 恢复整体规划。
 
-## 1. Research objective
+## 1. 研究目标
 
-Working thesis direction:
+当前论文方向：
 
 **面向混合码垛任务的双机械臂具身智能协调规划与控制方法研究**
 
-The project targets mixed-size palletizing with two Franka FR3 manipulators and combines:
+项目面向多尺寸箱体混合码垛任务，以 Franka FR3 为主要机械臂平台，研究内容包括：
 
-- robot-executable palletizing / placement planning;
-- single-arm and dual-arm motion planning;
-- loose dual-arm coordination and collision avoidance;
-- tight dual-arm cooperative manipulation with force control;
-- a hierarchical embodied decision layer that selects and executes reusable skills;
-- closed-loop feedback and recovery in Isaac Sim.
+- 面向机器人实际可执行性的码垛与放置规划；
+- 单机械臂与双机械臂运动规划；
+- 双机械臂松协调、并行执行与避碰；
+- 双机械臂紧协调共同搬运及力控制；
+- 高层具身状态、技能库与技能路由；
+- 基于 Isaac Sim 物理反馈的闭环执行与恢复。
 
-The project is **simulation-first**. Physical experiments and learning-based policies are optional rather than prerequisites for completing the core thesis pipeline.
+项目采用 **仿真优先** 的路线。实物实验和学习型策略不是完成论文主体工作的必要前提，可根据后续时间与条件选择加入。
 
 ---
 
-## 2. System architecture
+## 2. 系统总体架构
 
 ```text
-Environment / task state
+环境 / 任务状态
         ↓
-Embodied state representation
+具身状态表示
         ↓
-High-level decision / skill router
+高层决策 / 技能路由
         ↓
-Skill library
+技能库
         ↓
-Motion / force execution
+运动 / 力控制执行
         ↓
-Isaac Sim physical interaction
+Isaac Sim 物理交互
         ↓
-State + contact + task feedback
-        └──────────────→ re-decision / recovery
+状态 + 接触 + 任务反馈
+        └──────────────→ 重新决策 / 恢复
 ```
 
-State representation:
+具身状态可以表示为：
 
 ```text
 S_t = {
@@ -53,254 +53,260 @@ S_t = {
 }
 ```
 
-The first implementation can use Isaac ground-truth state. RGB-D perception can be added later without changing the high-level architecture.
+第一阶段直接使用 Isaac Sim Ground Truth 状态即可。后续可以加入 RGB-D 感知，而不需要改变总体高层架构。
 
-### Planned skill library
+### 计划中的技能库
 
-- `E_S`: SingleArmPickPlace
-- `E_L`: LooseCoordination
-- `E_T`: TightCoordinationForceControl
-- `E_P`: PlacementSkill
-- `E_R`: RecoverySkill
+- `E_S`：SingleArmPickPlace，单臂抓放技能
+- `E_L`：LooseCoordination，松协调技能
+- `E_T`：TightCoordinationForceControl，紧协调力控技能
+- `E_P`：PlacementSkill，可执行放置技能
+- `E_R`：RecoverySkill，恢复技能
 
-High-level routing can initially be a deterministic rule/FSM controller:
+高层技能选择第一版采用规则 / FSM 即可：
 
 ```text
 E_t = pi_R(S_t, G)
 ```
 
-No reinforcement learning is required for the first complete system.
+第一套完整系统不要求强化学习。
 
 ---
 
-## 3. Core engineering principles
+## 3. 核心工程原则
 
-### 3.1 Planning and execution are different layers
+### 3.1 规划层与执行层分开
 
-MoveIt / OMPL performs collision-aware planning. Isaac Sim performs physical execution.
+MoveIt / OMPL 负责碰撞约束下的运动规划，Isaac Sim 负责物理执行。
 
-Validated baseline:
+已经验证的基础链路：
 
 ```text
 MoveIt 2 / OMPL
         ↓
 RobotTrajectory / JointTrajectory
         ↓
-ROS 2 trajectory adapter
+ROS 2 轨迹执行节点
         ↓
 100 Hz /joint_command
         ↓
 Isaac Articulation Controller
         ↓
-FR3 simulation
+FR3 仿真执行
 ```
 
-### 3.2 Geometric feasibility is not enough
+### 3.2 几何可放置不等于机器人可执行放置
 
-A palletizing target pose is only valid if the robot can actually execute the placement while considering:
+一个码垛目标位姿只有在考虑以下条件后仍然可以实际执行，才应被认为有效：
 
-- box geometry;
-- gripper geometry;
-- safety clearance;
-- insertion direction;
-- swept-volume collision;
-- release and retreat feasibility.
+- 箱体几何尺寸；
+- 夹爪几何尺寸；
+- 安全间隙；
+- 插入方向；
+- 扫掠体碰撞；
+- 释放可行性；
+- 退出可行性。
 
-For placement between existing boxes B and C, a simplified clearance condition can be written as:
+例如，将箱体 A 放置在已有箱体 B、C 之间时，可用简化的横向空间条件表示：
 
 ```text
 d_BC >= w_A + 2 t_g + 2 delta
 ```
 
-A complete placement motion is treated as:
+完整放置过程定义为：
 
 ```text
 T_pre → T_insert → T_place → Release → T_retreat
 ```
 
-and placement executability as:
+放置可执行性可以写成：
 
 ```text
 C_place = C_reach * C_insert * C_release * C_retreat
 ```
 
-If a candidate cannot be executed, the system may:
+如果候选放置位置无法执行，可以：
 
-1. change placement sequence;
-2. change grasp direction;
-3. change coordination mode;
-4. reject the candidate placement.
+1. 调整放置顺序；
+2. 改变抓取方向；
+3. 改变双臂协调模式；
+4. 拒绝该候选放置位置。
 
-### 3.3 Loose and tight coordination are distinct modes
+### 3.3 松协调和紧协调是两种不同模式
 
-Loose coordination focuses on independent / parallel arm execution with collision and timing constraints.
+松协调关注两机械臂独立或并行执行时的碰撞约束、时序冲突和局部重规划。
 
-Tight coordination is cooperative manipulation of one object and is treated as a **force-control problem**, not only a trajectory synchronization problem.
+紧协调关注两机械臂共同操作同一个物体，应作为 **力控制问题** 处理，而不只是两条轨迹同步。
 
-Planned tight-control structure:
+计划中的紧协调控制结构：
 
 ```text
-Manipulator dynamics
+机械臂动力学
         ↓
-Grasp matrix G
+抓取矩阵 G
         ↓
-Object-motion wrench + internal grasp wrench decomposition
+物体运动外力 / 内力分解
         ↓
-Desired internal gripping force
+期望内部夹持力
         ↓
-Object impedance + internal-force feedback
+物体阻抗 + 内力反馈
         ↓
-J^T wrench-to-joint-torque mapping
+J^T 力/力矩到关节力矩映射
 ```
 
-A first implementation can use hybrid position/force control: force control along the gripping normal and motion control along the remaining directions.
+第一版可以采用混合位置 / 力控制：沿夹持法向做力控制，其余方向负责物体运动控制。
 
 ---
 
-## 4. Implementation roadmap
+## 4. 工程实现路线
 
-| Task | Engineering milestone | Main acceptance target | Status |
+| Task | 工程里程碑 | 主要验收目标 | 状态 |
 |---|---|---|---|
-| 00 | FR3 + Isaac + ROS 2 + MoveIt baseline | MoveIt trajectory executes on Isaac FR3 | ✅ Complete |
-| 01 | Single-arm Pick & Place | Full deterministic pick/place cycle | 🟡 In progress |
-| 02 | Placement Skill | Pre-insert / insert / place / release / retreat | Planned |
-| 03 | B-A-C placement executability | Detect gripper/box insertion infeasibility | Planned |
-| 04 | Sequence adjustment | Reorder placements when later insertion is blocked | Planned |
-| 05 | Dual-FR3 baseline | Two FR3 models, namespaces, planning groups and commands | Planned |
-| 06 | Loose parallel execution | Two arms execute independent tasks concurrently | Planned |
-| 07 | Spatiotemporal conflict detection | Detect arm-arm / carried-object conflicts over time | Planned |
-| 08 | Master-slave local replanning | Resolve detected conflicts without full global replanning | Planned |
-| 09 | Loose-coordination experiments | Repeatable simulation metrics and comparison cases | Planned |
-| 10 | Tight shared-object baseline | Two arms contact / constrain one common box | Planned |
-| 11 | Wrench sensing | Obtain / validate contact or joint-derived wrench signals | Planned |
-| 12 | Grasp matrix + internal force | Compute object wrench and internal force components | Planned |
-| 13 | Internal-force control | Track desired gripping force without changing object wrench | Planned |
-| 14 | Object motion + force control | Cooperative transport with motion + internal-force regulation | Planned |
-| 15 | Skill library | Wrap validated behaviors as reusable skills | Planned |
-| 16 | High-level skill router | Rule/FSM mode selection from task state | Planned |
-| 17 | Recovery behavior | Handle planning failure, blocked placement, failed grasp, etc. | Planned |
-| 18 | Full embodied demo | Closed-loop mixed palletizing sequence | Planned |
-| 19 | Optional RGB-D perception | Replace selected ground-truth state with perception output | Optional |
-| 20 | Batch experiments | Quantitative simulation evaluation for thesis | Planned |
+| 00 | FR3 + Isaac + ROS 2 + MoveIt 基线 | MoveIt 轨迹可在 Isaac FR3 上执行 | ✅ 已完成 |
+| 01 | 单机械臂 Pick & Place | 完整稳定的确定性抓放循环 | 🟡 进行中：稳定抓取与提升已验证 |
+| 02 | Placement Skill | 预放置 / 插入 / 放置 / 释放 / 退出 | 计划中 |
+| 03 | B-A-C 放置可执行性 | 检测夹爪 / 箱体插入不可行情况 | 计划中 |
+| 04 | 放置顺序调整 | 后续插入被阻挡时自动调整顺序 | 计划中 |
+| 05 | 双 FR3 基线 | 两台 FR3、命名空间、规划组和控制链 | 计划中 |
+| 06 | 松协调并行执行 | 两机械臂并行执行独立任务 | 计划中 |
+| 07 | 时空冲突检测 | 检测臂-臂、臂-携带物在时间维度的冲突 | 计划中 |
+| 08 | 主从局部重规划 | 在不完全全局重规划的情况下解决冲突 | 计划中 |
+| 09 | 松协调实验 | 可重复仿真指标与对比实验 | 计划中 |
+| 10 | 紧协调共物体基线 | 两机械臂共同接触 / 约束同一个箱体 | 计划中 |
+| 11 | 力 / 力矩感知 | 获取并验证接触力或关节推算力信息 | 计划中 |
+| 12 | 抓取矩阵与内部力 | 计算物体合力和内部夹持力分量 | 计划中 |
+| 13 | 内力控制 | 在不改变物体合力的情况下跟踪目标夹持力 | 计划中 |
+| 14 | 物体运动 + 力控制 | 双臂共同搬运，同时调节运动与内部力 | 计划中 |
+| 15 | 技能库 | 将已验证行为封装为可复用技能 | 计划中 |
+| 16 | 高层技能路由 | 根据任务状态通过规则 / FSM 选择模式 | 计划中 |
+| 17 | 恢复行为 | 处理规划失败、放置阻塞、抓取失败等情况 | 计划中 |
+| 18 | 完整具身演示 | 闭环混合码垛流程 | 计划中 |
+| 19 | 可选 RGB-D 感知 | 用感知结果替代部分 Ground Truth | 可选 |
+| 20 | 批量实验 | 为论文提供定量仿真评价 | 计划中 |
 
 ---
 
-## 5. Current Task 01 plan
+## 5. 当前 Task 01 路线
 
-Single-arm deterministic Pick & Place:
+当前单臂抓放使用 30 mm Cube，已经多次重复验证以下阶段稳定成功：
 
 ```text
 HOME
   ↓
-PRE_GRASP
+ALIGNED_APPROACH
   ↓
 OPEN_GRIPPER
   ↓
-APPROACH
-  ↓
-GRASP_DESCENT
+Cartesian Z-only GRASP
   ↓
 CLOSE_GRIPPER
   ↓
-ATTACH (Isaac + MoveIt)
+MoveIt ATTACH
   ↓
+Cartesian Z-only LIFT
+```
+
+下一步直接完成：
+
+```text
 LIFT
   ↓
 TRANSFER
   ↓
 PRE_PLACE
   ↓
-PLACE
+Cartesian Z-only PLACE
   ↓
-DETACH (MoveIt + Isaac)
+MoveIt DETACH
   ↓
-OPEN_GRIPPER
+OPEN / RELEASE
   ↓
-RETREAT
+Cartesian Z-only RETREAT
   ↓
 HOME / DONE
 ```
 
-The first version deliberately uses:
+当前抓取策略的重要原则：
 
-- known object pose;
-- MoveIt collision objects;
-- logical attach/detach for reliable transport;
-- physical gripper opening/closing for visible state consistency;
-- no vision requirement;
-- no learned grasping requirement.
+- 已知物体位姿；
+- 抓取目标是完整 6D 末端位姿，不只是 TCP 位置；
+- TCP Z 轴保持竖直向下；
+- 两指方向与箱体侧面方向平齐；
+- 最终接近、抓取和提升采用 Cartesian 直线运动；
+- Isaac Sim 当前依靠真实夹爪-方块接触，不使用 FixedJoint；
+- MoveIt 使用 AttachedCollisionObject 表示携带物；
+- 统一使用 MoveIt 模型参考坐标系 `base`。
 
-Task 01 should eventually be repeat-tested for 10 consecutive cycles. The target is a test criterion, not a pre-declared thesis result.
-
----
-
-## 6. Planned thesis mapping
-
-A working chapter structure is:
-
-### Chapter 2 — Robot-executable mixed palletizing planning
-
-- palletizing representation / candidate placement generation;
-- support and stability constraints;
-- gripper-aware placement executability;
-- insertion / release / retreat feasibility;
-- sequence adjustment.
-
-### Chapter 3 — Dual-arm kinematics and loose collision-free motion planning
-
-- kinematics and Jacobian foundations;
-- collision models;
-- RRT / RRT-Connect and improved planning;
-- temporal conflict detection;
-- master-slave collision avoidance and local replanning.
-
-### Chapter 4 — Tight coordinated manipulation and force control
-
-- dual-arm/object dynamics;
-- grasp matrix;
-- external/object-motion wrench and internal-force decomposition;
-- desired gripping-force generation;
-- object impedance and internal-force feedback;
-- Jacobian-transpose torque mapping.
-
-### Chapter 5 — Hierarchical embodied decision and skill execution
-
-- embodied state;
-- skill library;
-- loose/tight mode selection;
-- placement/recovery skills;
-- closed-loop feedback and re-decision.
-
-### Chapter 6 — Simulation experiments
-
-- placement executability experiments;
-- loose-coordination experiments;
-- tight force-control experiments;
-- integrated embodied palletizing demonstrations.
+Task 01 完成后应进行多次重复循环测试。重复次数属于实验验收标准，不提前作为论文结果声明。
 
 ---
 
-## 7. Project workspace conventions
+## 6. 论文结构对应关系
 
-Main project root:
+### 第 2 章 — 面向机器人可执行性的混合码垛规划
+
+- 码垛状态表示与候选放置位置；
+- 支撑与稳定性约束；
+- 考虑夹爪尺寸的放置可执行性；
+- 插入 / 释放 / 退出可行性；
+- 放置顺序调整。
+
+### 第 3 章 — 双机械臂运动学与松协调无碰规划
+
+- 运动学与 Jacobian 基础；
+- 碰撞模型；
+- RRT / RRT-Connect 与改进路径规划；
+- 时间维度冲突检测；
+- 主从避碰与局部重规划。
+
+### 第 4 章 — 双机械臂紧协调搬运与力控制
+
+- 双机械臂 / 物体动力学；
+- 抓取矩阵；
+- 外部运动力与内部夹持力分解；
+- 期望夹持力生成；
+- 物体阻抗与内力反馈；
+- Jacobian 转置关节力矩映射。
+
+### 第 5 章 — 分层具身决策与技能执行
+
+- 具身状态；
+- 技能库；
+- 松 / 紧模式选择；
+- 放置与恢复技能；
+- 闭环反馈与重新决策。
+
+### 第 6 章 — 仿真实验
+
+- 放置可执行性实验；
+- 松协调实验；
+- 紧协调力控实验；
+- 完整具身混合码垛演示。
+
+---
+
+## 7. 工程目录约定
+
+项目根目录：
 
 ```text
 ~/lmy/dual-arm-embodied-palletizing
 ```
 
-ROS workspace:
+ROS 2 工作空间：
 
 ```text
 ~/lmy/dual-arm-embodied-palletizing/ros_ws
 ```
 
-Expected repository structure:
+规划中的仓库结构：
 
 ```text
 dual-arm-embodied-palletizing/
 ├── README.md
 ├── docs/
 │   ├── PROJECT_PLAN.md
+│   ├── STARTUP_GUIDE.md
 │   └── tasks/
 ├── configs/
 ├── assets/
@@ -314,17 +320,40 @@ dual-arm-embodied-palletizing/
 └── scripts/
 ```
 
-Generated build products (`build/`, `install/`, `log/`) and large raw experiment outputs should not be committed.
+生成目录 `build/`、`install/`、`log/` 以及大型原始实验输出不提交到 GitHub。
 
 ---
 
-## 8. Documentation rule
+## 8. 启动方式与复现规则
 
-After each validated milestone:
+已经验证过的启动方式统一记录在：
 
-1. update the corresponding `docs/tasks/TASKxx_*.md` file;
-2. update the status table in this roadmap if task status changes;
-3. update `README.md` for major milestone changes;
-4. keep failed attempts / important debugging notes when they are useful for reproducibility.
+```text
+docs/STARTUP_GUIDE.md
+```
 
-This GitHub roadmap is intended to make the project recoverable even if conversational context is lost.
+任何会影响复现的变化，例如：
+
+- MoveIt 启动命令；
+- 工作空间路径；
+- Isaac 场景结构；
+- Cube / Table 参数；
+- ROS topic 名称；
+- 规划参考坐标系；
+- 编译和运行命令；
+
+都必须同步更新该文件。
+
+---
+
+## 9. 文档维护规则
+
+每完成一个可以重复验证的里程碑：
+
+1. 更新对应 `docs/tasks/TASKxx_*.md`；
+2. 如果 Task 状态发生变化，更新本文件中的路线表；
+3. 重大进展同步更新 `README.md`；
+4. 启动方式与关键命令同步更新 `docs/STARTUP_GUIDE.md`；
+5. 对后续复现有价值的失败原因和调试结论保留记录。
+
+目标是让整个工程即使失去聊天上下文，也可以仅依靠 GitHub 文档继续恢复和推进。
