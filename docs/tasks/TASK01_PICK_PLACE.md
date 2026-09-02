@@ -11,10 +11,12 @@ HOME
   ↓
 PRE_GRASP
   ↓
+OPEN_GRIPPER
+  ↓
 APPROACH
 ```
 
-Both MoveIt/RViz and the Isaac Sim FR3 reach the expected pose above the cube.
+Both MoveIt/RViz and the Isaac Sim FR3 reach the expected pose above the cube, and the Franka gripper opening command has been validated through `/joint_command`.
 
 ---
 
@@ -160,18 +162,23 @@ Validation:
 - RRTConnect successfully planned both stages.
 - RViz robot reached the expected cube-above pose.
 - Isaac Sim FR3 followed the planned motion and reached the same stage successfully.
+- Gripper opening was manually validated using:
+
+```bash
+ros2 topic pub --once \
+/joint_command sensor_msgs/msg/JointState \
+"{name: ['fr3_finger_joint1','fr3_finger_joint2'], position: [0.04,0.04]}"
+```
+
+- Both finger joints opened correctly in Isaac Sim.
 
 ---
 
 ## 5. Next sub-stage
 
-Planned sequence from the current implementation:
+Next sequence from the current implementation:
 
 ```text
-PRE_GRASP
-  ↓
-OPEN_GRIPPER
-  ↓
 APPROACH
   ↓
 GRASP_DESCENT
@@ -183,18 +190,13 @@ ATTACH
 LIFT
 ```
 
-For robust execution, the gripper should be explicitly commanded open before entering the final grasp region, even if it already appears open in the initial scene.
+The next immediate task is `GRASP_DESCENT`: lower the TCP from the current approach pose to a carefully chosen grasp height while keeping the gripper open.
 
-The current `APPROACH` pose is intentionally still above the cube. The next motion will determine a true `GRASP` height from the actual FR3 hand/finger geometry before closing the fingers.
+The descent height must be chosen from actual FR3 hand/finger geometry rather than simply sending the TCP to the cube center. The first test should remain conservative and stop before finger/cube penetration.
 
 ### Important geometry note
 
-The current cube width is `0.08 m`, which is approximately the full opening scale of the Franka parallel gripper. That leaves essentially no insertion clearance in an idealized top-down grasp. Before implementing physical finger closure, either:
-
-- reduce the test cube width (recommended for the first deterministic demo, e.g. 0.06 m), or
-- retain the 0.08 m cube but treat grasping as purely logical attach/detach rather than relying on finger contact.
-
-The first project version is intended to use logical attach/detach for reliable transport, while still commanding the gripper for visually consistent state transitions.
+The current cube width is `0.08 m`, which is approximately the full opening scale of the Franka parallel gripper. That leaves essentially no insertion clearance in an idealized top-down grasp. The first project version therefore continues to use logical attach/detach for reliable transport, while still commanding the gripper open/closed for visually and logically consistent state transitions.
 
 ---
 
@@ -203,9 +205,9 @@ The first project version is intended to use logical attach/detach for reliable 
 ```text
 HOME                         ✅
 PRE_GRASP                    ✅
-OPEN_GRIPPER                 Next
-APPROACH                     ✅ motion primitive validated
-GRASP_DESCENT                Pending
+OPEN_GRIPPER                 ✅
+APPROACH                     ✅
+GRASP_DESCENT                Next
 CLOSE_GRIPPER                Pending
 ISAAC + MOVEIT ATTACH        Pending
 LIFT                         Pending
