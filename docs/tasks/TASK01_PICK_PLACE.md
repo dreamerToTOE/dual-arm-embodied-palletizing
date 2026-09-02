@@ -2,9 +2,9 @@
 
 ## 状态
 
-🟡 **进行中 — 抓取、提升、搬运、放置和释放均已运行到位，正在修复释放后的退出规划**
+✅ **已完成**
 
-当前 30 mm Cube 已多次稳定完成抓取与提升。本轮完整 Pick & Place 测试进一步验证了：
+Task 01 已完成完整闭环验证，并且最终版本可以稳定执行：
 
 ```text
 HOME
@@ -17,17 +17,14 @@ HOME
 → Cartesian TRANSFER
 → Cartesian PLACE
 → MOVEIT_DETACH
+→ 临时 removeWorldCube
 → OPEN / RELEASE
+→ Cartesian Z-only RETREAT
+→ addPlacedCubeToWorld
+→ RRTConnect HOME
 ```
 
-本轮在释放之后的 `PLACE -> RETREAT` 出现：
-
-```text
-Cartesian fraction = 0.0000
-MoveIt error_code   = 1
-```
-
-这说明 Cartesian 服务本身正常，但退出路径从起点开始就被判定为不可执行。
+用户最终确认：修改 `DETACH -> RETREAT` 释放状态切换后，完整流程可以一次执行到底，Cube 能稳定抓取、提升、搬运、放置、释放，机械臂能够正常退出并返回 HOME。
 
 ---
 
@@ -69,9 +66,9 @@ Yaw         = 0 rad
 
 ---
 
-## 2. 当前启动方式
+## 2. 启动方式
 
-长期启动、编译和运行命令统一保存在：
+完整启动、编译和运行方式长期保存在：
 
 ```text
 docs/STARTUP_GUIDE.md
@@ -80,7 +77,7 @@ docs/STARTUP_GUIDE.md
 当前关键命令：
 
 ```bash
-# 终端 1：MoveIt
+# 终端 1：启动 MoveIt
 cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
@@ -89,10 +86,10 @@ ros2 launch franka_fr3_moveit_config moveit.launch.py \
   use_fake_hardware:=true
 ```
 
-Isaac Sim 打开当前 FR3 + Table + PickCube 场景并点击 Play。
+Isaac Sim 打开 FR3 + Table + PickCube 场景并点击 Play。
 
 ```bash
-# 终端 2：编译与运行
+# 终端 2：编译并运行
 cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
@@ -103,34 +100,9 @@ ros2 run fr3_moveit_test single_arm_pick_place
 
 ---
 
-## 3. 已解决的 `base` 坐标系问题
+## 3. 抓取姿态设计
 
-曾出现：
-
-```text
-Robot model frame    = base
-Pose reference frame = fr3_link0
-Cartesian fraction   = -1.0000
-MoveIt error_code    = -21
-```
-
-原因为 `FRAME_TRANSFORM_FAILURE`。
-
-当前统一使用：
-
-```text
-MoveIt pose reference frame = base
-Table CollisionObject frame = base
-Cube CollisionObject frame  = base
-```
-
-修复后 Cartesian 抓取下降和提升已经多次稳定成功。
-
----
-
-## 4. 抓取姿态原则
-
-抓取目标使用完整 6D 位姿，而不是只要求 TCP 到达目标点。
+抓取目标必须是完整 6D 位姿，而不是只要求 TCP 到达目标点。
 
 当前轴对齐 Cube：
 
@@ -146,15 +118,18 @@ Finger 运动方向 → 与 Cube Y 方向平行
 R_grasp = Rz(cube_yaw) * Rx(pi)
 ```
 
-当前 `cube_yaw = 0` 时：
+当前：
 
 ```text
+cube_yaw = 0
 Quaternion (x,y,z,w) = (1,0,0,0)
 ```
 
+最终抓取与提升阶段均采用 Cartesian 直线运动，保持 X、Y 和姿态不变，只改变 Z。
+
 ---
 
-## 5. 已验证运动参数
+## 4. 已验证参数
 
 ```text
 APPROACH TCP z = 0.140 m
@@ -170,7 +145,7 @@ Cartesian 插值步长：
 2 mm
 ```
 
-要求：
+Cartesian 路径要求：
 
 ```text
 fraction >= 0.999
@@ -183,120 +158,186 @@ OPEN  = 0.040 m / finger
 CLOSE = 0.014 m / finger
 ```
 
----
-
-## 6. 当前验证结果
-
-已经确认：
-
-```text
-ALIGNED_APPROACH          ✅
-Cartesian GRASP           ✅ 多次稳定成功
-CLOSE_GRIPPER             ✅ 多次稳定成功
-MOVEIT_ATTACH             ✅
-Cartesian LIFT            ✅ 多次稳定成功
-Cartesian TRANSFER        ✅
-Cartesian PLACE           ✅ fraction = 1.0000
-MOVEIT_DETACH             ✅
-OPEN / RELEASE            ✅ Cube 已释放
-PLACE -> RETREAT          ❌ fraction = 0.0000
-```
-
-因此当前问题已经缩小到“释放后的 MoveIt Planning Scene 状态”。
+当前 30 mm Cube 在多次重复运行中能够稳定夹持和提升，不需要额外添加 Isaac FixedJoint。
 
 ---
 
-## 7. `DETACH -> RETREAT` 问题原因
+## 5. 已解决问题一：Cartesian -21 坐标系错误
 
-MoveIt 的 `AttachedCollisionObject REMOVE` 不只是删除 attached body。
-
-MoveIt `PlanningScene::processAttachedCollisionObjectMsg()` 在执行 DETACH 时，会：
+曾出现：
 
 ```text
-1. 读取 AttachedBody；
-2. 从 RobotState 中解除 attached body；
-3. 自动把该物体按当前全局姿态重新加入 collision world。
+Robot model frame    = base
+Pose reference frame = fr3_link0
+Cartesian fraction   = -1.0000
+MoveIt error_code    = -21
 ```
 
-因此当前代码注释中“DETACH 后暂时不把 Cube 加回 World”的假设是不正确的。
+原因为：
 
-实际流程变成了：
+```text
+FRAME_TRANSFORM_FAILURE
+```
+
+最终统一使用：
+
+```text
+MoveIt pose reference frame = base
+Table CollisionObject frame = base
+Cube CollisionObject frame  = base
+```
+
+修复后 Cartesian 抓取下降、提升、搬运、放置和退出均可以正常规划。
+
+---
+
+## 6. 已解决问题二：TCP 到点但抓取不稳定
+
+60 mm Cube 对夹爪 yaw 误差较敏感。仅保证 TCP 到达目标位置无法保证两个 finger 对称接触。
+
+最终采用：
+
+```text
+30 mm Cube
++ 完整抓取姿态
++ 抓取前先完成姿态对齐
++ 最终只沿 Z 轴下降
++ 提升只沿 Z 轴上升
+```
+
+该方案多次重复测试均能稳定抓取并提升。
+
+---
+
+## 7. 已解决问题三：DETACH 后 RETREAT fraction = 0
+
+### 现象
+
+完整流程第一次运行到释放后出现：
+
+```text
+PLACE -> RETREAT
+Cartesian fraction = 0.0000
+MoveIt error_code   = 1
+```
+
+### 根本原因
+
+MoveIt 的 `AttachedCollisionObject::REMOVE` 执行 DETACH 时，并不是只删除附着关系，而是：
+
+```text
+AttachedBody
+↓
+解除附着
+↓
+自动按当前全局姿态重新加入 collision world
+```
+
+因此实际状态是：
 
 ```text
 PLACE
 ↓
 DETACH
 ↓
-MoveIt 自动把 pick_cube 加回 World
+Cube 自动重新成为 MoveIt World CollisionObject
 ↓
-夹爪仍处在刚刚接触 Cube 的放置位姿
-↓
-OPEN
+夹爪仍处于释放接触区域
 ↓
 规划 RETREAT
 ↓
-Cartesian 起点被判定与 World Cube 接触 / 碰撞
+起点附近被判定存在夹爪 / Cube 接触或碰撞
 ↓
-fraction = 0.0000
+fraction = 0
 ```
 
-这与本轮日志完全吻合：`error_code = 1` 表示 Cartesian 请求本身正常，而 `fraction = 0` 表示从起点就无法生成有效无碰撞路径。
+这里不是 Isaac Sim 拒绝运动，而是 MoveIt Planning Scene 在规划阶段判定路径起点无效。
 
----
+此外，当前 Cartesian 起始 RobotState 只显式设置 `fr3_arm` 7 个关节，Isaac 中 finger 的真实张开状态并不一定完全同步到 MoveIt 当前规划状态，因此不能仅凭 Isaac 画面中“夹爪已经张开”判断 MoveIt 起点一定无碰撞。
 
-## 8. 当前修复方案
+### 最终修复
 
-Task 01 的第一版继续采用简单、确定的释放逻辑：
+采用确定性的释放状态切换：
 
 ```text
 PLACE
 ↓
 MoveIt DETACH
 ↓
-立即再次从 MoveIt World 删除 pick_cube
+MoveIt 自动把 Cube 放回 World
 ↓
-OPEN / RELEASE（Isaac 中真实 Cube 不受影响）
+removeWorldCube()
 ↓
-Cartesian Z-only RETREAT
+OPEN / RELEASE
 ↓
-机械臂退出完成
+Cartesian RETREAT
 ↓
-按目标位置 (0.65, -0.15, 0.065) 把 pick_cube 加回 MoveIt World
+addPlacedCubeToWorld()
 ↓
-RRTConnect -> HOME
+HOME
 ```
 
-即：在退出动作完成前，MoveIt 暂时不让释放后的 Cube 参与 RETREAT 碰撞检查；退出完成以后，再将 Cube 作为新的环境障碍物加入 Planning Scene。
+也就是：只在释放接触和退出的过渡阶段临时从 MoveIt Planning Scene 删除 Cube，机械臂退出后马上按最终放置位置重新加入。
 
-这是 Task 01 的基线实现。Task 02 Placement Skill 将进一步正式处理释放接触、退刀空间和可执行放置等问题。
+该修复已实际验证成功，完整 Pick & Place 可以顺利执行到底。
 
 ---
 
-## 9. 当前源码
+## 8. MoveIt 与 Isaac Sim 的职责边界
 
 ```text
-ros_ws/src/fr3_moveit_test/src/single_arm_pick_place.cpp
+MoveIt
+→ RobotState
+→ Planning Scene
+→ CollisionObject / AttachedCollisionObject
+→ 路径规划和几何碰撞检查
+
+Isaac Sim
+→ 关节真实执行
+→ PhysX 刚体
+→ 接触
+→ 摩擦
+→ 重力
 ```
 
-本次需要在 `detachCubeFromTcp()` 成功之后、`OPEN / RELEASE` 之前增加一次：
+因此操作任务需要区分：
 
-```cpp
-removeWorldCube();
+```text
+非法碰撞
+和
+抓取 / 夹持 / 放置 / 释放等有意接触
 ```
 
-验证成功后，将该修复正式保留在 Task 01 源码中。
+这也是后续 Placement Skill 的基础。
 
 ---
 
-## 10. Task 01 剩余验收
-
-下一轮只需要确认：
+## 9. Task 01 最终验收
 
 ```text
-1. PLACE -> RETREAT Cartesian fraction = 1.0000；
-2. 机械臂竖直退出；
-3. Cube 留在目标位置附近；
-4. Cube 重新加入 MoveIt World；
-5. RETREAT -> HOME 成功；
-6. 整个 Pick & Place 完整闭环完成。
+ALIGNED_APPROACH          ✅
+Cartesian GRASP           ✅ 多次稳定成功
+CLOSE_GRIPPER             ✅ 多次稳定成功
+MOVEIT ATTACH             ✅
+Cartesian LIFT            ✅ 多次稳定成功
+Cartesian TRANSFER        ✅
+Cartesian PLACE           ✅
+MOVEIT DETACH             ✅
+OPEN / RELEASE            ✅
+Cartesian RETREAT         ✅
+Cube 重新加入 MoveIt World ✅
+RETREAT -> HOME           ✅
+完整 Pick & Place 闭环     ✅
 ```
+
+## 结论
+
+**Task 01 正式完成。**
+
+下一阶段进入：
+
+```text
+Task 02 — Placement Skill / 机器人可执行放置
+```
+
+重点从“基础抓放能否执行”转向：放置目标是否对夹爪插入、释放和退出全过程均可执行。
