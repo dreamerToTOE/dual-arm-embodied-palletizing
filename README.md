@@ -30,8 +30,8 @@ docs/KEY_ISSUES.md
 | 任务 | 内容 | 状态 |
 |---|---|---|
 | Task 00 | FR3 + Isaac Sim + ROS 2 + MoveIt 2 基线 | ✅ 已完成 |
-| Task 01 | 单机械臂 Pick & Place | 🟡 进行中：抓取、提升、搬运、放置和释放已验证到位，正在完成释放后的退出与回 HOME |
-| Task 02 | Placement Skill / 机器人可执行放置 | 计划中 |
+| Task 01 | 单机械臂 Pick & Place | ✅ 已完成：抓取、提升、搬运、放置、释放、退出、回 HOME 全链路验证通过 |
+| Task 02 | Placement Skill / 机器人可执行放置 | 下一步 |
 | Task 03 | B-A-C 放置可执行性 | 计划中 |
 | Task 04 | 放置顺序调整 | 计划中 |
 | Task 05+ | 双臂松协调、紧协调与具身技能路由 | 计划中 |
@@ -121,7 +121,7 @@ ros2 run fr3_moveit_test single_arm_pick_place
 
 完整启动与排错记录见：[启动与运行指南](docs/STARTUP_GUIDE.md)。
 
-## 当前 Task 01 已验证状态
+## Task 01 最终验证链
 
 当前 PickCube：
 
@@ -131,66 +131,58 @@ Size   = 0.03 × 0.03 × 0.03 m
 Yaw    = 0 rad
 ```
 
-已经多次重复验证稳定成功：
+已验证完整链路：
 
 ```text
 HOME
-  ↓
+↓
 ALIGNED_APPROACH
-  ↓
+↓
 OPEN_GRIPPER
-  ↓
+↓
 Cartesian Z-only GRASP
-  ↓
+↓
 CLOSE_GRIPPER
-  ↓
+↓
 MoveIt ATTACH
-  ↓
+↓
 Cartesian Z-only LIFT
-```
-
-完整链路当前已经继续验证到：
-
-```text
-LIFT
 ↓
-TRANSFER
+Cartesian TRANSFER
 ↓
-PLACE
+Cartesian PLACE
 ↓
-DETACH
+MoveIt DETACH
+↓
+removeWorldCube
 ↓
 OPEN / RELEASE
+↓
+Cartesian RETREAT
+↓
+addPlacedCubeToWorld
+↓
+RRTConnect HOME
 ```
 
-释放后的 `PLACE -> RETREAT` 曾出现 `Cartesian fraction = 0.0000`。已确认原因为 MoveIt 在 DETACH 时会自动把 Attached Object 重新加入 collision world，导致退出规划起点仍处于释放接触区域。当前采用 `DETACH -> removeWorldCube -> OPEN -> RETREAT -> addPlacedCubeToWorld` 的基线释放状态切换方案。详细原因见 [关键问题与排错记录](docs/KEY_ISSUES.md)。
-
-抓取采用完整 6D 末端位姿约束，而不是只要求 TCP 到达目标位置：
+其中两个关键修复已验证：
 
 ```text
-TCP Z 轴竖直向下
-夹爪两指方向与 Cube 侧面平齐
-最终抓取阶段保持姿态，只沿 Z 轴下降
+1. Cartesian Path 统一使用 base 参考坐标系；
+2. DETACH 后在释放过渡阶段临时移除 World Cube，再退出并重新加入 Planning Scene。
 ```
 
-当前统一使用 MoveIt 模型参考坐标系：
-
-```text
-base
-```
-
-此前 `fr3_link0 -> base` 的 Cartesian Path 变换失败问题已经定位并解决。
+详细原因见 [关键问题与排错记录](docs/KEY_ISSUES.md)。
 
 ## 下一步
 
-完成 Task 01 最后两段：
+正式进入 **Task 02：机器人可执行 Placement Skill**，进一步研究：
 
 ```text
-RELEASE
-↓
-RETREAT
-↓
-HOME
+抓取器插入空间
+放置方向
+周围箱体干涉
+释放接触
+退出空间
+放置后的碰撞与可执行性
 ```
-
-Task 01 完成后进入 **Task 02：机器人可执行 Placement Skill**，进一步研究抓取器空间、插入方向、周围箱体干涉、释放接触与退出可执行性。
