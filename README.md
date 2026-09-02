@@ -4,15 +4,24 @@
 
 当前工程采用 **Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 / OMPL + Franka FR3** 作为主要仿真与运动规划平台。
 
+## Project documents
+
+- [Master project roadmap](docs/PROJECT_PLAN.md)
+- [Task 00 — FR3 / Isaac / ROS 2 / MoveIt baseline](docs/tasks/TASK00_BASELINE.md)
+- [Task 01 — Single-arm Pick & Place](docs/tasks/TASK01_PICK_PLACE.md)
+
+`docs/PROJECT_PLAN.md` is the source-of-truth roadmap for later development and thesis mapping.
+
 ## Current progress
 
 | Task | Description | Status |
 |---|---|---|
 | Task 00 | FR3 + Isaac Sim + ROS 2 + MoveIt 2 baseline | ✅ Complete |
-| Task 01 | Single-arm Pick & Place | ⏭️ Next |
+| Task 01 | Single-arm Pick & Place | 🟡 In progress: HOME → PRE_GRASP → APPROACH validated |
 | Task 02 | Placement Skill / robot-executable placement | Planned |
-| Task 03 | B-A-C placement executability and sequence adjustment | Planned |
-| Task 04+ | Dual-arm loose/tight coordination and embodied skill routing | Planned |
+| Task 03 | B-A-C placement executability | Planned |
+| Task 04 | Placement sequence adjustment | Planned |
+| Task 05+ | Dual-arm loose/tight coordination and embodied skill routing | Planned |
 
 ## Validated baseline
 
@@ -23,7 +32,7 @@ RRTConnect
         ↓
 RobotTrajectory / JointTrajectory
         ↓
-moveit_to_isaac
+moveit_to_isaac / pick-place executor
         ↓
 100 Hz interpolation
         ↓
@@ -36,17 +45,13 @@ Articulation Controller
 FR3 simulation
 ```
 
-Isaac Sim also publishes the robot state through ROS 2:
+Isaac Sim publishes robot state through ROS 2:
 
 ```text
 /clock
 /joint_states
 /tf
 ```
-
-The complete Task 00 procedure, dependency setup, troubleshooting notes, and acceptance results are recorded in:
-
-[`docs/tasks/TASK00_BASELINE.md`](docs/tasks/TASK00_BASELINE.md)
 
 ## Environment baseline
 
@@ -61,34 +66,44 @@ The complete Task 00 procedure, dependency setup, troubleshooting notes, and acc
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## Next milestone
+## Current Task 01 state
 
-Task 01 implements a deterministic single-arm Pick & Place pipeline using a known cube pose:
+Validated so far:
 
 ```text
 HOME
-↓
-Pre-Grasp
-↓
-Approach
-↓
-Close Gripper
-↓
-Attach
-↓
-Lift
-↓
-Move
-↓
-Pre-Place
-↓
-Place
-↓
-Detach
-↓
-Open Gripper
-↓
-Retreat
+  ↓
+PRE_GRASP   TCP ≈ (0.45, 0.15, 0.24)
+  ↓
+APPROACH    TCP ≈ (0.45, 0.15, 0.17)
 ```
 
-The first version intentionally uses known object pose + attach/detach. Real contact grasping and RGB-D perception are deferred until the motion-planning and placement-executability pipeline is stable.
+Both MoveIt/RViz and Isaac Sim execute the stages successfully.
+
+Next implementation sequence:
+
+```text
+OPEN_GRIPPER
+↓
+GRASP_DESCENT
+↓
+CLOSE_GRIPPER
+↓
+ATTACH
+↓
+LIFT
+↓
+TRANSFER
+↓
+PRE_PLACE
+↓
+PLACE
+↓
+DETACH
+↓
+OPEN_GRIPPER
+↓
+RETREAT
+```
+
+The first version intentionally uses known object pose + deterministic attach/detach. Real contact grasping and RGB-D perception are deferred until the motion-planning and placement-executability pipeline is stable.
