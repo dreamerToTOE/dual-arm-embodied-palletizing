@@ -166,6 +166,28 @@ Isaac Sim still uses physical finger/cube contact for this test. No FixedJoint i
 
 ---
 
+## Latest Cartesian-path diagnosis
+
+The first 30 mm Cartesian descent test reached `APPROACH_ALIGNED` successfully but returned:
+
+```text
+Cartesian fraction = -1.0000
+MoveIt error_code   = -21
+```
+
+The client-side robot model reported:
+
+```text
+Robot model frame          = base
+Current pose reference     = fr3_link0
+```
+
+`-21` is a frame-transform failure. The failure occurs before Cartesian interpolation itself, so this is not evidence that the straight-line Z motion is infeasible. The current fix is to use the MoveIt robot-model frame `base` as the Cartesian pose reference frame instead of requesting Cartesian waypoints in `fr3_link0`, avoiding the failed `fr3_link0 -> base` transform inside the Cartesian-path service.
+
+The `No kinematics plugins defined` warning printed by the local client model is not treated as the cause of this failure because the preceding `HOME -> APPROACH_ALIGNED` pose plan completed successfully through the running MoveIt server.
+
+---
+
 ## Current source
 
 ```text
@@ -193,17 +215,20 @@ Task 00 MoveIt -> Isaac baseline      ✅
 60 mm cube grasp                      ✅ when well aligned
 60 mm robustness issue identified     ✅
 30 mm Isaac cube scene                ✅
-Explicit grasp-orientation design      ✅ implemented
-Cartesian Z-only descent               Testing
-CLOSE_GRIPPER on 30 mm cube            Testing
-MOVEIT ATTACH                           Testing
-Cartesian Z-only LIFT                   Testing
-TRANSFER                                Pending
-PRE_PLACE                               Pending
-PLACE                                   Pending
-DETACH                                  Pending
-RETREAT                                 Pending
-HOME / DONE                             Pending
+Explicit grasp-orientation design     ✅ implemented
+ALIGNED_APPROACH                      ✅
+Cartesian frame failure identified    ✅ error_code -21
+Cartesian reference-frame fix         Next
+Cartesian Z-only descent              Pending retest
+CLOSE_GRIPPER on 30 mm cube           Pending retest
+MOVEIT ATTACH                          Pending retest
+Cartesian Z-only LIFT                  Pending retest
+TRANSFER                               Pending
+PRE_PLACE                              Pending
+PLACE                                  Pending
+DETACH                                 Pending
+RETREAT                                Pending
+HOME / DONE                            Pending
 ```
 
-Immediate acceptance criterion: the FR3 reaches the aligned approach, descends vertically without changing yaw/orientation, closes around the 30 mm cube, and lifts it approximately 100 mm without losing the object.
+Immediate acceptance criterion: after switching the Cartesian request to the MoveIt model frame, the FR3 reaches the aligned approach, obtains a Cartesian fraction near `1.0`, descends vertically without changing yaw/orientation, closes around the 30 mm cube, and lifts it approximately 100 mm without losing the object.
