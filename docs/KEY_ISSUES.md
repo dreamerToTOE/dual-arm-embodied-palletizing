@@ -474,11 +474,7 @@ Attached Object
 removeWorldCube();
 ```
 
-后重新完整运行，用户确认：
-
-```text
-“这遍完美，完整执行了”
-```
+后重新完整运行，用户确认完整执行成功。
 
 最终实际验证：
 
@@ -494,7 +490,7 @@ RETREAT -> HOME           ✅
 因此该问题正式标记为：
 
 ```text
-✅ 已解决并实机仿真验证
+✅ 已解决并仿真验证
 ```
 
 ## 工程意义
@@ -507,17 +503,211 @@ RETREAT -> HOME           ✅
 机器人能够完成插入、释放和退出
 ```
 
-后续 Task 02 应正式考虑：
+后续应正式考虑：release contact 的允许碰撞策略、夹爪真实 joint state 与 MoveIt RobotState 同步、放置后的物体真实位姿更新、retreat swept volume、释放方向、退出方向以及周围箱体对夹爪退出空间的限制。
+
+---
+
+# 问题 04：Task 03 中 Isaac 已发生夹爪碰撞，但 MoveIt C_insert 仍返回 1.0000
+
+## 现象
+
+Task 03 构造 B-A-C 场景：
 
 ```text
-release contact 的允许碰撞策略
-夹爪真实 joint state 与 MoveIt RobotState 同步
-放置后的物体真实位姿更新
-retreat swept volume
-释放方向
-退出方向
-周围箱体对夹爪退出空间的限制
+A size   = 30 mm
+A target = (0.65, -0.15, 0.065)
+B center = (0.65, -0.115, 0.065)
+C center = (0.65, -0.185, 0.065)
+d_BC     = 40 mm
 ```
+
+满足：
+
+```text
+d_BC = 40 mm > w_A = 30 mm
+```
+
+也就是 A 本体几何上可以放入 B/C 之间。
+
+Task 03 已确认 `box_b`、`box_c` 被加入 MoveIt Planning Scene，但运行结果却是：
+
+```text
+C_reach   = PASS
+C_insert  = PASS
+C_release = PASS
+C_retreat = PASS
+RESULT    = SUCCESS
+```
+
+其中：
+
+```text
+C_insert: PRE_PLACE -> PLACE
+Cartesian fraction = 1.0000
+MoveIt error_code = 1
+```
+
+与此同时，Isaac Sim 画面中能够直接观察到：
+
+```text
+夹爪与 B/C 发生物理碰撞，
+机械臂仍继续沿 ROS 轨迹运动，最终把 A 硬塞进 B/C 之间。
+```
+
+## 为什么这是 MoveIt 与 Isaac 状态不一致，而不是 PhysX 失效
+
+Isaac Sim 负责实际动力学执行。它已经发生接触，说明真实仿真几何确实发生了碰撞。
+
+但 `/joint_command` 当前是位置目标控制。Isaac 的 Articulation Controller 仍会努力跟随位置指令，所以“发生碰撞”并不自动等价于“机械臂立即停止”。
+
+真正应该在运动前阻止这条插入轨迹的是 MoveIt 的碰撞检测。
+
+因此本次异常点是：
+
+```text
+MoveIt 判断无碰撞
+但 Isaac 执行时发生碰撞
+```
+
+## 根本原因
+
+Task 02 / Task 03 当前规划函数构造 `RobotState` 的方式是：
+
+```cpp
+moveit::core::RobotState start_state(move_group.getRobotModel());
+start_state.setToDefaultValues();
+start_state.setJointGroupPositions(joint_model_group, start_q);
+start_state.update();
+```
+
+而：
+
+```text
+joint_model_group = fr3_arm
+```
+
+只包含 FR3 的 7 个机械臂关节。
+
+程序执行抓取后，Isaac 中真实夹爪持续保持：
+
+```text
+fr3_finger_joint1 = 0.014
+fr3_finger_joint2 = 0.014
+```
+
+但是 MoveIt 规划状态没有把这两个 finger joint 写入，只保留 `setToDefaultValues()` 给出的模型默认状态。
+
+于是形成：
+
+```text
+真实 Isaac RobotState
+= 7 arm joints
++ finger1 = 0.014
++ finger2 = 0.014
+
+MoveIt 规划 RobotState
+= 7 arm joints
++ finger1 = 默认值
++ finger2 = 默认值
+```
+
+如果默认 finger 状态对应的夹爪外包络比真实抓取状态更窄，MoveIt 就会认为 40 mm 间隙可穿过；而 Isaac 中真实夹爪则会撞到 B/C。
+
+这与 Task 01 DETACH 问题中发现的“MoveIt 夹爪状态不一定等于 Isaac 画面状态”属于同一类根因，只是在 Task 03 中第一次直接表现为 **环境障碍物碰撞漏检**。
+
+## 当前修复方案
+
+必须让 MoveIt 用完整 RobotState 进行碰撞检查。
+
+携物阶段 C_reach / C_insert 应显式设置：
+
+```cpp
+start_state.setVariablePosition(
+    "fr3_finger_joint1",
+    GRIPPER_CLOSE_POS);
+start_state.setVariablePosition(
+    "fr3_finger_joint2",
+    GRIPPER_CLOSE_POS);
+start_state.update();
+```
+
+当前：
+
+```text
+GRIPPER_CLOSE_POS = 0.014 m
+```
+
+释放后的 C_retreat 则应显式使用：
+
+```text
+GRIPPER_OPEN_POS = 0.040 m
+```
+
+推荐把 `finger_position` 作为规划函数输入，而不是在函数内部猜测当前动作阶段，例如：
+
+```text
+planPoseStage(..., finger_position)
+planCartesianStage(..., finger_position)
+```
+
+从而保证：
+
+```text
+规划状态
+=
+实际执行状态
+```
+
+## 下一轮验收
+
+保持完全相同的 B-A-C 场景：
+
+```text
+d_BC = 40 mm
+w_A  = 30 mm
+```
+
+只修改 MoveIt RobotState 的 finger joints，不改变 B/C 位置、不膨胀障碍物、不降低碰撞阈值。
+
+预期：
+
+```text
+C_reach = PASS
+C_insert < 0.999
+RESULT = INSERT_FAILED
+```
+
+如果显式同步 finger=0.014 后仍然 `C_insert = PASS`，再检查：
+
+```text
+1. FR3 finger collision geometry 是否实际存在；
+2. box_b / box_c 是否仍在 Planning Scene；
+3. touch_links / Allowed Collision Matrix 是否误放行 finger ↔ box_b/c；
+4. 40 mm 是否确实仍大于真实 MoveIt finger collision envelope 的临界宽度。
+```
+
+当前解决方案状态：
+
+```text
+🟡 根因已定位，待修改并验证
+```
+
+## 工程意义
+
+以后双臂避碰、抓取搬运、放置插入、紧协调共同搬运时，不能只同步机械臂关节。
+
+完整碰撞状态至少需要：
+
+```text
+RobotState
+=
+arm joints
++ gripper joints
++ attached object
++ Planning Scene environment
+```
+
+否则即使 Planning Scene 中障碍物建模完全正确，也可能得到错误的“无碰撞”规划结果。
 
 ---
 
