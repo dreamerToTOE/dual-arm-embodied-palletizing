@@ -20,7 +20,7 @@ GRASP
 CLOSE_GRIPPER
 ```
 
-Both MoveIt/RViz and Isaac Sim reach the expected grasp pose. The 60 mm cube is now visibly held between the Franka fingers without being pushed away or ejected.
+The 60 mm cube is now physically grasped in Isaac Sim without being visibly pushed away or ejected.
 
 ---
 
@@ -34,7 +34,7 @@ Translate = (0, 0, 0)
 Rotate    = (0, 0, 0)
 ```
 
-The current scene therefore treats Isaac `World` and MoveIt `fr3_link0` as aligned.
+Isaac `World` and MoveIt `fr3_link0` are treated as aligned in this scene.
 
 ### Table
 
@@ -43,9 +43,9 @@ Center = (0.55, 0.00, 0.025) m
 Size   = (1.20, 0.80, 0.05) m
 ```
 
-### PickCube — revised and validated
+### PickCube
 
-The original 80 mm cube was unnecessarily close to the full Franka gripper opening and was replaced with a 60 mm test cube.
+The initial 80 mm cube was replaced with a 60 mm cube for practical Franka gripper clearance.
 
 ```text
 Center = (0.45, 0.15, 0.08) m
@@ -53,11 +53,15 @@ Size   = (0.06, 0.06, 0.06) m
 Mass   = 0.2 kg
 ```
 
-The top surface is therefore at `z = 0.11 m`.
+Cube top surface:
+
+```text
+z = 0.11 m
+```
 
 ---
 
-## Current motion sequence
+## Current grasp sequence
 
 ```text
 HOME
@@ -77,65 +81,97 @@ MOVEIT ATTACH
 LIFT
 ```
 
-No redundant intermediate grasp stages are used.
-
-Current target TCP heights are:
+Current TCP targets:
 
 ```text
 PRE_GRASP = 0.23 m
 APPROACH  = 0.16 m
 GRASP     = 0.10 m
+LIFT      = 0.20 m
 ```
 
-The current gripper commands are:
+Current gripper commands:
 
 ```text
 OPEN  = 0.040 m per finger joint
 CLOSE = 0.030 m per finger joint
 ```
 
-The 0.030 m close target is retained because the latest Isaac Sim test shows the 60 mm cube is stably positioned between the fingers and is not visibly pushed away.
+The grasp at `TCP z = 0.10 m` has been visually validated in Isaac Sim. The fingers reach the sides of the 60 mm cube, the gripper closes around it, and the cube is not visibly ejected.
 
 ---
 
 ## MoveIt grasp-contact handling
 
-Before the intentional final descent into the grasp region, `pick_cube` is removed from the MoveIt world collision objects. This prevents intentional finger/object contact from being rejected as a collision during the final grasp plan.
+Before the final grasp descent, `pick_cube` is removed from the MoveIt world collision objects. This allows intentional finger/object contact without causing the final grasp plan to be rejected.
 
-The physical cube remains present in Isaac Sim, and the table remains active as a MoveIt collision object.
+After the physical gripper closes, the current implementation creates an explicit MoveIt `AttachedCollisionObject`:
 
-After successful closure, the cube will be restored to the MoveIt Planning Scene and attached to the Franka hand as an `AttachedCollisionObject` / `attachObject` state before planning the lift. This ensures later planning accounts for the carried box geometry.
+```text
+attached link = fr3_hand_tcp
+object id     = pick_cube
+size          = 0.06 x 0.06 x 0.06 m
+```
 
-Because the revised cube is now physically held by finger contact in Isaac Sim, the next test will first use the real simulated contact/friction during lift. An Isaac `PhysicsFixedJoint` will be kept only as a fallback if repeated lift tests show slipping or unreliable transport.
+Touch links:
+
+```text
+fr3_hand_tcp
+fr3_hand
+fr3_leftfinger
+fr3_rightfinger
+```
+
+The attached cube is expressed directly in the `fr3_hand_tcp` frame, avoiding dependence on the fake-hardware current joint state when determining the attachment transform.
+
+The nominal physical cube center is 20 mm below the TCP at the grasp pose. The MoveIt attached model uses a 19 mm relative offset so that its lower face starts approximately 1 mm above the table, preventing an exact table-contact state from being interpreted as a collision at the start of lift planning.
 
 ---
 
-## Latest validation
+## Isaac grasp strategy
 
-Observed result in Isaac Sim:
+No Isaac FixedJoint is used for the current lift test.
 
-- FR3 descended to the revised grasp pose at TCP `z = 0.10 m`.
-- The open fingers entered the sides of the 60 mm cube correctly.
-- The close command completed normally.
-- The cube remained centered between the fingers.
-- The cube was not knocked over, pushed away, or ejected.
+The physical cube remains a rigid body and is held by the actual simulated finger/cube contact. This is deliberately tested first because the current physical grasp is stable at rest.
 
-This validates the first physical grasp geometry for Task 01.
+If the cube slips or falls during lift, a logical Isaac attachment / Physics FixedJoint will be added as a deterministic fallback for the first Pick & Place demo.
 
 ---
 
-## Validated items
+## Current source
+
+```text
+ros_ws/src/fr3_moveit_test/src/single_arm_pick_place.cpp
+```
+
+The source now implements:
+
+```text
+HOME
+→ PRE_GRASP
+→ APPROACH
+→ OPEN
+→ GRASP
+→ CLOSE
+→ MoveIt AttachedCollisionObject
+→ LIFT 100 mm
+```
+
+---
+
+## Validation status
 
 ```text
 HOME                         ✅
 PRE_GRASP                    ✅
 APPROACH                     ✅
 OPEN_GRIPPER                 ✅
-60 mm cube scene update      ✅
+60 mm cube geometry          ✅
 GRASP z=0.10                 ✅
 CLOSE_GRIPPER                ✅
-MOVEIT ATTACH                Next
-LIFT                         Next
+Cube not visibly ejected     ✅
+MOVEIT ATTACH                Testing
+LIFT 100 mm                  Testing
 TRANSFER                     Pending
 PRE_PLACE                    Pending
 PLACE                        Pending
@@ -145,10 +181,4 @@ RETREAT                      Pending
 HOME / DONE                  Pending
 ```
 
-## Current source
-
-```text
-ros_ws/src/fr3_moveit_test/src/single_arm_pick_place.cpp
-```
-
-The current source is configured for the validated 60 mm cube and single-step final grasp descent.
+The immediate acceptance criterion is that MoveIt accepts the attached object, successfully plans the lift, and the physical Isaac cube remains held while the TCP rises from `z = 0.10 m` to `z = 0.20 m`.
