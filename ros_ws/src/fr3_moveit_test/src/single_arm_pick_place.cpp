@@ -12,6 +12,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <shape_msgs/msg/solid_primitive.hpp>
 #include <moveit_msgs/msg/collision_object.hpp>
+#include <moveit_msgs/msg/attached_collision_object.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 
@@ -32,29 +33,38 @@ constexpr double TABLE_SIZE_X = 1.20;
 constexpr double TABLE_SIZE_Y = 0.80;
 constexpr double TABLE_SIZE_Z = 0.05;
 
-// PickCube was reduced from 80 mm to 60 mm.
+// 60 mm PickCube
 constexpr double CUBE_X = 0.45;
 constexpr double CUBE_Y = 0.15;
 constexpr double CUBE_Z = 0.08;
 constexpr double CUBE_SIZE = 0.06;
 
-// TCP heights: 0.23 -> 0.16 -> 0.10 m
+// TCP heights: 0.23 -> 0.16 -> 0.10 -> 0.20 m
 constexpr double PRE_GRASP_Z_OFFSET = 0.15;
 constexpr double APPROACH_Z_OFFSET = 0.08;
 constexpr double GRASP_Z_OFFSET = 0.02;
+constexpr double LIFT_DISTANCE = 0.10;
 
-// Franka finger joint position is approximately half of total opening.
-constexpr double GRIPPER_OPEN_POS = 0.040;   // total opening ~80 mm
-constexpr double GRIPPER_CLOSE_POS = 0.030;  // total opening ~60 mm
+// Franka finger joint position ~= half of total opening
+constexpr double GRIPPER_OPEN_POS = 0.040;
+constexpr double GRIPPER_CLOSE_POS = 0.030;
+
+// The cube center is physically 20 mm below the TCP at the grasp pose.
+// The MoveIt attached model uses 19 mm to leave ~1 mm clearance from the table
+// at the start of the lift and avoid a false table-contact collision.
+constexpr double ATTACHED_CUBE_TCP_Z = 0.019;
+
+// ============================================================
+// Copy robot model parameters from /move_group
+// ============================================================
 
 bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
 {
     RCLCPP_INFO(node->get_logger(), "Waiting for /move_group parameter service...");
 
-    auto parameter_client =
-        std::make_shared<rclcpp::SyncParametersClient>(node, "/move_group");
+    auto client = std::make_shared<rclcpp::SyncParametersClient>(node, "/move_group");
 
-    if (!parameter_client->wait_for_service(10s))
+    if (!client->wait_for_service(10s))
     {
         RCLCPP_ERROR(node->get_logger(),
                      "Cannot connect to /move_group parameter service.");
@@ -70,7 +80,7 @@ bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
 
     try
     {
-        params = parameter_client->get_parameters(names);
+        params = client->get_parameters(names);
     }
     catch (const std::exception& e)
     {
@@ -109,6 +119,10 @@ double pointTime(const trajectory_msgs::msg::JointTrajectoryPoint& point)
            static_cast<double>(point.time_from_start.nanosec) * 1e-9;
 }
 
+// ============================================================
+// Single-arm Pick & Place
+// ============================================================
+
 class SingleArmPickPlace
 {
 public:
@@ -124,8 +138,7 @@ public:
     {
         RCLCPP_INFO(node_->get_logger(), "Creating MoveGroupInterface...");
 
-        moveit::planning_interface::MoveGroupInterface move_group(
-            node_, "fr3_arm");
+        moveit::planning_interface::MoveGroupInterface move_group(node_, "fr3_arm");
 
         move_group.setPlannerId("RRTConnectkConfigDefault");
         move_group.setPlanningTime(5.0);
@@ -211,8 +224,7 @@ public:
 
         // ----------------------------------------------------
         // 4. Remove cube from MoveIt world before intentional
-        //    grasp contact. The cube remains physically present
-        //    in Isaac Sim. The table remains a collision object.
+        //    grasp contact. Physical Isaac cube remains present.
         // ----------------------------------------------------
         removePickCubeFromPlanningScene();
 
@@ -244,17 +256,57 @@ public:
         commandGripper(GRIPPER_CLOSE_POS, 1.0);
         RCLCPP_INFO(node_->get_logger(), "CLOSE_GRIPPER COMPLETE.");
 
+        // Give PhysX a short moment to settle the contact.
+        rclcpp::sleep_for(500ms);
+
+        // ----------------------------------------------------
+        // 7. MOVEIT ATTACH
+        // ----------------------------------------------------
+        if (!attachPickCubeToTcp())
+        {
+            RCLCPP_ERROR(node_->get_logger(), "MoveIt ATTACH failed.");
+            return false;
+        }
+
+        RCLCPP_INFO(node_->get_logger(), "MOVEIT ATTACH COMPLETE.");
+
+        // ----------------------------------------------------
+        // 8. LIFT 100 mm
+        // ----------------------------------------------------
+        const std::vector<double> grasp_final_q =
+            grasp_trajectory.points.back().positions;
+
+        geometry_msgs::msg::Pose lift_pose = grasp_pose;
+        lift_pose.position.z += LIFT_DISTANCE;
+
+        trajectory_msgs::msg::JointTrajectory lift_trajectory;
+        if (!planPoseStage(move_group,
+                           joint_model_group,
+                           grasp_final_q,
+                           lift_pose,
+                           "GRASP -> LIFT",
+                           lift_trajectory))
+            return false;
+
+        RCLCPP_INFO(node_->get_logger(), "Executing LIFT...");
+        executeTrajectory(lift_trajectory);
+        RCLCPP_INFO(node_->get_logger(), "LIFT execution COMPLETE.");
+
         RCLCPP_INFO(node_->get_logger(), "========================================");
-        RCLCPP_INFO(node_->get_logger(), "Task 01 current stage COMPLETE:");
+        RCLCPP_INFO(node_->get_logger(), "Task 01 current chain COMPLETE:");
         RCLCPP_INFO(node_->get_logger(),
-                    "HOME -> PRE_GRASP -> APPROACH -> OPEN -> GRASP -> CLOSE");
-        RCLCPP_INFO(node_->get_logger(), "Next: ATTACH -> LIFT");
+                    "HOME -> PRE_GRASP -> APPROACH -> OPEN -> GRASP -> CLOSE -> ATTACH -> LIFT");
+        RCLCPP_INFO(node_->get_logger(), "Lift target TCP z = %.3f m", lift_pose.position.z);
+        RCLCPP_INFO(node_->get_logger(), "Next: TRANSFER -> PLACE");
         RCLCPP_INFO(node_->get_logger(), "========================================");
 
         return true;
     }
 
 private:
+    // ========================================================
+    // Initial Planning Scene: table + cube
+    // ========================================================
     bool addPlanningScene()
     {
         moveit::planning_interface::PlanningSceneInterface psi;
@@ -308,21 +360,86 @@ private:
         }
 
         RCLCPP_INFO(node_->get_logger(),
-                    "Planning Scene updated: cube=%.2f m, center z=%.3f m",
-                    CUBE_SIZE, CUBE_Z);
+                    "Planning Scene updated: cube=%.2f m, center=(%.3f, %.3f, %.3f)",
+                    CUBE_SIZE, CUBE_X, CUBE_Y, CUBE_Z);
+
         rclcpp::sleep_for(1s);
         return true;
     }
 
+    // ========================================================
+    // Remove world cube before intentional grasp contact
+    // ========================================================
     void removePickCubeFromPlanningScene()
     {
         moveit::planning_interface::PlanningSceneInterface psi;
         psi.removeCollisionObjects({"pick_cube"});
+
         RCLCPP_INFO(node_->get_logger(),
                     "pick_cube removed from MoveIt world for intentional grasp contact.");
+
         rclcpp::sleep_for(500ms);
     }
 
+    // ========================================================
+    // Attach a 60 mm cube directly to fr3_hand_tcp in MoveIt.
+    // This does NOT create an Isaac FixedJoint. Isaac continues
+    // to rely on the real finger/cube contact that has been validated.
+    // ========================================================
+    bool attachPickCubeToTcp()
+    {
+        moveit::planning_interface::PlanningSceneInterface psi;
+
+        moveit_msgs::msg::AttachedCollisionObject attached;
+        attached.link_name = "fr3_hand_tcp";
+        attached.touch_links = {
+            "fr3_hand_tcp",
+            "fr3_hand",
+            "fr3_leftfinger",
+            "fr3_rightfinger"
+        };
+
+        attached.object.header.frame_id = "fr3_hand_tcp";
+        attached.object.id = "pick_cube";
+
+        shape_msgs::msg::SolidPrimitive cube_shape;
+        cube_shape.type = shape_msgs::msg::SolidPrimitive::BOX;
+        cube_shape.dimensions = {CUBE_SIZE, CUBE_SIZE, CUBE_SIZE};
+
+        geometry_msgs::msg::Pose relative_pose;
+
+        // TCP orientation at grasp is Rx(pi), while the cube remains
+        // axis-aligned in fr3_link0/world. Therefore cube orientation
+        // relative to TCP is also Rx(pi).
+        relative_pose.orientation.x = 1.0;
+        relative_pose.orientation.y = 0.0;
+        relative_pose.orientation.z = 0.0;
+        relative_pose.orientation.w = 0.0;
+
+        relative_pose.position.x = 0.0;
+        relative_pose.position.y = 0.0;
+        relative_pose.position.z = ATTACHED_CUBE_TCP_Z;
+
+        attached.object.primitives.push_back(cube_shape);
+        attached.object.primitive_poses.push_back(relative_pose);
+        attached.object.operation = moveit_msgs::msg::CollisionObject::ADD;
+
+        if (!psi.applyAttachedCollisionObject(attached))
+        {
+            return false;
+        }
+
+        RCLCPP_INFO(node_->get_logger(),
+                    "pick_cube attached to fr3_hand_tcp in MoveIt, relative z=%.3f m",
+                    ATTACHED_CUBE_TCP_Z);
+
+        rclcpp::sleep_for(1s);
+        return true;
+    }
+
+    // ========================================================
+    // Generic pose planning stage
+    // ========================================================
     bool planPoseStage(
         moveit::planning_interface::MoveGroupInterface& move_group,
         const moveit::core::JointModelGroup* joint_model_group,
@@ -379,9 +496,13 @@ private:
                     stage_name.c_str(),
                     trajectory_out.points.size(),
                     pointTime(trajectory_out.points.back()));
+
         return true;
     }
 
+    // ========================================================
+    // MoveIt JointTrajectory -> Isaac /joint_command at 100 Hz
+    // ========================================================
     void executeTrajectory(
         const trajectory_msgs::msg::JointTrajectory& trajectory)
     {
@@ -446,6 +567,9 @@ private:
         }
     }
 
+    // ========================================================
+    // Gripper command
+    // ========================================================
     void commandGripper(double finger_position, double duration_sec)
     {
         const std::vector<std::string> names = {
@@ -478,16 +602,20 @@ private:
         command_pub_->publish(msg);
     }
 
+private:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr command_pub_;
 };
+
+// ============================================================
+// main
+// ============================================================
 
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
 
-    auto node =
-        std::make_shared<rclcpp::Node>("single_arm_pick_place");
+    auto node = std::make_shared<rclcpp::Node>("single_arm_pick_place");
 
     if (!copyRobotModelParameters(node))
     {
@@ -515,6 +643,7 @@ int main(int argc, char** argv)
     }
 
     executor.cancel();
+
     if (spin_thread.joinable())
         spin_thread.join();
 
