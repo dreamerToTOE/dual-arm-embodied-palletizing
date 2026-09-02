@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **进行中 — 构造“箱体几何可放，但夹爪不可插入”的 B-A-C 场景**
+🟡 **进行中 — Isaac Sim 中 B/C 邻箱已建立，Task 03 测试节点已准备，待 MoveIt 插入碰撞验证**
 
 Task 02 已完成第一版 Placement Skill。Task 03 开始正式验证论文中的核心问题：
 
@@ -86,9 +86,7 @@ t_g   = 单侧夹爪 / 手指额外占用厚度
 delta = 安全间隙
 ```
 
-Task 03 第一版先使用 MoveIt 的真实 FR3 碰撞模型直接判定，不急于人为给出 t_g 的精确常数。
-
-后续可以从实验结果或模型包络进一步提取等效夹爪宽度。
+Task 03 第一版先使用 MoveIt 的真实 FR3 碰撞模型直接判定，不急于人为给出 `t_g` 的精确常数。后续可根据模型包络或临界实验反推等效夹爪占用宽度。
 
 ---
 
@@ -116,40 +114,41 @@ PASS 或 FAIL
 
 ---
 
-## 4. Isaac Sim 场景要求
+## 4. Isaac Sim 场景
 
-继续使用 Task 02 场景，并新增：
+当前已在 Isaac Sim 中建立：
 
 ```text
 /World/BoxB
 /World/BoxC
 ```
 
-第一版 B、C 作为静态环境障碍物：
+第一版参数：
 
 ```text
+BoxB center = (0.65, -0.115, 0.065)
+BoxC center = (0.65, -0.185, 0.065)
+Size        = 0.03 × 0.03 × 0.03 m
 Collider    = ON
 Rigid Body  = OFF
 ```
 
-这样即使真实机械臂发生接触，B、C 也不会被撞走，便于稳定复现实验。
+B/C 作为静态环境障碍物，避免真实接触后被撞走，从而保证实验可重复。
 
-A 仍然是当前 `/World/PickCube`，保留：
+A 仍然是 `/World/PickCube`：
 
 ```text
+Initial center = (0.45, 0.15, 0.065)
+Size           = 0.03 × 0.03 × 0.03 m
 Rigid Body + Collider
-Mass = 0.2 kg
+Mass           = 0.2 kg
 ```
 
 ---
 
-## 5. MoveIt Planning Scene 要求
+## 5. MoveIt Planning Scene
 
-仅在 Isaac 中加入 B/C 不够。
-
-Task 03 节点必须同时把 B、C 作为 `CollisionObject` 加入 MoveIt Planning Scene，否则 MoveIt 不会在规划阶段知道邻箱存在。
-
-规划层场景应包含：
+仅在 Isaac 中加入 B/C 不够。MoveIt 必须同步拥有对应 `CollisionObject`：
 
 ```text
 table
@@ -158,41 +157,51 @@ box_b
 box_c
 ```
 
-B、C 的位置和尺寸必须与 Isaac 完全一致。
+B、C 的位置和尺寸必须与 Isaac 完全一致，否则规划层和物理层会出现场景不一致。
 
 ---
 
-## 6. 源码策略
+## 6. Task 03 源码
 
-不修改已经验证成功的：
+保持以下稳定基线不修改：
 
 ```text
 single_arm_pick_place.cpp
 placement_skill_demo.cpp
 ```
 
-Task 03 新建独立测试节点：
+新增：
 
 ```text
 ros_ws/src/fr3_moveit_test/src/bac_placement_test.cpp
 ```
 
-它复用 Task 02 的 Placement Skill 流程，只增加 B/C 场景建模和 Task 03 日志。
+实现方式：
 
-这样 Task 01、Task 02 始终保留为稳定回归基线。
+```text
+bac_placement_test
+        ↓
+先把 box_b / box_c 写入 MoveIt Planning Scene
+        ↓
+直接复用 Task 02 已验证的 Placement Skill
+        ↓
+执行 PICK + LIFT + C_reach + C_insert + ...
+```
+
+源码通过预处理重命名方式复用 `placement_skill_demo.cpp` 的入口，避免复制整套 Task 02 代码。这样后续 Task 02 基线修复也不会与 Task 03 产生两套不同实现。
 
 ---
 
 ## 7. 第一轮验收标准
 
-第一轮 B/C 间距设置为 40 mm。
+第一轮 B/C 净间距设置为 40 mm。
 
 预期：
 
 ```text
 A 本体 30 mm，可以几何放入
 C_reach = PASS
-C_insert < 0.999
+C_insert Cartesian fraction < 0.999
 RESULT = INSERT_FAILED
 ```
 
