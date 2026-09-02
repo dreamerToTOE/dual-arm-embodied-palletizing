@@ -84,9 +84,10 @@ Current implementation responsibilities:
 5. add Table and PickCube to the MoveIt Planning Scene;
 6. plan HOME → PRE_GRASP;
 7. execute the trajectory on Isaac through `/joint_command`;
-8. use the PRE_GRASP trajectory endpoint as the next planning start state;
-9. plan PRE_GRASP → APPROACH;
-10. execute APPROACH on Isaac.
+8. explicitly open the gripper;
+9. use the PRE_GRASP trajectory endpoint as the next planning start state;
+10. plan PRE_GRASP → APPROACH;
+11. execute APPROACH on Isaac.
 
 Trajectory execution continues to use the validated 100 Hz interpolation adapter.
 
@@ -174,14 +175,18 @@ ros2 topic pub --once \
 
 ---
 
-## 5. Next sub-stage
+## 5. Grasp-sequence decision
 
-Next sequence from the current implementation:
+The grasp sequence is intentionally kept simple. There is no need to introduce multiple redundant descent stages.
+
+The intended logic is:
 
 ```text
-APPROACH
+PRE_GRASP / near-object pose
   ↓
-GRASP_DESCENT
+OPEN_GRIPPER
+  ↓
+FINAL_DESCENT_TO_GRASP_HEIGHT
   ↓
 CLOSE_GRIPPER
   ↓
@@ -190,9 +195,9 @@ ATTACH
 LIFT
 ```
 
-The next immediate task is `GRASP_DESCENT`: lower the TCP from the current approach pose to a carefully chosen grasp height while keeping the gripper open.
+The already validated `APPROACH` pose can be retained as the near-object pose if desired. From that pose, only one final descent to the calibrated grasp height is needed before closing the fingers.
 
-The descent height must be chosen from actual FR3 hand/finger geometry rather than simply sending the TCP to the cube center. The first test should remain conservative and stop before finger/cube penetration.
+The purpose of the final descent is not to add an unnecessary motion stage; it is simply to place the open fingers alongside the cube before closure. If the chosen near-object pose already places the fingers at the correct grasp depth, this extra descent can be removed entirely.
 
 ### Important geometry note
 
@@ -207,7 +212,7 @@ HOME                         ✅
 PRE_GRASP                    ✅
 OPEN_GRIPPER                 ✅
 APPROACH                     ✅
-GRASP_DESCENT                Next
+FINAL_DESCENT_TO_GRASP       Next
 CLOSE_GRIPPER                Pending
 ISAAC + MOVEIT ATTACH        Pending
 LIFT                         Pending
