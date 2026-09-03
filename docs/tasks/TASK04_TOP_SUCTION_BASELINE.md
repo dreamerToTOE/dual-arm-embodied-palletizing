@@ -23,7 +23,7 @@
 
 Isaac 中保留 `fr3_hand` / finger joint 的 articulation 结构，但隐藏原 Franka Hand/Finger 的视觉并关闭其物理碰撞；实际末端几何使用紧凑 `suction_tool`。
 
-为了继续复用 MoveIt 的 TCP 规划逻辑，第一版让吸盘接触面位于 hand 局部 +Z 约 `0.1034 m`，与 Franka Hand 默认 TCP 偏置一致。
+第一版 MoveIt 优先使用 Franka 官方 `cobot_pump` 末端，因此 Isaac 自定义吸盘的接触 TCP 也设置到 hand 局部 +Z `0.105 m`，使规划层和物理层的工具长度基本一致。
 
 Isaac 4.5 的真实吸附采用 `isaacsim.robot.surface_gripper`，不模拟真空流体，只模拟吸附接触、保持与释放。
 
