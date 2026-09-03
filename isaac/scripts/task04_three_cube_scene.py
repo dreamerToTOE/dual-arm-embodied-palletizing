@@ -33,9 +33,9 @@ STACK_TARGETS = [
     (0.684, -0.150, CUBE_Z),
 ]
 
-# Franka 官方手爪 TCP 默认位于 hand 局部 +Z 方向 0.1034 m。
-# Task04 让吸盘接触面与该 TCP 基本重合，从而继续复用 MoveIt TCP 规划逻辑。
-SUCTION_TCP_Z = 0.1034
+# Franka 官方 cobot_pump 使用约 0.105 m 的工具 TCP 偏置。
+# Task04 的 Isaac 吸盘接触面与该 TCP 对齐，方便 MoveIt 与 Isaac 使用同一末端定义。
+SUCTION_TCP_Z = 0.1050
 STEM_RADIUS = 0.006
 CUP_RADIUS = 0.010
 CUP_HEIGHT = 0.006
@@ -124,7 +124,7 @@ disable_visual_and_collision("/World/fr3/fr3_leftfinger")
 disable_visual_and_collision("/World/fr3/fr3_rightfinger")
 
 # ============================================================
-# 3. 重建紧凑吸盘，使吸附接触面与原 fr3_hand_tcp 基本重合
+# 3. 重建紧凑吸盘，使吸附接触面与 cobot_pump TCP 对齐
 # ============================================================
 
 hand_path = "/World/fr3/fr3_hand"
