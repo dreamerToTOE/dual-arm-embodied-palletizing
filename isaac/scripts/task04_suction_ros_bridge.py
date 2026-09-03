@@ -49,10 +49,11 @@ class Task04SuctionBridge:
 
         # Surface Gripper 默认沿 offset pose 的局部 +X 方向寻找物体。
         # 当前 suction_tool 沿 fr3_hand 局部 +Z 伸出，因此将 +X 旋转到 +Z。
+        # 0.105 m 与 Franka cobot_pump 的工具 TCP 偏置对齐。
         offset = omni.physics.tensors.Transform()
         offset.p.x = 0.0
         offset.p.y = 0.0
-        offset.p.z = 0.1034
+        offset.p.z = 0.1050
         offset.r.x = 0.0
         offset.r.y = -0.70710678
         offset.r.z = 0.0
