@@ -92,6 +92,35 @@ PRE_PICK
 
 而不是先接触再开启吸盘。
 
+### 4.1 当前开发阶段：保留手动加载 Bridge
+
+当前明确不把 Surface Gripper ROS Bridge 永久封装进 USD、ActionGraph 或 Isaac Extension。
+
+原因不是做不到，而是开发阶段希望保留清晰、可观察的启动步骤，便于理解每一层的作用和快速排错：
+
+```text
+USD / Stage
+→ 保存场景与物理结构
+
+ActionGraph
+→ 负责机械臂 /joint_command、/joint_states、/tf、/clock 等基础 ROS 通信
+
+Task04 Python Bridge
+→ 负责 Surface Gripper API
+→ 发布随机 Cube Ground Truth
+→ 提供 /task04/suction_* 接口
+```
+
+因此当前每次重新打开 Isaac 或重新开始 Task04 测试时，手动在 Script Editor 启动：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task04_suction_ros_bridge.py").read())
+```
+
+必须在 Isaac 已点击 **Play** 后运行。
+
+开发阶段保留这种手动方式；等单臂、双臂松协调和双臂紧协调主流程全部稳定后，再统一整理为可自动加载的最终工程版本。
+
 ## 5. ROS / MoveIt 控制节点
 
 源码：
