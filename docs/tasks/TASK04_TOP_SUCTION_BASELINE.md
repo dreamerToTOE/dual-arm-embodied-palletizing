@@ -136,7 +136,52 @@ ros2 launch franka_fr3_moveit_config moveit.launch.py \
 
 控制节点默认读取 MoveIt 当前配置给出的 end-effector link，不再硬编码 `fr3_hand_tcp`；必要时可通过 ROS 参数 `eef_link` 覆盖。
 
-## 7. 第一轮验收标准
+## 7. 已验证问题：`fr3_link7` 与 `fr3_cobot_pump` 安装处自碰撞
+
+第一次运行三 Cube 控制时，`PRE_PICK` 的 RRTConnect 在约几十毫秒内直接 aborted。
+
+排查结果：
+
+```text
+avoid_collisions = false 的 /compute_ik：SUCCESS
+avoid_collisions = true  的 /compute_ik：NO_IK_SOLUTION
+```
+
+进一步使用 `/check_state_validity` 检查 HOME 和 PRE_PICK IK 解，两者均返回：
+
+```text
+valid = false
+contact_body_1 / 2 = fr3_link7 <-> fr3_cobot_pump
+penetration depth ≈ 0.0002867 m
+```
+
+因此根因不是随机 Cube 不可达，也不是桌面或环境障碍，而是 MoveIt 把官方 `cobot_pump` 与机器人相邻安装结构 `fr3_link7` 判定为自碰撞。因为 HOME 起点本身就是 invalid，后续 collision-aware RRTConnect 无法从合法起点开始规划，所以会立即失败。
+
+临时工程修复：只在 Allowed Collision Matrix 中允许这一对内部安装结构碰撞：
+
+```text
+fr3_link7 <-> fr3_cobot_pump
+```
+
+注意：这不等于关闭吸盘与桌面、Cube 或邻近箱体之间的碰撞检测；环境碰撞仍保持启用。
+
+用户实际验证后：
+
+```text
+HOME /check_state_validity
+valid = true
+contacts = []
+```
+
+因此该问题状态为：
+
+```text
+✅ 根因与临时修复均已验证
+```
+
+后续若继续长期使用 `cobot_pump`，应把这一相邻安装关系正式写入项目自己的 SRDF / Allowed Collision 配置，而不是每次手动注入。
+
+## 8. 第一轮验收标准
 
 ```text
 1. 三个 Cube 初始位置随机且互不重叠；
