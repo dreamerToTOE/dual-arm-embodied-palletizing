@@ -96,12 +96,14 @@ Script Editor：运行三 Cube 随机场景脚本
         ↓
 Isaac 点击 Play
         ↓
-Script Editor：运行 Surface Gripper ROS Bridge
+Script Editor：手动运行 Surface Gripper ROS Bridge
         ↓
 终端 2：检查 ROS topics
         ↓
 终端 3：编译 / 运行 Task04 控制节点
 ```
+
+当前开发阶段**有意保留手动加载 Bridge**，暂不封装成 Isaac Extension、USD 自动逻辑或自定义 OmniGraph Node。这样可以明确看到“场景 / ActionGraph / Surface Gripper Bridge / MoveIt”每一层分别负责什么，也更方便逐层排错。等整体单臂、双臂松协调、紧协调流程稳定后再统一自动化。
 
 如果只是复现 Task01~03，则使用本文后面的“二指夹爪 MoveIt 启动方式”。
 
@@ -277,7 +279,13 @@ Isaac 本地 Position_Controller = OFF
 Window → Script Editor
 ```
 
-将下面脚本内容复制到 Script Editor 执行：
+推荐直接在 Script Editor 运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task04_three_cube_scene.py").read())
+```
+
+也可以先在终端查看脚本：
 
 ```bash
 cat ~/lmy/dual-arm-embodied-palletizing/isaac/scripts/task04_three_cube_scene.py
@@ -331,12 +339,39 @@ Isaac Sim → Play
 
 ---
 
-# 8. Task04：启动 Isaac Surface Gripper ROS Bridge
+# 8. Task04：手动启动 Isaac Surface Gripper ROS Bridge
 
-Isaac 已经处于 Play 状态后，再在 Script Editor 执行：
+当前开发阶段采用**手动启动**，每次重新打开 Isaac / 重新恢复 Task04 时都主动执行一次，不做永久自动加载。
 
-```bash
-cat ~/lmy/dual-arm-embodied-palletizing/isaac/scripts/task04_suction_ros_bridge.py
+必须先确认：
+
+```text
+1. Task04 场景已加载；
+2. /World/fr3/fr3_hand 存在；
+3. Cube1 / Cube2 / Cube3 已创建；
+4. Isaac Timeline 已经是 Play 状态。
+```
+
+然后：
+
+```text
+Window → Script Editor
+```
+
+在 Script Editor 中直接运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task04_suction_ros_bridge.py").read())
+```
+
+正常情况下 Isaac Console / Script Editor 会打印：
+
+```text
+Task04 Surface Gripper ROS bridge 已启动
+SUB : /task04/suction_command  std_msgs/Bool
+PUB : /task04/suction_state    std_msgs/Bool
+PUB : /task04/cube_poses       geometry_msgs/PoseArray
+Cube PoseArray 顺序固定为 Cube1, Cube2, Cube3
 ```
 
 该 Bridge 负责：
@@ -411,6 +446,19 @@ ros2 topic echo /task04/cube_poses --once
 ros2 topic echo /task04/suction_state
 ```
 
+如果 `suction_three_cube_palletize` 报：
+
+```text
+等待 Isaac bridge 超时
+```
+
+优先检查是否忘记：
+
+```text
+Isaac 点击 Play
+→ Script Editor 手动运行 task04_suction_ros_bridge.py
+```
+
 ---
 
 # 10. 编译 fr3_moveit_test
@@ -475,13 +523,7 @@ RRTConnect -> PRE_PICK
 → 下一个 Cube
 ```
 
-注意当前 Task04 尚在调试阶段：
-
-```text
-PRE_PICK RRTConnect 仍在排查
-```
-
-因此不要把 Task04 写成“已验证完整成功”。
+注意当前 Task04 尚在调试阶段，因此不要把 Task04 写成“已验证完整成功”。
 
 ---
 
