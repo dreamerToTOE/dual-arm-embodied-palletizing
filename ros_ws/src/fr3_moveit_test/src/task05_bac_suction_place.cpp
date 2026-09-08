@@ -390,6 +390,11 @@ private:
         }
         executeTrajectory(pre_pick_traj);
 
+        // BoxA 是当前有意接触/抓取目标。CONTACT 规划前把它从 MoveIt World 暂时移除，
+        // 避免吸盘在最后几毫米接近目标表面时被目标物自身的碰撞检查截断。
+        // BoxB / BoxC 始终保留在 Planning Scene 中，Task05 的高密度碰撞验证不被放宽。
+        removeWorldBox("box_a");
+
         // 2. 吸盘保持 OFF，垂直到 CONTACT。
         auto contact = makeTopDownPose(
             pick_pose.position.x,
@@ -416,7 +421,6 @@ private:
             return false;
         }
 
-        removeWorldBox("box_a");
         if (!attachBoxAToTcp("box_a", eef_link))
         {
             return false;
