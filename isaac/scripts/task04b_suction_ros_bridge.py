@@ -66,9 +66,11 @@ class Task04BNineCubeSuctionBridge:
         offset.r.w = 0.70710678
         props.offset = offset
 
-        props.gripThreshold = 0.012
-        props.forceLimit = 200.0
-        props.torqueLimit = 20.0
+        props.gripThreshold = 0.003
+        # Task04-B 稳定性实验：
+        # 使用极高断裂阈值，将 Surface Gripper 近似视为不可断吸盘。
+        props.forceLimit = 1.0e6
+        props.torqueLimit = 1.0e6
         props.bendAngle = math.radians(15.0)
         props.stiffness = 1.0e4
         props.damping = 1.0e3
