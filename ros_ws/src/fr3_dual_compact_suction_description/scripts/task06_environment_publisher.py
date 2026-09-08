@@ -8,17 +8,22 @@ from rclpy.node import Node
 from shape_msgs.msg import SolidPrimitive
 
 
-TABLE_ID = "task06_table"
-TABLE_FRAME = "world"
-TABLE_CENTER = (0.55, 0.00, 0.025)
-TABLE_SIZE = (1.20, 0.80, 0.05)
-
-
 class Task06EnvironmentPublisher(Node):
     """把 Task06 Isaac 基准桌面写入 MoveIt Planning Scene。"""
 
     def __init__(self):
         super().__init__("task06_environment_publisher")
+
+        self.declare_parameter("table_id", "task06_table")
+        self.declare_parameter("table_frame", "world")
+        self.declare_parameter("table_center", [0.55, 0.00, 0.025])
+        self.declare_parameter("table_size", [1.20, 0.80, 0.05])
+
+        self.table_id = self.get_parameter("table_id").value
+        self.table_frame = self.get_parameter("table_frame").value
+        self.table_center = tuple(self.get_parameter("table_center").value)
+        self.table_size = tuple(self.get_parameter("table_size").value)
+
         self.apply_scene_client = self.create_client(
             ApplyPlanningScene,
             "/apply_planning_scene",
@@ -26,17 +31,17 @@ class Task06EnvironmentPublisher(Node):
 
     def build_table(self) -> CollisionObject:
         table = CollisionObject()
-        table.header.frame_id = TABLE_FRAME
-        table.id = TABLE_ID
+        table.header.frame_id = self.table_frame
+        table.id = self.table_id
 
         primitive = SolidPrimitive()
         primitive.type = SolidPrimitive.BOX
-        primitive.dimensions = list(TABLE_SIZE)
+        primitive.dimensions = list(self.table_size)
 
         pose = Pose()
-        pose.position.x = TABLE_CENTER[0]
-        pose.position.y = TABLE_CENTER[1]
-        pose.position.z = TABLE_CENTER[2]
+        pose.position.x = self.table_center[0]
+        pose.position.y = self.table_center[1]
+        pose.position.z = self.table_center[2]
         pose.orientation.w = 1.0
 
         table.primitives = [primitive]
@@ -79,8 +84,8 @@ class Task06EnvironmentPublisher(Node):
 
         self.get_logger().info(
             "Task06 MoveIt 环境加载完成: "
-            f"id={TABLE_ID}, frame={TABLE_FRAME}, "
-            f"center={TABLE_CENTER}, size={TABLE_SIZE}"
+            f"id={self.table_id}, frame={self.table_frame}, "
+            f"center={self.table_center}, size={self.table_size}"
         )
         return True
 
