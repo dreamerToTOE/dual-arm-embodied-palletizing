@@ -35,13 +35,9 @@ Task 03 已证明普通 Franka 二指夹爪在高密度码垛中存在结构性�
 → C_insert = FAIL
 ```
 
-对于实际紧密码垛，右侧、后侧甚至多侧已有箱体是常见状态，仅靠调整放置 yaw 或顺序不能从根本上解决侧夹 finger 的空间占用问题。
-
-因此后续工程主线改为：
+因此后续工程主线固定为：
 
 > **左右 FR3 始终使用同一种固定的顶部吸附式末端执行器。**
-
-不根据松协调 / 紧协调切换末端。
 
 ### 小箱体 / 松协调
 
@@ -56,7 +52,7 @@ Right FR3 → Box B
 
 ### 大箱体 / 紧协调
 
-两台机械臂从箱体**上表面两个分离吸附点**共同吊运同一个箱体：
+两台机械臂从箱体上表面两个分离吸附点共同吊运同一个箱体：
 
 ```text
      Left suction        Right suction
@@ -65,8 +61,6 @@ Right FR3 → Box B
       │        Large Box         │
       └──────────────────────────┘
 ```
-
-这样最终放置仍然是顶部接近，不需要从箱体左右侧留下夹爪退出空间。
 
 紧协调阶段先做工程闭环：
 
@@ -79,29 +73,77 @@ Right FR3 → Box B
 → 两臂退出
 ```
 
-后续是否加入力 / 负载分配 / 柔顺控制，根据实际仿真表现和工程需要再决定，不在当前阶段提前限定。
+后续是否加入力 / 负载分配 / 柔顺控制，根据实际仿真表现和工程需要再决定。
 
-## 3. 吸盘第一版建模原则
+## 3. 紧凑吸盘与 MoveIt / Isaac 模型统一
 
-第一版不模拟真空流体细节。
-
-采用：
+第一版不模拟真空流体细节，采用：
 
 ```text
 紧凑刚性吸盘工具几何
 +
 吸附 ON / OFF 状态
 +
-Isaac 物理约束或 Surface Gripper
+Isaac Surface Gripper
 +
 MoveIt AttachedCollisionObject
 ```
 
-吸盘工具本体作为刚体是合理的。
+Task05 已确认：Franka 官方 `cobot_pump` 的环境碰撞包络与本项目的紧凑吸盘不一致，会在 B-A-C 高密度插入中产生假碰撞。
 
-需要避免继续保留原 Franka finger 的大侧向碰撞包络，否则即使加入吸盘，Task 03 的侧向干涉问题仍会存在。因此后续应建立一个真正的“FR3 + compact suction tool”规划 / 仿真模型，而不是只在现有 finger 中间增加一个吸附开关。
+因此项目建立自定义：
 
-## 4. 工程实现路线
+```text
+fr3_compact_suction_description
+```
+
+几何与 Isaac 基线保持一致：
+
+```text
+stem radius = 6 mm
+stem length = 99 mm
+cup radius  = 10 mm
+cup length  = 6 mm
+TCP offset  = 105 mm
+```
+
+当前兼容策略继续保持：
+
+```text
+MoveIt planning tip = fr3_link8
+suction TCP target -> +0.105 m -> fr3_link8 pose target
+```
+
+这样不破坏已经验证的 Task04 基础码垛事件单元。
+
+## 4. 基础码垛事件单元（项目级约束）
+
+从 Task04 起，后续所有单臂基础抓放默认复用同一时序，不为每个 Task 重新设计抓放逻辑：
+
+```text
+HOME / 当前安全状态
+→ PRE_PICK
+→ 临时移除待抓物 MoveIt World 碰撞体
+→ Cartesian 到 CONTACT
+→ CONTACT 后 SUCTION ON
+→ 确认吸附
+→ MoveIt AttachedCollisionObject
+→ LIFT
+→ TRANSFER / PRE_PLACE
+→ Cartesian PLACE
+→ 仍保持 Attached + SUCTION ON，先规划 RETREAT
+→ SUCTION OFF
+→ 等待物体 settle
+→ 读取 Isaac Ground Truth
+→ MoveIt detach
+→ 按实际 pose 加回 Planning Scene
+→ 执行预先规划好的 RETREAT
+→ 下一事件
+```
+
+后续 Task 的变化主要发生在该事件单元外部：目标位置、双臂调度、冲突处理、同物体协同等。
+
+## 5. 工程实现路线
 
 | Task | 工程里程碑 | 主要验收目标 | 状态 |
 |---|---|---|---|
@@ -109,9 +151,9 @@ MoveIt AttachedCollisionObject
 | 01 | 二指夹爪单臂 Pick & Place 基线 | 完整稳定确定性抓放循环 | ✅ 已完成 |
 | 02 | Placement Skill | 参数化放置、到达/插入/释放/退出判定 | ✅ 已完成 |
 | 03 | B-A-C 二指夹爪可执行性 | 验证高密度放置中的侧向夹爪干涉 | ✅ 已完成 |
-| 04 | 顶部吸盘单臂基线 | FR3 使用紧凑顶部吸盘稳定吸取、搬运、放置 | 🟡 进行中 |
-| 05 | 吸盘高密度放置验证 | 在 B-A-C / 紧邻箱体场景中完成无侧向间隙放置 | 计划中 |
-| 06 | 双 FR3 + 双吸盘基线 | 两台 FR3、独立控制链、工具坐标系与吸附状态 | 计划中 |
+| 04 | 顶部吸盘单臂基线 | FR3 使用紧凑顶部吸盘稳定吸取、搬运、放置；形成基础码垛事件单元 | ✅ 已完成 |
+| 05 | 吸盘高密度放置验证 | 同一 B-A-C 场景中顶部吸盘完成二指夹爪无法完成的垂直插入；完成 MoveIt/Isaac 模型对齐 | ✅ 已完成 |
+| 06 | 双 FR3 + 双吸盘基线 | 两台 FR3、独立控制链、独立工具坐标系、独立吸附状态 | 🟡 进行中 |
 | 07 | 松协调并行码垛 | 两臂分别操作不同小箱并行执行 | 计划中 |
 | 08 | 松协调时空冲突检测 | 臂-臂、臂-携带物、路径时序冲突检测 | 计划中 |
 | 09 | 松协调局部重规划 | 冲突时通过等待 / 主从 / 局部重规划解决 | 计划中 |
@@ -126,46 +168,9 @@ MoveIt AttachedCollisionObject
 | 18 | 批量仿真实验 | 为后续论文整理提供定量数据 | 计划中 |
 | 19 | RGB-D 感知 | Ground Truth 稳定后再决定是否加入 | 可选 |
 
-## 5. 当前 Task 04
+## 6. Task03 → Task05 的工程结论
 
-Task 04 的目标非常单纯：
-
-> **先把现有单 FR3 的二指抓放替换成稳定的顶部吸盘抓放。**
-
-本阶段不做双臂、不做力控、不做论文算法扩展。
-
-验收链：
-
-```text
-HOME
-→ PRE_GRASP
-→ 顶部接触
-→ SUCTION ON
-→ LIFT
-→ TRANSFER
-→ PLACE
-→ SUCTION OFF
-→ RETREAT
-→ HOME
-```
-
-验收标准：
-
-```text
-1. Cube 可以稳定吸起；
-2. 搬运过程中不脱落；
-3. 放置时吸盘不需要进入 Cube 两侧；
-4. 释放后 Cube 稳定留在目标位置；
-5. MoveIt 携物碰撞模型与 Isaac 吸附状态一致。
-```
-
-Task 05 再回到 Task 03 的 B-A-C 场景，验证顶部吸盘是否真正解决密集放置问题。
-
-## 6. 已完成 Task 03 的工程结论
-
-Task 03 保留作为末端执行器选择的验证依据，而不是继续围绕二指夹爪设计补救策略。
-
-已验证：
+Task03：
 
 ```text
 A 本体几何可放入 B/C 间隙
@@ -174,17 +179,48 @@ A 本体几何可放入 B/C 间隙
 → 二指夹爪无法完成该高密度放置
 ```
 
-不继续采用：
+Task05：
 
 ```text
-放置后硬推 Cube
-仅靠 yaw 切换
-为每个箱体永久预留 finger 缝隙
+同一 B-A-C 几何
+→ 顶部紧凑吸盘
+→ PRE_PLACE -> PLACE 成功
+→ BoxA 稳定进入 B/C 中间
+→ 自定义 MoveIt 紧凑吸盘模型联合仿真通过
 ```
 
-这些方案不能作为通用高密度码垛主路线。
+最终结论：高密度放置主线采用顶部紧凑吸盘，不再围绕二指夹爪设计补救策略。
 
-## 7. 工程目录
+## 7. 当前 Task06
+
+Task06 只建立双臂基础设施，不直接做并行码垛或紧协调搬大箱。
+
+第一阶段目标：
+
+```text
+Left FR3  + left compact suction
+Right FR3 + right compact suction
+```
+
+要求两套控制链相互独立：
+
+```text
+Left joint command / joint state / suction command / suction state
+Right joint command / joint state / suction command / suction state
+```
+
+首个验收只做：
+
+```text
+两台 FR3 都能被 MoveIt 正确描述
+→ 两臂能分别回 HOME
+→ 左右吸盘可独立 ON/OFF
+→ TF / planning groups / namespace 不串线
+```
+
+通过后再进入 Task07 的两臂分别搬不同小箱并行执行。
+
+## 8. 工程目录
 
 项目根目录：
 
@@ -198,11 +234,11 @@ ROS 2 工作空间：
 ~/lmy/dual-arm-embodied-palletizing/ros_ws
 ```
 
-稳定的旧 Task 源码继续保留作为回归基线，不直接覆盖。
+稳定旧 Task 源码继续保留作为回归基线，不直接覆盖。
 
 后续新功能继续采用独立 Task 节点 / 场景，确认稳定后再抽象成统一技能库。
 
-## 8. 当前原则
+## 9. 当前原则
 
 ```text
 工程先于论文结构。
