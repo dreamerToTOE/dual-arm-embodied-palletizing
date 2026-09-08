@@ -6,7 +6,7 @@
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
 - Task06-B：✅ ROS / TF / Joint 通信隔离已本机验收通过。
-- Task06-C：🟡 双臂 MoveIt2 描述代码已上传，待本机编译与 RViz / move_group 验收。
+- Task06-C：🟡 双臂 MoveIt2 描述已通过编译与 URDF 静态 xacro 验证，待 move_group / RViz 联合验收。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
 ## 1. 目标
@@ -183,17 +183,23 @@ Isaac Task06-B 仍发布原始：
 
 随后由 `robot_state_publisher` 基于双臂 URDF 发布标准 `/tf`，因此左右 frame 名不再冲突。
 
-Task06-C 当前验收目标：
+当前本机已通过：
 
 ```text
-1. 新包可 colcon build
-2. xacro 可生成双臂 URDF / SRDF
-3. /joint_states 含 14 个唯一 arm joints
-4. 标准 /tf 中出现 left_fr3_* 与 right_fr3_* frame
-5. move_group 正常启动
-6. RViz 同时显示两台 FR3 + 两个 compact suction
-7. MotionPlanning 中存在 left_arm / right_arm
-8. 两臂之间的碰撞没有被 ACM 全局屏蔽
+1. fr3_dual_compact_suction_description 可 colcon build：PASS
+2. xacro 可生成双臂 URDF：PASS
+3. 生成 URDF 中 left_fr3_joint1..7 与 right_fr3_joint1..7 共 14 个唯一关节：PASS
+```
+
+Task06-C 剩余验收：
+
+```text
+4. /joint_states 含 14 个唯一 arm joints
+5. 标准 /tf 中出现 left_fr3_* 与 right_fr3_* frame
+6. move_group 正常启动
+7. RViz 同时显示两台 FR3 + 两个 compact suction
+8. MotionPlanning 中存在 left_arm / right_arm
+9. 两臂之间的碰撞没有被 ACM 全局屏蔽
 ```
 
 ## 6. Task06-D：左右臂独立 HOME + 吸盘 ON/OFF
@@ -219,4 +225,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-本机只做 **Task06-C 第一轮静态验收**：下载新包 → 编译 → 启动双臂 MoveIt → 检查 `/joint_states`、标准 `/tf`、RViz 两臂模型与 planning groups。
+进入 **Task06-C 第二轮联合验收**：保持 Isaac Task06-B 场景与 ActionGraph 运行，启动双臂 MoveIt2，检查 `/joint_states`、标准 `/tf`、RViz 双臂模型与 planning groups。
