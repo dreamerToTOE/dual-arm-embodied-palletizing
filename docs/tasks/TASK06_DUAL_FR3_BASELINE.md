@@ -5,7 +5,7 @@
 🟡 **进行中**
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
-- Task06-B：🟡 双臂 ROS / TF / Joint ActionGraph 代码已上传，待本机通信隔离验收。
+- Task06-B：🟡 ROS ActionGraph 已运行；左右 joint_states / topic 已验证正常，待左右 joint_command 隔离动作验收。
 - Task06-C：计划中，MoveIt 双臂描述。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
@@ -169,16 +169,16 @@ Task06-B 暂时把左右 TF 拆到：
 MoveIt 双臂 URDF / SRDF
 ```
 
-Task06-B 验收：
+Task06-B 当前本机验收：
 
 ```text
-1. /left/joint_states 持续发布左臂状态
-2. /right/joint_states 持续发布右臂状态
-3. /left/tf 有左臂 TF 数据
-4. /right/tf 有右臂 TF 数据
-5. 向 /left/joint_command 发命令时只有左臂动作
-6. 向 /right/joint_command 发命令时只有右臂动作
-7. 两套控制不能串线
+1. /left/joint_states 持续发布左臂状态：PASS
+2. /right/joint_states 持续发布右臂状态：PASS
+3. 左右相关 ROS topic 可正常发现：PASS
+4. /left/tf 左臂 TF：待确认
+5. /right/tf 右臂 TF：待确认
+6. 向 /left/joint_command 发命令时只有左臂动作：待验收
+7. 向 /right/joint_command 发命令时只有右臂动作：待验收
 ```
 
 本阶段不运行抓取任务，也不修改 Task04 基础码垛原语。
@@ -218,4 +218,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-先本机验收 **Task06-B ROS 通信隔离**。通过后再开始 Task06-C 双臂 MoveIt 描述。
+先完成 Task06-B 左右 joint_command 隔离动作验收；通过后再开始 Task06-C 双臂 MoveIt 描述。
