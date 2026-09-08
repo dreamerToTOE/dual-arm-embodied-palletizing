@@ -1,16 +1,24 @@
 # Task05-C：MoveIt / Isaac 紧凑吸盘模型对齐
 
+## 状态
+
+✅ **已完成并本机联合验证通过**
+
 ## 背景
 
 Task05 B-A-C 高密度放置验证中：
 
 - 使用官方 `cobot_pump` MoveIt 模型时，`PRE_PLACE -> PLACE` 在 B/C 中间插入失败；
 - `load_gripper:=false` 后，同一 Task04 基础码垛事件单元、同一 B-A-C 几何场景完整成功；
-- 本次成功结果：BoxA 最终约 `(0.6492, -0.1494, 0.0650)`，`e_xy ≈ 0.98 mm`，`e_z = 0.00 mm`。
-
-因此项目不继续使用官方大尺寸 `cobot_pump` 环境碰撞模型，而建立与 Isaac 实际紧凑吸盘一致的自定义 MoveIt 模型。
+- 项目因此建立与 Isaac 实际紧凑吸盘一致的自定义 MoveIt 模型。
 
 ## 自定义模型
+
+ROS2 包：
+
+```text
+ros_ws/src/fr3_compact_suction_description
+```
 
 尺寸严格复用 Task04 Isaac 基线：
 
@@ -50,13 +58,40 @@ fr3_link8 pose target
 
 暂不切换 planning tip 到 `fr3_compact_suction_tcp`，以减少对已验证控制代码的改动。
 
-## 验收
+## 启动方式
 
-1. 编译 `fr3_compact_suction_description`；
-2. 启动 `moveit_compact_suction.launch.py`；
-3. RViz 中确认末端为细杆 + 20 mm 直径吸盘，不存在官方 cobot_pump；
-4. 重跑 Task05；
-5. `PRE_PLACE -> PLACE (B-A-C INSERT)` 应为 `Cartesian fraction = 1.0000`；
-6. Isaac 中 BoxA 能落入 B/C 中间并完成 RETREAT。
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
 
-当前状态：🟡 模型代码已建立，待本机编译 + Isaac/MoveIt 联合验收。
+ros2 launch \
+  fr3_compact_suction_description \
+  moveit_compact_suction.launch.py
+```
+
+该启动方式不加载官方 `franka_hand` / `cobot_pump`，而加载项目自定义紧凑吸盘模型。
+
+## 最终验收
+
+已在 RViz / MoveIt 中看到紧凑吸盘模型，并再次运行 Task05：
+
+```text
+PRE_PLACE -> PLACE (B-A-C INSERT) = PASS
+Task05 SUCCESS
+```
+
+最终 BoxA Ground Truth：
+
+```text
+(0.6492, -0.1494, 0.0650) m
+```
+
+误差：
+
+```text
+e_xy ≈ 0.98 mm
+e_z  = 0.00 mm
+```
+
+结论：MoveIt / Isaac 末端执行器几何已对齐，官方 `cobot_pump` 不再作为本项目后续规划模型。
