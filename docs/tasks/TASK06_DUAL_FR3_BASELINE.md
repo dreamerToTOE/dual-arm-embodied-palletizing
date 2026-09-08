@@ -5,7 +5,7 @@
 🟡 **进行中**
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
-- Task06-B：🟡 ROS ActionGraph 已运行；左右 joint_states / topic 已验证正常，待左右 joint_command 隔离动作验收。
+- Task06-B：🟡 左右 joint_states 与 joint_command 隔离已验证通过，剩余左右 TF 验收。
 - Task06-C：计划中，MoveIt 双臂描述。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
@@ -177,8 +177,9 @@ Task06-B 当前本机验收：
 3. 左右相关 ROS topic 可正常发现：PASS
 4. /left/tf 左臂 TF：待确认
 5. /right/tf 右臂 TF：待确认
-6. 向 /left/joint_command 发命令时只有左臂动作：待验收
-7. 向 /right/joint_command 发命令时只有右臂动作：待验收
+6. 向 /left/joint_command 发命令时只有左臂动作：PASS
+7. 向 /right/joint_command 发命令时只有右臂动作：PASS
+8. 左右 joint_command 控制链互不串线：PASS
 ```
 
 本阶段不运行抓取任务，也不修改 Task04 基础码垛原语。
@@ -218,4 +219,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-先完成 Task06-B 左右 joint_command 隔离动作验收；通过后再开始 Task06-C 双臂 MoveIt 描述。
+只剩 Task06-B 左右 TF 数据验收。确认 `/left/tf` 与 `/right/tf` 都有对应机械臂 TF 后，Task06-B 收口并进入 Task06-C 双臂 MoveIt 描述。
