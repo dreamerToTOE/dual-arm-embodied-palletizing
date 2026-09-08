@@ -5,8 +5,8 @@
 🟡 **进行中**
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
-- Task06-B：🟡 左右 joint_states 与 joint_command 隔离已验证通过，剩余左右 TF 验收。
-- Task06-C：计划中，MoveIt 双臂描述。
+- Task06-B：✅ ROS / TF / Joint 通信隔离已本机验收通过。
+- Task06-C：🟡 双臂 MoveIt2 描述代码已上传，待本机编译与 RViz / move_group 验收。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
 ## 1. 目标
@@ -51,24 +51,20 @@ PRE_PICK
 → RETREAT
 ```
 
-MoveIt 末端执行器使用 Task05-C 已验证的项目自定义：
+MoveIt 末端执行器继续使用项目自定义 compact suction，不再使用 Franka 官方 `cobot_pump` 环境碰撞模型。
+
+当前兼容策略继续保持：
 
 ```text
-fr3_compact_suction_description
-```
-
-不再使用 Franka 官方 `cobot_pump` 环境碰撞模型。
-
-当前单臂兼容策略：
-
-```text
-planning tip = fr3_link8
+single arm tip = fr3_link8
+left arm tip   = left_fr3_link8
+right arm tip  = right_fr3_link8
 compact suction TCP offset = 0.105 m
 ```
 
-双臂版本优先保持同样语义，避免在 Task06 同时修改基础码垛原语。
+这样不破坏 Task04 起已经验证的 0.105 m TCP 换算逻辑。
 
-## 3. Task06-A：Isaac 双 FR3 场景
+## 3. Task06-A：Isaac 双 FR3 场景 ✅
 
 脚本：
 
@@ -76,25 +72,12 @@ compact suction TCP offset = 0.105 m
 isaac/scripts/task06_dual_fr3_scene.py
 ```
 
-### 第一版布局（已否决）
-
-```text
-Left  = (0.00, -0.25, 0.00)
-Right = (0.00, +0.25, 0.00)
-yaw   = 0 deg / 0 deg
-```
-
-问题：两台机械臂都挤在桌面同一短边附近，HOME 状态本体距离过近，初始碰撞概率过高，不适合作为双臂基线。
-
-### 第二版布局（已验收）
-
-采用桌面两条长边各一台、两臂同朝向：
+固定布局：
 
 ```text
 Table:
 center = (0.55, 0.00, 0.025)
 size   = (1.20, 0.80, 0.05)
-long sides: y = +/-0.40 m
 
 Left FR3:
 position = (0.55, -0.50, 0.00)
@@ -107,19 +90,9 @@ yaw      = 0 deg
 base separation = 1.00 m
 ```
 
-Task06-A 本机验收结果：
+本机验收：两台 FR3 位于桌面两条长边外侧、同朝向、HOME 状态无明显穿模，中央保留明显公共工作区，两端 compact suction 均正确显示。
 
-```text
-1. 两台 FR3 分别位于桌面两条长边外侧：PASS
-2. 两台机械臂 yaw 相同：PASS
-3. HOME 状态没有明显本体穿模或过近问题：PASS
-4. 桌面中央保留明显的双臂共同操作区域：PASS
-5. 两端 compact suction 正确显示：PASS
-```
-
-因此第二版布局固定为 Task06 后续基线。
-
-## 4. Task06-B：ROS / TF / Joint 通信拆分
+## 4. Task06-B：ROS / TF / Joint 通信拆分 ✅
 
 脚本：
 
@@ -127,13 +100,7 @@ Task06-A 本机验收结果：
 isaac/scripts/task06_dual_ros_graph.py
 ```
 
-该脚本会移除旧单臂 `/World/ActionGraph`，创建：
-
-```text
-/World/Task06ROSGraph
-```
-
-当前通信：
+通信：
 
 ```text
 Left:
@@ -150,50 +117,83 @@ Global:
 PUB /clock
 ```
 
-Task06-B 暂时把左右 TF 拆到：
+本机验收：
 
 ```text
-/left/tf
-/right/tf
+/left/joint_states：PASS
+/right/joint_states：PASS
+/left/tf：PASS
+/right/tf：PASS
+/left/joint_command 只驱动 left_fr3：PASS
+/right/joint_command 只驱动 right_fr3：PASS
 ```
 
-原因：Isaac 两个 FR3 引用内部仍使用相同 `fr3_link*` Prim 名。当前阶段只验证通信链是否互相隔离，避免直接在标准 `/tf` 中产生同名 frame 覆盖。
+因此 Task06-B 收口。
 
-**Task06-C 再统一解决：**
+## 5. Task06-C：MoveIt2 双臂描述 🟡
+
+新增 ROS2 包：
 
 ```text
-唯一 left_/right_ joint / frame 前缀
-+
-标准 /tf
-+
-MoveIt 双臂 URDF / SRDF
+ros_ws/src/fr3_dual_compact_suction_description/
 ```
 
-Task06-B 当前本机验收：
+关键设计：
 
 ```text
-1. /left/joint_states 持续发布左臂状态：PASS
-2. /right/joint_states 持续发布右臂状态：PASS
-3. 左右相关 ROS topic 可正常发现：PASS
-4. /left/tf 左臂 TF：待确认
-5. /right/tf 右臂 TF：待确认
-6. 向 /left/joint_command 发命令时只有左臂动作：PASS
-7. 向 /right/joint_command 发命令时只有右臂动作：PASS
-8. 左右 joint_command 控制链互不串线：PASS
+world
+├── left_fr3_link0 ... left_fr3_link8
+│   └── left_fr3_compact_suction
+└── right_fr3_link0 ... right_fr3_link8
+    └── right_fr3_compact_suction
 ```
 
-本阶段不运行抓取任务，也不修改 Task04 基础码垛原语。
-
-## 5. Task06-C：MoveIt 双臂描述
-
-验收：
+两台机械臂使用唯一 joint / link 前缀：
 
 ```text
-left_arm planning group
-right_arm planning group
-双臂碰撞模型同时存在
-两端均使用 compact suction collision
-标准 /tf 中 frame 名唯一
+left_fr3_joint1 ... left_fr3_joint7
+right_fr3_joint1 ... right_fr3_joint7
+
+left_fr3_link0 ... left_fr3_link8
+right_fr3_link0 ... right_fr3_link8
+```
+
+MoveIt planning groups：
+
+```text
+left_arm
+right_arm
+dual_arm
+```
+
+其中单臂 IK 分别配置 LMAKinematicsPlugin；`dual_arm` 当前只作为组合 group 保留，不为其配置单一末端 IK。
+
+Isaac Task06-B 仍发布原始：
+
+```text
+/left/joint_states
+/right/joint_states
+```
+
+新增 `dual_joint_state_bridge.py` 将两路状态合并并重命名到标准：
+
+```text
+/joint_states
+```
+
+随后由 `robot_state_publisher` 基于双臂 URDF 发布标准 `/tf`，因此左右 frame 名不再冲突。
+
+Task06-C 当前验收目标：
+
+```text
+1. 新包可 colcon build
+2. xacro 可生成双臂 URDF / SRDF
+3. /joint_states 含 14 个唯一 arm joints
+4. 标准 /tf 中出现 left_fr3_* 与 right_fr3_* frame
+5. move_group 正常启动
+6. RViz 同时显示两台 FR3 + 两个 compact suction
+7. MotionPlanning 中存在 left_arm / right_arm
+8. 两臂之间的碰撞没有被 ACM 全局屏蔽
 ```
 
 ## 6. Task06-D：左右臂独立 HOME + 吸盘 ON/OFF
@@ -219,4 +219,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-只剩 Task06-B 左右 TF 数据验收。确认 `/left/tf` 与 `/right/tf` 都有对应机械臂 TF 后，Task06-B 收口并进入 Task06-C 双臂 MoveIt 描述。
+本机只做 **Task06-C 第一轮静态验收**：下载新包 → 编译 → 启动双臂 MoveIt → 检查 `/joint_states`、标准 `/tf`、RViz 两臂模型与 planning groups。
