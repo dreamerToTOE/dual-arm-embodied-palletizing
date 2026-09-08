@@ -1,10 +1,16 @@
 # Task06-A：双 FR3 + 双紧凑吸盘 Isaac 场景
 # Isaac Sim 4.5 Script Editor 中、Timeline 停止时运行。
 #
-# 第一版基座布局：
-#   Left  FR3: (0.00, -0.25, 0.00), yaw = 0 deg
-#   Right FR3: (0.00, +0.25, 0.00), yaw = 0 deg
-# 两台机械臂同朝向、基座间距 0.50 m，中央保留明显公共工作空间。
+# 第二版基座布局（按实际场景反馈修正）：
+#   - 两台 FR3 分别放在桌面两条长边外侧；
+#   - 两台机械臂保持相同朝向 yaw = 0 deg；
+#   - 基座中心沿桌面 X 中心线布置，降低初始本体碰撞概率；
+#   - 两臂到桌面中心距离相同，保留中央公共工作区。
+#
+#   Table long sides: y = +/-0.40 m
+#   Left  FR3: (0.55, -0.50, 0.00), yaw = 0 deg
+#   Right FR3: (0.55, +0.50, 0.00), yaw = 0 deg
+#   Base separation = 1.00 m
 #
 # 本 Task 只搭建场景：
 #   - 不创建 ROS topic
@@ -39,8 +45,10 @@ LEFT_ROOT = "/World/left_fr3"
 RIGHT_ROOT = "/World/right_fr3"
 LEGACY_ROOT = "/World/fr3"
 
-LEFT_BASE = (0.00, -0.25, 0.00)
-RIGHT_BASE = (0.00, +0.25, 0.00)
+# 桌面中心 x = 0.55 m，宽度 y = +/-0.40 m。
+# 两台 FR3 分别放在两条长边外侧 0.10 m，且保持同一 yaw。
+LEFT_BASE = (0.55, -0.50, 0.00)
+RIGHT_BASE = (0.55, +0.50, 0.00)
 LEFT_YAW_DEG = 0.0
 RIGHT_YAW_DEG = 0.0
 
@@ -209,7 +217,7 @@ remove_if_exists(RIGHT_ROOT)
 remove_if_exists(LEGACY_ROOT)
 
 # ============================================================
-# 3. 创建同朝向双 FR3
+# 3. 创建“长边两侧、同朝向”双 FR3
 # ============================================================
 
 add_fr3_reference(LEFT_ROOT, fr3_asset, LEFT_BASE, LEFT_YAW_DEG)
@@ -237,12 +245,17 @@ right_center_distance = math.hypot(
     table_center_xy[1] - RIGHT_BASE[1],
 )
 
+table_half_y = 0.5 * TABLE_SIZE[1]
+left_side_clearance = abs(LEFT_BASE[1]) - table_half_y
+right_side_clearance = abs(RIGHT_BASE[1]) - table_half_y
+
 left_world = world_translation(LEFT_ROOT)
 right_world = world_translation(RIGHT_ROOT)
 
 print("")
 print("====================================================")
 print("Task06-A 双 FR3 + 双紧凑吸盘场景创建完成")
+print("布局：桌面两条长边各一台 FR3，两臂同朝向")
 print(f"FR3 asset = {fr3_asset}")
 print("")
 print(
@@ -265,6 +278,9 @@ print(
     f"Table size   = ({TABLE_SIZE[0]:.3f}, {TABLE_SIZE[1]:.3f}, "
     f"{TABLE_SIZE[2]:.3f})"
 )
+print(f"Table long sides at y = +/-{table_half_y:.3f} m")
+print(f"Left  base outside long side by = {left_side_clearance:.3f} m")
+print(f"Right base outside long side by = {right_side_clearance:.3f} m")
 print(f"Left  base -> table center XY distance = {left_center_distance:.3f} m")
 print(f"Right base -> table center XY distance = {right_center_distance:.3f} m")
 print("")
@@ -275,8 +291,9 @@ print("Compact suction max diameter = 20 mm")
 print("")
 print("Task06-A 当前只验收布局，不点击 Play 做控制。")
 print("重点观察：")
-print("1) 两台 FR3 HOME 外观是否互相穿模；")
-print("2) 两台机械臂是否同朝向；")
-print("3) 桌面中央是否形成明显公共工作区；")
-print("4) 左右吸盘外观是否均为细杆 + 20 mm cup。")
+print("1) 两台 FR3 是否分别位于桌面两条长边外侧；")
+print("2) 两台机械臂是否保持同朝向；")
+print("3) HOME 外观是否明显降低了本体碰撞风险；")
+print("4) 桌面中央是否仍存在足够的双臂公共工作区；")
+print("5) 左右吸盘外观是否均为细杆 + 20 mm cup。")
 print("====================================================")
