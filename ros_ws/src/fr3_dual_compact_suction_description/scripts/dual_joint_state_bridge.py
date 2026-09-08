@@ -16,7 +16,6 @@ class DualJointStateBridge(Node):
 
         self.left_msg = None
         self.right_msg = None
-        self.warned_incomplete = False
 
         self.pub = self.create_publisher(JointState, "/joint_states", 10)
         self.create_subscription(
@@ -77,14 +76,11 @@ class DualJointStateBridge(Node):
         right = self.remap(self.right_msg, "right")
 
         if len(left[0]) != 7 or len(right[0]) != 7:
-            if not self.warned_incomplete:
-                self.get_logger().warning(
-                    "左右 JointState 未同时包含 fr3_joint1..7，暂不发布完整 /joint_states。"
-                )
-                self.warned_incomplete = True
+            self.get_logger().warning(
+                "左右 JointState 未同时包含 fr3_joint1..7，暂不发布完整 /joint_states。",
+                throttle_duration_sec=2.0,
+            )
             return
-
-        self.warned_incomplete = False
 
         out = JointState()
         out.header.stamp = self.get_clock().now().to_msg()
