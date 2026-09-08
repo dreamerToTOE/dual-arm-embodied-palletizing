@@ -2,16 +2,16 @@
 
 ## 状态
 
-🟡 **进行中**
+✅ **已完成**
 
-- Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
+- Task06-A：✅ Isaac 双 FR3 长边布局已本机验收通过。
 - Task06-B：✅ ROS / TF / Joint 通信隔离已本机验收通过。
-- Task06-C：🟡 双臂 MoveIt2 描述、14 关节状态、标准 TF、RViz 双臂显示与 Planning Group 均已通过；正在补齐 MoveIt Planning Scene 环境桌面与最终碰撞验收。
-- Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
+- Task06-C：✅ 双臂 MoveIt2 描述、14 关节状态、标准 TF、RViz 双臂显示、Planning Group 与环境桌面均已通过。
+- 原计划 Task06-D（逐臂 HOME + 吸盘 ON/OFF）不再单独重复验收，合并到 Task07 首次双臂并行抓放集成测试中。
 
 ## 1. 目标
 
-Task06 只建立双臂基础设施，不直接做松协调并行码垛，也不直接做紧协调共同搬运。
+Task06 只建立双臂基础设施，不重新验证 Task04 / Task05 已经证明的单臂抓放能力。
 
 目标结构：
 
@@ -20,49 +20,44 @@ Left FR3  + left compact suction
 Right FR3 + right compact suction
 ```
 
-两套机械臂必须具备独立：
+双臂基础设施已具备：
 
 ```text
-joint state
-joint command
-TF
-MoveIt planning group
-suction command
-suction state
+独立 joint state / joint command
+唯一 left_/right_ joint / link / TF
+独立 MoveIt planning group
+统一 MoveIt Planning Scene
+双臂共同环境模型
 ```
 
-## 2. 继承的项目级基线
+## 2. 模块化复用原则
 
-后续基础码垛事件统一复用 Task04 已验证时序，不重新设计：
+从 Task06 结束后，项目不再按“每个 Task 从头验证一遍单臂能力”的方式推进。
+
+已经验证过的模块直接复用：
 
 ```text
-PRE_PICK
-→ CONTACT
+Task04 primitive
+HOME / safe
+→ PRE_PICK
+→ remove target from MoveIt world
+→ Cartesian CONTACT
 → SUCTION ON
-→ ATTACH
+→ attach
 → LIFT
 → TRANSFER / PRE_PLACE
 → PLACE
-→ 释放前先规划 RETREAT
+→ plan RETREAT while attached
 → SUCTION OFF
 → settle
-→ Ground Truth 同步
-→ DETACH / addWorld
+→ Ground Truth
+→ detach / addWorld
 → RETREAT
 ```
 
-MoveIt 末端执行器继续使用项目自定义 compact suction，不再使用 Franka 官方 `cobot_pump` 环境碰撞模型。
+Task05 已验证 compact suction 的 Isaac / MoveIt 几何一致性和高密度插入能力。
 
-当前兼容策略继续保持：
-
-```text
-single arm tip = fr3_link8
-left arm tip   = left_fr3_link8
-right arm tip  = right_fr3_link8
-compact suction TCP offset = 0.105 m
-```
-
-这样不破坏 Task04 起已经验证的 0.105 m TCP 换算逻辑。
+后续只验证“新增的双臂能力”，不重复验证已经稳定的单臂内部步骤。
 
 ## 3. Task06-A：Isaac 双 FR3 场景 ✅
 
@@ -128,17 +123,15 @@ PUB /clock
 /right/joint_command 只驱动 right_fr3：PASS
 ```
 
-因此 Task06-B 收口。
+## 5. Task06-C：MoveIt2 双臂描述 ✅
 
-## 5. Task06-C：MoveIt2 双臂描述 🟡
-
-新增 ROS2 包：
+ROS2 包：
 
 ```text
 ros_ws/src/fr3_dual_compact_suction_description/
 ```
 
-关键设计：
+MoveIt 结构：
 
 ```text
 world
@@ -148,17 +141,7 @@ world
     └── right_fr3_compact_suction
 ```
 
-两台机械臂使用唯一 joint / link 前缀：
-
-```text
-left_fr3_joint1 ... left_fr3_joint7
-right_fr3_joint1 ... right_fr3_joint7
-
-left_fr3_link0 ... left_fr3_link8
-right_fr3_link0 ... right_fr3_link8
-```
-
-MoveIt planning groups：
+Planning groups：
 
 ```text
 left_arm
@@ -166,46 +149,19 @@ right_arm
 dual_arm
 ```
 
-其中单臂 IK 分别配置 LMAKinematicsPlugin；`dual_arm` 当前只作为组合 group 保留，不为其配置单一末端 IK。
-
-Isaac Task06-B 仍发布原始：
+已通过：
 
 ```text
-/left/joint_states
-/right/joint_states
+双臂 URDF xacro：PASS
+14 个唯一 arm joints：PASS
+/joint_states 左右 14 关节：PASS
+标准 /tf left_fr3_* / right_fr3_*：PASS
+move_group：PASS
+RViz 双 FR3：PASS
+left_arm / right_arm / dual_arm：PASS
 ```
 
-`dual_joint_state_bridge.py` 将两路状态合并并重命名到标准：
-
-```text
-/joint_states
-```
-
-随后由 `robot_state_publisher` 基于双臂 URDF 发布标准 `/tf`，因此左右 frame 名不再冲突。
-
-### 当前本机已通过
-
-```text
-1. fr3_dual_compact_suction_description 可 colcon build：PASS
-2. xacro 可生成双臂 URDF：PASS
-3. 生成 URDF 中 left_fr3_joint1..7 与 right_fr3_joint1..7 共 14 个唯一关节：PASS
-4. /joint_states 含左右共 14 个唯一 arm joints：PASS
-5. 标准 /tf 中 left_fr3_* 与 right_fr3_* frame 均正常：PASS
-6. move_group 正常启动：PASS
-7. RViz 同时显示两台 FR3：PASS
-8. MotionPlanning 中 left_arm / right_arm / dual_arm 均存在：PASS
-```
-
-### MoveIt 环境桌面
-
-Isaac 的 `/World/Table` 不属于机器人 URDF，因此不会自动进入 MoveIt Planning Scene。Task06-C 新增：
-
-```text
-config/environment.yaml
-scripts/task06_environment_publisher.py
-```
-
-Launch 启动后，环境节点等待 `/apply_planning_scene`，把已验收桌面作为真正的 `CollisionObject` 加入 MoveIt：
+MoveIt Planning Scene 已自动加载与 Isaac 一致的桌面：
 
 ```text
 id     = task06_table
@@ -214,37 +170,50 @@ center = (0.55, 0.00, 0.025)
 size   = (1.20, 0.80, 0.05)
 ```
 
-该桌面用于碰撞检测，不只是 RViz 装饰显示。
+本机已确认 RViz 中桌面正常出现。
 
-Task06-C 剩余验收：
+不再为“桌子会不会挡住单臂轨迹”单独重复做穿桌回归；MoveIt 环境碰撞能力已在单臂阶段反复使用。真正新的双臂互碰能力在 Task08 的冲突场景中直接验收。
 
-```text
-9. RViz Planning Scene 出现 task06_table，尺寸/位置与 Isaac 一致
-10. 桌面参与碰撞检测，规划不会穿桌
-11. 两臂之间的碰撞没有被 ACM 全局屏蔽
-```
-
-## 6. Task06-D：左右臂独立 HOME + 吸盘 ON/OFF
-
-验收：
+## 6. Task06 收口后的模块结构
 
 ```text
-Left FR3 独立回 HOME
-Right FR3 独立回 HOME
-Left suction 独立 ON/OFF
-Right suction 独立 ON/OFF
+[SingleArmPalletizePrimitive]   ← Task04 已验证
+          ↑ 参数化复用
+   ┌──────┴──────┐
+   │             │
+[Left Arm]   [Right Arm]
+   │             │
+   └──────┬──────┘
+          ↓
+[DualArm Coordinator]
+   ├─ 同时启动 / 调度
+   ├─ 共享 Planning Scene
+   ├─ 臂-臂 / 臂-物冲突检测
+   └─ 等待 / 优先级 / 重规划
 ```
 
-Task06 到此收口。
+后续工作的重点从“基础功能逐项回归”切换为“双臂新增能力集成”。
 
-Task07 再开始：
+## 7. 下一步：直接进入 Task07
+
+Task07 不再先分别验证 HOME、吸盘、单臂抓放。
+
+直接做：
 
 ```text
-Left FR3 运行一个 Task04 primitive 搬 BoxA
-Right FR3 运行一个 Task04 primitive 搬 BoxB
-→ 两臂并行
+Left FR3 复用 Task04 primitive 搬 BoxA
++
+Right FR3 复用 Task04 primitive 搬 BoxB
++
+两条任务同时启动
 ```
 
-## 7. 当前下一步
+首轮刻意选取无冲突目标，先证明：
 
-重新同步并编译 `fr3_dual_compact_suction_description`，启动 MoveIt2，先验收 `task06_table` 是否出现在 RViz Planning Scene 中且与 Isaac 桌面重合。通过后再做桌面碰撞与双臂互碰的最终 Task06-C 验收。
+```text
+双臂可以真正同时执行
+左右状态 / 命令 / Attach / Suction 不串线
+共享 MoveIt 场景保持一致
+```
+
+然后 Task08 立即构造两条会发生空间 / 时间冲突的轨迹，开始真正的双臂避障与冲突检测。
