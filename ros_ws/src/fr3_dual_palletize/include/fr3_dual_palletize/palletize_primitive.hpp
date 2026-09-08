@@ -10,6 +10,8 @@
 #include <vector>
 
 #include <geometry_msgs/msg/pose.hpp>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/robot_state/robot_state.h>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -77,8 +79,8 @@ private:
     double x, double y, double suction_tcp_world_z, double yaw = 0.0) const;
 
   bool planPoseStage(
-    class moveit::planning_interface::MoveGroupInterface& move_group,
-    const class moveit::core::JointModelGroup* joint_model_group,
+    moveit::planning_interface::MoveGroupInterface& move_group,
+    const moveit::core::JointModelGroup* joint_model_group,
     const std::string& eef_link,
     const std::vector<double>& start_q,
     const geometry_msgs::msg::Pose& target_pose,
@@ -86,16 +88,16 @@ private:
     trajectory_msgs::msg::JointTrajectory& trajectory_out);
 
   bool planCartesianStage(
-    class moveit::planning_interface::MoveGroupInterface& move_group,
-    const class moveit::core::JointModelGroup* joint_model_group,
+    moveit::planning_interface::MoveGroupInterface& move_group,
+    const moveit::core::JointModelGroup* joint_model_group,
     const std::vector<double>& start_q,
     const geometry_msgs::msg::Pose& target_pose,
     const std::string& stage_name,
     trajectory_msgs::msg::JointTrajectory& trajectory_out);
 
   bool setStartStateForGroup(
-    class moveit::planning_interface::MoveGroupInterface& move_group,
-    const class moveit::core::JointModelGroup* joint_model_group,
+    moveit::planning_interface::MoveGroupInterface& move_group,
+    const moveit::core::JointModelGroup* joint_model_group,
     const std::vector<double>& group_q);
 
   bool executeTrajectory(const trajectory_msgs::msg::JointTrajectory& input);
