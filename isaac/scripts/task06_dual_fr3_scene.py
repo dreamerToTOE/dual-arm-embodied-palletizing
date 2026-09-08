@@ -1,7 +1,7 @@
 # Task06-A：双 FR3 + 双紧凑吸盘 Isaac 场景
 # Isaac Sim 4.5 Script Editor 中、Timeline 停止时运行。
 #
-# 第二版基座布局（按实际场景反馈修正）：
+# 第二版基座布局（已验收）：
 #   - 两台 FR3 分别放在桌面两条长边外侧；
 #   - 两台机械臂保持相同朝向 yaw = 0 deg；
 #   - 基座中心沿桌面 X 中心线布置，降低初始本体碰撞概率；
@@ -12,11 +12,13 @@
 #   Right FR3: (0.55, +0.50, 0.00), yaw = 0 deg
 #   Base separation = 1.00 m
 #
-# 本 Task 只搭建场景：
-#   - 不创建 ROS topic
-#   - 不运行 MoveIt
-#   - 不执行抓取
-#   - 不修改 ActionGraph
+# 本脚本现在是自包含场景脚本：
+#   - 如果 /World/Table 已存在，则沿用；
+#   - 如果 /World/Table 不存在，则自动创建已验证尺寸的静态碰撞桌面；
+#   - 不创建 ROS topic；
+#   - 不运行 MoveIt；
+#   - 不执行抓取；
+#   - 不修改 ActionGraph。
 
 import math
 
@@ -45,8 +47,6 @@ LEFT_ROOT = "/World/left_fr3"
 RIGHT_ROOT = "/World/right_fr3"
 LEGACY_ROOT = "/World/fr3"
 
-# 桌面中心 x = 0.55 m，宽度 y = +/-0.40 m。
-# 两台 FR3 分别放在两条长边外侧 0.10 m，且保持同一 yaw。
 LEFT_BASE = (0.55, -0.50, 0.00)
 RIGHT_BASE = (0.55, +0.50, 0.00)
 LEFT_YAW_DEG = 0.0
@@ -83,6 +83,33 @@ def remove_if_exists(path):
         stage.RemovePrim(path)
 
 
+def ensure_world():
+    if not stage.GetPrimAtPath("/World").IsValid():
+        UsdGeom.Xform.Define(stage, "/World")
+
+
+def ensure_table():
+    """若基础 Stage 没有桌面，则自动创建 Task04~06 一致的静态碰撞桌面。"""
+    existing = stage.GetPrimAtPath(TABLE_PATH)
+    if existing.IsValid():
+        print(f"沿用已有桌面：{TABLE_PATH}")
+        return
+
+    print(f"未检测到 {TABLE_PATH}，自动创建 Task06 基准桌面。")
+    table = UsdGeom.Cube.Define(stage, TABLE_PATH)
+    table.CreateSizeAttr(1.0)
+    table.CreateDisplayColorAttr([Gf.Vec3f(0.0, 0.65, 0.85)])
+
+    xformable = UsdGeom.Xformable(table.GetPrim())
+    translate = xformable.AddTranslateOp(opSuffix="task06_table")
+    translate.Set(Gf.Vec3d(*TABLE_CENTER))
+    scale = xformable.AddScaleOp(opSuffix="task06_table")
+    scale.Set(Gf.Vec3f(*TABLE_SIZE))
+
+    # 只有 CollisionAPI、不添加 RigidBodyAPI => 静态碰撞体。
+    UsdPhysics.CollisionAPI.Apply(table.GetPrim())
+
+
 def resolve_fr3_asset():
     assets_root = get_assets_root_path()
     if not assets_root:
@@ -109,7 +136,6 @@ def add_fr3_reference(root_path, asset_url, xyz, yaw_deg):
     prim = stage.DefinePrim(root_path, "Xform")
     prim.GetReferences().AddReference(asset_url)
 
-    # 使用带 suffix 的本地 override，避免与资产内部已有 xformOp 同名。
     xformable = UsdGeom.Xformable(prim)
     xformable.ClearXformOpOrder()
 
@@ -143,7 +169,6 @@ def create_compact_suction(robot_root):
             f"{hand_path} 不存在。FR3 USD 内部层级与预期不一致。"
         )
 
-    # 保留 hand articulation / joint 结构，只隐藏原 Hand/Finger 外观并关闭碰撞。
     disable_visual_and_collision(f"{hand_path}/visuals")
     disable_visual_and_collision(f"{hand_path}/collisions")
     disable_visual_and_collision(f"{robot_root}/fr3_leftfinger")
@@ -153,7 +178,6 @@ def create_compact_suction(robot_root):
     remove_if_exists(tool_path)
     UsdGeom.Xform.Define(stage, tool_path)
 
-    # stem：z = 0 ~ 0.099 m
     stem = UsdGeom.Cylinder.Define(stage, f"{tool_path}/stem")
     stem.CreateAxisAttr(UsdGeom.Tokens.z)
     stem.CreateRadiusAttr(STEM_RADIUS)
@@ -164,7 +188,6 @@ def create_compact_suction(robot_root):
     stem.CreateDisplayColorAttr([Gf.Vec3f(0.25, 0.25, 0.25)])
     UsdPhysics.CollisionAPI.Apply(stem.GetPrim())
 
-    # cup：末端中心位于 0.102 m，底面/TCP 位于 0.105 m。
     cup_center_z = SUCTION_TCP_Z - 0.5 * CUP_HEIGHT
     cup = UsdGeom.Cylinder.Define(stage, f"{tool_path}/cup")
     cup.CreateAxisAttr(UsdGeom.Tokens.z)
@@ -194,14 +217,11 @@ def world_translation(path):
 
 
 # ============================================================
-# 1. 基线检查
+# 1. 自包含基础场景准备
 # ============================================================
 
-if not stage.GetPrimAtPath(TABLE_PATH).IsValid():
-    raise RuntimeError(
-        f"缺少 {TABLE_PATH}。请先打开当前已验证基础 Stage。"
-    )
-
+ensure_world()
+ensure_table()
 fr3_asset = resolve_fr3_asset()
 
 # ============================================================
@@ -211,7 +231,6 @@ fr3_asset = resolve_fr3_asset()
 for path in OLD_TASK_OBJECTS:
     remove_if_exists(path)
 
-# Task06-A 使用独立 top-level Prim；旧 /World/fr3 不继续保留。
 remove_if_exists(LEFT_ROOT)
 remove_if_exists(RIGHT_ROOT)
 remove_if_exists(LEGACY_ROOT)
@@ -288,12 +307,4 @@ print(f"Left  root world = {left_world}")
 print(f"Right root world = {right_world}")
 print(f"Compact suction TCP local Z = {SUCTION_TCP_Z:.3f} m")
 print("Compact suction max diameter = 20 mm")
-print("")
-print("Task06-A 当前只验收布局，不点击 Play 做控制。")
-print("重点观察：")
-print("1) 两台 FR3 是否分别位于桌面两条长边外侧；")
-print("2) 两台机械臂是否保持同朝向；")
-print("3) HOME 外观是否明显降低了本体碰撞风险；")
-print("4) 桌面中央是否仍存在足够的双臂公共工作区；")
-print("5) 左右吸盘外观是否均为细杆 + 20 mm cup。")
 print("====================================================")
