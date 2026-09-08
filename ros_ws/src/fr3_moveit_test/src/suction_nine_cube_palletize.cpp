@@ -78,6 +78,14 @@ constexpr double SUPPORT_XY_TOLERANCE = CUBE_HALF + 0.002;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
 
+// 搬运期间 suction_state 持续 OPEN 超过 120 ms，判定抓取丢失。
+// 做一个短暂去抖，避免单个状态消息瞬时异常导致误停。
+constexpr double GRASP_LOST_CONFIRM_SEC = 0.12;
+
+// 检测到掉落后，持续发送当前位置命令约 0.5 s，
+// 不再沿原轨迹继续运动。
+constexpr int GRASP_LOST_HOLD_REPEAT = 50;
+
 // Task04-B 只预定义 XY，Z 不写死。
 // Cube1~6：3x2 底层；Cube7~9：在第一排三个位置形成第二层。
 const std::array<std::array<double, 2>, NUM_CUBES> STACK_TARGET_XY = {{
@@ -459,11 +467,8 @@ private:
         executeTrajectory(pre_pick_traj);
 
         // ----------------------------------------------------
-        // 2. SUCTION ON -> Cartesian 下降 -> CLOSED
+        // 2. 保持 SUCTION OFF，Cartesian 下降至接触位
         // ----------------------------------------------------
-        commandSuction(true);
-        std::this_thread::sleep_for(200ms);
-
         removeWorldCube(cube_id);
 
         auto contact = makeTopDownPose(
@@ -482,6 +487,9 @@ private:
             return false;
         }
         executeTrajectory(contact_traj);
+
+        // CONTACT 后才开启吸盘，避免下降过程中提前创建错误相对位姿的附着关节。
+        commandSuction(true);
 
         if (!waitForSuctionClosed(true, 2.0))
         {
@@ -514,7 +522,14 @@ private:
         {
             return false;
         }
-        executeTrajectory(lift_traj);
+        if (!executeTrajectory(
+                lift_traj,
+                false,
+                "SUCTION_CONTACT -> LIFT"))
+        {
+            handleGraspLost(cube_index, cube_id, eef_link);
+            return false;
+        }
 
         // ----------------------------------------------------
         // 4. 动态查询目标 XY 当前最高表面，再生成本次放置 Z
@@ -566,7 +581,14 @@ private:
         {
             return false;
         }
-        executeTrajectory(pre_place_traj);
+        if (!executeTrajectory(
+                pre_place_traj,
+                false,
+                "LIFT -> PRE_PLACE"))
+        {
+            handleGraspLost(cube_index, cube_id, eef_link);
+            return false;
+        }
 
         // ----------------------------------------------------
         // 6. Cartesian 垂直到动态 PLACE
@@ -582,30 +604,21 @@ private:
         {
             return false;
         }
-        executeTrajectory(place_traj);
-
-        // ----------------------------------------------------
-        // 7. DETACH -> 临时 remove -> SUCTION OFF
-        // ----------------------------------------------------
-        if (!detachCubeFromTcp(cube_id, eef_link))
+        if (!executeTrajectory(
+                place_traj,
+                false,
+                "PRE_PLACE -> PLACE"))
         {
-            return false;
-        }
-        removeWorldCube(cube_id);
-
-        commandSuction(false);
-        if (!waitForSuctionClosed(false, 2.0))
-        {
-            RCLCPP_ERROR(node_->get_logger(),
-                         "%s：吸盘释放状态确认失败。", cube_id.c_str());
+            handleGraspLost(cube_index, cube_id, eef_link);
             return false;
         }
 
-        // 给 Cube 从 1 mm 释放高度落到真实支撑面的时间。
-        std::this_thread::sleep_for(300ms);
-
         // ----------------------------------------------------
-        // 8. Cartesian 垂直 RETREAT
+        // 7. Cube 仍附着时预先规划 RETREAT
+        //
+        // 此时 AttachedCollisionObject 仍比支撑面高 1 mm，MoveIt 可从
+        // PLACE 起点合法计算上退轨迹。物理释放后不再重新规划，避免
+        // 吸盘仍贴近已落下 Cube 时 Cartesian 起点碰撞。
         // ----------------------------------------------------
         auto retreat = makeTopDownPose(place_x, place_y, retreat_tcp_z);
         trajectory_msgs::msg::JointTrajectory retreat_traj;
@@ -618,12 +631,21 @@ private:
         {
             return false;
         }
-        executeTrajectory(retreat_traj);
 
         // ----------------------------------------------------
-        // 9. 使用 Isaac 最新真实落稳位姿重新加入 MoveIt World
+        // 8. 保持 MoveIt AttachedCollisionObject，先释放 Isaac 物理吸盘
         // ----------------------------------------------------
+        commandSuction(false);
+        if (!waitForSuctionClosed(false, 2.0))
+        {
+            RCLCPP_ERROR(node_->get_logger(),
+                         "%s：吸盘释放状态确认失败。", cube_id.c_str());
+            return false;
+        }
+
+        // 给 Cube 从 1 mm 释放高度落到真实支撑面的时间。
         std::this_thread::sleep_for(300ms);
+
         const geometry_msgs::msg::Pose settled_pose = getCubePose(cube_index);
 
         RCLCPP_INFO(node_->get_logger(),
@@ -633,7 +655,25 @@ private:
                     settled_pose.position.y,
                     settled_pose.position.z);
 
+        // 物理释放和落稳后，再解除 MoveIt 中的 AttachedCollisionObject。
+        if (!detachCubeFromTcp(cube_id, eef_link))
+        {
+            return false;
+        }
+
+        // detach 可能把 AttachedCollisionObject 按旧位姿放回 collision world；
+        // 删除后再按 Isaac Ground Truth 写回，保证 RETREAT 的 Planning Scene 正确。
+        removeWorldCube(cube_id);
+
         if (!addWorldCube(cube_id, settled_pose))
+        {
+            return false;
+        }
+
+        // ----------------------------------------------------
+        // 9. 执行物理释放前已规划好的 Cartesian RETREAT
+        // ----------------------------------------------------
+        if (!executeTrajectory(retreat_traj, false, "PLACE -> RETREAT"))
         {
             return false;
         }
@@ -946,11 +986,61 @@ private:
         return false;
     }
 
-    void executeTrajectory(const trajectory_msgs::msg::JointTrajectory& input)
+    void handleGraspLost(
+        std::size_t cube_index,
+        const std::string& cube_id,
+        const std::string& eef_link)
+    {
+        RCLCPP_ERROR(
+            node_->get_logger(),
+            "%s：确认 GRASP_LOST，停止本次码垛并同步实际掉落位置。",
+            cube_id.c_str());
+
+        // 确保 Isaac 物理吸盘关闭。
+        commandSuction(false);
+
+        // 清除 MoveIt 中仍然存在的“虚假 Attached Cube”。
+        if (!detachCubeFromTcp(cube_id, eef_link))
+        {
+            RCLCPP_WARN(
+                node_->get_logger(),
+                "%s：GRASP_LOST 后 MoveIt detach 返回失败。",
+                cube_id.c_str());
+        }
+
+        removeWorldCube(cube_id);
+
+        // 等 Cube 在 Isaac 中自由下落一小段时间。
+        std::this_thread::sleep_for(500ms);
+
+        // 使用 Isaac Ground Truth 把掉落后的真实位置重新加入 Planning Scene。
+        const auto dropped_pose = getCubePose(cube_index);
+
+        RCLCPP_ERROR(
+            node_->get_logger(),
+            "%s：掉落后 Isaac pose = (%.4f, %.4f, %.4f)",
+            cube_id.c_str(),
+            dropped_pose.position.x,
+            dropped_pose.position.y,
+            dropped_pose.position.z);
+
+        if (!addWorldCube(cube_id, dropped_pose))
+        {
+            RCLCPP_WARN(
+                node_->get_logger(),
+                "%s：掉落物重新加入 MoveIt Planning Scene 失败。",
+                cube_id.c_str());
+        }
+    }
+
+    bool executeTrajectory(
+        const trajectory_msgs::msg::JointTrajectory& input,
+        bool monitor_grasp = false,
+        const std::string& stage_name = "")
     {
         if (input.points.empty())
         {
-            return;
+            return false;
         }
 
         auto trajectory = input;
@@ -960,10 +1050,63 @@ private:
         std::size_t segment = 0;
         const auto start_time = std::chrono::steady_clock::now();
 
+        bool lost_pending = false;
+        std::chrono::steady_clock::time_point lost_since;
+
+        auto publishJointCommand =
+            [&](const std::vector<double>& q)
+            {
+                sensor_msgs::msg::JointState msg;
+                msg.header.stamp = node_->now();
+                msg.name = trajectory.joint_names;
+                msg.position = q;
+                command_pub_->publish(msg);
+            };
+
+        auto graspLostConfirmed =
+            [&]() -> bool
+            {
+                if (!monitor_grasp)
+                {
+                    return false;
+                }
+
+                if (suction_closed_.load())
+                {
+                    lost_pending = false;
+                    return false;
+                }
+
+                const auto now = std::chrono::steady_clock::now();
+
+                if (!lost_pending)
+                {
+                    lost_pending = true;
+                    lost_since = now;
+                    return false;
+                }
+
+                const double lost_time =
+                    std::chrono::duration<double>(now - lost_since).count();
+
+                return lost_time >= GRASP_LOST_CONFIRM_SEC;
+            };
+
+        auto emergencyHold =
+            [&](const std::vector<double>& q)
+            {
+                for (int i = 0; i < GRASP_LOST_HOLD_REPEAT; ++i)
+                {
+                    publishJointCommand(q);
+                    std::this_thread::sleep_for(10ms);
+                }
+            };
+
         while (true)
         {
             const double t = std::chrono::duration<double>(
                 std::chrono::steady_clock::now() - start_time).count();
+
             if (t > total_time)
             {
                 break;
@@ -976,6 +1119,7 @@ private:
             }
 
             std::vector<double> q_command;
+
             if (segment + 1 >= trajectory.points.size())
             {
                 q_command = trajectory.points.back().positions;
@@ -984,36 +1128,66 @@ private:
             {
                 const auto& p0 = trajectory.points[segment];
                 const auto& p1 = trajectory.points[segment + 1];
+
                 const double t0 = pointTime(p0);
                 const double t1 = pointTime(p1);
-                double alpha = (t1 > t0) ? (t - t0) / (t1 - t0) : 0.0;
+
+                double alpha =
+                    (t1 > t0) ? (t - t0) / (t1 - t0) : 0.0;
+
                 alpha = std::clamp(alpha, 0.0, 1.0);
 
                 q_command.resize(p0.positions.size());
+
                 for (std::size_t j = 0; j < q_command.size(); ++j)
                 {
-                    q_command[j] = p0.positions[j] +
+                    q_command[j] =
+                        p0.positions[j] +
                         alpha * (p1.positions[j] - p0.positions[j]);
                 }
             }
 
-            sensor_msgs::msg::JointState msg;
-            msg.header.stamp = node_->now();
-            msg.name = trajectory.joint_names;
-            msg.position = q_command;
-            command_pub_->publish(msg);
+            // ----------------------------------------------------
+            // 搬运阶段在线监测抓取状态
+            // ----------------------------------------------------
+            if (graspLostConfirmed())
+            {
+                RCLCPP_ERROR(
+                    node_->get_logger(),
+                    "[GRASP_LOST] %s：suction_state 持续 OPEN 超过 %.0f ms，"
+                    "立即停止当前轨迹。",
+                    stage_name.c_str(),
+                    GRASP_LOST_CONFIRM_SEC * 1000.0);
+
+                emergencyHold(q_command);
+                return false;
+            }
+
+            publishJointCommand(q_command);
             std::this_thread::sleep_for(10ms);
         }
 
+        // 正常到达终点后继续短暂保持。
+        const auto& final_q = trajectory.points.back().positions;
+
         for (int i = 0; i < 50; ++i)
         {
-            sensor_msgs::msg::JointState msg;
-            msg.header.stamp = node_->now();
-            msg.name = trajectory.joint_names;
-            msg.position = trajectory.points.back().positions;
-            command_pub_->publish(msg);
+            if (graspLostConfirmed())
+            {
+                RCLCPP_ERROR(
+                    node_->get_logger(),
+                    "[GRASP_LOST] %s：终点保持期间检测到抓取丢失。",
+                    stage_name.c_str());
+
+                emergencyHold(final_q);
+                return false;
+            }
+
+            publishJointCommand(final_q);
             std::this_thread::sleep_for(10ms);
         }
+
+        return true;
     }
 
 private:
