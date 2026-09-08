@@ -6,7 +6,7 @@
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
 - Task06-B：✅ ROS / TF / Joint 通信隔离已本机验收通过。
-- Task06-C：🟡 双臂 MoveIt2 描述已通过编译与 URDF 静态 xacro 验证，待 move_group / RViz 联合验收。
+- Task06-C：🟡 双臂 MoveIt2 描述、14 关节状态、标准 TF、RViz 双臂显示与 Planning Group 均已通过；正在补齐 MoveIt Planning Scene 环境桌面与最终碰撞验收。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
 ## 1. 目标
@@ -175,7 +175,7 @@ Isaac Task06-B 仍发布原始：
 /right/joint_states
 ```
 
-新增 `dual_joint_state_bridge.py` 将两路状态合并并重命名到标准：
+`dual_joint_state_bridge.py` 将两路状态合并并重命名到标准：
 
 ```text
 /joint_states
@@ -183,23 +183,45 @@ Isaac Task06-B 仍发布原始：
 
 随后由 `robot_state_publisher` 基于双臂 URDF 发布标准 `/tf`，因此左右 frame 名不再冲突。
 
-当前本机已通过：
+### 当前本机已通过
 
 ```text
 1. fr3_dual_compact_suction_description 可 colcon build：PASS
 2. xacro 可生成双臂 URDF：PASS
 3. 生成 URDF 中 left_fr3_joint1..7 与 right_fr3_joint1..7 共 14 个唯一关节：PASS
+4. /joint_states 含左右共 14 个唯一 arm joints：PASS
+5. 标准 /tf 中 left_fr3_* 与 right_fr3_* frame 均正常：PASS
+6. move_group 正常启动：PASS
+7. RViz 同时显示两台 FR3：PASS
+8. MotionPlanning 中 left_arm / right_arm / dual_arm 均存在：PASS
 ```
+
+### MoveIt 环境桌面
+
+Isaac 的 `/World/Table` 不属于机器人 URDF，因此不会自动进入 MoveIt Planning Scene。Task06-C 新增：
+
+```text
+config/environment.yaml
+scripts/task06_environment_publisher.py
+```
+
+Launch 启动后，环境节点等待 `/apply_planning_scene`，把已验收桌面作为真正的 `CollisionObject` 加入 MoveIt：
+
+```text
+id     = task06_table
+frame  = world
+center = (0.55, 0.00, 0.025)
+size   = (1.20, 0.80, 0.05)
+```
+
+该桌面用于碰撞检测，不只是 RViz 装饰显示。
 
 Task06-C 剩余验收：
 
 ```text
-4. /joint_states 含 14 个唯一 arm joints
-5. 标准 /tf 中出现 left_fr3_* 与 right_fr3_* frame
-6. move_group 正常启动
-7. RViz 同时显示两台 FR3 + 两个 compact suction
-8. MotionPlanning 中存在 left_arm / right_arm
-9. 两臂之间的碰撞没有被 ACM 全局屏蔽
+9. RViz Planning Scene 出现 task06_table，尺寸/位置与 Isaac 一致
+10. 桌面参与碰撞检测，规划不会穿桌
+11. 两臂之间的碰撞没有被 ACM 全局屏蔽
 ```
 
 ## 6. Task06-D：左右臂独立 HOME + 吸盘 ON/OFF
@@ -225,4 +247,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-进入 **Task06-C 第二轮联合验收**：保持 Isaac Task06-B 场景与 ActionGraph 运行，启动双臂 MoveIt2，检查 `/joint_states`、标准 `/tf`、RViz 双臂模型与 planning groups。
+重新同步并编译 `fr3_dual_compact_suction_description`，启动 MoveIt2，先验收 `task06_table` 是否出现在 RViz Planning Scene 中且与 Isaac 桌面重合。通过后再做桌面碰撞与双臂互碰的最终 Task06-C 验收。
