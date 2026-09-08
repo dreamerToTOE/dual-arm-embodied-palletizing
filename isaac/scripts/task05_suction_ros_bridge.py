@@ -1,9 +1,9 @@
-# Task 05：B-A-C 顶部吸盘 <-> ROS 2 Bridge
+# Task 05：Isaac Surface Gripper <-> ROS 2 桥接（B-A-C）
 # 使用方式：
-# 1) Timeline 停止时运行 task05_bac_suction_scene.py；
-# 2) 保存 Stage 并点击 Play；
+# 1) 先运行 task05_bac_suction_scene.py；
+# 2) 保存场景并点击 Isaac Sim Play；
 # 3) 再在 Script Editor 运行本脚本；
-# 4) ROS 侧通过 /task05/* 控制吸盘并读取 BoxA/B/C Ground Truth。
+# 4) ROS 侧通过 /task05/* 与吸盘和 BoxA/BoxB/BoxC Ground Truth 通信。
 
 import builtins
 import math
@@ -34,22 +34,18 @@ from geometry_msgs.msg import Pose, PoseArray
 BOX_PATHS = ["/World/BoxA", "/World/BoxB", "/World/BoxC"]
 
 
-class Task05SuctionBridge:
+class Task05BACSuctionBridge:
     def __init__(self):
         self.stage = omni.usd.get_context().get_stage()
         self._lock = threading.Lock()
         self._desired_closed = False
         self._last_commanded = None
         self._publish_accum = 0.0
+
+        # 沿用 Task04-B 已验证机制：CONTACT 后才发 SUCTION ON；若第一次未闭合，
+        # desired=True 时每 50 ms 主动重试 close()。
         self._retry_accum = 0.0
         self._retry_interval = 0.05
-
-        # ----------------------------------------------------
-        # 基线检查
-        # ----------------------------------------------------
-        for path in ["/World/fr3", "/World/Table", *BOX_PATHS]:
-            if not self.stage.GetPrimAtPath(path).IsValid():
-                raise RuntimeError(f"Task05 缺少必要 Prim：{path}")
 
         # ----------------------------------------------------
         # Surface Gripper
@@ -58,8 +54,8 @@ class Task05SuctionBridge:
         props.d6JointPath = "/World/fr3/fr3_hand/task05_surface_gripper_joint"
         props.parentPath = "/World/fr3/fr3_hand"
 
-        # 与 Franka cobot_pump TCP 偏置保持一致：hand local +Z 0.105 m。
-        # Surface Gripper 默认沿 offset pose local +X 搜索，因此将 +X 旋转到 hand local +Z。
+        # Surface Gripper 默认沿 offset pose 局部 +X 搜索。
+        # 将 +X 旋转到 fr3_hand 局部 +Z，并与 cobot_pump TCP 的 0.105 m 偏置对齐。
         offset = omni.physics.tensors.Transform()
         offset.p.x = 0.0
         offset.p.y = 0.0
@@ -70,9 +66,9 @@ class Task05SuctionBridge:
         offset.r.w = 0.70710678
         props.offset = offset
 
-        # Task04 已验证：到 CONTACT 后才 SUCTION ON，因此抓取阈值缩小到 3 mm。
-        # 使用极高 break force/torque，把吸盘近似为不可断约束，避免仿真数值冲击导致随机脱落。
         props.gripThreshold = 0.003
+        # Task04-B 稳定性实验：
+        # 使用极高断裂阈值，将 Surface Gripper 近似视为不可断吸盘。
         props.forceLimit = 1.0e6
         props.torqueLimit = 1.0e6
         props.bendAngle = math.radians(15.0)
@@ -84,12 +80,12 @@ class Task05SuctionBridge:
         self.gripper = Surface_Gripper()
         if not self.gripper.initialize(props):
             raise RuntimeError(
-                "Task05 Surface Gripper 初始化失败。请确认 Isaac 已 Play，"
+                "Surface Gripper 初始化失败。请确认 Isaac 已点击 Play，"
                 "且 /World/fr3/fr3_hand 是有效刚体。"
             )
 
         # ----------------------------------------------------
-        # ROS 2
+        # 独立 ROS 2 Context
         # ----------------------------------------------------
         self.context = Context()
         rclpy.init(context=self.context)
@@ -127,13 +123,11 @@ class Task05SuctionBridge:
 
         print("")
         print("====================================================")
-        print("Task05 Surface Gripper ROS bridge 已启动")
+        print("Task05 B-A-C Surface Gripper ROS bridge 已启动")
         print("SUB : /task05/suction_command  std_msgs/Bool")
         print("PUB : /task05/suction_state    std_msgs/Bool")
         print("PUB : /task05/box_poses        geometry_msgs/PoseArray")
-        print("PoseArray 顺序：BoxA, BoxB, BoxC")
-        print("gripThreshold = 0.003 m")
-        print("forceLimit / torqueLimit = 1e6 / 1e6")
+        print("PoseArray 顺序固定为 BoxA, BoxB, BoxC")
         print("====================================================")
 
     def _on_suction_command(self, msg):
@@ -149,27 +143,34 @@ class Task05SuctionBridge:
             if desired:
                 ok = self.gripper.close()
                 print(
-                    f"[Task05 Isaac] SUCTION ON request, immediate_result={ok}"
+                    f"[Task05 Isaac] SUCTION ON request, "
+                    f"immediate_result={ok}"
                 )
                 self._retry_accum = 0.0
             else:
                 ok = self.gripper.open()
-                print(f"[Task05 Isaac] SUCTION OFF request, result={ok}")
+                print(
+                    f"[Task05 Isaac] SUCTION OFF request, result={ok}"
+                )
                 self._retry_accum = 0.0
 
             self._last_commanded = desired
 
-        # SUCTION ON 后持续 update；CONTACT 已到位，所以 retry 不会造成提前浮空抓。
+        # SUCTION ON 后每个 physics step 更新；未吸住时周期性主动重试 close()。
         if desired:
             self.gripper.update()
 
             if not self.gripper.is_closed():
                 self._retry_accum += float(dt)
+
                 if self._retry_accum >= self._retry_interval:
                     self._retry_accum = 0.0
                     ok = self.gripper.close()
                     if ok:
-                        print("[Task05 Isaac] SUCTION retry succeeded -> CLOSED")
+                        print(
+                            "[Task05 Isaac] "
+                            "SUCTION retry succeeded -> CLOSED"
+                        )
             else:
                 self._retry_accum = 0.0
 
@@ -195,6 +196,7 @@ class Task05SuctionBridge:
             world_tf = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(
                 Usd.TimeCode.Default()
             )
+
             p = world_tf.ExtractTranslation()
             q = world_tf.ExtractRotationQuat()
             qi = q.GetImaginary()
@@ -242,4 +244,4 @@ if old_bridge is not None:
     except Exception as exc:
         print("清理旧 Task05 bridge 时出现非致命异常：", exc)
 
-builtins._task05_suction_bridge = Task05SuctionBridge()
+builtins._task05_suction_bridge = Task05BACSuctionBridge()
