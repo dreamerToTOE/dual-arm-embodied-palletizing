@@ -4,8 +4,8 @@
 
 🟡 **进行中**
 
-- Task06-A：🟡 Isaac 双 FR3 场景代码已完成并上传，当前验证“桌面两条长边各一台、同朝向”的第二版布局。
-- Task06-B：计划中，ROS / TF / Joint 通信拆分。
+- Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
+- Task06-B：🟡 下一步，ROS / TF / Joint 通信拆分。
 - Task06-C：计划中，MoveIt 双臂描述。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
@@ -88,7 +88,7 @@ yaw   = 0 deg / 0 deg
 
 问题：两台机械臂都挤在桌面同一短边附近，HOME 状态本体距离过近，初始碰撞概率过高，不适合作为双臂基线。
 
-### 第二版布局（当前）
+### 第二版布局（已验收）
 
 改为**桌面两条长边各一台机械臂，两臂保持相同朝向**：
 
@@ -138,17 +138,17 @@ cup length  = 6 mm
 TCP offset  = 105 mm
 ```
 
-Task06-A 本机验收：
+Task06-A 本机验收结果：
 
 ```text
-1. 两台 FR3 分别位于桌面两条长边外侧；
-2. 两台机械臂 yaw 相同；
-3. HOME 状态没有明显本体穿模或过近问题；
-4. 桌面中央仍存在足够大的双臂共同操作区域；
-5. 两端 compact suction 均正确显示。
+1. 两台 FR3 分别位于桌面两条长边外侧：PASS
+2. 两台机械臂 yaw 相同：PASS
+3. HOME 状态没有明显本体穿模或过近问题：PASS
+4. 桌面中央保留明显的双臂共同操作区域：PASS
+5. 两端 compact suction 正确显示：PASS
 ```
 
-第二版通过本机验收后再标记 Task06-A ✅。
+因此第二版布局固定为 Task06 后续基线。
 
 ## 4. Task06-B：ROS / TF / Joint 通信拆分
 
@@ -162,6 +162,8 @@ Right TF
 ```
 
 两套控制不能串线。
+
+Task06-B 第一阶段只建立和验证通信命名，不运行抓取任务，也不修改 Task04 基础码垛原语。
 
 ## 5. Task06-C：MoveIt 双臂描述
 
@@ -197,6 +199,6 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-现在只验证 **Task06-A 第二版长边布局**。
+进入 **Task06-B：ROS / TF / Joint 通信拆分**。
 
-不同时修改 MoveIt、ROS topic、控制器和码垛流程。
+下一步先建立左右两臂独立的 ROS topic / TF 命名和 ActionGraph 通信，不同时引入双臂 MoveIt 或抓取流程。
