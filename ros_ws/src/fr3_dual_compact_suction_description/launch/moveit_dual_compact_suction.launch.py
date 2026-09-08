@@ -107,6 +107,25 @@ def generate_launch_description():
         ],
     )
 
+    environment_config = load_yaml(package_name, "config/environment.yaml")
+    table_config = environment_config["task06_environment"]["table"]
+    environment_parameters = {
+        "table_id": table_config["id"],
+        "table_frame": table_config["frame_id"],
+        "table_center": table_config["center"],
+        "table_size": table_config["size"],
+    }
+
+    # 环境节点通过 /apply_planning_scene 等待 move_group 就绪后，
+    # 将 Isaac Task06-A 已验收桌面作为真正的 MoveIt CollisionObject 加入场景。
+    task06_environment = Node(
+        package=package_name,
+        executable="task06_environment_publisher.py",
+        name="task06_environment_publisher",
+        output="screen",
+        parameters=[environment_parameters],
+    )
+
     rviz_config = os.path.join(
         get_package_share_directory("franka_fr3_moveit_config"),
         "rviz",
@@ -136,5 +155,6 @@ def generate_launch_description():
         joint_state_bridge,
         robot_state_publisher,
         move_group,
+        task06_environment,
         rviz,
     ])
