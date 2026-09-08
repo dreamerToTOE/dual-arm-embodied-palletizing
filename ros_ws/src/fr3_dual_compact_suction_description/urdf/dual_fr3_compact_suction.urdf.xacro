@@ -9,6 +9,10 @@
     - 基座位姿与 Task06-A Isaac 场景一致；
     - 两端均挂项目自定义 compact suction；
     - planning tip 仍使用各自 link8，保留 Task04 的 0.105 m TCP 换算语义。
+
+    兼容性说明：
+    当前本机 franka_description 2.8.1 的 franka_robot 宏不接受
+    include_self_collision_geometry 参数，因此这里不传该参数，沿用该版本默认碰撞描述。
   -->
 
   <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
@@ -32,7 +36,6 @@
       hand="false"
       ee_id="none"
       connected_to=""
-      include_self_collision_geometry="true"
       with_sc="false"/>
 
   <xacro:franka_robot
@@ -42,7 +45,6 @@
       hand="false"
       ee_id="none"
       connected_to=""
-      include_self_collision_geometry="true"
       with_sc="false"/>
 
   <!-- Task06-A 已验收基座位姿。 -->
