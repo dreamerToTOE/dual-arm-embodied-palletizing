@@ -9,7 +9,9 @@ install(
 )
 
 install(
-  PROGRAMS scripts/dual_joint_state_bridge.py
+  PROGRAMS
+    scripts/dual_joint_state_bridge.py
+    scripts/task06_environment_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
