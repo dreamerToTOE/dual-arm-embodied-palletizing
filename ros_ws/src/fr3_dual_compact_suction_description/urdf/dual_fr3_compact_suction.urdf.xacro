@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3_compact_suction">
+  <!--
+    Task06-C 双 FR3 MoveIt 机器人描述。
+
+    关键约束：
+    - 左右两臂均为 FR3；
+    - 两臂 link / joint 全部唯一前缀；
+    - 基座位姿与 Task06-A Isaac 场景一致；
+    - 两端均挂项目自定义 compact suction；
+    - planning tip 仍使用各自 link8，保留 Task04 的 0.105 m TCP 换算语义。
+  -->
+
+  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
+  <xacro:include filename="$(find fr3_dual_compact_suction_description)/urdf/dual_compact_suction.xacro"/>
+
+  <!-- 统一世界坐标系。 -->
+  <link name="world"/>
+
+  <!--
+    connected_to 置空，避免 franka_robot 宏为两台机械臂重复定义同一个 base/world link。
+    两台 link0 再由下方固定关节显式挂到 world。
+
+    arm_prefix 使用 left_ / right_，Franka 宏内部会生成：
+      left_fr3_link*, left_fr3_joint*
+      right_fr3_link*, right_fr3_joint*
+  -->
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="left_"
+      no_prefix="false"
+      hand="false"
+      ee_id="none"
+      connected_to=""
+      include_self_collision_geometry="true"
+      with_sc="false"/>
+
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="right_"
+      no_prefix="false"
+      hand="false"
+      ee_id="none"
+      connected_to=""
+      include_self_collision_geometry="true"
+      with_sc="false"/>
+
+  <!-- Task06-A 已验收基座位姿。 -->
+  <joint name="world_to_left_fr3" type="fixed">
+    <parent link="world"/>
+    <child link="left_fr3_link0"/>
+    <origin xyz="0.55 -0.50 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="world_to_right_fr3" type="fixed">
+    <parent link="world"/>
+    <child link="right_fr3_link0"/>
+    <origin xyz="0.55 0.50 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 与 Task04 / Task05 一致的紧凑吸盘。 -->
+  <xacro:dual_compact_suction
+      parent_link="left_fr3_link8"
+      prefix="left_fr3_"/>
+
+  <xacro:dual_compact_suction
+      parent_link="right_fr3_link8"
+      prefix="right_fr3_"/>
+</robot>
