@@ -5,7 +5,7 @@
 🟡 **进行中**
 
 - Task06-A：✅ Isaac 双 FR3 第二版长边布局已本机验收通过。
-- Task06-B：🟡 下一步，ROS / TF / Joint 通信拆分。
+- Task06-B：🟡 双臂 ROS / TF / Joint ActionGraph 代码已上传，待本机通信隔离验收。
 - Task06-C：计划中，MoveIt 双臂描述。
 - Task06-D：计划中，左右臂独立 HOME + 吸盘 ON/OFF。
 
@@ -78,8 +78,6 @@ isaac/scripts/task06_dual_fr3_scene.py
 
 ### 第一版布局（已否决）
 
-第一版使用：
-
 ```text
 Left  = (0.00, -0.25, 0.00)
 Right = (0.00, +0.25, 0.00)
@@ -90,7 +88,7 @@ yaw   = 0 deg / 0 deg
 
 ### 第二版布局（已验收）
 
-改为**桌面两条长边各一台机械臂，两臂保持相同朝向**：
+采用桌面两条长边各一台、两臂同朝向：
 
 ```text
 Table:
@@ -109,35 +107,6 @@ yaw      = 0 deg
 base separation = 1.00 m
 ```
 
-两个基座都位于对应长边外侧约 0.10 m，到桌面中心的水平距离都是 0.50 m。
-
-设计目的：
-
-1. 两台机械臂不再集中在同一短边，显著降低 HOME / 初始动作阶段的本体碰撞概率；
-2. 两台机械臂保持相同底座朝向，便于后续统一坐标约定和动力学表达；
-3. 两台 FR3 都距离桌面中心约 0.50 m，中央仍属于双方可达区域，保留真正的公共工作空间；
-4. 后续松协调仍可在公共区域产生臂-臂 / 臂-携带物冲突，不退化为两个完全独立的单臂任务；
-5. 后续紧协调可让两臂在大箱顶部两个分离吸附点共同操作。
-
-Task06-A 只搭建场景，不运行抓取任务，不创建双臂 ROS / MoveIt 控制。
-
-两个 FR3 顶部 Prim：
-
-```text
-/World/left_fr3
-/World/right_fr3
-```
-
-两个末端都复用 Task04 / Task05 已验证紧凑吸盘几何：
-
-```text
-stem radius = 6 mm
-stem length = 99 mm
-cup radius  = 10 mm
-cup length  = 6 mm
-TCP offset  = 105 mm
-```
-
 Task06-A 本机验收结果：
 
 ```text
@@ -152,18 +121,67 @@ Task06-A 本机验收结果：
 
 ## 4. Task06-B：ROS / TF / Joint 通信拆分
 
-验收：
+脚本：
 
 ```text
-Left joint_states / joint_command
-Right joint_states / joint_command
-Left TF
-Right TF
+isaac/scripts/task06_dual_ros_graph.py
 ```
 
-两套控制不能串线。
+该脚本会移除旧单臂 `/World/ActionGraph`，创建：
 
-Task06-B 第一阶段只建立和验证通信命名，不运行抓取任务，也不修改 Task04 基础码垛原语。
+```text
+/World/Task06ROSGraph
+```
+
+当前通信：
+
+```text
+Left:
+PUB /left/joint_states
+SUB /left/joint_command
+PUB /left/tf
+
+Right:
+PUB /right/joint_states
+SUB /right/joint_command
+PUB /right/tf
+
+Global:
+PUB /clock
+```
+
+Task06-B 暂时把左右 TF 拆到：
+
+```text
+/left/tf
+/right/tf
+```
+
+原因：Isaac 两个 FR3 引用内部仍使用相同 `fr3_link*` Prim 名。当前阶段只验证通信链是否互相隔离，避免直接在标准 `/tf` 中产生同名 frame 覆盖。
+
+**Task06-C 再统一解决：**
+
+```text
+唯一 left_/right_ joint / frame 前缀
++
+标准 /tf
++
+MoveIt 双臂 URDF / SRDF
+```
+
+Task06-B 验收：
+
+```text
+1. /left/joint_states 持续发布左臂状态
+2. /right/joint_states 持续发布右臂状态
+3. /left/tf 有左臂 TF 数据
+4. /right/tf 有右臂 TF 数据
+5. 向 /left/joint_command 发命令时只有左臂动作
+6. 向 /right/joint_command 发命令时只有右臂动作
+7. 两套控制不能串线
+```
+
+本阶段不运行抓取任务，也不修改 Task04 基础码垛原语。
 
 ## 5. Task06-C：MoveIt 双臂描述
 
@@ -174,6 +192,7 @@ left_arm planning group
 right_arm planning group
 双臂碰撞模型同时存在
 两端均使用 compact suction collision
+标准 /tf 中 frame 名唯一
 ```
 
 ## 6. Task06-D：左右臂独立 HOME + 吸盘 ON/OFF
@@ -199,6 +218,4 @@ Right FR3 运行一个 Task04 primitive 搬 BoxB
 
 ## 7. 当前下一步
 
-进入 **Task06-B：ROS / TF / Joint 通信拆分**。
-
-下一步先建立左右两臂独立的 ROS topic / TF 命名和 ActionGraph 通信，不同时引入双臂 MoveIt 或抓取流程。
+先本机验收 **Task06-B ROS 通信隔离**。通过后再开始 Task06-C 双臂 MoveIt 描述。
