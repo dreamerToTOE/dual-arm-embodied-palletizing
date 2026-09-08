@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fr3_compact_suction">
+  <!--
+    复用 Franka ROS2 的 FR3 + ros2_control 描述，但明确不加载官方 cobot_pump/franka_hand。
+    之后挂载项目自定义 compact_suction。
+
+    当前仍让 MoveIt planning group 的 tip 保持 fr3_link8，
+    以兼容 Task04 起所有已验证的 0.105 m TCP 手工换算逻辑。
+  -->
+  <xacro:include filename="$(find franka_bringup)/urdf/franka_arm.urdf.xacro"/>
+  <xacro:include filename="$(find fr3_compact_suction_description)/urdf/compact_suction.xacro"/>
+
+  <!-- franka_arm.urdf.xacro -> fr3.urdf.xacro 已定义 modified_prefix。 -->
+  <xacro:compact_suction
+      parent_link="${modified_prefix}fr3_link8"
+      prefix="${modified_prefix}fr3_"/>
+</robot>
