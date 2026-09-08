@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **代码已完成，待本机联合运行验收**
+✅ **本机联合运行验收通过**
 
 ## 本 Task 只做什么
 
@@ -117,14 +117,32 @@ Right PRE_PICK planned --/
 
 Task07 不做时空冲突判断。这个能力明确留给 Task08。
 
+## 本机验收结果
+
+```text
+LEFT / BoxA  SUCCESS
+RIGHT / BoxB SUCCESS
+Task07 SUCCESS
+wall_time = 20.693 s
+```
+
+最终放置误差：
+
+```text
+BoxA e_xy = 1.38 mm
+BoxB e_xy = 1.03 mm
+```
+
+日志中左右 `PRE_PICK` 均先完成规划并在 `StartGate` 等待，随后同时打印 `PARALLEL GO`，两条完整 primitive 并发向前执行，因此 Task07 目标已经满足。
+
 ## 只验收以下内容
 
 ```text
-1. 左右 PRE_PICK 在 gate 后可同时开始实际运动
-2. 左右完整 primitive 均成功结束
-3. BoxA 最终到左侧目标
-4. BoxB 最终到右侧目标
-5. 左右 suction / attach / Planning Scene 更新不串线
+1. 左右 PRE_PICK 在 gate 后可同时开始实际运动：PASS
+2. 左右完整 primitive 均成功结束：PASS
+3. BoxA 最终到左侧目标：PASS
+4. BoxB 最终到右侧目标：PASS
+5. 左右 suction / attach / Planning Scene 更新不串线：PASS
 ```
 
 不单独重复测试：
@@ -149,4 +167,11 @@ Task07 不做时空冲突判断。这个能力明确留给 Task08。
 -> 增加时空冲突检测
 ```
 
-Task08 开始才是松协调避障与调度的核心。
+职责拆分：
+
+```text
+Task08 = 发现冲突：预测两条带时间轨迹是否在同一时刻进入危险距离/碰撞状态
+Task09 = 主动消解冲突：等待、优先级、时间偏移、必要时局部重规划/绕行
+```
+
+因此真正的双臂主动避障/冲突解决从 Task09 开始；Task08 先把“什么时候、在哪里、哪两个对象会冲突”检测可靠。
