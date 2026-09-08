@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    双臂版本紧凑吸盘。几何与 Task04 / Task05 完全一致；
+    仅把 material / link / joint 名称全部加 prefix，保证左右臂唯一。
+  -->
+  <xacro:macro name="dual_compact_suction" params="parent_link prefix">
+    <link name="${prefix}compact_suction">
+      <visual name="stem_visual">
+        <origin xyz="0 0 0.0495" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.006" length="0.099"/>
+        </geometry>
+        <material name="${prefix}compact_suction_stem_gray">
+          <color rgba="0.25 0.25 0.25 1.0"/>
+        </material>
+      </visual>
+      <collision name="stem_collision">
+        <origin xyz="0 0 0.0495" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.006" length="0.099"/>
+        </geometry>
+      </collision>
+
+      <visual name="cup_visual">
+        <origin xyz="0 0 0.102" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.010" length="0.006"/>
+        </geometry>
+        <material name="${prefix}compact_suction_cup_black">
+          <color rgba="0.05 0.05 0.05 1.0"/>
+        </material>
+      </visual>
+      <collision name="cup_collision">
+        <origin xyz="0 0 0.102" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.010" length="0.006"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}compact_suction_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${prefix}compact_suction"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}compact_suction_tcp"/>
+    <joint name="${prefix}compact_suction_tcp_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${prefix}compact_suction_tcp"/>
+      <origin xyz="0 0 0.105" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>
