@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3_compact_suction">
+  <!--
+    Task06-C 双臂 SRDF。
+    不调用官方 franka_arm_srdf 两次，因为官方宏会重复创建同名 virtual_joint/base 语义。
+    这里显式定义 left_arm / right_arm，并复用官方 FR3 的单臂禁碰撞关系。
+  -->
+
+  <group name="left_arm">
+    <chain base_link="left_fr3_link0" tip_link="left_fr3_link8"/>
+  </group>
+
+  <group name="right_arm">
+    <chain base_link="right_fr3_link0" tip_link="right_fr3_link8"/>
+  </group>
+
+  <group name="dual_arm">
+    <group name="left_arm"/>
+    <group name="right_arm"/>
+  </group>
+
+  <group_state name="ready" group="left_arm">
+    <joint name="left_fr3_joint1" value="0"/>
+    <joint name="left_fr3_joint2" value="-0.78539816339"/>
+    <joint name="left_fr3_joint3" value="0"/>
+    <joint name="left_fr3_joint4" value="-2.35619449019"/>
+    <joint name="left_fr3_joint5" value="0"/>
+    <joint name="left_fr3_joint6" value="1.57079632679"/>
+    <joint name="left_fr3_joint7" value="0.78539816339"/>
+  </group_state>
+
+  <group_state name="ready" group="right_arm">
+    <joint name="right_fr3_joint1" value="0"/>
+    <joint name="right_fr3_joint2" value="-0.78539816339"/>
+    <joint name="right_fr3_joint3" value="0"/>
+    <joint name="right_fr3_joint4" value="-2.35619449019"/>
+    <joint name="right_fr3_joint5" value="0"/>
+    <joint name="right_fr3_joint6" value="1.57079632679"/>
+    <joint name="right_fr3_joint7" value="0.78539816339"/>
+  </group_state>
+
+  <xacro:macro name="fr3_internal_collision_matrix" params="p">
+    <disable_collisions link1="${p}link0" link2="${p}link1" reason="Adjacent"/>
+    <disable_collisions link1="${p}link0" link2="${p}link2" reason="Never"/>
+    <disable_collisions link1="${p}link0" link2="${p}link3" reason="Never"/>
+    <disable_collisions link1="${p}link0" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link1" link2="${p}link2" reason="Adjacent"/>
+    <disable_collisions link1="${p}link1" link2="${p}link3" reason="Never"/>
+    <disable_collisions link1="${p}link1" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link2" link2="${p}link3" reason="Adjacent"/>
+    <disable_collisions link1="${p}link2" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link2" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link4" reason="Adjacent"/>
+    <disable_collisions link1="${p}link3" link2="${p}link5" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link5" reason="Adjacent"/>
+    <disable_collisions link1="${p}link4" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link8" reason="Never"/>
+    <disable_collisions link1="${p}link5" link2="${p}link6" reason="Adjacent"/>
+    <disable_collisions link1="${p}link5" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link6" link2="${p}link7" reason="Adjacent"/>
+    <disable_collisions link1="${p}link6" link2="${p}link8" reason="Default"/>
+    <disable_collisions link1="${p}link7" link2="${p}link8" reason="Adjacent"/>
+    <disable_collisions link1="${p}link8" link2="${p}compact_suction" reason="Adjacent"/>
+  </xacro:macro>
+
+  <xacro:fr3_internal_collision_matrix p="left_fr3_"/>
+  <xacro:fr3_internal_collision_matrix p="right_fr3_"/>
+
+  <!-- 不屏蔽任何左右臂之间的碰撞，Task07+ 需要真实检测双臂冲突。 -->
+</robot>
