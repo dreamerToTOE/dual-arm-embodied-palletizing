@@ -1,8 +1,13 @@
 # 双机械臂具身智能码垛
 
-面向混合码垛任务的双机械臂具身智能协调规划与控制项目。
+面向混合尺寸箱体码垛的双机械臂协调规划与控制项目。
 
-当前工程采用 **Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 / OMPL + Franka FR3** 作为主要仿真、运动规划与控制验证平台。
+当前工程采用 **Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 / OMPL + Franka FR3**，主线目标是完成：
+
+```text
+小箱体：双臂分别抓取、并行码垛（松协调）
+大箱体：双臂顶部双吸盘共同搬运与放置（紧协调）
+```
 
 ## 项目文档
 
@@ -11,150 +16,114 @@
 - [关键问题与排错记录](docs/KEY_ISSUES.md)
 - [Task 00 — FR3 / Isaac / ROS 2 / MoveIt 基线](docs/tasks/TASK00_BASELINE.md)
 - [Task 01 — 单机械臂 Pick & Place](docs/tasks/TASK01_PICK_PLACE.md)
-- [Task 02 — 机器人可执行 Placement Skill](docs/tasks/TASK02_PLACEMENT_SKILL.md)
-- [Task 03 — B-A-C 放置可执行性](docs/tasks/TASK03_BAC_EXECUTABILITY.md)
+- [Task 02 — Placement Skill](docs/tasks/TASK02_PLACEMENT_SKILL.md)
+- [Task 03 — B-A-C 二指夹爪可执行性](docs/tasks/TASK03_BAC_EXECUTABILITY.md)
+- [Task 04 — 顶部吸盘单臂基线](docs/tasks/TASK04_TOP_SUCTION_BASELINE.md)
+- [Task 04-B — 九 Cube 三维码垛](docs/tasks/TASK04B_NINE_CUBE_3D_PALLETIZING.md)
+- [Task 05 — B-A-C 顶部吸盘验证](docs/tasks/TASK05_BAC_SUCTION.md)
+- [Task 05-C — MoveIt / Isaac 紧凑吸盘模型对齐](docs/tasks/TASK05C_COMPACT_SUCTION_MOVEIT.md)
+- [Task 06 — 双 FR3 + 双紧凑吸盘基线](docs/tasks/TASK06_DUAL_FR3_BASELINE.md)
 
 ## 当前进度
 
-| 任务 | 内容 | 状态 |
+| Task | 内容 | 状态 |
 |---|---|---|
-| Task 00 | FR3 + Isaac Sim + ROS 2 + MoveIt 2 基线 | ✅ 已完成 |
-| Task 01 | 单机械臂 Pick & Place | ✅ 已完成 |
-| Task 02 | Placement Skill / 机器人可执行放置 | ✅ 已完成：参数化输入、阶段判定、结构化结果、正常目标全链路验证通过 |
-| Task 03 | B-A-C 放置可执行性 | 🟡 进行中：构造“箱体可放但夹爪不可插”的邻箱场景 |
-| Task 04 | 放置顺序调整 | 计划中 |
-| Task 05+ | 双臂松协调、紧协调与具身技能路由 | 计划中 |
+| 00 | FR3 + Isaac + ROS 2 + MoveIt 基线 | ✅ |
+| 01 | 二指夹爪单臂 Pick & Place | ✅ |
+| 02 | Placement Skill | ✅ |
+| 03 | B-A-C 二指夹爪高密度可执行性 | ✅ |
+| 04 | 顶部紧凑吸盘单臂码垛基线 | ✅ |
+| 05 | 同一 B-A-C 场景顶部吸盘插入 + MoveIt/Isaac 模型对齐 | ✅ |
+| 06 | 双 FR3 + 双紧凑吸盘基础设施 | 🟡 进行中 |
+| 07 | 双臂松协调并行码垛 | 计划中 |
+| 11+ | 双吸盘共物体与紧协调 | 计划中 |
 
-## 已验证基础链路
+## 当前核心工程结论
 
-```text
-MoveIt 2 / OMPL
-        ↓
-RRTConnect / Cartesian Path
-        ↓
-RobotTrajectory / JointTrajectory
-        ↓
-ROS 2 执行节点
-        ↓
-100 Hz 插值
-        ↓
-/joint_command
-        ↓
-Isaac Sim ROS 2 Bridge
-        ↓
-Articulation Controller
-        ↓
-FR3 仿真执行
-```
-
-Isaac Sim 发布：
+Task03 / Task05 形成直接对照：
 
 ```text
-/clock
-/joint_states
-/tf
+同一 B-A-C 几何
+
+二指夹爪：
+C_insert = FAIL
+
+紧凑顶部吸盘：
+C_insert = PASS
+完整放置 / 释放 / RETREAT = PASS
 ```
 
-Isaac Sim 接收：
+因此项目固定采用顶部紧凑吸盘，不再围绕二指夹爪设计高密度放置补救策略。
+
+另外，Franka 官方 `cobot_pump` MoveIt 环境碰撞包络与本项目实际紧凑吸盘不一致，会在 B-A-C 插入中产生假碰撞。项目已新增自定义：
 
 ```text
-/joint_command
+ros_ws/src/fr3_compact_suction_description
 ```
 
-## 当前稳定环境
+几何与 Isaac 保持一致：
+
+```text
+stem radius = 6 mm
+stem length = 99 mm
+cup radius  = 10 mm
+cup length  = 6 mm
+TCP offset  = 105 mm
+```
+
+## 基础码垛事件单元
+
+Task04 的最终成功时序作为后续 Task 的项目级基线：
+
+```text
+PRE_PICK
+→ CONTACT
+→ SUCTION ON
+→ ATTACH
+→ LIFT
+→ TRANSFER / PRE_PLACE
+→ PLACE
+→ 释放前先规划 RETREAT
+→ SUCTION OFF
+→ settle
+→ Isaac Ground Truth 同步
+→ DETACH / addWorld
+→ RETREAT
+```
+
+后续 Task 默认不重新设计这套基础事件，只在其外部增加目标选择、双臂调度、碰撞协调或共物体约束。
+
+## 当前稳定平台
 
 - Ubuntu 22.04.5 LTS
 - ROS 2 Humble
 - Isaac Sim 4.5.0
 - NVIDIA GeForce RTX 3070 8 GB
 - NVIDIA 580 系列驱动
-- Python 3.10.12（`/usr/bin/python3`）
-- Franka ROS 2 `humble`
+- Python 3.10.12
+- Franka FR3
 - `franka_description` 2.8.1
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## Task 01 已验证基线
+## 当前阶段：Task06
 
-当前 PickCube：
-
-```text
-Center = (0.45, 0.15, 0.065) m
-Size   = 0.03 × 0.03 × 0.03 m
-Yaw    = 0 rad
-```
-
-完整链路：
+Task06 首先只建立双臂基础设施：
 
 ```text
-HOME
-→ ALIGNED_APPROACH
-→ OPEN_GRIPPER
-→ Cartesian GRASP
-→ CLOSE_GRIPPER
-→ MoveIt ATTACH
-→ Cartesian LIFT
-→ TRANSFER
-→ PLACE
-→ MoveIt DETACH
-→ removeWorldCube
-→ OPEN / RELEASE
-→ RETREAT
-→ addPlacedCubeToWorld
-→ HOME
+Left FR3  + left compact suction
+Right FR3 + right compact suction
 ```
 
-关键修复详见 [关键问题与排错记录](docs/KEY_ISSUES.md)。
-
-## Task 02 已验证能力
-
-Task 02 将固定放置流程封装为：
+优先验证：
 
 ```text
-PlacementTarget
-→ C_reach
-→ C_insert
-→ C_release
-→ C_retreat
-→ PlacementSkillResult
+双臂 Prim / namespace 不重名
+→ 左右 joint state / command 独立
+→ 左右 TF 独立
+→ 左右 MoveIt planning group 独立
+→ 左右吸盘 ON/OFF 独立
+→ 两臂分别 HOME
 ```
 
-正常目标已验证：
-
-```text
-C_reach   = PASS
-C_insert  = PASS
-C_release = PASS
-C_retreat = PASS
-RESULT    = SUCCESS
-```
-
-## 当前 Task 03
-
-目标是验证：
-
-```text
-A 箱体本体几何上可以放入 B、C 之间
-但携带 A 的真实夹爪扫掠体无法插入
-```
-
-第一版场景：
-
-```text
-A target = (0.65, -0.15, 0.065) m
-A size   = 30 mm
-
-B center = (0.65, -0.115, 0.065) m
-C center = (0.65, -0.185, 0.065) m
-B/C size = 30 mm
-
-B-C 净间距 = 40 mm
-```
-
-因此 A 本体 30 mm 有约 5 mm/侧几何余量，但预期 FR3 finger / hand 无法随 A 一起完成垂直插入。
-
-这将直接验证：
-
-```text
-几何可放置 ≠ 机器人可执行放置
-```
+完成后再进入 Task07 的两臂分别操作不同小箱体并行码垛。
