@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fr3_dual_compact_suction_description</name>
+  <version>0.1.0</version>
+  <description>Dual FR3 + project compact suction MoveIt description for Task06.</description>
+  <maintainer email="noreply@example.com">dual-arm-embodied-palletizing</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>franka_description</exec_depend>
+  <exec_depend>franka_fr3_moveit_config</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
