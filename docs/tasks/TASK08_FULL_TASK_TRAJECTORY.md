@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **已完成接口与离线规划实现；待 Isaac + MoveIt 联调验证。**
+✅ **已完成接口、离线规划与 Isaac + MoveIt 联调验证。**
 
 ## 目标
 
@@ -77,6 +77,25 @@ ATTACH 时间
 DETACH 时间
 计划释放 pose
 ```
+
+## 联调结果
+
+在 Task08 交叉场景、Task07 双吸盘 Bridge 与双 FR3 MoveIt2 同时运行时，
+`task08_candidate_demo` 已于 2026-09-09 成功生成两条完整候选；没有下发任何机器人或吸盘命令。
+
+| Candidate | 轨迹点数 | 总时长 | ATTACH | DETACH | 计划释放 pose |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `TASK08 LEFT / BoxA` | 162 | 16.285 s | 7.498 s | 14.937 s | `(0.820, 0.120, 0.066)` |
+| `TASK08 RIGHT / BoxB` | 153 | 15.466 s | 6.824 s | 13.891 s | `(0.820, -0.120, 0.066)` |
+
+右臂的 `PRE_PLACE -> PLACE` 与 `PLACE -> RETREAT` Cartesian path 均返回
+`fraction = 1.0000`，完整候选日志最终输出：
+
+```text
+PASS：两条完整任务轨迹与 ATTACH/DETACH 事件已经生成；未执行任何机器人或吸盘命令。
+```
+
+结论：`JointTrajectory` 已包含统一的相对 `time_from_start`，并显式保留吸附、释放与 settle 的停留窗口；事件时间可供 Task08-B 在同一时间轴切换 Box 的 World / Attached 状态。
 
 ## 后续：Task08-B
 
