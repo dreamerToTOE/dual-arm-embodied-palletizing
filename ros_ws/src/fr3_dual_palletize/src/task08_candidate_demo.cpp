@@ -28,10 +28,69 @@ constexpr std::size_t NUM_BOXES = 2;
 constexpr double BOX_SIZE = 0.030;
 
 // Task08 交叉目标：最终目标不重叠，但 transfer 会进入公共工作区。
-constexpr double LEFT_TARGET_X = 0.820;
-constexpr double LEFT_TARGET_Y = 0.120;
-constexpr double RIGHT_TARGET_X = 0.820;
-constexpr double RIGHT_TARGET_Y = -0.120;
+constexpr double TASK08_LEFT_TARGET_X = 0.820;
+constexpr double TASK08_LEFT_TARGET_Y = 0.120;
+constexpr double TASK08_RIGHT_TARGET_X = 0.820;
+constexpr double TASK08_RIGHT_TARGET_Y = -0.120;
+
+// Task07 作为 Task08-B 的 SAFE 对照组：两条通道始终保持分离。
+constexpr double TASK07_LEFT_TARGET_X = 0.820;
+constexpr double TASK07_LEFT_TARGET_Y = -0.250;
+constexpr double TASK07_RIGHT_TARGET_X = 0.820;
+constexpr double TASK07_RIGHT_TARGET_Y = 0.250;
+
+struct ScenarioConfig
+{
+  std::string name;
+  std::string left_label;
+  std::string right_label;
+  std::string left_object_id;
+  std::string right_object_id;
+  double left_target_x{0.0};
+  double left_target_y{0.0};
+  double right_target_x{0.0};
+  double right_target_y{0.0};
+  bool expected_conflict{false};
+};
+
+bool selectScenario(const std::string& name, ScenarioConfig& config)
+{
+  if (name == "task08_conflict")
+  {
+    config = ScenarioConfig{
+      "task08_conflict",
+      "TASK08 LEFT / BoxA",
+      "TASK08 RIGHT / BoxB",
+      "task08_box_a",
+      "task08_box_b",
+      TASK08_LEFT_TARGET_X,
+      TASK08_LEFT_TARGET_Y,
+      TASK08_RIGHT_TARGET_X,
+      TASK08_RIGHT_TARGET_Y,
+      true
+    };
+    return true;
+  }
+
+  if (name == "task07_safe")
+  {
+    config = ScenarioConfig{
+      "task07_safe",
+      "TASK07 SAFE LEFT / BoxA",
+      "TASK07 SAFE RIGHT / BoxB",
+      "task07_box_a",
+      "task07_box_b",
+      TASK07_LEFT_TARGET_X,
+      TASK07_LEFT_TARGET_Y,
+      TASK07_RIGHT_TARGET_X,
+      TASK07_RIGHT_TARGET_Y,
+      false
+    };
+    return true;
+  }
+
+  return false;
+}
 
 bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
 {
@@ -141,7 +200,8 @@ private:
 };
 
 bool addInitialBoxesToPlanningScene(
-  const std::array<geometry_msgs::msg::Pose, NUM_BOXES>& poses)
+  const std::array<geometry_msgs::msg::Pose, NUM_BOXES>& poses,
+  const ScenarioConfig& scenario)
 {
   moveit::planning_interface::PlanningSceneInterface psi;
 
@@ -153,8 +213,8 @@ bool addInitialBoxesToPlanningScene(
   std::this_thread::sleep_for(200ms);
 
   std::vector<moveit_msgs::msg::CollisionObject> objects;
-  objects.push_back(makeBoxObject("task08_box_a", poses[0]));
-  objects.push_back(makeBoxObject("task08_box_b", poses[1]));
+  objects.push_back(makeBoxObject(scenario.left_object_id, poses[0]));
+  objects.push_back(makeBoxObject(scenario.right_object_id, poses[1]));
 
   if (!psi.applyCollisionObjects(objects))
   {
@@ -283,6 +343,19 @@ int main(int argc, char** argv)
   auto left_node = std::make_shared<rclcpp::Node>("task08_left_primitive");
   auto right_node = std::make_shared<rclcpp::Node>("task08_right_primitive");
 
+  const std::string scenario_name = pose_node->declare_parameter<std::string>(
+    "scenario", "task08_conflict");
+  ScenarioConfig scenario;
+  if (!selectScenario(scenario_name, scenario))
+  {
+    RCLCPP_ERROR(
+      pose_node->get_logger(),
+      "未知 scenario='%s'。仅支持 task08_conflict 或 task07_safe。",
+      scenario_name.c_str());
+    rclcpp::shutdown();
+    return 1;
+  }
+
   if (!copyRobotModelParameters(left_node) ||
       !copyRobotModelParameters(right_node))
   {
@@ -308,6 +381,11 @@ int main(int argc, char** argv)
     "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT；"
     "仅规划，不发布 joint command 或 suction command。"
   );
+  RCLCPP_INFO(
+    pose_node->get_logger(),
+    "Task08-B scenario=%s, expected=%s",
+    scenario.name.c_str(),
+    scenario.expected_conflict ? "CONFLICT" : "SAFE");
 
   if (!pose_buffer->wait(10.0))
   {
@@ -322,7 +400,7 @@ int main(int argc, char** argv)
   }
 
   const auto initial_poses = pose_buffer->snapshot();
-  if (!addInitialBoxesToPlanningScene(initial_poses))
+  if (!addInitialBoxesToPlanningScene(initial_poses, scenario))
   {
     RCLCPP_ERROR(pose_node->get_logger(), "Task08 初始箱体加入 Planning Scene 失败。");
     executor.cancel();
@@ -334,7 +412,7 @@ int main(int argc, char** argv)
   auto scene_mutex = std::make_shared<std::mutex>();
 
   fr3_dual_palletize::PrimitiveConfig left_config;
-  left_config.label = "TASK08 LEFT / BoxA";
+  left_config.label = scenario.left_label;
   left_config.planning_group = "left_arm";
   left_config.eef_link = "left_fr3_link8";
   left_config.tool_link = "left_fr3_compact_suction";
@@ -342,13 +420,13 @@ int main(int argc, char** argv)
   left_config.joint_command_topic = "/left/joint_command";
   left_config.suction_command_topic = "/task07/left/suction_command";
   left_config.suction_state_topic = "/task07/left/suction_state";
-  left_config.object_id = "task08_box_a";
+  left_config.object_id = scenario.left_object_id;
   left_config.pose_index = 0;
-  left_config.target_x = LEFT_TARGET_X;
-  left_config.target_y = LEFT_TARGET_Y;
+  left_config.target_x = scenario.left_target_x;
+  left_config.target_y = scenario.left_target_y;
 
   fr3_dual_palletize::PrimitiveConfig right_config;
-  right_config.label = "TASK08 RIGHT / BoxB";
+  right_config.label = scenario.right_label;
   right_config.planning_group = "right_arm";
   right_config.eef_link = "right_fr3_link8";
   right_config.tool_link = "right_fr3_compact_suction";
@@ -356,10 +434,10 @@ int main(int argc, char** argv)
   right_config.joint_command_topic = "/right/joint_command";
   right_config.suction_command_topic = "/task07/right/suction_command";
   right_config.suction_state_topic = "/task07/right/suction_state";
-  right_config.object_id = "task08_box_b";
+  right_config.object_id = scenario.right_object_id;
   right_config.pose_index = 1;
-  right_config.target_x = RIGHT_TARGET_X;
-  right_config.target_y = RIGHT_TARGET_Y;
+  right_config.target_x = scenario.right_target_x;
+  right_config.target_y = scenario.right_target_y;
 
   auto provider = [pose_buffer](std::size_t index)
   {
@@ -431,9 +509,26 @@ int main(int argc, char** argv)
       return 1;
     }
 
+    if (report.conflict != scenario.expected_conflict)
+    {
+      RCLCPP_ERROR(
+        pose_node->get_logger(),
+        "Task08-B FAIL：scenario=%s 预期 %s，实际为 %s。",
+        scenario.name.c_str(),
+        scenario.expected_conflict ? "CONFLICT" : "SAFE",
+        report.conflict ? "CONFLICT" : "SAFE");
+      executor.cancel();
+      if (spin_thread.joinable())
+      {
+        spin_thread.join();
+      }
+      rclcpp::shutdown();
+      return 1;
+    }
+
     RCLCPP_INFO(
       pose_node->get_logger(),
-      "Task08-B PASS：已完成联合预测；无论 SAFE 或 CONFLICT，均未执行任何机器人或吸盘命令。"
+      "Task08-B PASS：结果符合 scenario 预期；未执行任何机器人或吸盘命令。"
     );
   }
   else

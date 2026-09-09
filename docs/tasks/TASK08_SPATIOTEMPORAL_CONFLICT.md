@@ -405,7 +405,18 @@ Task08-A 生成 left/right TaskTrajectoryCandidate
 -> 输出 SAFE 或首个 CONFLICT 的时间、碰撞 pair 与类型
 ```
 
-它始终只规划和预测，不会执行机器人或吸盘命令。交叉场景的预期结果是 `CONFLICT`；Task07 分离通道的预期结果是 `SAFE`。
+它始终只规划和预测，不会执行机器人或吸盘命令。
+
+```bash
+# 默认：Task08 交叉场景，预期 CONFLICT
+ros2 run fr3_dual_palletize task08_candidate_demo
+
+# Task07 分离通道，预期 SAFE
+ros2 run fr3_dual_palletize task08_candidate_demo \
+  --ros-args -p scenario:=task07_safe
+```
+
+节点会将结果与 scenario 预期比较；`SAFE/CONFLICT` 不符合预期时以非零退出，避免把漏检或误报错误标记为 PASS。
 
 不要运行：
 

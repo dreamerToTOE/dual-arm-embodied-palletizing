@@ -357,7 +357,14 @@ source install/setup.bash
 ros2 run fr3_dual_palletize task08_candidate_demo
 ```
 
-该节点先生成两条完整 `TaskTrajectoryCandidate`，再按 `0.01 s` 联合采样；仅输出 `Task08-B SAFE` 或 `Task08-B CONFLICT`，不会执行机器人或吸盘命令。
+该节点先生成两条完整 `TaskTrajectoryCandidate`，再按 `0.01 s` 联合采样；仅输出 `Task08-B SAFE` 或 `Task08-B CONFLICT`，不会执行机器人或吸盘命令。默认是 Task08 交叉场景，预期 `CONFLICT`。
+
+Task07 分离通道的 SAFE 对照运行：
+
+```bash
+ros2 run fr3_dual_palletize task08_candidate_demo \
+  --ros-args -p scenario:=task07_safe
+```
 
 > 不要运行 `task07_parallel_demo` 来测试 Task08，因为 Task07 demo 内部仍使用无冲突目标坐标。
 
