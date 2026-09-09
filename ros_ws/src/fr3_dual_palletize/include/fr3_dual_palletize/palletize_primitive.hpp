@@ -36,6 +36,9 @@ struct PrimitiveConfig
   std::size_t pose_index{0};
   double target_x{0.0};
   double target_y{0.0};
+  // Task09-B 安全退出扩展：放置完成后追加 MoveIt 规划的安全退出段，终点回到本次候选的 HOME。
+  // 默认关闭，保持 Task08-A/B 原有 HOME -> ... -> RETREAT 候选定义不变。
+  bool include_safe_egress{false};
 };
 
 // Task08 协调层读取的候选搬运轨迹。
@@ -150,6 +153,14 @@ private:
     const moveit::core::JointModelGroup* joint_model_group,
     const std::vector<double>& start_q,
     const geometry_msgs::msg::Pose& target_pose,
+    const std::string& stage_name,
+    trajectory_msgs::msg::JointTrajectory& trajectory_out);
+
+  bool planJointStage(
+    moveit::planning_interface::MoveGroupInterface& move_group,
+    const moveit::core::JointModelGroup* joint_model_group,
+    const std::vector<double>& start_q,
+    const std::vector<double>& target_q,
     const std::string& stage_name,
     trajectory_msgs::msg::JointTrajectory& trajectory_out);
 

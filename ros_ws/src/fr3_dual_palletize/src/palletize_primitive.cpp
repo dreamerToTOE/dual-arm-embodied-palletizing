@@ -336,6 +336,53 @@ bool PalletizePrimitive::planCartesianStage(
   return true;
 }
 
+bool PalletizePrimitive::planJointStage(
+  moveit::planning_interface::MoveGroupInterface& move_group,
+  const moveit::core::JointModelGroup* joint_model_group,
+  const std::vector<double>& start_q,
+  const std::vector<double>& target_q,
+  const std::string& stage_name,
+  trajectory_msgs::msg::JointTrajectory& trajectory_out)
+{
+  if (!setStartStateForGroup(move_group, joint_model_group, start_q))
+  {
+    return false;
+  }
+
+  move_group.clearPoseTargets();
+  if (!move_group.setJointValueTarget(target_q))
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] %s：无法设置关节目标。",
+      config_.label.c_str(), stage_name.c_str());
+    return false;
+  }
+
+  moveit::planning_interface::MoveGroupInterface::Plan plan;
+  if (move_group.plan(plan) != moveit::core::MoveItErrorCode::SUCCESS)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] %s：RRTConnect 规划失败。",
+      config_.label.c_str(), stage_name.c_str());
+    return false;
+  }
+
+  trajectory_out = plan.trajectory_.joint_trajectory;
+  if (trajectory_out.points.empty())
+  {
+    return false;
+  }
+
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] %s：plan OK, points=%zu, duration=%.3f s",
+    config_.label.c_str(), stage_name.c_str(),
+    trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
+  return true;
+}
+
 std::vector<std::string> PalletizePrimitive::isaacJointNames(
   const std::vector<std::string>& moveit_names) const
 {
@@ -840,7 +887,40 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     return false;
   }
 
-  candidate.goal_q = currentFrom(retreat_traj);
+  // 当前交叉场景中，两臂若都永久停在 RETREAT，会形成静态终态碰撞。
+  // Task09-B 安全退出扩展仅在协调候选模式下，在真实释放后以 MoveIt 规划一段独立安全退出：
+  // RETREAT -> HOME。放置后的 Box 保持为 world object，绝不忽略其碰撞几何。
+  if (config_.include_safe_egress)
+  {
+    if (!detachObject(config_.object_id, config_.eef_link))
+    {
+      restoreInitialWorldObject();
+      return false;
+    }
+    attached = false;
+    removeWorldObject(config_.object_id);
+    if (!addWorldObject(config_.object_id, candidate.planned_release_pose))
+    {
+      restoreInitialWorldObject();
+      return false;
+    }
+
+    trajectory_msgs::msg::JointTrajectory egress_traj;
+    if (!planJointStage(
+          move_group,
+          joint_model_group,
+          currentFrom(retreat_traj),
+          candidate.start_q,
+          "TASK09-B RETREAT -> HOME SAFE_EGRESS",
+          egress_traj) ||
+        !appendStage("RETREAT_TO_HOME_SAFE_EGRESS", egress_traj))
+    {
+      restoreInitialWorldObject();
+      return false;
+    }
+  }
+
+  candidate.goal_q = currentFrom(candidate.trajectory);
   candidate.duration_sec = trajectoryDuration(candidate.trajectory);
 
   const bool restore_ok = restoreInitialWorldObject();

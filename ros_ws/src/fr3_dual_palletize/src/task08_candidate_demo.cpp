@@ -397,7 +397,7 @@ void logLocalWaitPlan(
   RCLCPP_INFO(logger, "coordinated_makespan = %.3f s", result.coordinated_makespan_sec);
   RCLCPP_INFO(
     logger,
-    "Task09-B SAFE：只生成含局部 HOLD 的候选，已由 Task08-B 复检；未执行机器人或吸盘命令。");
+    "Task09-B SAFE：只生成含安全退出与可选局部 HOLD 的候选，已由 Task08-B 复检；未执行机器人或吸盘命令。");
 }
 
 }  // namespace
@@ -416,6 +416,8 @@ int main(int argc, char** argv)
     "enable_temporal_coordination", false);
   const bool enable_local_wait_coordination = pose_node->declare_parameter<bool>(
     "enable_local_wait_coordination", false);
+  const bool enable_safe_egress = pose_node->declare_parameter<bool>(
+    "enable_safe_egress", enable_local_wait_coordination);
   const double delay_step_sec = pose_node->declare_parameter<double>(
     "delay_step_sec", 0.25);
   const double max_delay_sec = pose_node->declare_parameter<double>(
@@ -455,11 +457,22 @@ int main(int argc, char** argv)
   RCLCPP_INFO(
     pose_node->get_logger(),
     "========== Task08-A：完整 TaskTrajectoryCandidate 输出 ==========");
-  RCLCPP_INFO(
-    pose_node->get_logger(),
-    "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT；"
-    "仅规划，不发布 joint command 或 suction command。"
-  );
+  if (enable_safe_egress)
+  {
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT -> HOME SAFE_EGRESS；"
+      "仅规划，不发布 joint command 或 suction command。"
+    );
+  }
+  else
+  {
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT；"
+      "仅规划，不发布 joint command 或 suction command。"
+    );
+  }
   RCLCPP_INFO(
     pose_node->get_logger(),
     "Task08-B scenario=%s, expected=%s",
@@ -503,6 +516,7 @@ int main(int argc, char** argv)
   left_config.pose_index = 0;
   left_config.target_x = scenario.left_target_x;
   left_config.target_y = scenario.left_target_y;
+  left_config.include_safe_egress = enable_safe_egress;
 
   fr3_dual_palletize::PrimitiveConfig right_config;
   right_config.label = scenario.right_label;
@@ -517,6 +531,7 @@ int main(int argc, char** argv)
   right_config.pose_index = 1;
   right_config.target_x = scenario.right_target_x;
   right_config.target_y = scenario.right_target_y;
+  right_config.include_safe_egress = enable_safe_egress;
 
   auto provider = [pose_buffer](std::size_t index)
   {
@@ -588,7 +603,10 @@ int main(int argc, char** argv)
       return 1;
     }
 
-    if (report.conflict != scenario.expected_conflict)
+    // Task08 固定场景用于验证原始候选的 SAFE / CONFLICT 结论。
+    // 启用 Task09-B safe egress 后，单臂 MoveIt 退出路径已经是新的候选空间路径：
+    // 它可能直接 SAFE，也可能仍需交给 local wait 协调，两种结果都合法。
+    if (!enable_safe_egress && report.conflict != scenario.expected_conflict)
     {
       RCLCPP_ERROR(
         pose_node->get_logger(),
