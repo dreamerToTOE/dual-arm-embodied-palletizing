@@ -2,7 +2,18 @@
 
 ## 状态
 
-✅ **本机联合运行验收通过**
+✅ **已本机联合运行验收通过**
+
+Task07 最终结果：左右两个 Task04 primitive 在 `StartGate` 后真正并发执行，两边抓取、搬运、放置与释放均成功。
+
+实际结果：
+
+```text
+LEFT / BoxA  SUCCESS, e_xy ≈ 1.38 mm
+RIGHT / BoxB SUCCESS, e_xy ≈ 1.03 mm
+Task07 SUCCESS
+wall_time ≈ 20.693 s
+```
 
 ## 本 Task 只做什么
 
@@ -117,32 +128,14 @@ Right PRE_PICK planned --/
 
 Task07 不做时空冲突判断。这个能力明确留给 Task08。
 
-## 本机验收结果
-
-```text
-LEFT / BoxA  SUCCESS
-RIGHT / BoxB SUCCESS
-Task07 SUCCESS
-wall_time = 20.693 s
-```
-
-最终放置误差：
-
-```text
-BoxA e_xy = 1.38 mm
-BoxB e_xy = 1.03 mm
-```
-
-日志中左右 `PRE_PICK` 均先完成规划并在 `StartGate` 等待，随后同时打印 `PARALLEL GO`，两条完整 primitive 并发向前执行，因此 Task07 目标已经满足。
-
 ## 只验收以下内容
 
 ```text
-1. 左右 PRE_PICK 在 gate 后可同时开始实际运动：PASS
-2. 左右完整 primitive 均成功结束：PASS
-3. BoxA 最终到左侧目标：PASS
-4. BoxB 最终到右侧目标：PASS
-5. 左右 suction / attach / Planning Scene 更新不串线：PASS
+1. 左右 PRE_PICK 在 gate 后可同时开始实际运动
+2. 左右完整 primitive 均成功结束
+3. BoxA 最终到左侧目标
+4. BoxB 最终到右侧目标
+5. 左右 suction / attach / Planning Scene 更新不串线
 ```
 
 不单独重复测试：
@@ -167,11 +160,60 @@ BoxB e_xy = 1.03 mm
 -> 增加时空冲突检测
 ```
 
-职责拆分：
+Task08 开始才是松协调避障与调度的核心。
 
-```text
-Task08 = 发现冲突：预测两条带时间轨迹是否在同一时刻进入危险距离/碰撞状态
-Task09 = 主动消解冲突：等待、优先级、时间偏移、必要时局部重规划/绕行
+---
+
+## 启动 / 复现指令
+
+### 1. Isaac Sim：恢复 Task06 双臂基础设施
+
+Timeline **Stop** 时依次运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_fr3_scene.py").read())
 ```
 
-因此真正的双臂主动避障/冲突解决从 Task09 开始；Task08 先把“什么时候、在哪里、哪两个对象会冲突”检测可靠。
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_ros_graph.py").read())
+```
+
+### 2. Isaac Sim：加载 Task07 场景
+
+仍保持 **Stop**：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task07_parallel_scene.py").read())
+```
+
+然后点击 **Play**，再运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task07_dual_suction_bridge.py").read())
+```
+
+### 3. MoveIt2
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.launch.py
+```
+
+### 4. Task07 主节点
+
+另开终端：
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 run fr3_dual_palletize task07_parallel_demo
+```
+
+统一启动总表见：
+
+```text
+docs/STARTUP_GUIDE.md
+```
