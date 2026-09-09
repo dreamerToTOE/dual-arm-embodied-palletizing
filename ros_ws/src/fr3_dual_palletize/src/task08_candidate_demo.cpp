@@ -18,6 +18,7 @@
 #include <shape_msgs/msg/solid_primitive.hpp>
 
 #include "fr3_dual_palletize/palletize_primitive.hpp"
+#include "fr3_dual_palletize/spatiotemporal_conflict_detector.hpp"
 
 using namespace std::chrono_literals;
 
@@ -233,6 +234,45 @@ void logCandidate(
   }
 }
 
+void logConflictReport(
+  const rclcpp::Logger& logger,
+  const fr3_dual_palletize::ConflictReport& report)
+{
+  RCLCPP_INFO(logger, "========== Task08-B CONFLICT REPORT ==========");
+  RCLCPP_INFO(logger, "horizon         = %.3f s", report.horizon_sec);
+  RCLCPP_INFO(logger, "sample_period   = %.3f s", report.sample_period_sec);
+  RCLCPP_INFO(logger, "samples_checked = %zu", report.samples_checked);
+  RCLCPP_INFO(logger, "detector_wall   = %.3f s", report.wall_time_sec);
+
+  if (!report.valid)
+  {
+    RCLCPP_ERROR(logger, "Task08-B INVALID: %s", report.error.c_str());
+    return;
+  }
+
+  if (!report.conflict)
+  {
+    RCLCPP_INFO(logger, "Task08-B SAFE: NO_CONFLICT");
+    return;
+  }
+
+  RCLCPP_WARN(
+    logger,
+    "Task08-B CONFLICT: first_time = %.3f s, events_at_first_sample = %zu",
+    report.first_conflict_time_sec,
+    report.events.size());
+  for (const auto& event : report.events)
+  {
+    RCLCPP_WARN(
+      logger,
+      "pair = %s <-> %s, type = %s, t = %.3f s",
+      event.body_a.c_str(),
+      event.body_b.c_str(),
+      event.type.c_str(),
+      event.time_sec);
+  }
+}
+
 }  // namespace
 
 int main(int argc, char** argv)
@@ -354,7 +394,46 @@ int main(int argc, char** argv)
     );
     RCLCPP_INFO(
       pose_node->get_logger(),
-      "下一步由 SpatioTemporalConflictDetector 同时读取两个 TaskTrajectoryCandidate。"
+      "Task08-A PASS：开始 Task08-B，只读检查两个候选的联合时空碰撞。"
+    );
+
+    // 将 MoveIt 当前 world object 快照复制到 Detector 的私有 PlanningScene。
+    // 其中两个 task08 Box 会在每个时间采样点按 ATTACH/DETACH 事件重新创建，
+    // Detector 绝不会向 move_group 或 Isaac 回写任何状态。
+    moveit::planning_interface::PlanningSceneInterface scene_interface;
+    std::vector<moveit_msgs::msg::CollisionObject> static_world_objects;
+    for (const auto& [id, object] : scene_interface.getObjects())
+    {
+      static_cast<void>(id);
+      static_world_objects.push_back(object);
+    }
+
+    moveit::planning_interface::MoveGroupInterface detector_group(
+      left_node, "left_arm");
+    const auto robot_model = detector_group.getRobotModel();
+    fr3_dual_palletize::SpatioTemporalConflictDetector detector(
+      robot_model, std::move(static_world_objects));
+    const auto report = detector.check(left_candidate, right_candidate, 0.01);
+    logConflictReport(pose_node->get_logger(), report);
+
+    if (!report.valid)
+    {
+      RCLCPP_ERROR(
+        pose_node->get_logger(),
+        "Task08-B FAIL：Detector 未生成有效 ConflictReport。"
+      );
+      executor.cancel();
+      if (spin_thread.joinable())
+      {
+        spin_thread.join();
+      }
+      rclcpp::shutdown();
+      return 1;
+    }
+
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "Task08-B PASS：已完成联合预测；无论 SAFE 或 CONFLICT，均未执行任何机器人或吸盘命令。"
     );
   }
   else

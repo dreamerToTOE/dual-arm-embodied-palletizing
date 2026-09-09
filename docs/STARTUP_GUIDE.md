@@ -349,7 +349,15 @@ ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.lau
 
 ### ROS 节点
 
-Task08 当前已完成交叉场景设计，`SpatioTemporalConflictDetector` 与协调接口仍在实现中。因此此处暂不写一个不存在的 `ros2 run` 命令；实现后再补最终入口。
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+
+ros2 run fr3_dual_palletize task08_candidate_demo
+```
+
+该节点先生成两条完整 `TaskTrajectoryCandidate`，再按 `0.01 s` 联合采样；仅输出 `Task08-B SAFE` 或 `Task08-B CONFLICT`，不会执行机器人或吸盘命令。
 
 > 不要运行 `task07_parallel_demo` 来测试 Task08，因为 Task07 demo 内部仍使用无冲突目标坐标。
 

@@ -24,6 +24,9 @@ struct TaskTrajectoryCandidate
   std::string planning_group;
   std::string object_id;
   std::string eef_link;
+  // ATTACH 后允许 Box 与这些末端部件发生安装/吸附接触。
+  // Task08-B 在私有 RobotState 中重建 AttachedBody 时复用该 ACM 语义。
+  std::vector<std::string> object_touch_links;
 
   // 供 Task08-B 以统一时间轴采样的完整拼接轨迹。
   trajectory_msgs::msg::JointTrajectory trajectory;

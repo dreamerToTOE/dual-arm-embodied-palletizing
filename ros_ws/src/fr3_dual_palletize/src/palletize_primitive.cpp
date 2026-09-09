@@ -679,6 +679,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   candidate.planning_group = config_.planning_group;
   candidate.object_id = config_.object_id;
   candidate.eef_link = config_.eef_link;
+  candidate.object_touch_links = {config_.eef_link, config_.tool_link};
   candidate.start_q = current_q;
   candidate.initial_object_pose = pick_pose;
   candidate.planned_release_pose = pick_pose;

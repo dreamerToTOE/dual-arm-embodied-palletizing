@@ -121,4 +121,4 @@ HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 -> PRE_PLACE -> PLACE -> DETACH -> RETREAT
 ```
 
-每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。下一步使用同一双臂 RobotState 对两个候选按时间采样，完成动态冲突检测；协调决策留到 Task09。
+每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已实现同一双臂 RobotState 的 10 ms 联合采样与真实几何碰撞检测，运行验收后再进入 Task09 的协调决策。

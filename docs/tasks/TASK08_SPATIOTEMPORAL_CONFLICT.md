@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **Task08-A 完整候选已实现；交叉场景已完成，Task08-B 冲突检测器待实现。**
+🟡 **Task08-A 已完成 Isaac + MoveIt 联调；Task08-B 检测器已实现并通过编译，待交叉场景运行验收。**
 
 ## 1. 本 Task 只解决什么
 
@@ -119,34 +119,31 @@ BoxB target = (0.820, -0.120, 0.065)
 
 ## 5. 新模块：SpatioTemporalConflictDetector
 
-计划新增到：
+已新增到：
 
 ```text
 ros_ws/src/fr3_dual_palletize/
 ```
 
-核心接口概念：
+核心接口：
 
 ```cpp
-struct TimedTrajectory
-{
-    trajectory_msgs::msg::JointTrajectory trajectory;
-    double start_delay;
-    CarryState carry_state;
-};
-
 struct ConflictEvent
 {
-    double time;
-    std::string type;
+    double time_sec;
+    std::string type;  // ARM_ARM / ARM_OBJECT / OBJECT_OBJECT
     std::string body_a;
     std::string body_b;
 };
 
 struct ConflictReport
 {
+    bool valid;
     bool conflict;
-    double first_conflict_time;
+    double first_conflict_time_sec;
+    double horizon_sec;
+    std::size_t samples_checked;
+    double wall_time_sec;
     std::vector<ConflictEvent> events;
 };
 
@@ -154,10 +151,15 @@ class SpatioTemporalConflictDetector
 {
 public:
     ConflictReport check(
-        const TimedTrajectory& left,
-        const TimedTrajectory& right);
+        const TaskTrajectoryCandidate& left,
+        const TaskTrajectoryCandidate& right,
+        double sample_period_sec = 0.01);
 };
 ```
+
+检测器从当前 MoveIt World object 读取一次静态快照，并为每个采样点创建私有
+`PlanningScene` / `RobotState`；不会发布任何 ROS command，也不会修改 `move_group`。
+两个 Task08 Box 不直接复用快照，而是根据候选事件重新创建：World 时使用初始/计划释放 pose，Attached 时使用 Task04 已验证的吸盘相对几何与 touch-links。
 
 Task09 直接消费 `ConflictReport`，不再重新做碰撞分析。
 
@@ -391,7 +393,19 @@ ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.lau
 
 ### 4. Task08 ROS 主节点
 
-当前 `SpatioTemporalConflictDetector` 与协调接口仍在实现中，因此暂时没有最终 `ros2 run` 入口。实现完成后把最终命令补在这里和 `docs/STARTUP_GUIDE.md`。
+```bash
+ros2 run fr3_dual_palletize task08_candidate_demo
+```
+
+该入口依次完成：
+
+```text
+Task08-A 生成 left/right TaskTrajectoryCandidate
+-> Task08-B 以 0.01 s 采样联合 14-DoF RobotState
+-> 输出 SAFE 或首个 CONFLICT 的时间、碰撞 pair 与类型
+```
+
+它始终只规划和预测，不会执行机器人或吸盘命令。交叉场景的预期结果是 `CONFLICT`；Task07 分离通道的预期结果是 `SAFE`。
 
 不要运行：
 

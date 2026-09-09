@@ -13,10 +13,12 @@ find_package(geometry_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
+find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 
 add_library(palletize_primitive
   src/palletize_primitive.cpp
+  src/spatiotemporal_conflict_detector.cpp
 )
 target_include_directories(palletize_primitive
   PUBLIC
@@ -31,6 +33,7 @@ ament_target_dependencies(palletize_primitive
   shape_msgs
   trajectory_msgs
   moveit_msgs
+  moveit_core
   moveit_ros_planning_interface
 )
 
@@ -56,6 +59,7 @@ ament_target_dependencies(task08_candidate_demo
   shape_msgs
   trajectory_msgs
   moveit_msgs
+  moveit_core
   moveit_ros_planning_interface
 )
 
@@ -83,6 +87,7 @@ ament_export_dependencies(
   shape_msgs
   trajectory_msgs
   moveit_msgs
+  moveit_core
   moveit_ros_planning_interface
 )
 
