@@ -5,10 +5,9 @@
 #include <cmath>
 #include <cstdint>
 #include <thread>
+#include <utility>
 
-#include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
-#include <moveit/robot_state/robot_state.h>
 #include <moveit_msgs/msg/attached_collision_object.hpp>
 #include <moveit_msgs/msg/collision_object.hpp>
 #include <moveit_msgs/msg/move_it_error_codes.hpp>
@@ -178,6 +177,31 @@ bool PalletizePrimitive::waitForIsaacBridge()
     config_.suction_command_topic.c_str(),
     config_.suction_state_topic.c_str());
   return false;
+}
+
+bool PalletizePrimitive::configureMoveGroup(
+  moveit::planning_interface::MoveGroupInterface& move_group,
+  const moveit::core::JointModelGroup*& joint_model_group)
+{
+  move_group.setPlannerId("RRTConnectkConfigDefault");
+  move_group.setPlanningTime(5.0);
+  move_group.setNumPlanningAttempts(5);
+  move_group.setMaxVelocityScalingFactor(0.20);
+  move_group.setMaxAccelerationScalingFactor(0.20);
+  move_group.setPoseReferenceFrame("world");
+  move_group.setEndEffectorLink(config_.eef_link);
+
+  joint_model_group =
+    move_group.getRobotModel()->getJointModelGroup(config_.planning_group);
+  if (joint_model_group == nullptr)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] 找不到 planning group=%s",
+      config_.label.c_str(), config_.planning_group.c_str());
+    return false;
+  }
+  return true;
 }
 
 geometry_msgs::msg::Pose PalletizePrimitive::makeTopDownPose(
@@ -521,45 +545,58 @@ std::vector<double> PalletizePrimitive::currentFrom(
   return trajectory.points.back().positions;
 }
 
-bool PalletizePrimitive::runOnce(StartGate& start_gate)
+bool PalletizePrimitive::prepareTransferCandidate(
+  StartGate& start_gate,
+  StartGate& coordination_gate,
+  TransferCandidate& candidate)
 {
   RCLCPP_INFO(
     node_->get_logger(),
-    "========== Task07 %s primitive START ==========" ,
+    "========== %s prepare candidate START ==========" ,
     config_.label.c_str());
 
   if (!waitForIsaacBridge())
   {
     start_gate.cancel();
+    coordination_gate.cancel();
     return false;
   }
 
   moveit::planning_interface::MoveGroupInterface move_group(
     node_, config_.planning_group);
-  move_group.setPlannerId("RRTConnectkConfigDefault");
-  move_group.setPlanningTime(5.0);
-  move_group.setNumPlanningAttempts(5);
-  move_group.setMaxVelocityScalingFactor(0.20);
-  move_group.setMaxAccelerationScalingFactor(0.20);
-  move_group.setPoseReferenceFrame("world");
-  move_group.setEndEffectorLink(config_.eef_link);
-
-  const auto* joint_model_group =
-    move_group.getRobotModel()->getJointModelGroup(config_.planning_group);
-  if (joint_model_group == nullptr)
+  const moveit::core::JointModelGroup* joint_model_group = nullptr;
+  if (!configureMoveGroup(move_group, joint_model_group))
   {
-    RCLCPP_ERROR(
-      node_->get_logger(),
-      "[%s] 找不到 planning group=%s",
-      config_.label.c_str(), config_.planning_group.c_str());
     start_gate.cancel();
+    coordination_gate.cancel();
     return false;
   }
 
+  const bool ok = prepareTransferCandidateImpl(
+    move_group,
+    joint_model_group,
+    start_gate,
+    coordination_gate,
+    candidate);
+
+  if (!ok)
+  {
+    start_gate.cancel();
+    coordination_gate.cancel();
+  }
+  return ok;
+}
+
+bool PalletizePrimitive::prepareTransferCandidateImpl(
+  moveit::planning_interface::MoveGroupInterface& move_group,
+  const moveit::core::JointModelGroup* joint_model_group,
+  StartGate& start_gate,
+  StartGate& coordination_gate,
+  TransferCandidate& candidate)
+{
   auto current_state = move_group.getCurrentState(3.0);
   if (!current_state)
   {
-    start_gate.cancel();
     return false;
   }
 
@@ -571,7 +608,6 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
       node_->get_logger(),
       "[%s] 当前关节数量=%zu，预期 7。",
       config_.label.c_str(), current_q.size());
-    start_gate.cancel();
     return false;
   }
 
@@ -589,13 +625,12 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
         move_group, joint_model_group, config_.eef_link,
         current_q, pre_pick, "PRE_PICK", pre_pick_traj))
   {
-    start_gate.cancel();
     return false;
   }
 
   RCLCPP_INFO(
     node_->get_logger(),
-    "[%s] PRE_PICK 已规划，等待另一臂；两臂将在此处同时释放。",
+    "[%s] PRE_PICK 已规划，等待另一臂同时启动。",
     config_.label.c_str());
 
   if (!start_gate.arriveAndWait())
@@ -603,11 +638,7 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
     return false;
   }
 
-  RCLCPP_INFO(
-    node_->get_logger(),
-    "[%s] PARALLEL GO",
-    config_.label.c_str());
-
+  RCLCPP_INFO(node_->get_logger(), "[%s] PARALLEL GO", config_.label.c_str());
   if (!executeTrajectory(pre_pick_traj))
   {
     return false;
@@ -653,7 +684,17 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
     return false;
   }
 
-  // Task07 是“无冲突双臂并行”基线；两箱均放到底层桌面。
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] 已到 LIFT coordination point；保持 Attached + SUCTION ON。",
+    config_.label.c_str());
+
+  // Task08 的关键协调接口：两臂都到达 LIFT 后，才开始生成候选 transfer。
+  if (!coordination_gate.arriveAndWait())
+  {
+    return false;
+  }
+
   const double planned_release_center_z =
     TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
@@ -663,21 +704,109 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
 
   auto pre_place = makeTopDownPose(
     config_.target_x, config_.target_y, pre_place_tcp_z);
-  trajectory_msgs::msg::JointTrajectory pre_place_traj;
+
+  trajectory_msgs::msg::JointTrajectory transfer_traj;
+  const auto start_q = currentFrom(lift_traj);
   if (!planPoseStage(
-        move_group, joint_model_group, config_.eef_link,
-        currentFrom(lift_traj), pre_place, "LIFT -> PRE_PLACE", pre_place_traj) ||
-      !executeTrajectory(pre_place_traj))
+        move_group,
+        joint_model_group,
+        config_.eef_link,
+        start_q,
+        pre_place,
+        "LIFT -> PRE_PLACE CANDIDATE",
+        transfer_traj))
   {
     return false;
   }
 
+  candidate.label = config_.label;
+  candidate.planning_group = config_.planning_group;
+  candidate.object_id = config_.object_id;
+  candidate.eef_link = config_.eef_link;
+  candidate.trajectory = transfer_traj;
+  candidate.start_q = start_q;
+  candidate.goal_q = currentFrom(transfer_traj);
+  candidate.duration_sec = pointTime(transfer_traj.points.back());
+  candidate.target_x = config_.target_x;
+  candidate.target_y = config_.target_y;
+  candidate.carrying_object = true;
+
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] CANDIDATE READY: joints=%zu, points=%zu, duration=%.3f s, target=(%.3f, %.3f)",
+    config_.label.c_str(),
+    candidate.trajectory.joint_names.size(),
+    candidate.trajectory.points.size(),
+    candidate.duration_sec,
+    candidate.target_x,
+    candidate.target_y);
+
+  return true;
+}
+
+bool PalletizePrimitive::executePreparedTransferAndFinish(
+  const TransferCandidate& candidate)
+{
+  if (candidate.trajectory.points.empty() || !candidate.carrying_object)
+  {
+    RCLCPP_ERROR(node_->get_logger(), "[%s] candidate 无效。", config_.label.c_str());
+    return false;
+  }
+
+  if (candidate.planning_group != config_.planning_group ||
+      candidate.object_id != config_.object_id ||
+      candidate.eef_link != config_.eef_link)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] candidate 元数据与 primitive 配置不匹配。",
+      config_.label.c_str());
+    return false;
+  }
+
+  moveit::planning_interface::MoveGroupInterface move_group(
+    node_, config_.planning_group);
+  const moveit::core::JointModelGroup* joint_model_group = nullptr;
+  if (!configureMoveGroup(move_group, joint_model_group))
+  {
+    return false;
+  }
+
+  return finishPreparedTransferImpl(move_group, joint_model_group, candidate);
+}
+
+bool PalletizePrimitive::finishPreparedTransferImpl(
+  moveit::planning_interface::MoveGroupInterface& move_group,
+  const moveit::core::JointModelGroup* joint_model_group,
+  const TransferCandidate& candidate)
+{
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] Coordinator 已批准 candidate，开始执行 LIFT -> PRE_PLACE。",
+    config_.label.c_str());
+
+  if (!executeTrajectory(candidate.trajectory))
+  {
+    return false;
+  }
+
+  const double planned_release_center_z =
+    TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+  const double place_tcp_z =
+    planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+  const double pre_place_tcp_z =
+    std::max(MIN_PRE_PLACE_TCP_Z, place_tcp_z + PRE_PLACE_CLEARANCE);
+
   auto place = makeTopDownPose(
-    config_.target_x, config_.target_y, place_tcp_z);
+    candidate.target_x, candidate.target_y, place_tcp_z);
   trajectory_msgs::msg::JointTrajectory place_traj;
   if (!planCartesianStage(
-        move_group, joint_model_group, currentFrom(pre_place_traj),
-        place, "PRE_PLACE -> PLACE", place_traj) ||
+        move_group,
+        joint_model_group,
+        candidate.goal_q,
+        place,
+        "PRE_PLACE -> PLACE",
+        place_traj) ||
       !executeTrajectory(place_traj))
   {
     return false;
@@ -685,11 +814,15 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
 
   // Task04 canonical primitive：仍 Attached + SUCTION ON 时先规划 RETREAT。
   auto retreat = makeTopDownPose(
-    config_.target_x, config_.target_y, pre_place_tcp_z);
+    candidate.target_x, candidate.target_y, pre_place_tcp_z);
   trajectory_msgs::msg::JointTrajectory retreat_traj;
   if (!planCartesianStage(
-        move_group, joint_model_group, currentFrom(place_traj),
-        retreat, "PLACE -> RETREAT", retreat_traj))
+        move_group,
+        joint_model_group,
+        currentFrom(place_traj),
+        retreat,
+        "PLACE -> RETREAT",
+        retreat_traj))
   {
     return false;
   }
@@ -708,7 +841,6 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
     return false;
   }
 
-  // detach 后按 Isaac Ground Truth 重建 world object。
   removeWorldObject(config_.object_id);
   if (!addWorldObject(config_.object_id, settled_pose))
   {
@@ -721,16 +853,31 @@ bool PalletizePrimitive::runOnce(StartGate& start_gate)
   }
 
   const double e_xy = std::hypot(
-    settled_pose.position.x - config_.target_x,
-    settled_pose.position.y - config_.target_y);
+    settled_pose.position.x - candidate.target_x,
+    settled_pose.position.y - candidate.target_y);
 
   RCLCPP_INFO(
     node_->get_logger(),
     "[%s] SUCCESS: settled=(%.4f, %.4f, %.4f), target=(%.4f, %.4f), e_xy=%.2f mm",
     config_.label.c_str(),
     settled_pose.position.x, settled_pose.position.y, settled_pose.position.z,
-    config_.target_x, config_.target_y, e_xy * 1000.0);
+    candidate.target_x, candidate.target_y, e_xy * 1000.0);
   return true;
+}
+
+bool PalletizePrimitive::runOnce(StartGate& start_gate)
+{
+  // Task07 继续走完整 primitive，但内部也通过同一 candidate 接口，
+  // coordination_gate=1 表示无需等待另一臂的 LIFT 审批点。
+  StartGate coordination_gate(1);
+  TransferCandidate candidate;
+
+  if (!prepareTransferCandidate(start_gate, coordination_gate, candidate))
+  {
+    return false;
+  }
+
+  return executePreparedTransferAndFinish(candidate);
 }
 
 }  // namespace fr3_dual_palletize
