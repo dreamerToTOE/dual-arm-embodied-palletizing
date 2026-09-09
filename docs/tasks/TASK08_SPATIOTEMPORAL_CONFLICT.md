@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **Task08-A 已完成 Isaac + MoveIt 联调；Task08-B 检测器已实现并通过编译，待交叉场景运行验收。**
+🟡 **Task08-A 已完成 Isaac + MoveIt 联调；Task08-B 已通过交叉场景 CONFLICT 验收，待 Task07 SAFE 对照验收。**
 
 ## 1. 本 Task 只解决什么
 
@@ -417,6 +417,37 @@ ros2 run fr3_dual_palletize task08_candidate_demo \
 ```
 
 节点会将结果与 scenario 预期比较；`SAFE/CONFLICT` 不符合预期时以非零退出，避免把漏检或误报错误标记为 PASS。
+
+## 15. 当前运行记录
+
+### Task08 交叉场景：PASS
+
+2026-09-09，使用 `task08_conflict` 默认 scenario 完成实际 Isaac + MoveIt 联调：
+
+```text
+horizon         = 19.117 s
+sample_period   = 0.010 s
+samples_checked = 289
+detector_wall   = 0.045 s
+
+Task08-B CONFLICT: first_time = 2.880 s
+pair = left_fr3_link7 <-> right_fr3_link7
+type = ARM_ARM
+Task08-B PASS
+```
+
+首个冲突发生在两个 `ATTACH` 事件之前，说明危险并不局限于携物 `LIFT -> PRE_PLACE` 段；完整任务轨迹与统一时间轴的建模是必要的。
+
+### Task07 SAFE 对照：待验收
+
+切换至 `task07_parallel_scene.py` 后运行：
+
+```bash
+ros2 run fr3_dual_palletize task08_candidate_demo \
+  --ros-args -p scenario:=task07_safe
+```
+
+预期 `Task08-B SAFE: NO_CONFLICT` 且进程返回 0。
 
 不要运行：
 
