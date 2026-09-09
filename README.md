@@ -39,7 +39,8 @@
 | 05 | 同一 B-A-C 场景顶部吸盘插入 + MoveIt/Isaac 模型对齐 | ✅ |
 | 06 | 双 FR3 + 双紧凑吸盘基础设施 | ✅ |
 | 07 | 双臂松协调并行码垛 | ✅ |
-| 08 | 双臂完整任务轨迹与时空冲突检测 | 🟡 Task08-A 完成，Task08-B 进行中 |
+| 08 | 双臂完整任务轨迹与时空冲突检测 | ✅ Task08-A/B 完成：SAFE 与 CONFLICT 均已验收 |
+| 09 | 松协调时间协调 | 🟡 进行中 |
 | 11+ | 双吸盘共物体与紧协调 | 计划中 |
 
 ## 当前核心工程结论
@@ -110,15 +111,17 @@ PRE_PICK
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## 当前阶段：Task08
+## 当前阶段：Task09
 
 Task06 已完成双臂基础设施，Task07 已完成两条独立 Task04 primitive 的并行执行。
 
-Task08 当前先生成完整任务候选：
+Task08 已生成完整任务候选：
 
 ```text
 HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 -> PRE_PLACE -> PLACE -> DETACH -> RETREAT
 ```
 
-每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已实现同一双臂 RobotState 的 10 ms 联合采样与真实几何碰撞检测，运行验收后再进入 Task09 的协调决策。
+每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已在 10 ms 联合采样下通过两项实际验收：Task07 分离通道为 `SAFE`，Task08 交叉通道报告 `ARM_ARM` 冲突。
+
+Task09 将消费 `ConflictReport`，首先验证延迟启动/等待的时间协调策略；之后再考虑优先级与局部重规划。
