@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **方案已确定，待实现**
+🟡 **方案已确定，交叉场景已完成，冲突检测器待实现**
 
 ## 1. 本 Task 只解决什么
 
@@ -96,14 +96,23 @@ Right y ≈ +0.25
 
 Task08 新增 `conflict` 场景，把两个搬运目标主动引入中央公共工作区，使两条 `LIFT -> PRE_PLACE` 路径交叉或高度重叠。
 
-优先采用“交叉目标”而不是人为插一个障碍：
+当前交叉场景：
 
 ```text
-Left  从负 y 一侧搬向正 y / 中央区域
-Right 从正 y 一侧搬向负 y / 中央区域
+BoxA pick   = (0.320, -0.250, 0.065)
+BoxA target = (0.820, +0.120, 0.065)
+
+BoxB pick   = (0.320, +0.250, 0.065)
+BoxB target = (0.820, -0.120, 0.065)
 ```
 
-具体 target XY 作为场景参数调节；标准不是某组固定坐标，而是必须满足：
+两条名义 XY 路径交叉位置约：
+
+```text
+(0.658, 0.000)
+```
+
+最终标准仍然不是某组固定坐标，而是必须满足：
 
 ```text
 左轨迹单独规划：PASS
@@ -349,3 +358,54 @@ Task09 输入该报告后才实现：
 > **系统已经能在真正执行前准确指出“两条单独合法的轨迹为什么不能同时执行”。**
 
 而不是已经会主动绕开。
+
+---
+
+## 14. 启动 / 复现指令
+
+### 1. Isaac Sim：恢复 Task06 双臂基础设施
+
+Timeline **Stop** 时依次运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_fr3_scene.py").read())
+```
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_ros_graph.py").read())
+```
+
+### 2. Isaac Sim：加载 Task08 交叉场景
+
+仍保持 **Stop**：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task08_cross_conflict_scene.py").read())
+```
+
+点击 **Play** 后继续复用 Task07 双吸盘 Bridge：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task07_dual_suction_bridge.py").read())
+```
+
+### 3. MoveIt2
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.launch.py
+```
+
+### 4. Task08 ROS 主节点
+
+当前 `SpatioTemporalConflictDetector` 与协调接口仍在实现中，因此暂时没有最终 `ros2 run` 入口。实现完成后把最终命令补在这里和 `docs/STARTUP_GUIDE.md`。
+
+不要运行：
+
+```bash
+ros2 run fr3_dual_palletize task07_parallel_demo
+```
+
+因为 Task07 demo 内部仍使用 Task07 无冲突目标坐标。
