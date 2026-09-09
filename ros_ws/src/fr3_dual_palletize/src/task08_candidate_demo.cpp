@@ -1,0 +1,385 @@
+#include <array>
+#include <chrono>
+#include <condition_variable>
+#include <iomanip>
+#include <memory>
+#include <mutex>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include <geometry_msgs/msg/pose.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit_msgs/msg/collision_object.hpp>
+#include <rclcpp/parameter_client.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <shape_msgs/msg/solid_primitive.hpp>
+
+#include "fr3_dual_palletize/palletize_primitive.hpp"
+
+using namespace std::chrono_literals;
+
+namespace
+{
+constexpr std::size_t NUM_BOXES = 2;
+constexpr double BOX_SIZE = 0.030;
+
+// Task08 交叉目标：最终目标不重叠，但 transfer 会进入公共工作区。
+constexpr double LEFT_TARGET_X = 0.820;
+constexpr double LEFT_TARGET_Y = 0.120;
+constexpr double RIGHT_TARGET_X = 0.820;
+constexpr double RIGHT_TARGET_Y = -0.120;
+
+bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
+{
+  auto client = std::make_shared<rclcpp::SyncParametersClient>(node, "/move_group");
+  if (!client->wait_for_service(10s))
+  {
+    RCLCPP_ERROR(node->get_logger(), "无法连接 /move_group，请先启动 Task06 双臂 MoveIt2。");
+    return false;
+  }
+
+  const auto params = client->get_parameters({
+    "robot_description",
+    "robot_description_semantic"
+  });
+
+  if (params.size() != 2 ||
+      params[0].get_type() != rclcpp::ParameterType::PARAMETER_STRING ||
+      params[1].get_type() != rclcpp::ParameterType::PARAMETER_STRING)
+  {
+    return false;
+  }
+
+  if (!node->has_parameter("robot_description"))
+  {
+    node->declare_parameter<std::string>(
+      "robot_description", params[0].as_string());
+  }
+  if (!node->has_parameter("robot_description_semantic"))
+  {
+    node->declare_parameter<std::string>(
+      "robot_description_semantic", params[1].as_string());
+  }
+  return true;
+}
+
+moveit_msgs::msg::CollisionObject makeBoxObject(
+  const std::string& id,
+  const geometry_msgs::msg::Pose& pose)
+{
+  moveit_msgs::msg::CollisionObject object;
+  object.header.frame_id = "world";
+  object.id = id;
+
+  shape_msgs::msg::SolidPrimitive shape;
+  shape.type = shape_msgs::msg::SolidPrimitive::BOX;
+  shape.dimensions = {BOX_SIZE, BOX_SIZE, BOX_SIZE};
+
+  object.primitives.push_back(shape);
+  object.primitive_poses.push_back(pose);
+  object.operation = moveit_msgs::msg::CollisionObject::ADD;
+  return object;
+}
+
+class BoxPoseBuffer
+{
+public:
+  explicit BoxPoseBuffer(const rclcpp::Node::SharedPtr& node)
+  {
+    // Task08 暂时复用 Task07 已验证双吸盘 bridge，因此 topic 保持 /task07/box_poses。
+    sub_ = node->create_subscription<geometry_msgs::msg::PoseArray>(
+      "/task07/box_poses",
+      10,
+      [this](const geometry_msgs::msg::PoseArray::SharedPtr msg)
+      {
+        if (msg->poses.size() < NUM_BOXES)
+        {
+          return;
+        }
+
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          poses_[0] = msg->poses[0];
+          poses_[1] = msg->poses[1];
+          ready_ = true;
+        }
+        cv_.notify_all();
+      });
+  }
+
+  bool wait(double timeout_sec)
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return cv_.wait_for(
+      lock,
+      std::chrono::duration<double>(timeout_sec),
+      [this]() { return ready_; });
+  }
+
+  geometry_msgs::msg::Pose get(std::size_t index) const
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return poses_.at(index);
+  }
+
+  std::array<geometry_msgs::msg::Pose, NUM_BOXES> snapshot() const
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return poses_;
+  }
+
+private:
+  mutable std::mutex mutex_;
+  std::condition_variable cv_;
+  std::array<geometry_msgs::msg::Pose, NUM_BOXES> poses_{};
+  bool ready_{false};
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr sub_;
+};
+
+bool addInitialBoxesToPlanningScene(
+  const std::array<geometry_msgs::msg::Pose, NUM_BOXES>& poses)
+{
+  moveit::planning_interface::PlanningSceneInterface psi;
+
+  // 防止上一轮 Task07/Task08 world object 残留。
+  psi.removeCollisionObjects({
+    "task07_box_a", "task07_box_b",
+    "task08_box_a", "task08_box_b"
+  });
+  std::this_thread::sleep_for(200ms);
+
+  std::vector<moveit_msgs::msg::CollisionObject> objects;
+  objects.push_back(makeBoxObject("task08_box_a", poses[0]));
+  objects.push_back(makeBoxObject("task08_box_b", poses[1]));
+
+  if (!psi.applyCollisionObjects(objects))
+  {
+    return false;
+  }
+
+  std::this_thread::sleep_for(500ms);
+  return true;
+}
+
+std::string formatVector(const std::vector<double>& values)
+{
+  std::ostringstream out;
+  out << std::fixed << std::setprecision(4) << "[";
+  for (std::size_t i = 0; i < values.size(); ++i)
+  {
+    if (i > 0)
+    {
+      out << ", ";
+    }
+    out << values[i];
+  }
+  out << "]";
+  return out.str();
+}
+
+std::string formatNames(const std::vector<std::string>& names)
+{
+  std::ostringstream out;
+  out << "[";
+  for (std::size_t i = 0; i < names.size(); ++i)
+  {
+    if (i > 0)
+    {
+      out << ", ";
+    }
+    out << names[i];
+  }
+  out << "]";
+  return out.str();
+}
+
+void logCandidate(
+  const rclcpp::Logger& logger,
+  const fr3_dual_palletize::TransferCandidate& candidate)
+{
+  const auto names = formatNames(candidate.trajectory.joint_names);
+  const auto start_q = formatVector(candidate.start_q);
+  const auto goal_q = formatVector(candidate.goal_q);
+
+  RCLCPP_INFO(logger, "--------------------------------------------");
+  RCLCPP_INFO(logger, "CANDIDATE: %s", candidate.label.c_str());
+  RCLCPP_INFO(logger, "group        = %s", candidate.planning_group.c_str());
+  RCLCPP_INFO(logger, "object       = %s", candidate.object_id.c_str());
+  RCLCPP_INFO(logger, "eef_link     = %s", candidate.eef_link.c_str());
+  RCLCPP_INFO(logger, "joint_names  = %s", names.c_str());
+  RCLCPP_INFO(logger, "points       = %zu", candidate.trajectory.points.size());
+  RCLCPP_INFO(logger, "duration     = %.3f s", candidate.duration_sec);
+  RCLCPP_INFO(logger, "start_q      = %s", start_q.c_str());
+  RCLCPP_INFO(logger, "goal_q       = %s", goal_q.c_str());
+  RCLCPP_INFO(
+    logger,
+    "target_xy    = (%.3f, %.3f)",
+    candidate.target_x,
+    candidate.target_y);
+  RCLCPP_INFO(
+    logger,
+    "carry_object = %s",
+    candidate.carrying_object ? "true" : "false");
+}
+
+}  // namespace
+
+int main(int argc, char** argv)
+{
+  rclcpp::init(argc, argv);
+
+  auto pose_node = std::make_shared<rclcpp::Node>("task08_candidate_coordinator");
+  auto left_node = std::make_shared<rclcpp::Node>("task08_left_primitive");
+  auto right_node = std::make_shared<rclcpp::Node>("task08_right_primitive");
+
+  if (!copyRobotModelParameters(left_node) ||
+      !copyRobotModelParameters(right_node))
+  {
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  auto pose_buffer = std::make_shared<BoxPoseBuffer>(pose_node);
+
+  rclcpp::executors::MultiThreadedExecutor executor(
+    rclcpp::ExecutorOptions(), 4);
+  executor.add_node(pose_node);
+  executor.add_node(left_node);
+  executor.add_node(right_node);
+
+  std::thread spin_thread([&executor]() { executor.spin(); });
+
+  RCLCPP_INFO(
+    pose_node->get_logger(),
+    "========== Task08-A：协调接口 + candidate trajectory 输出 ==========");
+  RCLCPP_INFO(
+    pose_node->get_logger(),
+    "本阶段只做到 LIFT coordination point 并输出两条 LIFT -> PRE_PLACE candidate；不执行危险 transfer。"
+  );
+
+  if (!pose_buffer->wait(10.0))
+  {
+    RCLCPP_ERROR(
+      pose_node->get_logger(),
+      "等待 /task07/box_poses 超时。请先运行 Task07 双吸盘 bridge。"
+    );
+    executor.cancel();
+    spin_thread.join();
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  const auto initial_poses = pose_buffer->snapshot();
+  if (!addInitialBoxesToPlanningScene(initial_poses))
+  {
+    RCLCPP_ERROR(pose_node->get_logger(), "Task08 初始箱体加入 Planning Scene 失败。");
+    executor.cancel();
+    spin_thread.join();
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  auto scene_mutex = std::make_shared<std::mutex>();
+
+  fr3_dual_palletize::PrimitiveConfig left_config;
+  left_config.label = "TASK08 LEFT / BoxA";
+  left_config.planning_group = "left_arm";
+  left_config.eef_link = "left_fr3_link8";
+  left_config.tool_link = "left_fr3_compact_suction";
+  left_config.moveit_joint_prefix = "left_";
+  left_config.joint_command_topic = "/left/joint_command";
+  left_config.suction_command_topic = "/task07/left/suction_command";
+  left_config.suction_state_topic = "/task07/left/suction_state";
+  left_config.object_id = "task08_box_a";
+  left_config.pose_index = 0;
+  left_config.target_x = LEFT_TARGET_X;
+  left_config.target_y = LEFT_TARGET_Y;
+
+  fr3_dual_palletize::PrimitiveConfig right_config;
+  right_config.label = "TASK08 RIGHT / BoxB";
+  right_config.planning_group = "right_arm";
+  right_config.eef_link = "right_fr3_link8";
+  right_config.tool_link = "right_fr3_compact_suction";
+  right_config.moveit_joint_prefix = "right_";
+  right_config.joint_command_topic = "/right/joint_command";
+  right_config.suction_command_topic = "/task07/right/suction_command";
+  right_config.suction_state_topic = "/task07/right/suction_state";
+  right_config.object_id = "task08_box_b";
+  right_config.pose_index = 1;
+  right_config.target_x = RIGHT_TARGET_X;
+  right_config.target_y = RIGHT_TARGET_Y;
+
+  auto provider = [pose_buffer](std::size_t index)
+  {
+    return pose_buffer->get(index);
+  };
+
+  fr3_dual_palletize::PalletizePrimitive left(
+    left_node, left_config, provider, scene_mutex);
+  fr3_dual_palletize::PalletizePrimitive right(
+    right_node, right_config, provider, scene_mutex);
+
+  // 第一层 gate：复用 Task07，保证两臂 PRE_PICK 实际同时启动。
+  fr3_dual_palletize::StartGate start_gate(2);
+
+  // 第二层 gate：Task08 新增协调点。只有两臂都到 LIFT，才允许各自生成 candidate。
+  fr3_dual_palletize::StartGate coordination_gate(2);
+
+  fr3_dual_palletize::TransferCandidate left_candidate;
+  fr3_dual_palletize::TransferCandidate right_candidate;
+  bool left_ok = false;
+  bool right_ok = false;
+
+  std::thread left_thread([&]()
+  {
+    left_ok = left.prepareTransferCandidate(
+      start_gate, coordination_gate, left_candidate);
+  });
+
+  std::thread right_thread([&]()
+  {
+    right_ok = right.prepareTransferCandidate(
+      start_gate, coordination_gate, right_candidate);
+  });
+
+  left_thread.join();
+  right_thread.join();
+
+  if (left_ok && right_ok)
+  {
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "========== Task08-A CANDIDATES READY ==========");
+    logCandidate(pose_node->get_logger(), left_candidate);
+    logCandidate(pose_node->get_logger(), right_candidate);
+    RCLCPP_INFO(pose_node->get_logger(), "--------------------------------------------");
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "PASS：规划与执行已经解耦。两臂当前停在 LIFT，candidate 未下发。"
+    );
+    RCLCPP_INFO(
+      pose_node->get_logger(),
+      "下一步由 SpatioTemporalConflictDetector 同时读取这两个 TransferCandidate。"
+    );
+  }
+  else
+  {
+    RCLCPP_ERROR(
+      pose_node->get_logger(),
+      "Task08-A FAIL: left_candidate=%s, right_candidate=%s",
+      left_ok ? "PASS" : "FAIL",
+      right_ok ? "PASS" : "FAIL");
+  }
+
+  executor.cancel();
+  if (spin_thread.joinable())
+  {
+    spin_thread.join();
+  }
+
+  rclcpp::shutdown();
+  return (left_ok && right_ok) ? 0 : 1;
+}
