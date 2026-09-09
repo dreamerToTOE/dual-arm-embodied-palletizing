@@ -30,6 +30,8 @@ struct ConflictReport
   double first_conflict_time_sec{-1.0};
   double horizon_sec{0.0};
   double sample_period_sec{0.01};
+  double left_start_delay_sec{0.0};
+  double right_start_delay_sec{0.0};
   std::size_t samples_checked{0};
   double wall_time_sec{0.0};
   std::string error;
@@ -51,7 +53,9 @@ public:
   ConflictReport check(
     const TaskTrajectoryCandidate& left,
     const TaskTrajectoryCandidate& right,
-    double sample_period_sec = 0.01) const;
+    double sample_period_sec = 0.01,
+    double left_start_delay_sec = 0.0,
+    double right_start_delay_sec = 0.0) const;
 
 private:
   moveit::core::RobotModelConstPtr robot_model_;

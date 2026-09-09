@@ -339,10 +339,14 @@ SpatioTemporalConflictDetector::SpatioTemporalConflictDetector(
 ConflictReport SpatioTemporalConflictDetector::check(
   const TaskTrajectoryCandidate& left,
   const TaskTrajectoryCandidate& right,
-  double sample_period_sec) const
+  double sample_period_sec,
+  double left_start_delay_sec,
+  double right_start_delay_sec) const
 {
   ConflictReport report;
   report.sample_period_sec = sample_period_sec;
+  report.left_start_delay_sec = left_start_delay_sec;
+  report.right_start_delay_sec = right_start_delay_sec;
 
   if (!robot_model_)
   {
@@ -352,6 +356,11 @@ ConflictReport SpatioTemporalConflictDetector::check(
   if (sample_period_sec <= 0.0)
   {
     report.error = "采样周期必须大于 0。";
+    return report;
+  }
+  if (left_start_delay_sec < 0.0 || right_start_delay_sec < 0.0)
+  {
+    report.error = "启动延迟不能为负。";
     return report;
   }
   if (!validateTrajectory(left, report.error) ||
@@ -377,7 +386,9 @@ ConflictReport SpatioTemporalConflictDetector::check(
 
   const double left_duration = pointTime(left.trajectory.points.back());
   const double right_duration = pointTime(right.trajectory.points.back());
-  report.horizon_sec = std::max(left_duration, right_duration);
+  report.horizon_sec = std::max(
+    left_start_delay_sec + left_duration,
+    right_start_delay_sec + right_duration);
 
   // 使用整数 sample index 避免浮点累积误差，并保证必定检查精确的末点。
   const std::size_t sample_count = static_cast<std::size_t>(
@@ -390,8 +401,10 @@ ConflictReport SpatioTemporalConflictDetector::check(
       static_cast<double>(sample_index) * sample_period_sec,
       report.horizon_sec);
     auto sample_scene = base_scene->diff();
-    auto left_q = interpolate(left.trajectory, sample_time);
-    auto right_q = interpolate(right.trajectory, sample_time);
+    const double left_local_time = sample_time - left_start_delay_sec;
+    const double right_local_time = sample_time - right_start_delay_sec;
+    auto left_q = interpolate(left.trajectory, std::max(0.0, left_local_time));
+    auto right_q = interpolate(right.trajectory, std::max(0.0, right_local_time));
 
     moveit::core::RobotState state(robot_model_);
     state.setToDefaultValues();
@@ -399,8 +412,8 @@ ConflictReport SpatioTemporalConflictDetector::check(
     state.setVariablePositions(right.trajectory.joint_names, right_q);
     state.update();
 
-    if (!addObjectForTime(*sample_scene, state, left, sample_time) ||
-        !addObjectForTime(*sample_scene, state, right, sample_time))
+    if (!addObjectForTime(*sample_scene, state, left, left_local_time) ||
+        !addObjectForTime(*sample_scene, state, right, right_local_time))
     {
       report.error = "无法在采样时刻重建 Box 的碰撞状态。";
       return report;

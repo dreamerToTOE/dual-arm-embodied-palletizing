@@ -19,6 +19,7 @@
 
 #include "fr3_dual_palletize/palletize_primitive.hpp"
 #include "fr3_dual_palletize/spatiotemporal_conflict_detector.hpp"
+#include "fr3_dual_palletize/temporal_coordinator.hpp"
 
 using namespace std::chrono_literals;
 
@@ -333,6 +334,24 @@ void logConflictReport(
   }
 }
 
+void logTemporalPlan(
+  const rclcpp::Logger& logger,
+  const fr3_dual_palletize::TemporalCoordinationPlan& plan)
+{
+  RCLCPP_INFO(logger, "========== Task09-A TEMPORAL COORDINATION ==========");
+  RCLCPP_INFO(logger, "schedules_checked = %zu", plan.schedules_checked);
+  if (!plan.valid || !plan.coordinated)
+  {
+    RCLCPP_ERROR(logger, "Task09-A NO_SOLUTION: %s", plan.error.c_str());
+    return;
+  }
+  RCLCPP_INFO(logger, "strategy          = %s",
+    fr3_dual_palletize::temporalStrategyName(plan.strategy));
+  RCLCPP_INFO(logger, "left_start_delay  = %.3f s", plan.left_start_delay_sec);
+  RCLCPP_INFO(logger, "right_start_delay = %.3f s", plan.right_start_delay_sec);
+  RCLCPP_INFO(logger, "Task09-A SAFE：仅生成时间策略，未执行机器人或吸盘命令。");
+}
+
 }  // namespace
 
 int main(int argc, char** argv)
@@ -345,6 +364,12 @@ int main(int argc, char** argv)
 
   const std::string scenario_name = pose_node->declare_parameter<std::string>(
     "scenario", "task08_conflict");
+  const bool enable_temporal_coordination = pose_node->declare_parameter<bool>(
+    "enable_temporal_coordination", false);
+  const double delay_step_sec = pose_node->declare_parameter<double>(
+    "delay_step_sec", 0.25);
+  const double max_delay_sec = pose_node->declare_parameter<double>(
+    "max_delay_sec", 30.0);
   ScenarioConfig scenario;
   if (!selectScenario(scenario_name, scenario))
   {
@@ -524,6 +549,27 @@ int main(int argc, char** argv)
       }
       rclcpp::shutdown();
       return 1;
+    }
+
+    if (enable_temporal_coordination)
+    {
+      fr3_dual_palletize::TemporalCoordinationConfig config;
+      config.delay_step_sec = delay_step_sec;
+      config.max_delay_sec = max_delay_sec;
+      config.prefer_left = true;
+      fr3_dual_palletize::TemporalCoordinator coordinator(detector);
+      const auto plan = coordinator.solve(left_candidate, right_candidate, config);
+      logTemporalPlan(pose_node->get_logger(), plan);
+      if (!plan.valid || !plan.coordinated)
+      {
+        executor.cancel();
+        if (spin_thread.joinable())
+        {
+          spin_thread.join();
+        }
+        rclcpp::shutdown();
+        return 1;
+      }
     }
 
     RCLCPP_INFO(

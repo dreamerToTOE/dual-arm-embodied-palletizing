@@ -26,6 +26,7 @@
 - [Task 07 — 双臂松协调并行码垛](docs/tasks/TASK07_LOOSE_PARALLEL.md)
 - [Task 08 — 时空冲突检测设计](docs/tasks/TASK08_SPATIOTEMPORAL_CONFLICT.md)
 - [Task 08-A — 完整任务轨迹候选](docs/tasks/TASK08_FULL_TASK_TRAJECTORY.md)
+- [Task 09-A — 松协调延迟启动](docs/tasks/TASK09_TEMPORAL_COORDINATION.md)
 
 ## 当前进度
 
