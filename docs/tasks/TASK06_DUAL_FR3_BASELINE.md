@@ -217,3 +217,38 @@ Right FR3 复用 Task04 primitive 搬 BoxB
 ```
 
 然后 Task08 立即构造两条会发生空间 / 时间冲突的轨迹，开始真正的双臂避障与冲突检测。
+
+---
+
+## 8. 启动 / 复现指令
+
+### Isaac Sim
+
+Timeline **Stop** 时依次运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_fr3_scene.py").read())
+```
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_ros_graph.py").read())
+```
+
+然后点击 **Play**。
+
+### MoveIt2
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.launch.py
+```
+
+Task06 本身没有额外抓放 demo 节点；它作为 Task07 及后续双臂任务的基础设施复用。
+
+统一启动总表见：
+
+```text
+docs/STARTUP_GUIDE.md
+```
