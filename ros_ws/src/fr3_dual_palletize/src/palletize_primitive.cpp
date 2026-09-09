@@ -687,17 +687,36 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   candidate.planned_release_pose.position.y = config_.target_y;
   candidate.planned_release_pose.position.z = planned_release_center_z;
 
+  // 所有阶段均记录在同一条完整轨迹的时间轴上。Task09-B 据此只在
+  // LIFT 完成、进入公共工作区前插入局部等待，不改变 Task04 抓放时序。
+  auto appendStage =
+    [&](const std::string& marker_name,
+        const trajectory_msgs::msg::JointTrajectory& stage)
+    {
+      const double start_time = trajectoryDuration(candidate.trajectory);
+      if (!appendTrajectory(candidate.trajectory, stage))
+      {
+        return false;
+      }
+      candidate.trajectory_segments.push_back(stage);
+      candidate.stages.push_back(TaskStageMarker{
+        marker_name,
+        start_time,
+        trajectoryDuration(candidate.trajectory)
+      });
+      return true;
+    };
+
   auto pre_pick = makeTopDownPose(
     pick_pose.position.x, pick_pose.position.y, pre_pick_tcp_z);
   trajectory_msgs::msg::JointTrajectory pre_pick_traj;
   if (!planPoseStage(
         move_group, joint_model_group, config_.eef_link,
         current_q, pre_pick, "TASK08-A HOME -> PRE_PICK", pre_pick_traj) ||
-      !appendTrajectory(candidate.trajectory, pre_pick_traj))
+      !appendStage("HOME_TO_PRE_PICK", pre_pick_traj))
   {
     return false;
   }
-  candidate.trajectory_segments.push_back(pre_pick_traj);
 
   bool attached = false;
   bool restored = false;
@@ -731,12 +750,11 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(pre_pick_traj),
         contact, "TASK08-A PRE_PICK -> CONTACT", contact_traj) ||
-      !appendTrajectory(candidate.trajectory, contact_traj))
+      !appendStage("PRE_PICK_TO_CONTACT", contact_traj))
   {
     restoreInitialWorldObject();
     return false;
   }
-  candidate.trajectory_segments.push_back(contact_traj);
 
   // 对齐 Task04 的 nominal suction command 时间；随后 Cube 状态切换为 Attached。
   if (!appendHold(candidate.trajectory, NOMINAL_SUCTION_COMMAND_SEC) ||
@@ -759,12 +777,11 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(contact_traj),
         lift, "TASK08-A CONTACT -> LIFT", lift_traj) ||
-      !appendTrajectory(candidate.trajectory, lift_traj))
+      !appendStage("CONTACT_TO_LIFT", lift_traj))
   {
     restoreInitialWorldObject();
     return false;
   }
-  candidate.trajectory_segments.push_back(lift_traj);
 
   auto pre_place = makeTopDownPose(
     config_.target_x, config_.target_y, pre_place_tcp_z);
@@ -773,12 +790,11 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
         move_group, joint_model_group, config_.eef_link,
         currentFrom(lift_traj), pre_place,
         "TASK08-A LIFT -> PRE_PLACE", pre_place_traj) ||
-      !appendTrajectory(candidate.trajectory, pre_place_traj))
+      !appendStage("LIFT_TO_PRE_PLACE", pre_place_traj))
   {
     restoreInitialWorldObject();
     return false;
   }
-  candidate.trajectory_segments.push_back(pre_place_traj);
 
   auto place = makeTopDownPose(
     config_.target_x, config_.target_y, place_tcp_z);
@@ -786,12 +802,11 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(pre_place_traj),
         place, "TASK08-A PRE_PLACE -> PLACE", place_traj) ||
-      !appendTrajectory(candidate.trajectory, place_traj))
+      !appendStage("PRE_PLACE_TO_PLACE", place_traj))
   {
     restoreInitialWorldObject();
     return false;
   }
-  candidate.trajectory_segments.push_back(place_traj);
 
   // 保持 Attached + SUCTION ON 预先规划上退，与已验证 Task04 release/retreat 时序一致。
   auto retreat = makeTopDownPose(
@@ -804,8 +819,6 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     restoreInitialWorldObject();
     return false;
   }
-  candidate.trajectory_segments.push_back(retreat_traj);
-
   // 对齐 Task04：SUCTION OFF 命令窗口和 PhysX settle 后，才发生 MoveIt detach。
   if (!appendHold(
         candidate.trajectory,
@@ -821,7 +834,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     config_.eef_link
   });
 
-  if (!appendTrajectory(candidate.trajectory, retreat_traj))
+  if (!appendStage("PLACE_TO_RETREAT", retreat_traj))
   {
     restoreInitialWorldObject();
     return false;

@@ -20,6 +20,7 @@ add_library(palletize_primitive
   src/palletize_primitive.cpp
   src/spatiotemporal_conflict_detector.cpp
   src/temporal_coordinator.cpp
+  src/local_wait_coordinator.cpp
 )
 target_include_directories(palletize_primitive
   PUBLIC

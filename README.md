@@ -27,6 +27,7 @@
 - [Task 08 — 时空冲突检测设计](docs/tasks/TASK08_SPATIOTEMPORAL_CONFLICT.md)
 - [Task 08-A — 完整任务轨迹候选](docs/tasks/TASK08_FULL_TASK_TRAJECTORY.md)
 - [Task 09-A — 松协调延迟启动](docs/tasks/TASK09_TEMPORAL_COORDINATION.md)
+- [Task 09-B — 冲突窗口局部等待](docs/tasks/TASK09_LOCAL_WAIT.md)
 
 ## 当前进度
 
@@ -41,7 +42,7 @@
 | 06 | 双 FR3 + 双紧凑吸盘基础设施 | ✅ |
 | 07 | 双臂松协调并行码垛 | ✅ |
 | 08 | 双臂完整任务轨迹与时空冲突检测 | ✅ Task08-A/B 完成：SAFE 与 CONFLICT 均已验收 |
-| 09 | 松协调时间协调 | 🟡 进行中 |
+| 09 | 松协调时间协调 | 🟡 Task09-A 基线与 Task09-B 局部等待已实现；等待安全退出/局部重规划处理终态冲突 |
 | 11+ | 双吸盘共物体与紧协调 | 计划中 |
 
 ## 当前核心工程结论
@@ -125,4 +126,4 @@ HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 
 每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已在 10 ms 联合采样下通过两项实际验收：Task07 分离通道为 `SAFE`，Task08 交叉通道报告 `ARM_ARM` 冲突。
 
-Task09 将消费 `ConflictReport`，首先验证延迟启动/等待的时间协调策略；之后再考虑优先级与局部重规划。
+Task09-A 已保留 Full-task Start Delay baseline；Task09-B 已实现冲突窗口局部等待与最小安全等待搜索。当前交叉候选的最终 RETREAT 姿态仍相撞，系统会明确报告局部等待无解，而不会以延长等待掩盖终态碰撞。下一步是安全退出轨迹或局部空间重规划，并继续由 Task08-B 统一验证。

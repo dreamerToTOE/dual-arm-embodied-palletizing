@@ -23,6 +23,17 @@ struct ConflictEvent
   std::string body_b;
 };
 
+// 同类的连续碰撞采样区间。边界精度由 sample_period_sec 决定。
+struct ConflictWindow
+{
+  double start_time_sec{0.0};
+  double end_time_sec{0.0};
+  std::string type;
+  std::string body_a;
+  std::string body_b;
+  std::size_t samples{0};
+};
+
 struct ConflictReport
 {
   bool valid{false};
@@ -35,7 +46,10 @@ struct ConflictReport
   std::size_t samples_checked{0};
   double wall_time_sec{0.0};
   std::string error;
+  // 首个冲突采样点的 contact，兼容 Task08-A 既有日志。
   std::vector<ConflictEvent> events;
+  // Task09-B 消费连续冲突窗口，而非只看首个冲突时刻。
+  std::vector<ConflictWindow> conflict_windows;
 };
 
 // Task08-B：在同一个 14-DoF RobotState 上检查两个完整任务候选。

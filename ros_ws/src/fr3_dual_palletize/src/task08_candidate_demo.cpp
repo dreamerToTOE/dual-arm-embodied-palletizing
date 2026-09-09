@@ -18,6 +18,7 @@
 #include <shape_msgs/msg/solid_primitive.hpp>
 
 #include "fr3_dual_palletize/palletize_primitive.hpp"
+#include "fr3_dual_palletize/local_wait_coordinator.hpp"
 #include "fr3_dual_palletize/spatiotemporal_conflict_detector.hpp"
 #include "fr3_dual_palletize/temporal_coordinator.hpp"
 
@@ -283,6 +284,16 @@ void logCandidate(
     candidate.planned_release_pose.position.y,
     candidate.planned_release_pose.position.z);
 
+  for (const auto& stage : candidate.stages)
+  {
+    RCLCPP_INFO(
+      logger,
+      "stage        = %s [%.3f, %.3f] s",
+      stage.name.c_str(),
+      stage.start_time_sec,
+      stage.end_time_sec);
+  }
+
   for (const auto& event : candidate.events)
   {
     RCLCPP_INFO(
@@ -332,6 +343,18 @@ void logConflictReport(
       event.type.c_str(),
       event.time_sec);
   }
+  for (const auto& window : report.conflict_windows)
+  {
+    RCLCPP_WARN(
+      logger,
+      "window = [%.3f, %.3f] s, samples=%zu, pair=%s <-> %s, type=%s",
+      window.start_time_sec,
+      window.end_time_sec,
+      window.samples,
+      window.body_a.c_str(),
+      window.body_b.c_str(),
+      window.type.c_str());
+  }
 }
 
 void logTemporalPlan(
@@ -352,6 +375,31 @@ void logTemporalPlan(
   RCLCPP_INFO(logger, "Task09-A SAFE：仅生成时间策略，未执行机器人或吸盘命令。");
 }
 
+void logLocalWaitPlan(
+  const rclcpp::Logger& logger,
+  const fr3_dual_palletize::LocalWaitCoordinationResult& result)
+{
+  RCLCPP_INFO(logger, "========== Task09-B LOCAL WAIT COORDINATION ==========");
+  RCLCPP_INFO(logger, "schedules_checked   = %zu", result.schedules_checked);
+  RCLCPP_INFO(logger, "original_makespan   = %.3f s", result.original_makespan_sec);
+  if (!result.valid || !result.coordinated)
+  {
+    RCLCPP_ERROR(logger, "Task09-B NO_SOLUTION: %s", result.error.c_str());
+    return;
+  }
+  RCLCPP_INFO(
+    logger,
+    "strategy            = %s",
+    fr3_dual_palletize::localWaitStrategyName(result.strategy));
+  RCLCPP_INFO(logger, "yielding_arm        = %s", result.yielding_arm.c_str());
+  RCLCPP_INFO(logger, "wait_start          = %.3f s", result.wait_start_time_sec);
+  RCLCPP_INFO(logger, "minimum_safe_wait   = %.3f s", result.wait_duration_sec);
+  RCLCPP_INFO(logger, "coordinated_makespan = %.3f s", result.coordinated_makespan_sec);
+  RCLCPP_INFO(
+    logger,
+    "Task09-B SAFE：只生成含局部 HOLD 的候选，已由 Task08-B 复检；未执行机器人或吸盘命令。");
+}
+
 }  // namespace
 
 int main(int argc, char** argv)
@@ -366,10 +414,16 @@ int main(int argc, char** argv)
     "scenario", "task08_conflict");
   const bool enable_temporal_coordination = pose_node->declare_parameter<bool>(
     "enable_temporal_coordination", false);
+  const bool enable_local_wait_coordination = pose_node->declare_parameter<bool>(
+    "enable_local_wait_coordination", false);
   const double delay_step_sec = pose_node->declare_parameter<double>(
     "delay_step_sec", 0.25);
   const double max_delay_sec = pose_node->declare_parameter<double>(
     "max_delay_sec", 30.0);
+  const double wait_step_sec = pose_node->declare_parameter<double>(
+    "wait_step_sec", 0.05);
+  const double max_wait_sec = pose_node->declare_parameter<double>(
+    "max_wait_sec", 15.0);
   ScenarioConfig scenario;
   if (!selectScenario(scenario_name, scenario))
   {
@@ -561,6 +615,34 @@ int main(int argc, char** argv)
       const auto plan = coordinator.solve(left_candidate, right_candidate, config);
       logTemporalPlan(pose_node->get_logger(), plan);
       if (!plan.valid || !plan.coordinated)
+      {
+        if (!enable_local_wait_coordination)
+        {
+          executor.cancel();
+          if (spin_thread.joinable())
+          {
+            spin_thread.join();
+          }
+          rclcpp::shutdown();
+          return 1;
+        }
+        RCLCPP_WARN(
+          pose_node->get_logger(),
+          "Task09-A 无解；继续尝试 Task09-B conflict-window local wait。"
+        );
+      }
+    }
+
+    if (enable_local_wait_coordination)
+    {
+      fr3_dual_palletize::LocalWaitCoordinationConfig config;
+      config.wait_step_sec = wait_step_sec;
+      config.max_wait_sec = max_wait_sec;
+      config.prefer_left = true;
+      fr3_dual_palletize::LocalWaitCoordinator coordinator(detector);
+      const auto result = coordinator.solve(left_candidate, right_candidate, config);
+      logLocalWaitPlan(pose_node->get_logger(), result);
+      if (!result.valid || !result.coordinated)
       {
         executor.cancel();
         if (spin_thread.joinable())

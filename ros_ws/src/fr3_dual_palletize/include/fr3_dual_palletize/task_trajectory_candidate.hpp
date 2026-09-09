@@ -12,6 +12,15 @@
 namespace fr3_dual_palletize
 {
 
+// 完整任务中一个已拼接阶段在统一时间轴上的边界。
+// Task09-B 用它选择 LIFT 完成、进入公共工作区前的安全等待点。
+struct TaskStageMarker
+{
+  std::string name;
+  double start_time_sec{0.0};
+  double end_time_sec{0.0};
+};
+
 // 一台机械臂从当前 HOME/起始状态到 RETREAT 的完整预测任务。
 // 它只描述计划，不下发 Isaac joint command 或 suction command。
 struct TaskTrajectoryCandidate
@@ -37,6 +46,7 @@ struct TaskTrajectoryCandidate
   geometry_msgs::msg::Pose initial_object_pose;
   geometry_msgs::msg::Pose planned_release_pose;
   std::vector<TaskEvent> events;
+  std::vector<TaskStageMarker> stages;
 
   void printSummary() const
   {

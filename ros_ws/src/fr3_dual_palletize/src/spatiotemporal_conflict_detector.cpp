@@ -393,6 +393,7 @@ ConflictReport SpatioTemporalConflictDetector::check(
   // 使用整数 sample index 避免浮点累积误差，并保证必定检查精确的末点。
   const std::size_t sample_count = static_cast<std::size_t>(
     std::ceil(report.horizon_sec / sample_period_sec));
+  bool inside_conflict_window = false;
   for (std::size_t sample_index = 0;
        sample_index <= sample_count;
        ++sample_index)
@@ -428,33 +429,59 @@ ConflictReport SpatioTemporalConflictDetector::check(
     sample_scene->checkCollision(request, result, state);
     ++report.samples_checked;
 
-    if (!result.collision)
+    std::vector<ConflictEvent> sample_events;
+    if (result.collision)
     {
+      for (const auto& [pair, contacts] : result.contacts)
+      {
+        static_cast<void>(contacts);
+        const std::string type = classifyPair(pair.first, pair.second, left, right);
+        if (type.empty())
+        {
+          continue;
+        }
+
+        sample_events.push_back(ConflictEvent{
+          sample_time,
+          type,
+          pair.first,
+          pair.second
+        });
+      }
+    }
+
+    if (sample_events.empty())
+    {
+      inside_conflict_window = false;
       continue;
     }
 
-    for (const auto& [pair, contacts] : result.contacts)
-    {
-      static_cast<void>(contacts);
-      const std::string type = classifyPair(pair.first, pair.second, left, right);
-      if (type.empty())
-      {
-        continue;
-      }
-
-      report.events.push_back(ConflictEvent{
-        sample_time,
-        type,
-        pair.first,
-        pair.second
-      });
-    }
-
-    if (!report.events.empty())
+    if (!report.conflict)
     {
       report.conflict = true;
       report.first_conflict_time_sec = sample_time;
-      break;
+      // 兼容 Task08 既有日志：events 始终表示首个冲突采样点。
+      report.events = sample_events;
+    }
+
+    if (!inside_conflict_window)
+    {
+      const auto& first_event = sample_events.front();
+      report.conflict_windows.push_back(ConflictWindow{
+        sample_time,
+        sample_time,
+        first_event.type,
+        first_event.body_a,
+        first_event.body_b,
+        1
+      });
+      inside_conflict_window = true;
+    }
+    else
+    {
+      auto& window = report.conflict_windows.back();
+      window.end_time_sec = sample_time;
+      ++window.samples;
     }
   }
 

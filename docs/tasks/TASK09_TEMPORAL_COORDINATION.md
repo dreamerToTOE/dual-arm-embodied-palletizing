@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **已实现，待 Isaac + MoveIt 联调。**
+✅ **已实现并完成 MoveIt/FCL 只读联调。**
 
 ## 边界
 
@@ -29,3 +29,7 @@ ros2 run fr3_dual_palletize task08_candidate_demo \
 预期输出 `Task09-A SAFE`（含策略与两臂启动延迟），或明确 `Task09-A NO_SOLUTION`。两者均不会执行机器人或吸盘命令。
 
 Task09-A 只验证时间协调；将计划真正下发到双臂执行、优先级切换与局部重规划留给后续子任务。
+
+## 实测结果（2026-09-09）
+
+Task08 交叉场景已实测得到 `Task09-A NO_SOLUTION`：在 `max_delay_sec` 范围内，整条轨迹延迟无法消除所有冲突。这一结果保留为 Full-task Start Delay baseline，不将其误标为可执行解。后续的局部等待实现与终态冲突分析见 [TASK09_LOCAL_WAIT.md](TASK09_LOCAL_WAIT.md)。
