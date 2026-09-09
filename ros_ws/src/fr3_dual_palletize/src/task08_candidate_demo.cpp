@@ -198,14 +198,14 @@ std::string formatNames(const std::vector<std::string>& names)
 
 void logCandidate(
   const rclcpp::Logger& logger,
-  const fr3_dual_palletize::TransferCandidate& candidate)
+  const fr3_dual_palletize::TaskTrajectoryCandidate& candidate)
 {
   const auto names = formatNames(candidate.trajectory.joint_names);
   const auto start_q = formatVector(candidate.start_q);
   const auto goal_q = formatVector(candidate.goal_q);
 
   RCLCPP_INFO(logger, "--------------------------------------------");
-  RCLCPP_INFO(logger, "CANDIDATE: %s", candidate.label.c_str());
+  RCLCPP_INFO(logger, "FULL TASK CANDIDATE: %s", candidate.label.c_str());
   RCLCPP_INFO(logger, "group        = %s", candidate.planning_group.c_str());
   RCLCPP_INFO(logger, "object       = %s", candidate.object_id.c_str());
   RCLCPP_INFO(logger, "eef_link     = %s", candidate.eef_link.c_str());
@@ -216,13 +216,21 @@ void logCandidate(
   RCLCPP_INFO(logger, "goal_q       = %s", goal_q.c_str());
   RCLCPP_INFO(
     logger,
-    "target_xy    = (%.3f, %.3f)",
-    candidate.target_x,
-    candidate.target_y);
-  RCLCPP_INFO(
-    logger,
-    "carry_object = %s",
-    candidate.carrying_object ? "true" : "false");
+    "release_pose = (%.3f, %.3f, %.3f)",
+    candidate.planned_release_pose.position.x,
+    candidate.planned_release_pose.position.y,
+    candidate.planned_release_pose.position.z);
+
+  for (const auto& event : candidate.events)
+  {
+    RCLCPP_INFO(
+      logger,
+      "event        = t=%.3f s, %s, object=%s, link=%s",
+      event.time_sec,
+      fr3_dual_palletize::taskEventTypeName(event.type),
+      event.object_name.c_str(),
+      event.link_name.c_str());
+  }
 }
 
 }  // namespace
@@ -254,10 +262,11 @@ int main(int argc, char** argv)
 
   RCLCPP_INFO(
     pose_node->get_logger(),
-    "========== Task08-A：协调接口 + candidate trajectory 输出 ==========");
+    "========== Task08-A：完整 TaskTrajectoryCandidate 输出 ==========");
   RCLCPP_INFO(
     pose_node->get_logger(),
-    "本阶段只做到 LIFT coordination point 并输出两条 LIFT -> PRE_PLACE candidate；不执行危险 transfer。"
+    "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT；"
+    "仅规划，不发布 joint command 或 suction command。"
   );
 
   if (!pose_buffer->wait(10.0))
@@ -322,31 +331,14 @@ int main(int argc, char** argv)
   fr3_dual_palletize::PalletizePrimitive right(
     right_node, right_config, provider, scene_mutex);
 
-  // 第一层 gate：复用 Task07，保证两臂 PRE_PICK 实际同时启动。
-  fr3_dual_palletize::StartGate start_gate(2);
+  fr3_dual_palletize::TaskTrajectoryCandidate left_candidate;
+  fr3_dual_palletize::TaskTrajectoryCandidate right_candidate;
 
-  // 第二层 gate：Task08 新增协调点。只有两臂都到 LIFT，才允许各自生成 candidate。
-  fr3_dual_palletize::StartGate coordination_gate(2);
-
-  fr3_dual_palletize::TransferCandidate left_candidate;
-  fr3_dual_palletize::TransferCandidate right_candidate;
-  bool left_ok = false;
-  bool right_ok = false;
-
-  std::thread left_thread([&]()
-  {
-    left_ok = left.prepareTransferCandidate(
-      start_gate, coordination_gate, left_candidate);
-  });
-
-  std::thread right_thread([&]()
-  {
-    right_ok = right.prepareTransferCandidate(
-      start_gate, coordination_gate, right_candidate);
-  });
-
-  left_thread.join();
-  right_thread.join();
+  // 纯规划阶段会临时切换单个 Box 的 MoveIt AttachedCollisionObject，
+  // 因此串行生成，避免两个候选在同一 Planning Scene 中互相污染。
+  const bool left_ok = left.planTaskTrajectoryCandidate(left_candidate);
+  const bool right_ok = left_ok &&
+    right.planTaskTrajectoryCandidate(right_candidate);
 
   if (left_ok && right_ok)
   {
@@ -358,11 +350,11 @@ int main(int argc, char** argv)
     RCLCPP_INFO(pose_node->get_logger(), "--------------------------------------------");
     RCLCPP_INFO(
       pose_node->get_logger(),
-      "PASS：规划与执行已经解耦。两臂当前停在 LIFT，candidate 未下发。"
+      "PASS：两条完整任务轨迹与 ATTACH/DETACH 事件已经生成；未执行任何机器人或吸盘命令。"
     );
     RCLCPP_INFO(
       pose_node->get_logger(),
-      "下一步由 SpatioTemporalConflictDetector 同时读取这两个 TransferCandidate。"
+      "下一步由 SpatioTemporalConflictDetector 同时读取两个 TaskTrajectoryCandidate。"
     );
   }
   else

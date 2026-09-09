@@ -2,7 +2,7 @@
 
 ## 状态
 
-🟡 **方案已确定，交叉场景已完成，冲突检测器待实现**
+🟡 **Task08-A 完整候选已实现；交叉场景已完成，Task08-B 冲突检测器待实现。**
 
 ## 1. 本 Task 只解决什么
 
@@ -67,21 +67,14 @@ PRE_PICK
 → RETREAT
 ```
 
-Task08 只增加一个“协调观察点”，把最需要双臂协调的搬运段暴露给 Coordinator：
+Task08-A 不再把空载与携物段拆成单独的检测输入，而是将 canonical primitive 的全流程拼接为一个 `TaskTrajectoryCandidate`：
 
 ```text
-各自 PICK + LIFT
-        ↓
-[coordination point]
-        ↓
-分别生成 LIFT -> PRE_PLACE candidate trajectory
-        ↓
-SpatioTemporalConflictDetector
-        ↓
-SAFE / CONFLICT
+HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
+-> PRE_PLACE -> PLACE -> DETACH -> RETREAT
 ```
 
-这只是对现有 primitive 增加阶段接口，不重新实现抓放逻辑。
+候选包含完整 `JointTrajectory`，并以绝对相对时间记录 `ATTACH` / `DETACH`。因此 Task08-B 可以在每个采样时刻判断 Box 是 World object、Attached object 还是已释放物，而不是假定整段轨迹始终携带 Box。
 
 ---
 
@@ -94,7 +87,7 @@ Left  y ≈ -0.25
 Right y ≈ +0.25
 ```
 
-Task08 新增 `conflict` 场景，把两个搬运目标主动引入中央公共工作区，使两条 `LIFT -> PRE_PLACE` 路径交叉或高度重叠。
+Task08 新增 `conflict` 场景，把两个完整任务主动引入中央公共工作区，使候选中的携物搬运段交叉或高度重叠。
 
 当前交叉场景：
 
@@ -218,7 +211,7 @@ right_fr3_joint1..7 <- qR(t)
 
 Task08 不只检查裸机械臂。
 
-`LIFT -> PRE_PLACE` 阶段 BoxA / BoxB 已经被吸盘抓住，因此预测状态必须复用 Task04/07 的 AttachedCollisionObject 几何和相对位姿，而不是把箱子继续当世界静态物体。
+`ATTACH` 到 `DETACH` 之间，BoxA / BoxB 已经被吸盘抓住，因此预测状态必须复用 Task04/07 的 AttachedCollisionObject 几何和相对位姿，而不是把箱子继续当 world 静态物体。两个事件之外，检测器使用候选记录的初始 / 计划释放 pose 将 Box 作为 world object 处理。
 
 检测对象包括：
 
@@ -286,14 +279,12 @@ safety_margin
 ## 11. Task08 执行逻辑
 
 ```text
-Left  PICK -> ATTACH -> LIFT
-Right PICK -> ATTACH -> LIFT
+Left  完整 TaskTrajectoryCandidate
+Right 完整 TaskTrajectoryCandidate
              ↓
-      两臂停在 LIFT
+分别单独规划 PASS，且不下发 Isaac
              ↓
-分别规划 LIFT -> PRE_PLACE
-             ↓
-两条 candidate trajectory 都单独 PASS
+统一时间轴上的 ATTACH / DETACH 状态切换
              ↓
 SpatioTemporalConflictDetector
              ↓
@@ -321,7 +312,7 @@ Task08 不在检测到冲突后自行决定谁让行。
 4. 两条 candidate 按同一 t0 同时预测 -> CONFLICT
 5. 输出 first_conflict_time + collision pair + conflict type
 6. 冲突被发现后，危险的双臂 transfer 不下发到 Isaac
-7. carried BoxA / BoxB 纳入碰撞预测
+7. ATTACH / DETACH 之间的 carried BoxA / BoxB 纳入碰撞预测
 ```
 
 不重复测试：

@@ -33,6 +33,11 @@ constexpr double PRE_PLACE_CLEARANCE = 0.070;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
 
+// Task08-A 以 Task04 的既有控制时序构造名义时间轴。
+// 轨迹候选不接入 Isaac，因此 SUCTION state 的实际异步等待不在此处估计。
+constexpr double NOMINAL_SUCTION_COMMAND_SEC = 0.20;
+constexpr double NOMINAL_RELEASE_SETTLE_SEC = 0.30;
+
 
 double pointTime(const trajectory_msgs::msg::JointTrajectoryPoint& point)
 {
@@ -543,6 +548,305 @@ std::vector<double> PalletizePrimitive::currentFrom(
     return {};
   }
   return trajectory.points.back().positions;
+}
+
+double PalletizePrimitive::trajectoryDuration(
+  const trajectory_msgs::msg::JointTrajectory& trajectory)
+{
+  if (trajectory.points.empty())
+  {
+    return 0.0;
+  }
+  return pointTime(trajectory.points.back());
+}
+
+bool PalletizePrimitive::appendTrajectory(
+  trajectory_msgs::msg::JointTrajectory& destination,
+  const trajectory_msgs::msg::JointTrajectory& stage_input)
+{
+  if (stage_input.points.empty())
+  {
+    return false;
+  }
+
+  auto stage = stage_input;
+  ensureTrajectoryTiming(stage);
+
+  if (destination.joint_names.empty())
+  {
+    destination.joint_names = stage.joint_names;
+  }
+  else if (destination.joint_names != stage.joint_names)
+  {
+    return false;
+  }
+
+  const double offset = trajectoryDuration(destination);
+  for (std::size_t index = 0; index < stage.points.size(); ++index)
+  {
+    // 相邻规划段的首点就是上段终点，跳过它以保持时间严格递增。
+    if (!destination.points.empty() && index == 0 &&
+        pointTime(stage.points[index]) <= 1e-6)
+    {
+      continue;
+    }
+
+    auto point = stage.points[index];
+    setPointTime(point, offset + pointTime(point));
+    destination.points.push_back(std::move(point));
+  }
+
+  return !destination.points.empty();
+}
+
+bool PalletizePrimitive::appendHold(
+  trajectory_msgs::msg::JointTrajectory& trajectory,
+  double hold_sec)
+{
+  if (trajectory.points.empty() || hold_sec < 0.0)
+  {
+    return false;
+  }
+
+  auto hold = trajectory.points.back();
+  hold.velocities.assign(hold.positions.size(), 0.0);
+  hold.accelerations.assign(hold.positions.size(), 0.0);
+  setPointTime(hold, trajectoryDuration(trajectory) + hold_sec);
+  trajectory.points.push_back(std::move(hold));
+  return true;
+}
+
+bool PalletizePrimitive::planTaskTrajectoryCandidate(
+  TaskTrajectoryCandidate& candidate)
+{
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "========== %s Task08-A full candidate planning START ==========" ,
+    config_.label.c_str());
+
+  // Task08-A 不能发布 command 或 suction；这里只依赖 MoveIt 与最新 Box Ground Truth。
+  moveit::planning_interface::MoveGroupInterface move_group(
+    node_, config_.planning_group);
+  const moveit::core::JointModelGroup* joint_model_group = nullptr;
+  if (!configureMoveGroup(move_group, joint_model_group))
+  {
+    return false;
+  }
+
+  return planTaskTrajectoryCandidateImpl(
+    move_group, joint_model_group, candidate);
+}
+
+bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
+  moveit::planning_interface::MoveGroupInterface& move_group,
+  const moveit::core::JointModelGroup* joint_model_group,
+  TaskTrajectoryCandidate& candidate)
+{
+  auto current_state = move_group.getCurrentState(3.0);
+  if (!current_state)
+  {
+    RCLCPP_ERROR(node_->get_logger(), "[%s] 无法读取当前 RobotState。", config_.label.c_str());
+    return false;
+  }
+
+  std::vector<double> current_q;
+  current_state->copyJointGroupPositions(joint_model_group, current_q);
+  if (current_q.size() != 7)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] 当前关节数量=%zu，预期 7。",
+      config_.label.c_str(), current_q.size());
+    return false;
+  }
+
+  const geometry_msgs::msg::Pose pick_pose = pose_provider_(config_.pose_index);
+  const double pick_contact_tcp_z =
+    pick_pose.position.z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+  const double pre_pick_tcp_z = pick_contact_tcp_z + PRE_PICK_CLEARANCE;
+  const double lift_tcp_z = pick_contact_tcp_z + LIFT_CLEARANCE;
+
+  const double planned_release_center_z =
+    TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+  const double place_tcp_z =
+    planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+  const double pre_place_tcp_z =
+    std::max(MIN_PRE_PLACE_TCP_Z, place_tcp_z + PRE_PLACE_CLEARANCE);
+
+  candidate = TaskTrajectoryCandidate();
+  candidate.arm_name = config_.planning_group;
+  candidate.label = config_.label;
+  candidate.planning_group = config_.planning_group;
+  candidate.object_id = config_.object_id;
+  candidate.eef_link = config_.eef_link;
+  candidate.start_q = current_q;
+  candidate.initial_object_pose = pick_pose;
+  candidate.planned_release_pose = pick_pose;
+  candidate.planned_release_pose.position.x = config_.target_x;
+  candidate.planned_release_pose.position.y = config_.target_y;
+  candidate.planned_release_pose.position.z = planned_release_center_z;
+
+  auto pre_pick = makeTopDownPose(
+    pick_pose.position.x, pick_pose.position.y, pre_pick_tcp_z);
+  trajectory_msgs::msg::JointTrajectory pre_pick_traj;
+  if (!planPoseStage(
+        move_group, joint_model_group, config_.eef_link,
+        current_q, pre_pick, "TASK08-A HOME -> PRE_PICK", pre_pick_traj) ||
+      !appendTrajectory(candidate.trajectory, pre_pick_traj))
+  {
+    return false;
+  }
+  candidate.trajectory_segments.push_back(pre_pick_traj);
+
+  bool attached = false;
+  bool restored = false;
+  auto restoreInitialWorldObject = [&]()
+  {
+    if (restored)
+    {
+      return true;
+    }
+
+    bool ok = true;
+    if (attached)
+    {
+      ok = detachObject(config_.object_id, config_.eef_link) && ok;
+      attached = false;
+    }
+
+    // 无论 detach 是否将物体自动放回 world，都先删除后按原始 pose 回写。
+    removeWorldObject(config_.object_id);
+    ok = addWorldObject(config_.object_id, pick_pose) && ok;
+    restored = true;
+    return ok;
+  };
+
+  // CONTACT 阶段允许本臂与目标物产生有意接触；候选规划结束后会恢复该物体。
+  removeWorldObject(config_.object_id);
+
+  auto contact = makeTopDownPose(
+    pick_pose.position.x, pick_pose.position.y, pick_contact_tcp_z);
+  trajectory_msgs::msg::JointTrajectory contact_traj;
+  if (!planCartesianStage(
+        move_group, joint_model_group, currentFrom(pre_pick_traj),
+        contact, "TASK08-A PRE_PICK -> CONTACT", contact_traj) ||
+      !appendTrajectory(candidate.trajectory, contact_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.trajectory_segments.push_back(contact_traj);
+
+  // 对齐 Task04 的 nominal suction command 时间；随后 Cube 状态切换为 Attached。
+  if (!appendHold(candidate.trajectory, NOMINAL_SUCTION_COMMAND_SEC) ||
+      !attachObject(config_.object_id, config_.eef_link))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  attached = true;
+  candidate.events.push_back(TaskEvent{
+    trajectoryDuration(candidate.trajectory),
+    TaskEventType::ATTACH,
+    config_.object_id,
+    config_.eef_link
+  });
+
+  auto lift = makeTopDownPose(
+    pick_pose.position.x, pick_pose.position.y, lift_tcp_z);
+  trajectory_msgs::msg::JointTrajectory lift_traj;
+  if (!planCartesianStage(
+        move_group, joint_model_group, currentFrom(contact_traj),
+        lift, "TASK08-A CONTACT -> LIFT", lift_traj) ||
+      !appendTrajectory(candidate.trajectory, lift_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.trajectory_segments.push_back(lift_traj);
+
+  auto pre_place = makeTopDownPose(
+    config_.target_x, config_.target_y, pre_place_tcp_z);
+  trajectory_msgs::msg::JointTrajectory pre_place_traj;
+  if (!planPoseStage(
+        move_group, joint_model_group, config_.eef_link,
+        currentFrom(lift_traj), pre_place,
+        "TASK08-A LIFT -> PRE_PLACE", pre_place_traj) ||
+      !appendTrajectory(candidate.trajectory, pre_place_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.trajectory_segments.push_back(pre_place_traj);
+
+  auto place = makeTopDownPose(
+    config_.target_x, config_.target_y, place_tcp_z);
+  trajectory_msgs::msg::JointTrajectory place_traj;
+  if (!planCartesianStage(
+        move_group, joint_model_group, currentFrom(pre_place_traj),
+        place, "TASK08-A PRE_PLACE -> PLACE", place_traj) ||
+      !appendTrajectory(candidate.trajectory, place_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.trajectory_segments.push_back(place_traj);
+
+  // 保持 Attached + SUCTION ON 预先规划上退，与已验证 Task04 release/retreat 时序一致。
+  auto retreat = makeTopDownPose(
+    config_.target_x, config_.target_y, pre_place_tcp_z);
+  trajectory_msgs::msg::JointTrajectory retreat_traj;
+  if (!planCartesianStage(
+        move_group, joint_model_group, currentFrom(place_traj),
+        retreat, "TASK08-A PLACE -> RETREAT", retreat_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.trajectory_segments.push_back(retreat_traj);
+
+  // 对齐 Task04：SUCTION OFF 命令窗口和 PhysX settle 后，才发生 MoveIt detach。
+  if (!appendHold(
+        candidate.trajectory,
+        NOMINAL_SUCTION_COMMAND_SEC + NOMINAL_RELEASE_SETTLE_SEC))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+  candidate.events.push_back(TaskEvent{
+    trajectoryDuration(candidate.trajectory),
+    TaskEventType::DETACH,
+    config_.object_id,
+    config_.eef_link
+  });
+
+  if (!appendTrajectory(candidate.trajectory, retreat_traj))
+  {
+    restoreInitialWorldObject();
+    return false;
+  }
+
+  candidate.goal_q = currentFrom(retreat_traj);
+  candidate.duration_sec = trajectoryDuration(candidate.trajectory);
+
+  const bool restore_ok = restoreInitialWorldObject();
+  if (!restore_ok)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] Task08-A 规划后恢复 Planning Scene 失败。",
+      config_.label.c_str());
+    return false;
+  }
+
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] FULL CANDIDATE READY: points=%zu, duration=%.3f s, events=%zu",
+    config_.label.c_str(),
+    candidate.trajectory.points.size(),
+    candidate.duration_sec,
+    candidate.events.size());
+  return true;
 }
 
 bool PalletizePrimitive::prepareTransferCandidate(

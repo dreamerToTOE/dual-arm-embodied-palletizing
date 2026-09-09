@@ -23,6 +23,9 @@
 - [Task 05 — B-A-C 顶部吸盘验证](docs/tasks/TASK05_BAC_SUCTION.md)
 - [Task 05-C — MoveIt / Isaac 紧凑吸盘模型对齐](docs/tasks/TASK05C_COMPACT_SUCTION_MOVEIT.md)
 - [Task 06 — 双 FR3 + 双紧凑吸盘基线](docs/tasks/TASK06_DUAL_FR3_BASELINE.md)
+- [Task 07 — 双臂松协调并行码垛](docs/tasks/TASK07_LOOSE_PARALLEL.md)
+- [Task 08 — 时空冲突检测设计](docs/tasks/TASK08_SPATIOTEMPORAL_CONFLICT.md)
+- [Task 08-A — 完整任务轨迹候选](docs/tasks/TASK08_FULL_TASK_TRAJECTORY.md)
 
 ## 当前进度
 
@@ -34,8 +37,9 @@
 | 03 | B-A-C 二指夹爪高密度可执行性 | ✅ |
 | 04 | 顶部紧凑吸盘单臂码垛基线 | ✅ |
 | 05 | 同一 B-A-C 场景顶部吸盘插入 + MoveIt/Isaac 模型对齐 | ✅ |
-| 06 | 双 FR3 + 双紧凑吸盘基础设施 | 🟡 进行中 |
-| 07 | 双臂松协调并行码垛 | 计划中 |
+| 06 | 双 FR3 + 双紧凑吸盘基础设施 | ✅ |
+| 07 | 双臂松协调并行码垛 | ✅ |
+| 08 | 双臂完整任务轨迹与时空冲突检测 | 🟡 Task08-A 完成，Task08-B 进行中 |
 | 11+ | 双吸盘共物体与紧协调 | 计划中 |
 
 ## 当前核心工程结论
@@ -106,24 +110,15 @@ PRE_PICK
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## 当前阶段：Task06
+## 当前阶段：Task08
 
-Task06 首先只建立双臂基础设施：
+Task06 已完成双臂基础设施，Task07 已完成两条独立 Task04 primitive 的并行执行。
 
-```text
-Left FR3  + left compact suction
-Right FR3 + right compact suction
-```
-
-优先验证：
+Task08 当前先生成完整任务候选：
 
 ```text
-双臂 Prim / namespace 不重名
-→ 左右 joint state / command 独立
-→ 左右 TF 独立
-→ 左右 MoveIt planning group 独立
-→ 左右吸盘 ON/OFF 独立
-→ 两臂分别 HOME
+HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
+-> PRE_PLACE -> PLACE -> DETACH -> RETREAT
 ```
 
-完成后再进入 Task07 的两臂分别操作不同小箱体并行码垛。
+每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。下一步使用同一双臂 RobotState 对两个候选按时间采样，完成动态冲突检测；协调决策留到 Task09。

@@ -17,6 +17,8 @@
 #include <std_msgs/msg/bool.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 
+#include "fr3_dual_palletize/task_trajectory_candidate.hpp"
+
 namespace fr3_dual_palletize
 {
 
@@ -88,6 +90,11 @@ public:
   // Task07 兼容入口：完整执行一次 Task04 canonical primitive。
   bool runOnce(StartGate& start_gate);
 
+  // Task08-A：只生成完整 HOME -> ... -> RETREAT 候选，不执行机器人或吸盘。
+  // 为获得正确的携带物碰撞模型，函数会临时修改 MoveIt Planning Scene，
+  // 返回前无论成功或失败都会把当前 object 恢复到其初始 world pose。
+  bool planTaskTrajectoryCandidate(TaskTrajectoryCandidate& candidate);
+
   // Task08 新接口：
   // 1) 执行 PRE_PICK -> CONTACT -> SUCTION ON -> ATTACH -> LIFT；
   // 2) 在 coordination_gate 等待另一臂也到 LIFT；
@@ -115,6 +122,11 @@ private:
     StartGate& start_gate,
     StartGate& coordination_gate,
     TransferCandidate& candidate);
+
+  bool planTaskTrajectoryCandidateImpl(
+    moveit::planning_interface::MoveGroupInterface& move_group,
+    const moveit::core::JointModelGroup* joint_model_group,
+    TaskTrajectoryCandidate& candidate);
 
   bool finishPreparedTransferImpl(
     moveit::planning_interface::MoveGroupInterface& move_group,
@@ -161,6 +173,14 @@ private:
   bool detachObject(const std::string& object_id, const std::string& eef_link);
 
   static std::vector<double> currentFrom(
+    const trajectory_msgs::msg::JointTrajectory& trajectory);
+  static bool appendTrajectory(
+    trajectory_msgs::msg::JointTrajectory& destination,
+    const trajectory_msgs::msg::JointTrajectory& stage);
+  static bool appendHold(
+    trajectory_msgs::msg::JointTrajectory& trajectory,
+    double hold_sec);
+  static double trajectoryDuration(
     const trajectory_msgs::msg::JointTrajectory& trajectory);
 
 private:
