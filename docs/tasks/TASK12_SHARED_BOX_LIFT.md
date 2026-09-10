@@ -1,6 +1,6 @@
 # Task12：双吸盘共同抬升与运输
 
-状态：🟡 Task12-A 共同抬升已在 Isaac Sim 运行时验收（2026-09-10）；Task12-B 共同水平运输已实现并编译，等待 Isaac 验收。
+状态：✅ Task12-A 共同抬升与 Task12-B 共同水平运输均已在 Isaac Sim 运行时验收（2026-09-10）。
 
 ## 目标与边界
 
@@ -113,7 +113,7 @@ source install/setup.bash
 ros2 pkg executables fr3_dual_palletize | rg 'task1[12]_shared_box'
 ```
 
-结果：`fr3_dual_palletize` 编译成功，`task11_shared_box_grasp`、`task12_shared_box_lift` 与 `task12_shared_box_transport` 均已被 ament 索引发现。Task12-B 尚未执行 Isaac 运行时测试。
+结果：`fr3_dual_palletize` 编译成功，`task11_shared_box_grasp`、`task12_shared_box_lift` 与 `task12_shared_box_transport` 均已被 ament 索引发现。
 
 ## Isaac 运行时验收（2026-09-10）
 
@@ -136,6 +136,36 @@ SharedBox 与双臂相对几何均在阈值内。
 
 所有值满足 T12-05 至 T12-07：箱体实际抬升误差远小于 10 mm，左右 `link8` 相对向量变化远小于 3 mm，箱体姿态变化远小于 2°。可视化也确认 SharedBox 由两端吸盘稳定共同保持。
 
+## Task12-B Isaac 运行时验收（2026-09-10）
+
+完整共同搬运节点以同一初始物理状态先完成 Task12-A，再执行 `transport_delta_x_m:=0.100`。所有六条 Cartesian 规划均成功：
+
+```text
+left/right CONTACT           fraction = 1.0000
+left/right COMMON_LIFT       fraction = 1.0000
+left/right COMMON_TRANSPORT  fraction = 1.0000
+```
+
+本次完整运行的实际测量为：
+
+```text
+LIFT:
+  expected_box_z          = 0.1396 m
+  actual_box              = (0.5500, 0.0000, 0.1367) m
+  box_error               = 2.892 mm
+  relative_link8_error    = 1.262 mm
+  orientation_error       = 0.052 deg
+
+TRANSPORT:
+  expected_box            = (0.6500, 0.0000, 0.1367) m
+  actual_box              = (0.6497, -0.0001, 0.1366) m
+  box_error               = 0.311 mm
+  relative_link8_error    = 0.123 mm
+  orientation_error       = 0.012 deg
+```
+
+两阶段的箱体误差均小于 10 mm、左右 `link8` 相对误差均小于 3 mm、箱体姿态变化均小于 2°，节点输出 `Task12-B PASS`。Isaac 可视化确认 SharedBox 在 50 mm 安全高度被两臂稳定共同运输 100 mm。
+
 ## 验收标准
 
 ```text
@@ -156,6 +186,6 @@ T12-11  运输阶段左右 link8 相对向量变化 <= 3 mm，箱体姿态变化
 
 ```text
 Task12-A  共同抬升与相对几何保持（✅ 已完成）
-Task12-B  共同水平运输与路径级相对约束（🟡 已实现，待 Isaac 验收）
+Task12-B  共同水平运输与路径级相对约束（✅ 已完成）
 Task13    共同下降、同步释放、两臂安全退出
 ```
