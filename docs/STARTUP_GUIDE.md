@@ -370,6 +370,54 @@ ros2 run fr3_dual_palletize task08_candidate_demo \
 
 ---
 
+## Task09-C：联合安全候选的真实 Isaac 执行
+
+Task09-C 复用 Task08 交叉场景和 Task07 双吸盘 Bridge；它先生成完整候选、执行 Task08-B/FCL 联合检查、插入最小局部等待，并且只在结果为 `SAFE` 时才真正下发双臂 joint command。
+
+### Isaac Sim
+
+在 **Stop** 状态依次运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_fr3_scene.py").read())
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task06_dual_ros_graph.py").read())
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task08_cross_conflict_scene.py").read())
+```
+
+点击 **Play** 后：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task07_dual_suction_bridge.py").read())
+```
+
+### MoveIt2
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.launch.py
+```
+
+### 协调执行节点
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+
+ros2 run fr3_dual_palletize task08_candidate_demo --ros-args \
+  -p scenario:=task08_conflict \
+  -p enable_safe_egress:=true \
+  -p enable_local_wait_coordination:=true \
+  -p wait_step_sec:=0.20 \
+  -p max_wait_sec:=15.0 \
+  -p execute_coordinated_candidate:=true
+```
+
+`execute_coordinated_candidate` 默认是 `false`。没有 `Task09-B SAFE` 时节点会拒绝执行，绝不发布控制命令。
+
+---
+
 ## 后续 Task09+
 
 从 Task09 开始继续沿用同一规则：每个 Task 文档必须明确写出：
