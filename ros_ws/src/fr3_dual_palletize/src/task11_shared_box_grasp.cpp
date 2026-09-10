@@ -430,14 +430,25 @@ int main(int argc, char** argv)
     trajectory_msgs::msg::JointTrajectory left_pre_traj;
     trajectory_msgs::msg::JointTrajectory right_pre_traj;
     if (!left.planPose(left_group, left_pre, left_pre_traj) ||
-        !left.execute(left_pre_traj) ||
-        !right.planPose(right_group, right_pre, right_pre_traj) ||
-        !right.execute(right_pre_traj))
+        !right.planPose(right_group, right_pre, right_pre_traj))
     {
-      RCLCPP_ERROR(node->get_logger(), "Task11 PRE_CONTACT 规划或执行失败。");
+      RCLCPP_ERROR(node->get_logger(), "Task11 PRE_CONTACT 规划失败。");
       break;
     }
-    RCLCPP_INFO(node->get_logger(), "Task11 两臂均到达 PRE_CONTACT。");
+
+    if (execute)
+    {
+      // 右臂的 pre-contact 规划必须在左臂到位后重新生成，使 MoveIt 使用
+      // 左臂真实静止状态，而非预检时的 HOME 状态。
+      if (!left.execute(left_pre_traj) ||
+          !right.planPose(right_group, right_pre, right_pre_traj) ||
+          !right.execute(right_pre_traj))
+      {
+        RCLCPP_ERROR(node->get_logger(), "Task11 PRE_CONTACT 执行失败。");
+        break;
+      }
+      RCLCPP_INFO(node->get_logger(), "Task11 两臂均到达 PRE_CONTACT。");
+    }
 
     // CONTACT 是有意接触，故仅在两条已完成的预接触轨迹之间临时移除 SharedBox。
     // 本 Task 不进行后续 MoveIt 规划；Task12 将以共同 AttachedBody 模型恢复完整碰撞语义。
@@ -456,7 +467,7 @@ int main(int argc, char** argv)
 
     if (!execute)
     {
-      RCLCPP_INFO(node->get_logger(), "Task11 PRECHECK PASS：未发布 contact / suction 命令。");
+      RCLCPP_INFO(node->get_logger(), "Task11 PRECHECK PASS：未发布任何 joint / suction 命令。");
       success = true;
       break;
     }

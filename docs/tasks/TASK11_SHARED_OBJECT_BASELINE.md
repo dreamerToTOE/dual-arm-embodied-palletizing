@@ -67,7 +67,7 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task11-shared-obje
 exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task11-shared-object-baseline/isaac/scripts/task11_shared_box_bridge.py").read())
 ```
 
-Task11 控制节点先将左右吸盘分别移动到表中参考点，再同步下探至 CONTACT 并向两个 command topic 发送 `true`。先做只读预检：
+Task11 控制节点在真实执行时，先将左右吸盘分别移动到表中参考点，再同步下探至 CONTACT 并向两个 command topic 发送 `true`。先做只读预检；`execute:=false` 不发布任何 joint 或 suction command：
 
 ```bash
 cd ~/lmy/dual-arm-embodied-palletizing-task11-shared-object-baseline/ros_ws
