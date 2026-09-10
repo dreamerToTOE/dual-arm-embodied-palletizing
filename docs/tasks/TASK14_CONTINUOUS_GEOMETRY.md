@@ -47,8 +47,9 @@ fr3_dual_palletize/task14_shared_box_geometry_monitor
 | `relative_tcp_error` | 左右 suction TCP 相对向量相对基准的变化 | 3 mm |
 | `box_to_tcp_midpoint_error` | SharedBox 中心相对双 TCP 中点的偏移变化 | 5 mm |
 | `box_orientation_error` | SharedBox 相对初始姿态的角度变化 | 2° |
+| `sync_tolerance_sec` | 三路 Ground Truth 时间戳最大允许偏差 | 30 ms |
 
-报告同时输出每项的 `max` 与 `RMS`。只在任一吸盘变为 `OPEN` 后结束并判定；因此预接近、接触前和释放后的自由落体都不污染共同搬运窗口。
+报告同时输出每项的 `max` 与 `RMS`。只有 SharedBox、left TCP 与 right TCP 三路时间戳相差不超过 30 ms 时才接受该样本；不同步样本会计数并丢弃。只在任一吸盘变为 `OPEN` 后结束并判定；因此预接近、接触前和释放后的自由落体都不污染共同搬运窗口。
 
 ## 验收步骤
 
@@ -100,6 +101,7 @@ T14-01  更新后的 Bridge 发布左右 suction TCP Ground Truth
 T14-02  监测器不发布任何控制命令
 T14-03  监测窗口从 both CLOSED 开始，到任一 OPEN 结束
 T14-04  输出有效样本数及三项 max / RMS 连续指标
+T14-04a 输出并丢弃三路 Ground Truth 时间戳不一致的样本
 T14-05  max relative_tcp_error <= 3 mm
 T14-06  max box_to_tcp_midpoint_error <= 5 mm
 T14-07  max box_orientation_error <= 2°
@@ -116,7 +118,13 @@ source install/setup.bash
 ros2 pkg executables fr3_dual_palletize | rg 'task14_shared_box_geometry_monitor'
 ```
 
-结果：`fr3_dual_palletize` 编译成功，`task14_shared_box_geometry_monitor` 已被 ament 索引发现；尚未执行 Isaac 运行时测试。
+结果：`fr3_dual_palletize` 编译成功，`task14_shared_box_geometry_monitor` 已被 ament 索引发现；时间戳对齐修复后等待重新执行 Isaac 运行时验收。
+
+## 时间戳对齐修复（2026-09-10）
+
+首次运行曾出现 `box_to_tcp_midpoint max=25.284 mm`，但同时的 TCP 相对误差仍为 `2.896 mm`、箱体姿态误差仅 `0.403°`。这与 10 Hz Bridge 中“当前周期 SharedBox 回调先于当前周期 TCP 回调”造成的跨周期混采一致，不能据此推断共同搬运失稳。
+
+监测器现以三路 ROS header 时间戳进行 30 ms 对齐，只对齐后采样，并报告 `timestamp_rejected` 数量。该修复不修改任何机器人、吸盘或 MoveIt 控制逻辑；需要重新执行 Task14-A 运行时验收。
 
 ## 后续边界
 

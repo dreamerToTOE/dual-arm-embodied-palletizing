@@ -2,11 +2,13 @@
 #include <chrono>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <limits>
 #include <string>
 #include <thread>
 
+#include <builtin_interfaces/msg/time.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -75,6 +77,7 @@ public:
       "box_midpoint_tolerance_m", 0.005);
     orientation_tolerance_ = declare_parameter<double>(
       "orientation_tolerance_rad", 0.035);
+    sync_tolerance_sec_ = declare_parameter<double>("sync_tolerance_sec", 0.030);
     timeout_sec_ = declare_parameter<double>("timeout_sec", 45.0);
 
     box_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -82,6 +85,7 @@ public:
       [this](const geometry_msgs::msg::PoseStamped::SharedPtr message)
       {
         box_pose_ = message->pose;
+        box_stamp_ns_ = stampNs(message->header.stamp);
         have_box_ = true;
         sampleIfClosed();
       });
@@ -90,14 +94,18 @@ public:
       [this](const geometry_msgs::msg::PoseStamped::SharedPtr message)
       {
         left_tcp_ = message->pose;
+        left_tcp_stamp_ns_ = stampNs(message->header.stamp);
         have_left_tcp_ = true;
+        sampleIfClosed();
       });
     right_tcp_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
       "/task11/right/suction_tcp_pose", 10,
       [this](const geometry_msgs::msg::PoseStamped::SharedPtr message)
       {
         right_tcp_ = message->pose;
+        right_tcp_stamp_ns_ = stampNs(message->header.stamp);
         have_right_tcp_ = true;
+        sampleIfClosed();
       });
     left_state_sub_ = create_subscription<std_msgs::msg::Bool>(
       "/task11/left/suction_state", 10,
@@ -119,7 +127,7 @@ public:
   {
     return relative_tcp_tolerance_ > 0.0 &&
            box_midpoint_tolerance_ > 0.0 &&
-           orientation_tolerance_ > 0.0 && timeout_sec_ > 0.0;
+           orientation_tolerance_ > 0.0 && sync_tolerance_sec_ > 0.0 && timeout_sec_ > 0.0;
   }
 
   bool finished() const { return finished_; }
@@ -147,8 +155,8 @@ public:
       max_orientation_error_ <= orientation_tolerance_;
     RCLCPP_INFO(get_logger(), "========== Task14 CONTINUOUS GEOMETRY REPORT ==========");
     RCLCPP_INFO(
-      get_logger(), "samples=%zu, closed_window_finished=%s",
-      samples_, finished_ ? "true" : "false");
+      get_logger(), "samples=%zu, timestamp_rejected=%zu, closed_window_finished=%s",
+      samples_, timestamp_rejected_, finished_ ? "true" : "false");
     RCLCPP_INFO(
       get_logger(),
       "relative_tcp: max=%.3f mm, rms=%.3f mm, limit=%.3f mm",
@@ -184,6 +192,12 @@ public:
   }
 
 private:
+  static std::int64_t stampNs(const builtin_interfaces::msg::Time& stamp)
+  {
+    return static_cast<std::int64_t>(stamp.sec) * 1000000000LL +
+      static_cast<std::int64_t>(stamp.nanosec);
+  }
+
   void sampleIfClosed()
   {
     if (!left_closed_ || !right_closed_ ||
@@ -191,6 +205,22 @@ private:
     {
       return;
     }
+    if (box_stamp_ns_ <= last_sampled_box_stamp_ns_)
+    {
+      return;
+    }
+    const auto earliest_stamp = std::min({
+      box_stamp_ns_, left_tcp_stamp_ns_, right_tcp_stamp_ns_});
+    const auto latest_stamp = std::max({
+      box_stamp_ns_, left_tcp_stamp_ns_, right_tcp_stamp_ns_});
+    const double timestamp_skew_sec = static_cast<double>(
+      latest_stamp - earliest_stamp) * 1e-9;
+    if (timestamp_skew_sec > sync_tolerance_sec_)
+    {
+      ++timestamp_rejected_;
+      return;
+    }
+    last_sampled_box_stamp_ns_ = box_stamp_ns_;
     const auto relative_tcp = subtract(right_tcp_.position, left_tcp_.position);
     const auto box_to_midpoint = subtract(
       box_pose_.position, midpoint(left_tcp_.position, right_tcp_.position));
@@ -225,6 +255,7 @@ private:
   double relative_tcp_tolerance_{0.003};
   double box_midpoint_tolerance_{0.005};
   double orientation_tolerance_{0.035};
+  double sync_tolerance_sec_{0.030};
   double timeout_sec_{45.0};
   bool have_box_{false};
   bool have_left_tcp_{false};
@@ -234,6 +265,7 @@ private:
   bool started_{false};
   bool finished_{false};
   std::size_t samples_{0};
+  std::size_t timestamp_rejected_{0};
   double max_relative_tcp_error_{0.0};
   double max_box_midpoint_error_{0.0};
   double max_orientation_error_{0.0};
@@ -246,6 +278,10 @@ private:
   geometry_msgs::msg::Point initial_relative_tcp_;
   geometry_msgs::msg::Point initial_box_to_midpoint_;
   geometry_msgs::msg::Quaternion initial_orientation_;
+  std::int64_t box_stamp_ns_{0};
+  std::int64_t left_tcp_stamp_ns_{0};
+  std::int64_t right_tcp_stamp_ns_{0};
+  std::int64_t last_sampled_box_stamp_ns_{0};
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr box_sub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr left_tcp_sub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr right_tcp_sub_;
