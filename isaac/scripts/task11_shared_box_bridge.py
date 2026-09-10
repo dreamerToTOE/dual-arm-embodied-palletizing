@@ -189,16 +189,28 @@ class Task11SharedBoxBridge:
         quaternion = transform.ExtractRotationQuat()
         imaginary = quaternion.GetImaginary()
 
+        # SharedBox 是通过 Xform Scale 设置尺寸的。USD 从含 Scale 的完整
+        # 矩阵提取 rotation quaternion 时，其长度可能不为 1；ROS / MoveIt
+        # 的 Pose 必须发布单位四元数，否则会污染 Planning Scene 碰撞位姿。
+        quaternion_norm = math.sqrt(
+            float(imaginary[0]) ** 2
+            + float(imaginary[1]) ** 2
+            + float(imaginary[2]) ** 2
+            + float(quaternion.GetReal()) ** 2
+        )
+        if quaternion_norm <= 1.0e-9:
+            raise RuntimeError("SharedBox Ground Truth quaternion 无效。")
+
         message = PoseStamped()
         message.header.stamp = self.node.get_clock().now().to_msg()
         message.header.frame_id = "world"
         message.pose.position.x = float(position[0])
         message.pose.position.y = float(position[1])
         message.pose.position.z = float(position[2])
-        message.pose.orientation.x = float(imaginary[0])
-        message.pose.orientation.y = float(imaginary[1])
-        message.pose.orientation.z = float(imaginary[2])
-        message.pose.orientation.w = float(quaternion.GetReal())
+        message.pose.orientation.x = float(imaginary[0]) / quaternion_norm
+        message.pose.orientation.y = float(imaginary[1]) / quaternion_norm
+        message.pose.orientation.z = float(imaginary[2]) / quaternion_norm
+        message.pose.orientation.w = float(quaternion.GetReal()) / quaternion_norm
         self.box_pose_pub.publish(message)
 
     def shutdown(self):
