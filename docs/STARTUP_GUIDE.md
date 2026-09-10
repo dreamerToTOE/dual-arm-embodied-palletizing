@@ -432,6 +432,10 @@ ros2 run fr3_dual_palletize task08_candidate_demo --ros-args \
 
 没有独立脚本或节点时必须明确写“复用上一 Task”，不假造入口。
 
+### Task10（四箱 / 两批次连续码垛）
+
+Task10 不复用 Task07 的两箱 Bridge；它需要在 Isaac Stop 状态运行 `task10_continuous_palletizing_scene.py`，Play 后运行 `task10_quad_suction_bridge.py`。MoveIt2 仍复用 Task06 的 `moveit_dual_compact_suction.launch.py`。详细四步启动和 `execute` 安全开关见 [TASK10_CONTINUOUS_PALLETIZING.md](tasks/TASK10_CONTINUOUS_PALLETIZING.md)。
+
 ---
 
 ## 编译常用命令

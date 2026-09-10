@@ -66,11 +66,26 @@ ament_target_dependencies(task08_candidate_demo
   moveit_ros_planning_interface
 )
 
+add_executable(task10_continuous_demo
+  src/task10_continuous_demo.cpp
+)
+target_link_libraries(task10_continuous_demo palletize_primitive)
+ament_target_dependencies(task10_continuous_demo
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 install(
   TARGETS
     palletize_primitive
     task07_parallel_demo
     task08_candidate_demo
+    task10_continuous_demo
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
