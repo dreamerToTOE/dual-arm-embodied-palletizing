@@ -103,7 +103,7 @@ Phase B2 — 松协调（上层两个独立小件）
 在 Isaac Sim 4.5 打开 Task06 双 FR3 Stage、确认 Timeline 为 Stop 后，在 Script Editor 执行：
 
 ```python
-exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task15-hybrid-palletizing/isaac/scripts/task15_hybrid_palletizing_scene.py").read())
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_palletizing_scene.py").read())
 ```
 
 预期 Console 末尾显示：
