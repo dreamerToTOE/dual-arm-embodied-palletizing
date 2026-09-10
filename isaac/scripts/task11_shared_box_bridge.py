@@ -58,6 +58,7 @@ class Task11SharedBoxBridge:
 
         self.command_subs = {}
         self.state_pubs = {}
+        self.tcp_pose_pubs = {}
         for side in SIDES:
             self.command_subs[side] = self.node.create_subscription(
                 Bool,
@@ -68,6 +69,11 @@ class Task11SharedBoxBridge:
             self.state_pubs[side] = self.node.create_publisher(
                 Bool,
                 f"/task11/{side}/suction_state",
+                10,
+            )
+            self.tcp_pose_pubs[side] = self.node.create_publisher(
+                PoseStamped,
+                f"/task11/{side}/suction_tcp_pose",
                 10,
             )
 
@@ -88,6 +94,7 @@ class Task11SharedBoxBridge:
         print("LEFT : /task11/left/suction_command  <-> suction_state")
         print("RIGHT: /task11/right/suction_command <-> suction_state")
         print("PUB  : /task11/shared_box_pose geometry_msgs/PoseStamped")
+        print("PUB  : /task11/{left,right}/suction_tcp_pose geometry_msgs/PoseStamped")
         print("两个 Surface Gripper 可同时连接同一个 /World/SharedBox")
         print("====================================================")
 
@@ -179,10 +186,16 @@ class Task11SharedBoxBridge:
             state.data = bool(self.grippers[side].is_closed())
             self.state_pubs[side].publish(state)
 
-        box_prim = self.stage.GetPrimAtPath(SHARED_BOX_PATH)
-        if not box_prim.IsValid():
-            return
-        transform = UsdGeom.Xformable(box_prim).ComputeLocalToWorldTransform(
+        self.box_pose_pub.publish(self._ground_truth_pose(SHARED_BOX_PATH))
+        for side in SIDES:
+            tcp_path = f"/World/{side}_fr3/fr3_hand/suction_tool/suction_tcp"
+            self.tcp_pose_pubs[side].publish(self._ground_truth_pose(tcp_path))
+
+    def _ground_truth_pose(self, prim_path):
+        prim = self.stage.GetPrimAtPath(prim_path)
+        if not prim.IsValid():
+            raise RuntimeError(f"Ground Truth Prim 不存在：{prim_path}")
+        transform = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(
             Usd.TimeCode.Default()
         )
         position = transform.ExtractTranslation()
@@ -199,7 +212,7 @@ class Task11SharedBoxBridge:
             + float(quaternion.GetReal()) ** 2
         )
         if quaternion_norm <= 1.0e-9:
-            raise RuntimeError("SharedBox Ground Truth quaternion 无效。")
+            raise RuntimeError(f"Ground Truth quaternion 无效：{prim_path}")
 
         message = PoseStamped()
         message.header.stamp = self.node.get_clock().now().to_msg()
@@ -211,7 +224,7 @@ class Task11SharedBoxBridge:
         message.pose.orientation.y = float(imaginary[1]) / quaternion_norm
         message.pose.orientation.z = float(imaginary[2]) / quaternion_norm
         message.pose.orientation.w = float(quaternion.GetReal()) / quaternion_norm
-        self.box_pose_pub.publish(message)
+        return message
 
     def shutdown(self):
         for side in SIDES:

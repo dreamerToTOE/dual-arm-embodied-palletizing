@@ -149,6 +149,15 @@ ament_target_dependencies(task13_shared_box_place
   moveit_ros_planning_interface
 )
 
+add_executable(task14_shared_box_geometry_monitor
+  src/task14_shared_box_geometry_monitor.cpp
+)
+ament_target_dependencies(task14_shared_box_geometry_monitor
+  rclcpp
+  std_msgs
+  geometry_msgs
+)
+
 install(
   TARGETS
     palletize_primitive
@@ -159,6 +168,7 @@ install(
     task12_shared_box_lift
     task12_shared_box_transport
     task13_shared_box_place
+    task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

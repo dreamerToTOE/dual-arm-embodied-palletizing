@@ -33,6 +33,7 @@
 - [Task 11 — 双吸盘共同物体基线](docs/tasks/TASK11_SHARED_OBJECT_BASELINE.md)
 - [Task 12 — 双吸盘共同抬升与运输](docs/tasks/TASK12_SHARED_BOX_LIFT.md)
 - [Task 13 — 双吸盘共同放置、释放与安全退出](docs/tasks/TASK13_SHARED_BOX_PLACE.md)
+- [Task 14-A — 双吸盘共同搬运连续几何观测](docs/tasks/TASK14_CONTINUOUS_GEOMETRY.md)
 
 ## 当前进度
 
@@ -52,7 +53,8 @@
 | 11 | 双吸盘共同物体基线 | ✅ 双 Surface Gripper 已对同一 SharedBox 同时 CLOSED；未抬升阶段位移 0.115 mm |
 | 12 | 双吸盘共同抬升与运输 | ✅ +50 mm 抬升与 +100 mm X 向共同运输均通过；运输误差 0.311 mm、相对 `link8` 误差 0.123 mm |
 | 13 | 双吸盘共同放置、释放与安全退出 | ✅ 完整闭环通过；最终放置误差 0.947 mm、姿态误差 0.026° |
-| 14+ | 紧协调改进控制与模式选择 | 计划中 |
+| 14 | 紧协调连续几何观测 | 🟡 已实现双 TCP / SharedBox 连续 max-RMS 误差观测，待 Isaac 验收 |
+| 15+ | 紧协调改进控制与模式选择 | 计划中 |
 
 ## 当前核心工程结论
 
