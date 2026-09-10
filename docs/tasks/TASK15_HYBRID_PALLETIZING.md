@@ -31,7 +31,7 @@ Task15 新增可重复加载的物理场景、明确的任务分批、两个项�
 
 ## 场景
 
-脚本：[task15_hybrid_palletizing_scene.py](../../isaac/scripts/task15_hybrid_palletizing_scene.py)。它要求已有 Task06 Stage 中的 `/World/left_fr3`、`/World/right_fr3` 和 `/World/Table`；不会创建或复制桌面、机器人、吸盘和 ActionGraph。
+脚本：[task15_hybrid_palletizing_scene.py](../../isaac/scripts/task15_hybrid_palletizing_scene.py) 是自包含入口。在空白 Isaac Stage 中运行时，它会自动调用已验收的 `task06_dual_fr3_scene.py` 和 `task06_dual_ros_graph.py`，创建 `/World/left_fr3`、`/World/right_fr3`、`/World/Table`、双 compact suction、`/World/Task06ROSGraph` 与 `/physicsScene`；若这些基线已经完整存在则直接复用，不重复创建。Task15 本身只新增/重置任务物体。
 
 每次运行会仅清理旧的 Task15、Task10/11 任务物体及 `/World/Cube1`--`/World/Cube9`，因此可重复重置任务对象。
 
@@ -100,7 +100,7 @@ Phase B2 — 松协调（上层两个独立小件）
 
 ## 加载场景
 
-在 Isaac Sim 4.5 打开 Task06 双 FR3 Stage、确认 Timeline 为 Stop 后，在 Script Editor 执行：
+在 Isaac Sim 4.5 的新 Stage 或已有 Task06 Stage 中，确认 Timeline 为 **Stop** 后，在 Script Editor 执行：
 
 ```python
 exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_palletizing_scene.py").read())
@@ -110,6 +110,7 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 
 ```text
 Task15 hybrid palletizing scene ready
+Task15 基线就绪：Timeline Play 后运行 task15_hybrid_suction_bridge.py。
 Strategy Phase A / TIGHT: ...
 Strategy Phase B1 / LOOSE: ...
 Strategy Phase B2 / LOOSE: ...
