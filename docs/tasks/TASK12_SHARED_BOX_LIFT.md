@@ -1,6 +1,6 @@
 # Task12：双吸盘共同抬升基线
 
-状态：🟡 已实现并完成独立编译；等待 Isaac Sim 运行时验收。
+状态：✅ Task12-A 共同抬升已在 Isaac Sim 运行时验收（2026-09-10）；Task12-B 共同水平运输尚未开始。
 
 ## 目标与边界
 
@@ -15,7 +15,7 @@ PRE_CONTACT
   -> Ground Truth relative-geometry check
 ```
 
-本 Task 不做平面运输、共同下降或释放；这些分别留给后续 Task12 扩展和 Task13。
+本 Task12-A 不做平面运输、共同下降或释放；共同水平运输进入 Task12-B，共同下降与释放留给 Task13。
 
 ## 实现
 
@@ -106,7 +106,28 @@ source install/setup.bash
 ros2 pkg executables fr3_dual_palletize | rg 'task1[12]_shared_box'
 ```
 
-结果：`fr3_dual_palletize` 编译成功，`task11_shared_box_grasp` 与 `task12_shared_box_lift` 均已被 ament 索引发现。尚未执行 Isaac 运行时测试。
+结果：`fr3_dual_palletize` 编译成功，`task11_shared_box_grasp` 与 `task12_shared_box_lift` 均已被 ament 索引发现。
+
+## Isaac 运行时验收（2026-09-10）
+
+真实执行 `lift_height_m:=0.050` 后，日志确认：
+
+```text
+Task12 left  COMMON_LIFT Cartesian fraction=1.0000, error=1
+Task12 right COMMON_LIFT Cartesian fraction=1.0000, error=1
+
+Task12 LIFT METRICS:
+  expected_box_z          = 0.1400 m
+  actual_box              = (0.5499, 0.0000, 0.1396) m
+  box_error               = 0.446 mm
+  relative_link8_error    = 0.252 mm
+  orientation_error       = 0.052 deg
+
+Task12 PASS：双 Surface Gripper 共同抬升 0.050 m；
+SharedBox 与双臂相对几何均在阈值内。
+```
+
+所有值满足 T12-05 至 T12-07：箱体实际抬升误差远小于 10 mm，左右 `link8` 相对向量变化远小于 3 mm，箱体姿态变化远小于 2°。可视化也确认 SharedBox 由两端吸盘稳定共同保持。
 
 ## 验收标准
 
@@ -123,7 +144,7 @@ T12-07  SharedBox 姿态变化 <= 2°
 ## 后续边界
 
 ```text
-Task12-A  共同抬升与相对几何保持（本文件）
-Task12-B  共同水平运输与路径级相对约束
+Task12-A  共同抬升与相对几何保持（✅ 已完成）
+Task12-B  共同水平运输与路径级相对约束（下一步）
 Task13    共同下降、同步释放、两臂安全退出
 ```
