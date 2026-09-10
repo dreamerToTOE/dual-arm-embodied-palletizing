@@ -258,6 +258,32 @@ fr3_dual_palletize::PrimitiveConfig makePrimitiveConfig(
   return config;
 }
 
+bool applyDryRunReleasePoses(
+  const fr3_dual_palletize::TaskTrajectoryCandidate& left_candidate,
+  const fr3_dual_palletize::TaskTrajectoryCandidate& right_candidate)
+{
+  // 只读预检也必须让下一批看到与真实执行一致的已放置障碍物。
+  // 这里仅修改 MoveIt World：绝不发布 joint command / suction command，
+  // 也绝不改写 Isaac 中仍位于 source 的动态箱体。
+  moveit::planning_interface::PlanningSceneInterface scene_interface;
+  scene_interface.removeCollisionObjects({
+    left_candidate.object_id,
+    right_candidate.object_id,
+  });
+  std::this_thread::sleep_for(250ms);
+
+  const std::vector<moveit_msgs::msg::CollisionObject> objects{
+    makeBoxObject(left_candidate.object_id, left_candidate.planned_release_pose),
+    makeBoxObject(right_candidate.object_id, right_candidate.planned_release_pose),
+  };
+  if (!scene_interface.applyCollisionObjects(objects))
+  {
+    return false;
+  }
+  std::this_thread::sleep_for(250ms);
+  return true;
+}
+
 bool runBatch(
   const BatchConfig& batch,
   const rclcpp::Node::SharedPtr& coordinator_node,
@@ -337,9 +363,18 @@ bool runBatch(
 
   if (!execute)
   {
+    if (!applyDryRunReleasePoses(left_candidate, right_candidate))
+    {
+      RCLCPP_ERROR(
+        coordinator_node->get_logger(),
+        "Task10 %s：预检释放 pose 回写 MoveIt World 失败。",
+        batch.name.c_str());
+      return false;
+    }
     RCLCPP_INFO(
       coordinator_node->get_logger(),
-      "Task10 %s：仅验证模式，未发布 joint/suction command。",
+      "Task10 %s：仅验证模式，未发布 joint/suction command；"
+      "已将计划 release pose 写入 MoveIt World 供下一批检查。",
       batch.name.c_str());
     return true;
   }

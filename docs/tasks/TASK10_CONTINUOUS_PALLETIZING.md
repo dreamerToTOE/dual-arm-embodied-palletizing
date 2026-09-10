@@ -55,7 +55,7 @@ ROS：
 fr3_dual_palletize/task10_continuous_demo
 ```
 
-`task10_continuous_demo` 的默认 `execute:=false` 仅生成和验证两批候选；`execute:=true` 才可能发布 `/left/joint_command`、`/right/joint_command` 和吸盘命令。
+`task10_continuous_demo` 的默认 `execute:=false` 仅生成和验证两批候选；在每批预检结束后，它只在 MoveIt World 中写入该批的**计划 release pose**，使下一批看到正确的已放置障碍物。它不发布任何 `/left/joint_command`、`/right/joint_command` 或吸盘命令，也不改写 Isaac 中的动态箱体。`execute:=true` 才进行真实抓放并使用 Isaac Ground Truth 回写。
 
 ## 验收启动流程
 
