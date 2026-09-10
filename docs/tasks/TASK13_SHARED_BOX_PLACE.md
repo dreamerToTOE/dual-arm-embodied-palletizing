@@ -1,6 +1,6 @@
 # Task13：双吸盘共同放置、释放与安全退出
 
-状态：🟡 已实现并编译，等待 Isaac Sim 运行时验收。
+状态：✅ 已在 Isaac Sim 运行时验收（2026-09-10）：共同下降、同步释放、Ground Truth 回写与共同安全退出均完成。
 
 ## 目标
 
@@ -122,4 +122,38 @@ source install/setup.bash
 ros2 pkg executables fr3_dual_palletize | rg 'task13_shared_box_place'
 ```
 
-结果：`fr3_dual_palletize` 编译成功，`task13_shared_box_place` 已被 ament 索引发现；尚未执行 Isaac 运行时测试。
+结果：`fr3_dual_palletize` 编译成功，`task13_shared_box_place` 已被 ament 索引发现。
+
+## Isaac 运行时验收（2026-09-10）
+
+真实闭环运行通过。左右 `CONTACT`、`COMMON_LIFT`、`COMMON_TRANSPORT`、`COMMON_DESCENT` 与 `COMMON_RETREAT` 的 Cartesian 规划均返回 `fraction=1.0000`。完整运行的 Ground Truth 指标：
+
+```text
+LIFT:
+  expected_box_z          = 0.1396 m
+  actual_box              = (0.5497, 0.0001, 0.1365) m
+  box_error               = 3.105 mm
+  relative_link8_error    = 1.022 mm
+  orientation_error       = 0.026 deg
+
+TRANSPORT:
+  expected_box            = (0.6497, 0.0001, 0.1365) m
+  actual_box              = (0.6496, -0.0001, 0.1363) m
+  box_error               = 0.261 mm
+  relative_link8_error    = 0.187 mm
+  orientation_error       = 0.030 deg
+
+PLACE:
+  expected_box            = (0.6500, 0.0000, 0.0900) m
+  actual_box              = (0.6498, -0.0009, 0.0900) m
+  placement_error         = 0.947 mm
+  orientation_error       = 0.026 deg
+```
+
+节点输出：
+
+```text
+Task13 PASS：共同下降、同步释放、SharedBox Ground Truth 回写与共同安全退出均完成。
+```
+
+所有误差均满足 T13-08；可视化确认两个吸盘已脱离，SharedBox 稳定留在目标桌面位置，两臂完成共同向上退出。
