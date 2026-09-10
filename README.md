@@ -31,6 +31,7 @@
 - [Task 09-B — 安全退出 + 局部等待](docs/tasks/TASK09_SAFE_EGRESS.md)
 - [Task 10 — 松协调连续多箱码垛](docs/tasks/TASK10_CONTINUOUS_PALLETIZING.md)
 - [Task 11 — 双吸盘共同物体基线](docs/tasks/TASK11_SHARED_OBJECT_BASELINE.md)
+- [Task 12 — 双吸盘共同抬升基线](docs/tasks/TASK12_SHARED_BOX_LIFT.md)
 
 ## 当前进度
 
@@ -48,7 +49,8 @@
 | 09 | 松协调时间协调 | ✅ Task09-C 已在 Task08 交叉场景完成一次 Isaac 双臂抓取、放置和安全退出运行时验收 |
 | 10 | 松协调完整码垛 Demo | ✅ 四箱、两批次连续 Isaac 码垛完成；每批均经 FCL 验收，第二批保留 A/B 为碰撞物 |
 | 11 | 双吸盘共同物体基线 | ✅ 双 Surface Gripper 已对同一 SharedBox 同时 CLOSED；未抬升阶段位移 0.115 mm |
-| 12+ | 紧协调共同搬运与模式选择 | 计划中 |
+| 12 | 双吸盘共同抬升基线 | 🟡 已实现双臂同步 +50 mm 抬升、SharedBox 与相对 `link8` 几何验收，待 Isaac 验收 |
+| 13+ | 紧协调共同运输、放置与模式选择 | 计划中 |
 
 ## 当前核心工程结论
 

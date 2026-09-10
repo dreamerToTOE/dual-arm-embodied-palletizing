@@ -1,0 +1,129 @@
+# Task12：双吸盘共同抬升基线
+
+状态：🟡 已实现并完成独立编译；等待 Isaac Sim 运行时验收。
+
+## 目标与边界
+
+Task11 已确认左右 Surface Gripper 可以同时连接同一动态 `SharedBox`。Task12 的最小闭环是在此基础上验证：两个 FR3 能以相同起止时长共同竖直抬升箱体，并保持箱体姿态和两端末端的相对几何。
+
+```text
+PRE_CONTACT
+  -> CONTACT
+  -> LEFT / RIGHT SUCTION ON
+  -> both CLOSED
+  -> COMMON_LIFT (+50 mm)
+  -> Ground Truth relative-geometry check
+```
+
+本 Task 不做平面运输、共同下降或释放；这些分别留给后续 Task12 扩展和 Task13。
+
+## 实现
+
+新增可执行节点：
+
+```text
+fr3_dual_palletize/task12_shared_box_lift
+```
+
+它直接复用 Task11 已验证的场景与 Bridge：
+
+```text
+isaac/scripts/task11_shared_box_scene.py
+isaac/scripts/task11_shared_box_bridge.py
+```
+
+共同抬升以左右 `CONTACT` 末态组装**同一个全局 RobotState**，再分别计算两条竖直 Cartesian 轨迹。因此计算每条轨迹时，另一台机械臂已处于其真实 CONTACT 姿态，MoveIt 会执行完整双臂模型的臂-臂碰撞检查。两条轨迹随后按较长者重新定时，确保同时开始、同时结束。
+
+由于一个 MoveIt `AttachedBody` 不能同时附着到左右两个末端，`SharedBox` 在有意接触、吸附和本 Task 的短距离抬升中临时不作为 MoveIt World 障碍物；它的双端保持由 Isaac 中两个已验收的 Surface Gripper 物理约束承担。没有扩大 ACM、关闭重力或永久忽略 SharedBox。
+
+## 验收参数
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `lift_height_m` | `0.050 m` | 共同竖直抬升高度 |
+| `grasp_timeout_sec` | `3.0 s` | 两吸盘 CLOSED 等待上限 |
+| `settle_sec` | `1.0 s` | 抬升后 PhysX 稳定时间 |
+| `box_lift_tolerance_m` | `0.010 m` | SharedBox 相对期望抬升终点的三维误差上限 |
+| `relative_tcp_tolerance_m` | `0.003 m` | 左右 `link8` 相对向量变化上限 |
+| `box_orientation_tolerance_rad` | `0.035 rad` | SharedBox 抬升前后姿态变化上限（约 2°） |
+
+节点输出以下实际测量量：
+
+```text
+expected_box_z
+actual_box
+box_error
+relative_link8_error
+orientation_error
+```
+
+只有三个误差均在阈值内才打印 `Task12 PASS`。
+
+## 验收步骤
+
+先在 Isaac Timeline Stop 执行 Task11 场景，再 Play 后执行 Task11 Bridge：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task12-shared-lift/isaac/scripts/task11_shared_box_scene.py").read())
+```
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task12-shared-lift/isaac/scripts/task11_shared_box_bridge.py").read())
+```
+
+启动 Task06 双臂 MoveIt 后，先做无命令预检：
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing-task12-shared-lift/ros_ws
+source /opt/ros/humble/setup.bash
+source ~/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+source install/setup.bash
+
+ros2 run fr3_dual_palletize task12_shared_box_lift --ros-args \
+  -p execute:=false
+```
+
+仅当预检输出左右 `CONTACT` 和左右 `COMMON_LIFT` 的 Cartesian fraction 均为 `1.0000` 时，才运行真实共同抬升：
+
+```bash
+ros2 run fr3_dual_palletize task12_shared_box_lift --ros-args \
+  -p execute:=true \
+  -p lift_height_m:=0.050
+```
+
+真实运行后不要在同一场景内重复执行；先 Stop、重新运行场景脚本并重载 Bridge，恢复初始物理状态后才可再次测试。
+
+## 编译验证（2026-09-10）
+
+已在独立 Task12 工作区执行：
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing-task12-shared-lift/ros_ws
+source /opt/ros/humble/setup.bash
+source ~/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+colcon build --packages-select fr3_dual_palletize --symlink-install
+source install/setup.bash
+ros2 pkg executables fr3_dual_palletize | rg 'task1[12]_shared_box'
+```
+
+结果：`fr3_dual_palletize` 编译成功，`task11_shared_box_grasp` 与 `task12_shared_box_lift` 均已被 ament 索引发现。尚未执行 Isaac 运行时测试。
+
+## 验收标准
+
+```text
+T12-01  execute:=false 不发布 joint 或 suction 命令
+T12-02  两个 PRE_CONTACT、CONTACT 与 COMMON_LIFT 均规划成功
+T12-03  两个 Surface Gripper 均 CLOSED 后才允许抬升
+T12-04  两条共同抬升轨迹同时开始、同时结束
+T12-05  SharedBox 实际抬升误差 <= 10 mm
+T12-06  左右 link8 相对向量变化 <= 3 mm
+T12-07  SharedBox 姿态变化 <= 2°
+```
+
+## 后续边界
+
+```text
+Task12-A  共同抬升与相对几何保持（本文件）
+Task12-B  共同水平运输与路径级相对约束
+Task13    共同下降、同步释放、两臂安全退出
+```
