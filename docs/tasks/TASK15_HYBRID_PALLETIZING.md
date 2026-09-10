@@ -139,6 +139,10 @@ ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py execute:=true
 
 Phase B 的实际执行仍会检查大 Cube 已在紧协调目标 `(0.650, 0.000, 0.090)` 附近，防止绕过 Phase A 直接进行上层码垛。
 
+每次 Phase A 启动还会清理仅属于本任务的 `task15_large_cube` 与
+`task15_small_cube_1`--`task15_small_cube_4` Planning Scene 对象。这避免上一轮
+预检或中途失败遗留的小件目标碰撞物阻挡新一轮大件共同运输；不会删除桌面、机器人或其他任务对象。
+
 ## 当前本地验证
 
 已完成静态和构建验证，尚未进行物理执行验收：

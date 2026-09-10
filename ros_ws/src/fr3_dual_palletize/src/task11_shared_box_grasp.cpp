@@ -698,10 +698,25 @@ int main(int argc, char** argv)
       break;
     }
 
-    const auto box_pose = pose_buffer->get();
     moveit::planning_interface::PlanningSceneInterface scene;
-    scene.removeCollisionObjects({SHARED_OBJECT_ID});
+    // Task15 是单入口可重复执行任务。Phase B 的预检或中途失败可能把四个小件
+    // 留在 MoveIt World；它们若残留在目标层高，会确定性阻挡本轮共同运输。
+    // 这里只清理 Task15 自己的 object id，不触碰桌面或其他任务的碰撞物。
+    std::vector<std::string> stale_task_objects{SHARED_OBJECT_ID};
+#ifdef TASK15_TIGHT_PHASE
+    stale_task_objects.insert(
+      stale_task_objects.end(),
+      {
+        "task15_small_cube_1",
+        "task15_small_cube_2",
+        "task15_small_cube_3",
+        "task15_small_cube_4",
+      });
+#endif
+    scene.removeCollisionObjects(stale_task_objects);
     std::this_thread::sleep_for(250ms);
+
+    const auto box_pose = pose_buffer->get();
     if (!scene.applyCollisionObject(sharedBoxObject(box_pose)))
     {
       RCLCPP_ERROR(node->get_logger(), "无法将 SharedBox 加入 MoveIt World。");
