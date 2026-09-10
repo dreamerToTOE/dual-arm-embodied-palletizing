@@ -547,19 +547,34 @@ int main(int argc, char** argv)
       break;
     }
 
-    const auto large_pose = pose_buffer->largePose();
-    if (std::abs(large_pose.position.x - EXPECTED_LARGE_TARGET_X) > 0.030 ||
-        std::abs(large_pose.position.z - EXPECTED_LARGE_TARGET_Z) > 0.025)
+    const auto isaac_large_pose = pose_buffer->largePose();
+    if (execute &&
+        (std::abs(isaac_large_pose.position.x - EXPECTED_LARGE_TARGET_X) > 0.030 ||
+         std::abs(isaac_large_pose.position.z - EXPECTED_LARGE_TARGET_Z) > 0.025))
     {
       RCLCPP_ERROR(
         coordinator_node->get_logger(),
         "Task15 Phase B 拒绝启动：LargeCube=(%.4f, %.4f, %.4f)，期望先完成 Phase A 紧协调目标附近 (%.3f, 0.000, %.3f)。",
-        large_pose.position.x, large_pose.position.y, large_pose.position.z,
+        isaac_large_pose.position.x, isaac_large_pose.position.y, isaac_large_pose.position.z,
         EXPECTED_LARGE_TARGET_X, EXPECTED_LARGE_TARGET_Z);
       break;
     }
 
-    if (!initializeTask15World(large_pose, pose_buffer->smallSnapshot()))
+    // 一键预检不会执行 Phase A；因此仅在 execute:=false 时把 Phase A 的
+    // 名义终点写入私有 MoveIt World，供 Phase B 验证完整规划/协调链路。
+    // execute:=true 必须严格读取紧协调后 Isaac Ground Truth，绝不伪造物理状态。
+    auto planning_large_pose = isaac_large_pose;
+    if (!execute)
+    {
+      planning_large_pose.position.x = EXPECTED_LARGE_TARGET_X;
+      planning_large_pose.position.y = 0.0;
+      planning_large_pose.position.z = EXPECTED_LARGE_TARGET_Z;
+      RCLCPP_INFO(
+        coordinator_node->get_logger(),
+        "Task15 Phase B PRECHECK：使用 Phase A 名义目标作为 LargeCube Planning Scene 位姿；未发布物理命令。");
+    }
+
+    if (!initializeTask15World(planning_large_pose, pose_buffer->smallSnapshot()))
     {
       RCLCPP_ERROR(coordinator_node->get_logger(), "Task15 初始大/小 Cube 加入 MoveIt World 失败。");
       break;

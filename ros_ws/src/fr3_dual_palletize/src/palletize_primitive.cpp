@@ -31,6 +31,8 @@ constexpr double MIN_PRE_PLACE_TCP_Z = 0.180;
 constexpr double PRE_PLACE_CLEARANCE = 0.070;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
+// 规划器带有随机性。每个阶段独立尝试三次；第三次仍失败才把失败交给上层任务。
+constexpr int MAX_PLANNING_RETRIES = 3;
 
 // Task08-A 以 Task04 的既有控制时序构造名义时间轴。
 // 轨迹候选不接入 Isaac，因此 SUCTION state 的实际异步等待不在此处估计。
@@ -194,7 +196,8 @@ bool PalletizePrimitive::configureMoveGroup(
 {
   move_group.setPlannerId("RRTConnectkConfigDefault");
   move_group.setPlanningTime(5.0);
-  move_group.setNumPlanningAttempts(5);
+  // 外层重试次数需要可见、可统计，因此每次 MoveIt 调用只保留一次内部尝试。
+  move_group.setNumPlanningAttempts(1);
   move_group.setMaxVelocityScalingFactor(0.20);
   move_group.setMaxAccelerationScalingFactor(0.20);
   move_group.setPoseReferenceFrame("world");
@@ -259,40 +262,47 @@ bool PalletizePrimitive::planPoseStage(
   const std::string& stage_name,
   trajectory_msgs::msg::JointTrajectory& trajectory_out)
 {
-  if (!setStartStateForGroup(move_group, joint_model_group, start_q))
-  {
-    return false;
-  }
-
   move_group.clearPoseTargets();
   if (!move_group.setPoseTarget(target_pose, eef_link))
   {
-    return false;
-  }
-
-  moveit::planning_interface::MoveGroupInterface::Plan plan;
-  const auto result = move_group.plan(plan);
-  if (result != moveit::core::MoveItErrorCode::SUCCESS)
-  {
     RCLCPP_ERROR(
       node_->get_logger(),
-      "[%s] %s：RRTConnect 规划失败。",
+      "[%s] %s：无法设置末端位姿目标。",
       config_.label.c_str(), stage_name.c_str());
     return false;
   }
 
-  trajectory_out = plan.trajectory_.joint_trajectory;
-  if (trajectory_out.points.empty())
+  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
   {
-    return false;
+    if (!setStartStateForGroup(move_group, joint_model_group, start_q))
+    {
+      return false;
+    }
+
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    if (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+        !plan.trajectory_.joint_trajectory.points.empty())
+    {
+      trajectory_out = plan.trajectory_.joint_trajectory;
+      RCLCPP_INFO(
+        node_->get_logger(),
+        "[%s] %s：plan OK, attempt=%d/%d, points=%zu, duration=%.3f s",
+        config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES,
+        trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
+      return true;
+    }
+
+    RCLCPP_WARN(
+      node_->get_logger(),
+      "[%s] %s：RRTConnect 规划失败，attempt=%d/%d。",
+      config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES);
   }
 
-  RCLCPP_INFO(
+  RCLCPP_ERROR(
     node_->get_logger(),
-    "[%s] %s：plan OK, points=%zu, duration=%.3f s",
-    config_.label.c_str(), stage_name.c_str(),
-    trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
-  return true;
+    "[%s] %s：三次 RRTConnect 规划均失败，停止此任务。",
+    config_.label.c_str(), stage_name.c_str());
+  return false;
 }
 
 bool PalletizePrimitive::planCartesianStage(
@@ -303,41 +313,44 @@ bool PalletizePrimitive::planCartesianStage(
   const std::string& stage_name,
   trajectory_msgs::msg::JointTrajectory& trajectory_out)
 {
-  if (!setStartStateForGroup(move_group, joint_model_group, start_q))
-  {
-    return false;
-  }
-
   std::vector<geometry_msgs::msg::Pose> waypoints{target_pose};
-  moveit_msgs::msg::RobotTrajectory robot_trajectory;
-  moveit_msgs::msg::MoveItErrorCodes error_code;
+  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
+  {
+    if (!setStartStateForGroup(move_group, joint_model_group, start_q))
+    {
+      return false;
+    }
 
-  const double fraction = move_group.computeCartesianPath(
-    waypoints,
-    CARTESIAN_EEF_STEP,
-    0.0,
-    robot_trajectory,
-    true,
-    &error_code);
+    moveit_msgs::msg::RobotTrajectory robot_trajectory;
+    moveit_msgs::msg::MoveItErrorCodes error_code;
+    const double fraction = move_group.computeCartesianPath(
+      waypoints,
+      CARTESIAN_EEF_STEP,
+      0.0,
+      robot_trajectory,
+      true,
+      &error_code);
 
-  RCLCPP_INFO(
+    RCLCPP_INFO(
+      node_->get_logger(),
+      "[%s] %s：Cartesian fraction=%.4f, error=%d, attempt=%d/%d",
+      config_.label.c_str(), stage_name.c_str(), fraction, error_code.val,
+      attempt, MAX_PLANNING_RETRIES);
+
+    if (fraction >= CARTESIAN_MIN_FRACTION &&
+        !robot_trajectory.joint_trajectory.points.empty())
+    {
+      trajectory_out = robot_trajectory.joint_trajectory;
+      ensureTrajectoryTiming(trajectory_out);
+      return true;
+    }
+  }
+
+  RCLCPP_ERROR(
     node_->get_logger(),
-    "[%s] %s：Cartesian fraction=%.4f, error=%d",
-    config_.label.c_str(), stage_name.c_str(), fraction, error_code.val);
-
-  if (fraction < CARTESIAN_MIN_FRACTION)
-  {
-    return false;
-  }
-
-  trajectory_out = robot_trajectory.joint_trajectory;
-  if (trajectory_out.points.empty())
-  {
-    return false;
-  }
-
-  ensureTrajectoryTiming(trajectory_out);
-  return true;
+    "[%s] %s：三次 Cartesian 规划均失败，停止此任务。",
+    config_.label.c_str(), stage_name.c_str());
+  return false;
 }
 
 bool PalletizePrimitive::planJointStage(
@@ -348,11 +361,6 @@ bool PalletizePrimitive::planJointStage(
   const std::string& stage_name,
   trajectory_msgs::msg::JointTrajectory& trajectory_out)
 {
-  if (!setStartStateForGroup(move_group, joint_model_group, start_q))
-  {
-    return false;
-  }
-
   move_group.clearPoseTargets();
   if (!move_group.setJointValueTarget(target_q))
   {
@@ -363,28 +371,37 @@ bool PalletizePrimitive::planJointStage(
     return false;
   }
 
-  moveit::planning_interface::MoveGroupInterface::Plan plan;
-  if (move_group.plan(plan) != moveit::core::MoveItErrorCode::SUCCESS)
+  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
   {
-    RCLCPP_ERROR(
+    if (!setStartStateForGroup(move_group, joint_model_group, start_q))
+    {
+      return false;
+    }
+
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    if (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+        !plan.trajectory_.joint_trajectory.points.empty())
+    {
+      trajectory_out = plan.trajectory_.joint_trajectory;
+      RCLCPP_INFO(
+        node_->get_logger(),
+        "[%s] %s：plan OK, attempt=%d/%d, points=%zu, duration=%.3f s",
+        config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES,
+        trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
+      return true;
+    }
+
+    RCLCPP_WARN(
       node_->get_logger(),
-      "[%s] %s：RRTConnect 规划失败。",
-      config_.label.c_str(), stage_name.c_str());
-    return false;
+      "[%s] %s：关节规划失败，attempt=%d/%d。",
+      config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES);
   }
 
-  trajectory_out = plan.trajectory_.joint_trajectory;
-  if (trajectory_out.points.empty())
-  {
-    return false;
-  }
-
-  RCLCPP_INFO(
+  RCLCPP_ERROR(
     node_->get_logger(),
-    "[%s] %s：plan OK, points=%zu, duration=%.3f s",
-    config_.label.c_str(), stage_name.c_str(),
-    trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
-  return true;
+    "[%s] %s：三次关节规划均失败，停止此任务。",
+    config_.label.c_str(), stage_name.c_str());
+  return false;
 }
 
 std::vector<std::string> PalletizePrimitive::isaacJointNames(

@@ -125,7 +125,19 @@ Strategy Phase B2 / LOOSE: ...
 - `PrimitiveConfig::target_support_surface_z` 的默认值为 `0.050 m`，所以旧 Task04--Task10 不变。Task15 下层在 LargeCube 最新顶面释放；上层在对应下层小 Cube 最新 Ground Truth 顶面释放。释放前保持 `1 mm` gap，PhysX 落稳后的几何中心对应表中的 `0.145 / 0.175 m`。
 - Bridge：`isaac/scripts/task15_hybrid_suction_bridge.py` 发布 `/task15/large_cube_pose` 与按 `[SmallCube1, SmallCube2, SmallCube3, SmallCube4]` 排列的 `/task15/small_cube_poses`，并复用已验收的 `.003 m` 阈值、`1e6` force/torque limit 与 retry-close 参数。
 
-控制器默认 `execute:=false`，只生成、FCL 验收并写入计划 World 碰撞物；只有显式传入 `execute:=true` 才会发布关节和吸盘命令。Phase B 还会检查大 Cube 已在紧协调目标 `(0.650, 0.000, 0.090)` 附近，防止跳过 Phase A 直接进行上层码垛。
+## 单入口与失败重规划
+
+Task15 的紧协调和松协调不是两个需要人工衔接的命令。使用下面的总 launch 后，Phase A 成功退出才会自动启动 Phase B；Phase A 任意失败会以非零退出码停止 launch，绝不会在大件未放稳时启动小件码垛：
+
+```bash
+ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py execute:=true
+```
+
+`execute:=false` 可作完整无动作预检：它顺序规划紧协调和松协调、检查 FCL 与 LocalWait 调度，但不发布 joint / suction 命令。预检中 Phase B 使用 Phase A 的名义终点建立私有 Planning Scene；实际执行时则严格使用 Phase A 完成后的 Isaac Ground Truth。
+
+所有会受采样随机性影响的 MoveIt Pose / Joint / Cartesian 规划阶段均采用同一规则：一次 MoveIt 调用只做一次内部尝试，控制器在外层最多重新规划 **3 次**，日志会输出 `attempt=1/3` 至 `attempt=3/3`。第三次仍失败会输出明确错误并停止当前任务；不会带着不完整轨迹继续执行。紧协调复用的 Task11--Task13 阶段和松协调复用的 `PalletizePrimitive` 阶段均覆盖此规则。
+
+Phase B 的实际执行仍会检查大 Cube 已在紧协调目标 `(0.650, 0.000, 0.090)` 附近，防止绕过 Phase A 直接进行上层码垛。
 
 ## 当前本地验证
 
@@ -137,6 +149,7 @@ source /opt/ros/humble/setup.bash
 colcon build --packages-select fr3_dual_palletize --symlink-install
 source install/setup.bash
 ros2 pkg executables fr3_dual_palletize | grep task15
+ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py --show-args
 python3 -m py_compile \
   /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_suction_bridge.py
 ```

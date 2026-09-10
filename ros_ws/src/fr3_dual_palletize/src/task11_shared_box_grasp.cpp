@@ -35,6 +35,8 @@ constexpr double CONTACT_CLEARANCE_Z = 0.001;
 constexpr double PRE_CONTACT_CLEARANCE_Z = 0.065;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
+// 对随机采样规划及瞬时 Planning Scene 更新做显式外层重试。
+constexpr int MAX_PLANNING_RETRIES = 3;
 
 // Task15 不复制 Task11--Task13 已验收的紧协调状态机，而是通过独立 target
 // 复用同一源文件。仅切换任务命名、ROS 话题与 Planning Scene object id。
@@ -194,32 +196,45 @@ bool planCombinedCartesianStage(
   const auto model = group.getRobotModel();
   const auto* own_jmg = model->getJointModelGroup(group_name);
   const auto* partner_jmg = model->getJointModelGroup(partner_group_name);
-  auto state = group.getCurrentState(2.0);
-  if (!own_jmg || !partner_jmg || !state || own_start_q.empty() || partner_start_q.empty())
+  if (!own_jmg || !partner_jmg || own_start_q.empty() || partner_start_q.empty())
   {
     return false;
   }
-  state->setJointGroupPositions(own_jmg, own_start_q);
-  state->setJointGroupPositions(partner_jmg, partner_start_q);
-  state->update();
-  group.setStartState(*state);
 
-  moveit_msgs::msg::RobotTrajectory robot_trajectory;
-  moveit_msgs::msg::MoveItErrorCodes error;
-  const double fraction = group.computeCartesianPath(
-    std::vector<geometry_msgs::msg::Pose>{target}, CARTESIAN_EEF_STEP, 0.0,
-    robot_trajectory, true, &error);
-  RCLCPP_INFO(
-    node->get_logger(),
-    "Task12 %s %s Cartesian fraction=%.4f, error=%d",
-    side.c_str(), stage.c_str(), fraction, error.val);
-  if (fraction < CARTESIAN_MIN_FRACTION || robot_trajectory.joint_trajectory.points.empty())
+  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
   {
-    return false;
+    auto state = group.getCurrentState(2.0);
+    if (!state)
+    {
+      return false;
+    }
+    state->setJointGroupPositions(own_jmg, own_start_q);
+    state->setJointGroupPositions(partner_jmg, partner_start_q);
+    state->update();
+    group.setStartState(*state);
+
+    moveit_msgs::msg::RobotTrajectory robot_trajectory;
+    moveit_msgs::msg::MoveItErrorCodes error;
+    const double fraction = group.computeCartesianPath(
+      std::vector<geometry_msgs::msg::Pose>{target}, CARTESIAN_EEF_STEP, 0.0,
+      robot_trajectory, true, &error);
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task12 %s %s Cartesian fraction=%.4f, error=%d, attempt=%d/%d",
+      side.c_str(), stage.c_str(), fraction, error.val, attempt, MAX_PLANNING_RETRIES);
+    if (fraction >= CARTESIAN_MIN_FRACTION && !robot_trajectory.joint_trajectory.points.empty())
+    {
+      output = robot_trajectory.joint_trajectory;
+      ensureTiming(output);
+      return true;
+    }
   }
-  output = robot_trajectory.joint_trajectory;
-  ensureTiming(output);
-  return true;
+
+  RCLCPP_ERROR(
+    node->get_logger(),
+    "Task12 %s %s：三次 Cartesian 规划均失败，停止任务。",
+    side.c_str(), stage.c_str());
+  return false;
 }
 #endif
 
@@ -356,26 +371,44 @@ public:
   {
     group.setPlannerId("RRTConnectkConfigDefault");
     group.setPlanningTime(5.0);
-    group.setNumPlanningAttempts(5);
+    // 每次 MoveIt 调用只做一次；外层以固定三次重规划提供确定的失败语义。
+    group.setNumPlanningAttempts(1);
     group.setMaxVelocityScalingFactor(0.15);
     group.setMaxAccelerationScalingFactor(0.15);
     group.setPoseReferenceFrame("world");
     group.setEndEffectorLink(eef_link_);
-    group.setStartStateToCurrentState();
     group.clearPoseTargets();
     if (!group.setPoseTarget(target, eef_link_))
     {
       return false;
     }
-    moveit::planning_interface::MoveGroupInterface::Plan plan;
-    if (group.plan(plan) != moveit::core::MoveItErrorCode::SUCCESS ||
-        plan.trajectory_.joint_trajectory.points.empty())
+
+    for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
     {
-      return false;
+      group.setStartStateToCurrentState();
+      moveit::planning_interface::MoveGroupInterface::Plan plan;
+      if (group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+          !plan.trajectory_.joint_trajectory.points.empty())
+      {
+        output = plan.trajectory_.joint_trajectory;
+        ensureTiming(output);
+        RCLCPP_INFO(
+          node_->get_logger(),
+          "Task11 %s PRE_CONTACT plan OK, attempt=%d/%d",
+          side_.c_str(), attempt, MAX_PLANNING_RETRIES);
+        return true;
+      }
+      RCLCPP_WARN(
+        node_->get_logger(),
+        "Task11 %s PRE_CONTACT RRTConnect 失败，attempt=%d/%d。",
+        side_.c_str(), attempt, MAX_PLANNING_RETRIES);
     }
-    output = plan.trajectory_.joint_trajectory;
-    ensureTiming(output);
-    return true;
+
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "Task11 %s PRE_CONTACT：三次 RRTConnect 规划均失败，停止任务。",
+      side_.c_str());
+    return false;
   }
 
   bool planCartesianContact(
@@ -385,30 +418,43 @@ public:
     trajectory_msgs::msg::JointTrajectory& output) const
   {
     const auto* jmg = group.getRobotModel()->getJointModelGroup(group_name_);
-    auto state = group.getCurrentState(2.0);
-    if (jmg == nullptr || !state || start_q.empty())
+    if (jmg == nullptr || start_q.empty())
     {
       return false;
     }
-    state->setJointGroupPositions(jmg, start_q);
-    state->update();
-    group.setStartState(*state);
-    moveit_msgs::msg::RobotTrajectory robot_trajectory;
-    moveit_msgs::msg::MoveItErrorCodes error;
-    const double fraction = group.computeCartesianPath(
-      std::vector<geometry_msgs::msg::Pose>{target}, CARTESIAN_EEF_STEP, 0.0,
-      robot_trajectory, true, &error);
-    RCLCPP_INFO(
+
+    for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
+    {
+      auto state = group.getCurrentState(2.0);
+      if (!state)
+      {
+        return false;
+      }
+      state->setJointGroupPositions(jmg, start_q);
+      state->update();
+      group.setStartState(*state);
+      moveit_msgs::msg::RobotTrajectory robot_trajectory;
+      moveit_msgs::msg::MoveItErrorCodes error;
+      const double fraction = group.computeCartesianPath(
+        std::vector<geometry_msgs::msg::Pose>{target}, CARTESIAN_EEF_STEP, 0.0,
+        robot_trajectory, true, &error);
+      RCLCPP_INFO(
+        node_->get_logger(),
+        "Task11 %s CONTACT Cartesian fraction=%.4f, error=%d, attempt=%d/%d",
+        side_.c_str(), fraction, error.val, attempt, MAX_PLANNING_RETRIES);
+      if (fraction >= CARTESIAN_MIN_FRACTION && !robot_trajectory.joint_trajectory.points.empty())
+      {
+        output = robot_trajectory.joint_trajectory;
+        ensureTiming(output);
+        return true;
+      }
+    }
+
+    RCLCPP_ERROR(
       node_->get_logger(),
-      "Task11 %s CONTACT Cartesian fraction=%.4f, error=%d",
-      side_.c_str(), fraction, error.val);
-    if (fraction < CARTESIAN_MIN_FRACTION || robot_trajectory.joint_trajectory.points.empty())
-    {
-      return false;
-    }
-    output = robot_trajectory.joint_trajectory;
-    ensureTiming(output);
-    return true;
+      "Task11 %s CONTACT：三次 Cartesian 规划均失败，停止任务。",
+      side_.c_str());
+    return false;
   }
 
   bool execute(const trajectory_msgs::msg::JointTrajectory& input) const
