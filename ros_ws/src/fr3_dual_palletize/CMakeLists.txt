@@ -149,6 +149,46 @@ ament_target_dependencies(task13_shared_box_place
   moveit_ros_planning_interface
 )
 
+# Task15 Phase A：以编译目标复用 Task11--Task13 的紧协调共同物体流程。
+# 不复制状态机；宏只切换 Task15 的 ROS namespace / object id / node name。
+add_executable(task15_tight_large_cube
+  src/task11_shared_box_grasp.cpp
+)
+target_compile_definitions(
+  task15_tight_large_cube
+  PRIVATE
+    TASK12_SHARED_LIFT=1
+    TASK12_SHARED_TRANSPORT=1
+    TASK13_SHARED_PLACE=1
+    TASK15_TIGHT_PHASE=1
+)
+ament_target_dependencies(task15_tight_large_cube
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
+# Task15 Phase B：两批次配置驱动的小 Cube 松协调控制器。
+add_executable(task15_loose_layer_stack
+  src/task15_loose_layer_stack.cpp
+)
+target_link_libraries(task15_loose_layer_stack palletize_primitive)
+ament_target_dependencies(task15_loose_layer_stack
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 add_executable(task14_shared_box_geometry_monitor
   src/task14_shared_box_geometry_monitor.cpp
 )
@@ -168,6 +208,8 @@ install(
     task12_shared_box_lift
     task12_shared_box_transport
     task13_shared_box_place
+    task15_tight_large_cube
+    task15_loose_layer_stack
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

@@ -36,6 +36,20 @@ constexpr double PRE_CONTACT_CLEARANCE_Z = 0.065;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
 
+// Task15 不复制 Task11--Task13 已验收的紧协调状态机，而是通过独立 target
+// 复用同一源文件。仅切换任务命名、ROS 话题与 Planning Scene object id。
+#ifdef TASK15_TIGHT_PHASE
+constexpr const char* TASK_NAMESPACE = "/task15";
+constexpr const char* SHARED_OBJECT_ID = "task15_large_cube";
+constexpr const char* SHARED_POSE_TOPIC = "/task15/large_cube_pose";
+constexpr const char* TASK_NODE_NAME = "task15_tight_large_cube";
+#else
+constexpr const char* TASK_NAMESPACE = "/task11";
+constexpr const char* SHARED_OBJECT_ID = "task11_shared_box";
+constexpr const char* SHARED_POSE_TOPIC = "/task11/shared_box_pose";
+constexpr const char* TASK_NODE_NAME = "task11_shared_box_grasp";
+#endif
+
 #ifdef TASK12_SHARED_LIFT
 constexpr double DEFAULT_LIFT_HEIGHT_M = 0.050;
 constexpr double DEFAULT_SETTLE_SEC = 1.0;
@@ -228,7 +242,7 @@ moveit_msgs::msg::CollisionObject sharedBoxObject(
 {
   moveit_msgs::msg::CollisionObject object;
   object.header.frame_id = "world";
-  object.id = "task11_shared_box";
+  object.id = SHARED_OBJECT_ID;
   shape_msgs::msg::SolidPrimitive shape;
   shape.type = shape_msgs::msg::SolidPrimitive::BOX;
   shape.dimensions = {BOX_X, BOX_Y, BOX_Z};
@@ -267,7 +281,7 @@ public:
   explicit SharedBoxPoseBuffer(const rclcpp::Node::SharedPtr& node)
   {
     subscription_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-      "/task11/shared_box_pose", 10,
+      SHARED_POSE_TOPIC, 10,
       [this](const geometry_msgs::msg::PoseStamped::SharedPtr message)
       {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -311,9 +325,9 @@ public:
     command_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>(
       "/" + side_ + "/joint_command", 10);
     suction_pub_ = node_->create_publisher<std_msgs::msg::Bool>(
-      "/task11/" + side_ + "/suction_command", 10);
+      std::string(TASK_NAMESPACE) + "/" + side_ + "/suction_command", 10);
     state_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
-      "/task11/" + side_ + "/suction_state", 10,
+      std::string(TASK_NAMESPACE) + "/" + side_ + "/suction_state", 10,
       [this](const std_msgs::msg::Bool::SharedPtr message)
       {
         have_suction_state_.store(true);
@@ -538,7 +552,9 @@ bool executeSynchronously(
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-#ifdef TASK13_SHARED_PLACE
+#ifdef TASK15_TIGHT_PHASE
+  auto node = std::make_shared<rclcpp::Node>(TASK_NODE_NAME);
+#elif defined(TASK13_SHARED_PLACE)
   auto node = std::make_shared<rclcpp::Node>("task13_shared_box_place");
 #elif defined(TASK12_SHARED_TRANSPORT)
   auto node = std::make_shared<rclcpp::Node>("task12_shared_box_transport");
@@ -600,7 +616,12 @@ int main(int argc, char** argv)
   bool success = false;
   do
   {
-#ifdef TASK13_SHARED_PLACE
+#ifdef TASK15_TIGHT_PHASE
+    RCLCPP_INFO(
+      node->get_logger(),
+      "========== Task15 Phase A / TIGHT: reuse Task11--13 shared-object protocol (lift=%.3f m, delta=(%.3f, %.3f) m) ==========" ,
+      lift_height, transport_delta_x, transport_delta_y);
+#elif defined(TASK13_SHARED_PLACE)
     RCLCPP_INFO(
       node->get_logger(),
       "========== Task13 SHARED-BOX PLACE (lift=%.3f m, delta=(%.3f, %.3f) m) ==========",
@@ -620,7 +641,7 @@ int main(int argc, char** argv)
 #endif
     if (!pose_buffer->wait(10.0))
     {
-      RCLCPP_ERROR(node->get_logger(), "等待 /task11/shared_box_pose 超时。");
+      RCLCPP_ERROR(node->get_logger(), "等待 %s 超时。", SHARED_POSE_TOPIC);
       break;
     }
     ArmControl left(node, true);
@@ -633,7 +654,7 @@ int main(int argc, char** argv)
 
     const auto box_pose = pose_buffer->get();
     moveit::planning_interface::PlanningSceneInterface scene;
-    scene.removeCollisionObjects({"task11_shared_box"});
+    scene.removeCollisionObjects({SHARED_OBJECT_ID});
     std::this_thread::sleep_for(250ms);
     if (!scene.applyCollisionObject(sharedBoxObject(box_pose)))
     {
@@ -683,7 +704,7 @@ int main(int argc, char** argv)
     // Task12 共同抬升阶段会以完整双臂 RobotState 检查臂-臂碰撞；由于同一物体
     // 不能同时作为两个末端的 MoveIt AttachedBody，SharedBox 的实际保持由 Isaac
     // 两个 Surface Gripper 物理约束负责。
-    scene.removeCollisionObjects({"task11_shared_box"});
+    scene.removeCollisionObjects({SHARED_OBJECT_ID});
     std::this_thread::sleep_for(250ms);
     trajectory_msgs::msg::JointTrajectory left_contact_traj;
     trajectory_msgs::msg::JointTrajectory right_contact_traj;
@@ -805,7 +826,11 @@ int main(int argc, char** argv)
 
     if (!execute)
     {
-#ifdef TASK13_SHARED_PLACE
+#ifdef TASK15_TIGHT_PHASE
+      RCLCPP_INFO(
+        node->get_logger(),
+        "Task15 Phase A PRECHECK PASS：复用的 CONTACT / LIFT / TRANSPORT / PLACE / RETREAT 均已规划；未发布任何 joint / suction 命令。");
+#elif defined(TASK13_SHARED_PLACE)
       RCLCPP_INFO(
         node->get_logger(),
         "Task13 PRECHECK PASS：CONTACT / LIFT / TRANSPORT / DESCENT / RETREAT 均已规划；未发布任何 joint / suction 命令。");
@@ -986,7 +1011,7 @@ int main(int argc, char** argv)
 
     // 已释放的真实 pose 写回 MoveIt World；随后执行的是释放前已经规划好的上退，
     // 不在接触起点重新调用 Cartesian 规划。
-    scene.removeCollisionObjects({"task11_shared_box"});
+    scene.removeCollisionObjects({SHARED_OBJECT_ID});
     std::this_thread::sleep_for(250ms);
     if (!scene.applyCollisionObject(sharedBoxObject(box_after_release)))
     {
@@ -1017,9 +1042,15 @@ int main(int argc, char** argv)
         placement_tolerance * 1000.0, box_orientation_tolerance * 180.0 / PI);
       break;
     }
+#ifdef TASK15_TIGHT_PHASE
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task15 Phase A PASS：LargeCube 已完成紧协调共同抓取、运输、放置、Ground Truth 回写与共同安全退出。");
+#else
     RCLCPP_INFO(
       node->get_logger(),
       "Task13 PASS：共同下降、同步释放、SharedBox Ground Truth 回写与共同安全退出均完成。");
+#endif
 #endif
 #endif
 #else

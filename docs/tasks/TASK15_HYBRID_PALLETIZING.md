@@ -1,12 +1,12 @@
 # Task15 — 紧/松协调混合码垛场景与复用策略
 
-状态：🟡 场景与项目级 skill 已就绪；控制器与 Isaac 执行验收尚未开始。
+状态：🟡 场景、Task15 专用 Bridge 与两个复用控制器已实现；尚未进行 Isaac 实机执行验收。
 
 ## 目标
 
 在同一张桌面上验证混合尺寸箱体的协调路由：先用两台 FR3 顶部吸盘对同一个大件做紧协调搬运，再用两臂各自搬运独立小箱体，按两层放到大件顶面。
 
-Task15 的新增内容只包括：可重复加载的物理场景、明确的任务分批和两个项目级复用契约。它不复制 Task04、Task10 或 Task11--Task13 的控制逻辑，也不提前增加新的 Bridge 或控制节点。
+Task15 新增可重复加载的物理场景、明确的任务分批、两个项目级复用契约、专用 Bridge 与配置驱动控制器。它不复制 Task04、Task10 或 Task11--Task13 的控制逻辑。
 
 ## 项目级复用 skill
 
@@ -115,4 +115,29 @@ Strategy Phase B1 / LOOSE: ...
 Strategy Phase B2 / LOOSE: ...
 ```
 
-此阶段不要启动 Task11 或 Task10 的旧 Bridge 来执行 Task15：二者的对象命名、话题和任务状态机不同。下一步才是基于两个项目级 skill 建立 Task15 专用 Bridge 与协调控制器。
+此阶段不要启动 Task11 或 Task10 的旧 Bridge 来执行 Task15：二者的对象命名、话题和任务状态机不同。
+
+## 控制器实现
+
+- Phase A：`task15_tight_large_cube` 是 `task11_shared_box_grasp.cpp` 的独立编译目标，带有 `TASK15_TIGHT_PHASE` 宏。它直接复用 Task11--13 已验收的双吸附、共同抬升、`+X 0.100 m` 运输、共同放置、释放前 RETREAT 规划和 Ground Truth 回写逻辑；宏只切换为 `/task15/*` 话题与 `task15_large_cube` Planning Scene object id。
+- Phase B：`task15_loose_layer_stack` 的两个 `BatchConfig` 包含四条 `ArmAssignment`。每批左右各一条完整 `TaskTrajectoryCandidate`，经过 Task08 FCL、Task09 LocalWait 和共享时钟执行器。它不是四个独立状态机。
+- `PrimitiveConfig::target_support_surface_z` 的默认值为 `0.050 m`，所以旧 Task04--Task10 不变。Task15 下层在 LargeCube 最新顶面释放；上层在对应下层小 Cube 最新 Ground Truth 顶面释放。释放前保持 `1 mm` gap，PhysX 落稳后的几何中心对应表中的 `0.145 / 0.175 m`。
+- Bridge：`isaac/scripts/task15_hybrid_suction_bridge.py` 发布 `/task15/large_cube_pose` 与按 `[SmallCube1, SmallCube2, SmallCube3, SmallCube4]` 排列的 `/task15/small_cube_poses`，并复用已验收的 `.003 m` 阈值、`1e6` force/torque limit 与 retry-close 参数。
+
+控制器默认 `execute:=false`，只生成、FCL 验收并写入计划 World 碰撞物；只有显式传入 `execute:=true` 才会发布关节和吸盘命令。Phase B 还会检查大 Cube 已在紧协调目标 `(0.650, 0.000, 0.090)` 附近，防止跳过 Phase A 直接进行上层码垛。
+
+## 当前本地验证
+
+已完成静态和构建验证，尚未进行物理执行验收：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+colcon build --packages-select fr3_dual_palletize --symlink-install
+source install/setup.bash
+ros2 pkg executables fr3_dual_palletize | grep task15
+python3 -m py_compile \
+  /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_suction_bridge.py
+```
+
+构建结果：`task15_tight_large_cube` 与 `task15_loose_layer_stack` 均已安装；Bridge 与场景 Python 语法检查通过。下一次验收应先以 `execute:=false` 分别验证两个 Phase 的规划/FCL，再在已重置 Isaac 场景中执行 `execute:=true`。

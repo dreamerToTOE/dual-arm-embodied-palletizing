@@ -36,6 +36,10 @@ struct PrimitiveConfig
   std::size_t pose_index{0};
   double target_x{0.0};
   double target_y{0.0};
+  // 目标物体在释放后应落到的支撑面高度。默认桌面顶面 z=0.050 m，
+  // 因而完全保持 Task04--Task10 的地面码垛几何；Task15 上层码垛只需
+  // 按配置提供已落稳下层的顶面高度，而不复制 primitive 状态机。
+  double target_support_surface_z{0.050};
   // Task09-B 安全退出扩展：放置完成后追加 MoveIt 规划的安全退出段，终点回到本次候选的 HOME。
   // 默认关闭，保持 Task08-A/B 原有 HOME -> ... -> RETREAT 候选定义不变。
   bool include_safe_egress{false};

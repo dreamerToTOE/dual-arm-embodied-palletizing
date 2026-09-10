@@ -20,7 +20,6 @@ namespace fr3_dual_palletize
 {
 namespace
 {
-constexpr double TABLE_TOP_Z = 0.050;
 constexpr double BOX_SIZE = 0.030;
 constexpr double BOX_HALF = 0.5 * BOX_SIZE;
 constexpr double SUCTION_TCP_OFFSET_Z = 0.105;
@@ -862,7 +861,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   const double lift_tcp_z = pick_contact_tcp_z + LIFT_CLEARANCE;
 
   const double planned_release_center_z =
-    TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
     planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
@@ -1256,7 +1255,7 @@ bool PalletizePrimitive::prepareTransferCandidateImpl(
   }
 
   const double planned_release_center_z =
-    TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
     planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
@@ -1351,7 +1350,7 @@ bool PalletizePrimitive::finishPreparedTransferImpl(
   }
 
   const double planned_release_center_z =
-    TABLE_TOP_Z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
     planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
