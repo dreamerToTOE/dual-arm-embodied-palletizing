@@ -32,6 +32,7 @@
 - [Task 10 — 松协调连续多箱码垛](docs/tasks/TASK10_CONTINUOUS_PALLETIZING.md)
 - [Task 11 — 双吸盘共同物体基线](docs/tasks/TASK11_SHARED_OBJECT_BASELINE.md)
 - [Task 12 — 双吸盘共同抬升与运输](docs/tasks/TASK12_SHARED_BOX_LIFT.md)
+- [Task 13 — 双吸盘共同放置、释放与安全退出](docs/tasks/TASK13_SHARED_BOX_PLACE.md)
 
 ## 当前进度
 
@@ -50,7 +51,8 @@
 | 10 | 松协调完整码垛 Demo | ✅ 四箱、两批次连续 Isaac 码垛完成；每批均经 FCL 验收，第二批保留 A/B 为碰撞物 |
 | 11 | 双吸盘共同物体基线 | ✅ 双 Surface Gripper 已对同一 SharedBox 同时 CLOSED；未抬升阶段位移 0.115 mm |
 | 12 | 双吸盘共同抬升与运输 | ✅ +50 mm 抬升与 +100 mm X 向共同运输均通过；运输误差 0.311 mm、相对 `link8` 误差 0.123 mm |
-| 13+ | 紧协调共同运输、放置与模式选择 | 计划中 |
+| 13 | 双吸盘共同放置、释放与安全退出 | 🟡 已实现完整闭环与 Ground Truth 回写，待 Isaac 验收 |
+| 14+ | 紧协调改进控制与模式选择 | 计划中 |
 
 ## 当前核心工程结论
 

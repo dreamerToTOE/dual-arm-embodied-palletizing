@@ -130,6 +130,25 @@ ament_target_dependencies(task12_shared_box_transport
   moveit_ros_planning_interface
 )
 
+add_executable(task13_shared_box_place
+  src/task11_shared_box_grasp.cpp
+)
+target_compile_definitions(
+  task13_shared_box_place
+  PRIVATE TASK12_SHARED_LIFT=1 TASK12_SHARED_TRANSPORT=1 TASK13_SHARED_PLACE=1
+)
+ament_target_dependencies(task13_shared_box_place
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 install(
   TARGETS
     palletize_primitive
@@ -139,6 +158,7 @@ install(
     task11_shared_box_grasp
     task12_shared_box_lift
     task12_shared_box_transport
+    task13_shared_box_place
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

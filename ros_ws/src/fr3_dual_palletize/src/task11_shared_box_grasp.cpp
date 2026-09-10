@@ -47,6 +47,10 @@ constexpr double PI = 3.14159265358979323846;
 constexpr double DEFAULT_TRANSPORT_DELTA_X_M = 0.100;
 constexpr double DEFAULT_TRANSPORT_DELTA_Y_M = 0.000;
 constexpr double DEFAULT_BOX_TRANSPORT_TOLERANCE_M = 0.010;
+#ifdef TASK13_SHARED_PLACE
+constexpr double DEFAULT_RELEASE_TIMEOUT_SEC = 3.0;
+constexpr double DEFAULT_PLACEMENT_TOLERANCE_M = 0.010;
+#endif
 #endif
 #endif
 
@@ -503,7 +507,9 @@ private:
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-#ifdef TASK12_SHARED_TRANSPORT
+#ifdef TASK13_SHARED_PLACE
+  auto node = std::make_shared<rclcpp::Node>("task13_shared_box_place");
+#elif defined(TASK12_SHARED_TRANSPORT)
   auto node = std::make_shared<rclcpp::Node>("task12_shared_box_transport");
 #elif defined(TASK12_SHARED_LIFT)
   auto node = std::make_shared<rclcpp::Node>("task12_shared_box_lift");
@@ -529,6 +535,12 @@ int main(int argc, char** argv)
     "transport_delta_y_m", DEFAULT_TRANSPORT_DELTA_Y_M);
   const double box_transport_tolerance = node->declare_parameter<double>(
     "box_transport_tolerance_m", DEFAULT_BOX_TRANSPORT_TOLERANCE_M);
+#ifdef TASK13_SHARED_PLACE
+  const double release_timeout = node->declare_parameter<double>(
+    "release_timeout_sec", DEFAULT_RELEASE_TIMEOUT_SEC);
+  const double placement_tolerance = node->declare_parameter<double>(
+    "placement_tolerance_m", DEFAULT_PLACEMENT_TOLERANCE_M);
+#endif
 #endif
 #endif
 
@@ -539,6 +551,9 @@ int main(int argc, char** argv)
 #ifdef TASK12_SHARED_TRANSPORT
       || std::hypot(transport_delta_x, transport_delta_y) <= 0.0 ||
       box_transport_tolerance <= 0.0
+#ifdef TASK13_SHARED_PLACE
+      || release_timeout <= 0.0 || placement_tolerance <= 0.0
+#endif
 #endif
 #endif
   )
@@ -554,7 +569,12 @@ int main(int argc, char** argv)
   bool success = false;
   do
   {
-#ifdef TASK12_SHARED_TRANSPORT
+#ifdef TASK13_SHARED_PLACE
+    RCLCPP_INFO(
+      node->get_logger(),
+      "========== Task13 SHARED-BOX PLACE (lift=%.3f m, delta=(%.3f, %.3f) m) ==========",
+      lift_height, transport_delta_x, transport_delta_y);
+#elif defined(TASK12_SHARED_TRANSPORT)
     RCLCPP_INFO(
       node->get_logger(),
       "========== Task12 SHARED-BOX LIFT + TRANSPORT (lift=%.3f m, delta=(%.3f, %.3f) m) ==========",
@@ -695,12 +715,70 @@ int main(int argc, char** argv)
       RCLCPP_ERROR(node->get_logger(), "Task12 COMMON_TRANSPORT 规划或同步失败。");
       break;
     }
+
+#ifdef TASK13_SHARED_PLACE
+    // 共同下降时仍由双吸盘保持 SharedBox。目标 TCP 保持 1 mm release gap，
+    // 使箱体底面在释放前恰好悬于桌面顶面上方，随后由 PhysX 自然落稳。
+    const auto left_place_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y - 0.100 + transport_delta_y,
+      contact_z);
+    const auto right_place_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y + 0.100 + transport_delta_y,
+      contact_z);
+    trajectory_msgs::msg::JointTrajectory left_descent_traj;
+    trajectory_msgs::msg::JointTrajectory right_descent_traj;
+    if (!planCombinedCartesianStage(
+          node, left_group, left.groupName(), right.groupName(),
+          finalPositions(left_transport_traj), finalPositions(right_transport_traj),
+          left_place_target, "COMMON_DESCENT", left.side(), left_descent_traj) ||
+        !planCombinedCartesianStage(
+          node, right_group, right.groupName(), left.groupName(),
+          finalPositions(right_transport_traj), finalPositions(left_transport_traj),
+          right_place_target, "COMMON_DESCENT", right.side(), right_descent_traj) ||
+        !synchronizeDurations(left_descent_traj, right_descent_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "Task13 COMMON_DESCENT 规划或同步失败。");
+      break;
+    }
+
+    // RETREAT 必须在物理释放前规划：此时 SharedBox 仍由双端吸附保持，不会成为
+    // 夹在吸盘下方的 World CollisionObject。释放、落稳、回写 MoveIt World 后只执行。
+    const auto left_retreat_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y - 0.100 + transport_delta_y,
+      contact_z + PRE_CONTACT_CLEARANCE_Z);
+    const auto right_retreat_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y + 0.100 + transport_delta_y,
+      contact_z + PRE_CONTACT_CLEARANCE_Z);
+    trajectory_msgs::msg::JointTrajectory left_retreat_traj;
+    trajectory_msgs::msg::JointTrajectory right_retreat_traj;
+    if (!planCombinedCartesianStage(
+          node, left_group, left.groupName(), right.groupName(),
+          finalPositions(left_descent_traj), finalPositions(right_descent_traj),
+          left_retreat_target, "COMMON_RETREAT", left.side(), left_retreat_traj) ||
+        !planCombinedCartesianStage(
+          node, right_group, right.groupName(), left.groupName(),
+          finalPositions(right_descent_traj), finalPositions(left_descent_traj),
+          right_retreat_target, "COMMON_RETREAT", right.side(), right_retreat_traj) ||
+        !synchronizeDurations(left_retreat_traj, right_retreat_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "Task13 COMMON_RETREAT 规划或同步失败。");
+      break;
+    }
+#endif
 #endif
 #endif
 
     if (!execute)
     {
-#ifdef TASK12_SHARED_TRANSPORT
+#ifdef TASK13_SHARED_PLACE
+      RCLCPP_INFO(
+        node->get_logger(),
+        "Task13 PRECHECK PASS：CONTACT / LIFT / TRANSPORT / DESCENT / RETREAT 均已规划；未发布任何 joint / suction 命令。");
+#elif defined(TASK12_SHARED_TRANSPORT)
       RCLCPP_INFO(
         node->get_logger(),
         "Task12 PRECHECK PASS：双 CONTACT、%.3f m COMMON_LIFT 与 delta=(%.3f, %.3f) m COMMON_TRANSPORT 已规划；未发布任何 joint / suction 命令。",
@@ -853,6 +931,80 @@ int main(int argc, char** argv)
       node->get_logger(),
       "Task12-B PASS：双 Surface Gripper 共同运输 delta=(%.3f, %.3f) m；SharedBox 与双臂相对几何均在阈值内。",
       transport_delta_x, transport_delta_y);
+
+#ifdef TASK13_SHARED_PLACE
+    std::thread left_descent_thread([&left, &left_descent_traj]() {
+      left.execute(left_descent_traj);
+    });
+    std::thread right_descent_thread([&right, &right_descent_traj]() {
+      right.execute(right_descent_traj);
+    });
+    left_descent_thread.join();
+    right_descent_thread.join();
+
+    std::thread left_release_thread([&left]() { left.commandSuction(false); });
+    std::thread right_release_thread([&right]() { right.commandSuction(false); });
+    left_release_thread.join();
+    right_release_thread.join();
+    const bool left_open = left.waitForSuction(false, release_timeout);
+    const bool right_open = right.waitForSuction(false, release_timeout);
+    if (!left_open || !right_open)
+    {
+      RCLCPP_ERROR(
+        node->get_logger(), "Task13 RELEASE FAIL：left_open=%s, right_open=%s",
+        left_open ? "true" : "false", right_open ? "true" : "false");
+      break;
+    }
+    std::this_thread::sleep_for(std::chrono::duration<double>(settle_sec));
+    const auto box_after_release = pose_buffer->get();
+    geometry_msgs::msg::Point expected_placement = box_pose.position;
+    expected_placement.x += transport_delta_x;
+    expected_placement.y += transport_delta_y;
+    const double placement_error = distance3d(
+      box_after_release.position, expected_placement);
+    const double placement_orientation_error = quaternionAngularDistance(
+      box_after_release.orientation, box_pose.orientation);
+
+    // 已释放的真实 pose 写回 MoveIt World；随后执行的是释放前已经规划好的上退，
+    // 不在接触起点重新调用 Cartesian 规划。
+    scene.removeCollisionObjects({"task11_shared_box"});
+    std::this_thread::sleep_for(250ms);
+    if (!scene.applyCollisionObject(sharedBoxObject(box_after_release)))
+    {
+      RCLCPP_ERROR(node->get_logger(), "Task13 无法将释放后的 SharedBox 回写 MoveIt World。");
+      break;
+    }
+    std::this_thread::sleep_for(300ms);
+    std::thread left_retreat_thread([&left, &left_retreat_traj]() {
+      left.execute(left_retreat_traj);
+    });
+    std::thread right_retreat_thread([&right, &right_retreat_traj]() {
+      right.execute(right_retreat_traj);
+    });
+    left_retreat_thread.join();
+    right_retreat_thread.join();
+    const bool placement_ok =
+      placement_error <= placement_tolerance &&
+      placement_orientation_error <= box_orientation_tolerance;
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task13 PLACE METRICS: expected_box=(%.4f, %.4f, %.4f), actual_box=(%.4f, %.4f, %.4f), "
+      "placement_error=%.3f mm, orientation_error=%.3f deg",
+      expected_placement.x, expected_placement.y, expected_placement.z,
+      box_after_release.position.x, box_after_release.position.y, box_after_release.position.z,
+      placement_error * 1000.0, placement_orientation_error * 180.0 / PI);
+    if (!placement_ok)
+    {
+      RCLCPP_ERROR(
+        node->get_logger(),
+        "Task13 PLACE FAIL：释放后位置/姿态误差超限（position<=%.3f mm, orientation<=%.3f deg）。",
+        placement_tolerance * 1000.0, box_orientation_tolerance * 180.0 / PI);
+      break;
+    }
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task13 PASS：共同下降、同步释放、SharedBox Ground Truth 回写与共同安全退出均完成。");
+#endif
 #endif
 #else
     const auto settled = pose_buffer->get();
