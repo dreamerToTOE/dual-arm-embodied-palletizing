@@ -96,7 +96,7 @@ Phase B2 — 松协调（上层两个独立小件）
 - T15-02：大件为可碰撞、可动力学搬运的 `1.00 kg` 物体，且复用 Task11--Task13 几何与 `+X 0.100 m` 运输。
 - T15-03：四个小件均为独立的 Dynamic Rigid Body + Collider。
 - T15-04：四个目标高度满足两层支撑几何。
-- T15-05：策略明确调用既有 tight / loose skill；尚未开始 Task15 Bridge、MoveIt 控制器或执行验收。
+- T15-05：Task15 Bridge、紧协调复用目标和配置驱动松协调控制器均已构建；尚未进行 Isaac + MoveIt 物理执行验收。
 
 ## 加载场景
 
