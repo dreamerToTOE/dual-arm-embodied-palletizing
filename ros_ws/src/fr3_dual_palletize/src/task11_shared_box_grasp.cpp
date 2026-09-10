@@ -43,6 +43,11 @@ constexpr double DEFAULT_BOX_LIFT_TOLERANCE_M = 0.010;
 constexpr double DEFAULT_RELATIVE_TCP_TOLERANCE_M = 0.003;
 constexpr double DEFAULT_BOX_ORIENTATION_TOLERANCE_RAD = 0.035;
 constexpr double PI = 3.14159265358979323846;
+#ifdef TASK12_SHARED_TRANSPORT
+constexpr double DEFAULT_TRANSPORT_DELTA_X_M = 0.100;
+constexpr double DEFAULT_TRANSPORT_DELTA_Y_M = 0.000;
+constexpr double DEFAULT_BOX_TRANSPORT_TOLERANCE_M = 0.010;
+#endif
 #endif
 
 double pointTime(const trajectory_msgs::msg::JointTrajectoryPoint& point)
@@ -156,7 +161,7 @@ geometry_msgs::msg::Point subtractPoints(
   return result;
 }
 
-bool planCombinedCartesianLift(
+bool planCombinedCartesianStage(
   const rclcpp::Node::SharedPtr& node,
   moveit::planning_interface::MoveGroupInterface& group,
   const std::string& group_name,
@@ -164,6 +169,7 @@ bool planCombinedCartesianLift(
   const std::vector<double>& own_start_q,
   const std::vector<double>& partner_start_q,
   const geometry_msgs::msg::Pose& target,
+  const std::string& stage,
   const std::string& side,
   trajectory_msgs::msg::JointTrajectory& output)
 {
@@ -187,8 +193,8 @@ bool planCombinedCartesianLift(
     robot_trajectory, true, &error);
   RCLCPP_INFO(
     node->get_logger(),
-    "Task12 %s COMMON_LIFT Cartesian fraction=%.4f, error=%d",
-    side.c_str(), fraction, error.val);
+    "Task12 %s %s Cartesian fraction=%.4f, error=%d",
+    side.c_str(), stage.c_str(), fraction, error.val);
   if (fraction < CARTESIAN_MIN_FRACTION || robot_trajectory.joint_trajectory.points.empty())
   {
     return false;
@@ -497,7 +503,9 @@ private:
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-#ifdef TASK12_SHARED_LIFT
+#ifdef TASK12_SHARED_TRANSPORT
+  auto node = std::make_shared<rclcpp::Node>("task12_shared_box_transport");
+#elif defined(TASK12_SHARED_LIFT)
   auto node = std::make_shared<rclcpp::Node>("task12_shared_box_lift");
 #else
   auto node = std::make_shared<rclcpp::Node>("task11_shared_box_grasp");
@@ -514,12 +522,24 @@ int main(int argc, char** argv)
     "relative_tcp_tolerance_m", DEFAULT_RELATIVE_TCP_TOLERANCE_M);
   const double box_orientation_tolerance = node->declare_parameter<double>(
     "box_orientation_tolerance_rad", DEFAULT_BOX_ORIENTATION_TOLERANCE_RAD);
+#ifdef TASK12_SHARED_TRANSPORT
+  const double transport_delta_x = node->declare_parameter<double>(
+    "transport_delta_x_m", DEFAULT_TRANSPORT_DELTA_X_M);
+  const double transport_delta_y = node->declare_parameter<double>(
+    "transport_delta_y_m", DEFAULT_TRANSPORT_DELTA_Y_M);
+  const double box_transport_tolerance = node->declare_parameter<double>(
+    "box_transport_tolerance_m", DEFAULT_BOX_TRANSPORT_TOLERANCE_M);
+#endif
 #endif
 
   if (!copyRobotModelParameters(node) || grasp_timeout <= 0.0
 #ifdef TASK12_SHARED_LIFT
       || lift_height <= 0.0 || settle_sec < 0.0 || box_lift_tolerance <= 0.0 ||
       relative_tcp_tolerance <= 0.0 || box_orientation_tolerance <= 0.0
+#ifdef TASK12_SHARED_TRANSPORT
+      || std::hypot(transport_delta_x, transport_delta_y) <= 0.0 ||
+      box_transport_tolerance <= 0.0
+#endif
 #endif
   )
   {
@@ -534,7 +554,12 @@ int main(int argc, char** argv)
   bool success = false;
   do
   {
-#ifdef TASK12_SHARED_LIFT
+#ifdef TASK12_SHARED_TRANSPORT
+    RCLCPP_INFO(
+      node->get_logger(),
+      "========== Task12 SHARED-BOX LIFT + TRANSPORT (lift=%.3f m, delta=(%.3f, %.3f) m) ==========",
+      lift_height, transport_delta_x, transport_delta_y);
+#elif defined(TASK12_SHARED_LIFT)
     RCLCPP_INFO(
       node->get_logger(),
       "========== Task12 SHARED-BOX COMMON LIFT (height=%.3f m) ==========",
@@ -630,24 +655,57 @@ int main(int argc, char** argv)
       box_pose.position.x, box_pose.position.y + 0.100, contact_z + lift_height);
     trajectory_msgs::msg::JointTrajectory left_lift_traj;
     trajectory_msgs::msg::JointTrajectory right_lift_traj;
-    if (!planCombinedCartesianLift(
+    if (!planCombinedCartesianStage(
           node, left_group, left.groupName(), right.groupName(),
           finalPositions(left_contact_traj), finalPositions(right_contact_traj),
-          left_lift_target, left.side(), left_lift_traj) ||
-        !planCombinedCartesianLift(
+          left_lift_target, "COMMON_LIFT", left.side(), left_lift_traj) ||
+        !planCombinedCartesianStage(
           node, right_group, right.groupName(), left.groupName(),
           finalPositions(right_contact_traj), finalPositions(left_contact_traj),
-          right_lift_target, right.side(), right_lift_traj) ||
+          right_lift_target, "COMMON_LIFT", right.side(), right_lift_traj) ||
         !synchronizeDurations(left_lift_traj, right_lift_traj))
     {
       RCLCPP_ERROR(node->get_logger(), "Task12 COMMON_LIFT 规划或同步失败。");
       break;
     }
+
+#ifdef TASK12_SHARED_TRANSPORT
+    // 水平运输从共同抬升的终点开始；该姿态同时写入左右 group 的 start state，
+    // 使每次 Cartesian 计算都以另一台机械臂真实的共同搬运姿态为碰撞上下文。
+    const auto left_transport_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y - 0.100 + transport_delta_y,
+      contact_z + lift_height);
+    const auto right_transport_target = topDownPose(
+      box_pose.position.x + transport_delta_x,
+      box_pose.position.y + 0.100 + transport_delta_y,
+      contact_z + lift_height);
+    trajectory_msgs::msg::JointTrajectory left_transport_traj;
+    trajectory_msgs::msg::JointTrajectory right_transport_traj;
+    if (!planCombinedCartesianStage(
+          node, left_group, left.groupName(), right.groupName(),
+          finalPositions(left_lift_traj), finalPositions(right_lift_traj),
+          left_transport_target, "COMMON_TRANSPORT", left.side(), left_transport_traj) ||
+        !planCombinedCartesianStage(
+          node, right_group, right.groupName(), left.groupName(),
+          finalPositions(right_lift_traj), finalPositions(left_lift_traj),
+          right_transport_target, "COMMON_TRANSPORT", right.side(), right_transport_traj) ||
+        !synchronizeDurations(left_transport_traj, right_transport_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "Task12 COMMON_TRANSPORT 规划或同步失败。");
+      break;
+    }
+#endif
 #endif
 
     if (!execute)
     {
-#ifdef TASK12_SHARED_LIFT
+#ifdef TASK12_SHARED_TRANSPORT
+      RCLCPP_INFO(
+        node->get_logger(),
+        "Task12 PRECHECK PASS：双 CONTACT、%.3f m COMMON_LIFT 与 delta=(%.3f, %.3f) m COMMON_TRANSPORT 已规划；未发布任何 joint / suction 命令。",
+        lift_height, transport_delta_x, transport_delta_y);
+#elif defined(TASK12_SHARED_LIFT)
       RCLCPP_INFO(
         node->get_logger(),
         "Task12 PRECHECK PASS：双 CONTACT 与 %.3f m COMMON_LIFT 已规划；未发布任何 joint / suction 命令。",
@@ -739,6 +797,63 @@ int main(int argc, char** argv)
       node->get_logger(),
       "Task12 PASS：双 Surface Gripper 共同抬升 %.3f m；SharedBox 与双臂相对几何均在阈值内。",
       lift_height);
+
+#ifdef TASK12_SHARED_TRANSPORT
+    const auto box_before_transport = box_after_lift;
+    const auto left_before_transport = left_after_lift;
+    const auto right_before_transport = right_after_lift;
+    const auto relative_before_transport = subtractPoints(
+      right_before_transport.position, left_before_transport.position);
+    std::thread left_transport_thread([&left, &left_transport_traj]() {
+      left.execute(left_transport_traj);
+    });
+    std::thread right_transport_thread([&right, &right_transport_traj]() {
+      right.execute(right_transport_traj);
+    });
+    left_transport_thread.join();
+    right_transport_thread.join();
+    std::this_thread::sleep_for(std::chrono::duration<double>(settle_sec));
+
+    const auto box_after_transport = pose_buffer->get();
+    const auto left_after_transport = left_group.getCurrentPose(left.eefLink()).pose;
+    const auto right_after_transport = right_group.getCurrentPose(right.eefLink()).pose;
+    const auto relative_after_transport = subtractPoints(
+      right_after_transport.position, left_after_transport.position);
+    geometry_msgs::msg::Point expected_transport_position = box_before_transport.position;
+    expected_transport_position.x += transport_delta_x;
+    expected_transport_position.y += transport_delta_y;
+    const double box_transport_error = distance3d(
+      box_after_transport.position, expected_transport_position);
+    const double relative_transport_error = distance3d(
+      relative_after_transport, relative_before_transport);
+    const double transport_orientation_error = quaternionAngularDistance(
+      box_after_transport.orientation, box_before_transport.orientation);
+    const bool transport_ok =
+      box_transport_error <= box_transport_tolerance &&
+      relative_transport_error <= relative_tcp_tolerance &&
+      transport_orientation_error <= box_orientation_tolerance;
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task12 TRANSPORT METRICS: expected_box=(%.4f, %.4f, %.4f), actual_box=(%.4f, %.4f, %.4f), "
+      "box_error=%.3f mm, relative_link8_error=%.3f mm, orientation_error=%.3f deg",
+      expected_transport_position.x, expected_transport_position.y, expected_transport_position.z,
+      box_after_transport.position.x, box_after_transport.position.y, box_after_transport.position.z,
+      box_transport_error * 1000.0, relative_transport_error * 1000.0,
+      transport_orientation_error * 180.0 / PI);
+    if (!transport_ok)
+    {
+      RCLCPP_ERROR(
+        node->get_logger(),
+        "Task12 TRANSPORT FAIL：误差超限（box<=%.3f mm, relative_link8<=%.3f mm, orientation<=%.3f deg）。",
+        box_transport_tolerance * 1000.0, relative_tcp_tolerance * 1000.0,
+        box_orientation_tolerance * 180.0 / PI);
+      break;
+    }
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Task12-B PASS：双 Surface Gripper 共同运输 delta=(%.3f, %.3f) m；SharedBox 与双臂相对几何均在阈值内。",
+      transport_delta_x, transport_delta_y);
+#endif
 #else
     const auto settled = pose_buffer->get();
     RCLCPP_INFO(
