@@ -126,6 +126,21 @@ ros2 pkg executables fr3_dual_palletize | rg 'task14_shared_box_geometry_monitor
 
 监测器现以三路 ROS header 时间戳进行 30 ms 对齐，只对齐后采样，并报告 `timestamp_rejected` 数量。该修复不修改任何机器人、吸盘或 MoveIt 控制逻辑；需要重新执行 Task14-A 运行时验收。
 
+## 共同轨迹同步起跑修复（2026-09-10）
+
+时间戳对齐后，`box_to_tcp_midpoint` 已降至 `0.989 mm`、姿态误差为 `0.645°`，但 `relative_tcp max=3.667 mm`，仍超过 3 mm 阈值。这是有效的动态误差，不能通过放宽阈值处理。
+
+根因是既有共同阶段在两个独立线程中分别调用 `steady_clock::now()`：即使轨迹拥有相同总时长，也会存在毫秒级起跑偏差。共同轨迹执行器现改为：
+
+```text
+CONTACT / LIFT / TRANSPORT / DESCENT / RETREAT
+  -> 同一 future steady_clock start（提前 100 ms）
+  -> 左右线程 sleep_until 同一时刻
+  -> 各自按该共享时钟插值并发布 joint command
+```
+
+该改动不改变规划轨迹、Surface Gripper 参数、MoveIt 碰撞模型或验收阈值。已重新编译，等待完整 Task13 + Task14-A 运行时复验。
+
 ## 后续边界
 
 Task14-A 只建立连续误差基线。若连续误差超限，Task14-B 再根据误差类型选择相对位姿反馈、柔顺、负载分配或局部重规划；不预设不必要的控制复杂度。

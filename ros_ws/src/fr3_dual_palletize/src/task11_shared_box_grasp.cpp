@@ -399,6 +399,13 @@ public:
 
   bool execute(const trajectory_msgs::msg::JointTrajectory& input) const
   {
+    return executeAt(input, std::chrono::steady_clock::now());
+  }
+
+  bool executeAt(
+    const trajectory_msgs::msg::JointTrajectory& input,
+    const std::chrono::steady_clock::time_point& start) const
+  {
     if (input.joint_names.empty() || input.points.empty())
     {
       return false;
@@ -411,7 +418,7 @@ public:
       names.push_back(name.rfind(joint_prefix_, 0) == 0 ?
         name.substr(joint_prefix_.size()) : name);
     }
-    const auto start = std::chrono::steady_clock::now();
+    std::this_thread::sleep_until(start);
     std::size_t segment = 0;
     const auto publish = [&](const std::vector<double>& positions)
     {
@@ -501,6 +508,30 @@ private:
   std::atomic_bool have_suction_state_{false};
   std::atomic_bool suction_closed_{false};
 };
+
+// 两条共同搬运轨迹共享同一个未来起始时刻。此前两个线程分别在各自的
+// execute() 内读取 now()，会产生毫秒级起跑偏差并放大为动态相对位姿误差。
+bool executeSynchronously(
+  const ArmControl& left,
+  const trajectory_msgs::msg::JointTrajectory& left_trajectory,
+  const ArmControl& right,
+  const trajectory_msgs::msg::JointTrajectory& right_trajectory)
+{
+  const auto start = std::chrono::steady_clock::now() + 100ms;
+  bool left_ok = false;
+  bool right_ok = false;
+  std::thread left_thread([&left, &left_trajectory, &left_ok, &start]()
+  {
+    left_ok = left.executeAt(left_trajectory, start);
+  });
+  std::thread right_thread([&right, &right_trajectory, &right_ok, &start]()
+  {
+    right_ok = right.executeAt(right_trajectory, start);
+  });
+  left_thread.join();
+  right_thread.join();
+  return left_ok && right_ok;
+}
 
 }  // namespace
 
@@ -795,14 +826,11 @@ int main(int argc, char** argv)
       break;
     }
 
-    std::thread left_contact_thread([&left, &left_contact_traj]() {
-      left.execute(left_contact_traj);
-    });
-    std::thread right_contact_thread([&right, &right_contact_traj]() {
-      right.execute(right_contact_traj);
-    });
-    left_contact_thread.join();
-    right_contact_thread.join();
+    if (!executeSynchronously(left, left_contact_traj, right, right_contact_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "CONTACT 同步执行失败。");
+      break;
+    }
 
     std::thread left_suction_thread([&left]() { left.commandSuction(true); });
     std::thread right_suction_thread([&right]() { right.commandSuction(true); });
@@ -828,14 +856,11 @@ int main(int argc, char** argv)
     const auto relative_before = subtractPoints(
       right_before_lift.position, left_before_lift.position);
 
-    std::thread left_lift_thread([&left, &left_lift_traj]() {
-      left.execute(left_lift_traj);
-    });
-    std::thread right_lift_thread([&right, &right_lift_traj]() {
-      right.execute(right_lift_traj);
-    });
-    left_lift_thread.join();
-    right_lift_thread.join();
+    if (!executeSynchronously(left, left_lift_traj, right, right_lift_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "COMMON_LIFT 同步执行失败。");
+      break;
+    }
     std::this_thread::sleep_for(std::chrono::duration<double>(settle_sec));
 
     const auto box_after_lift = pose_buffer->get();
@@ -882,14 +907,11 @@ int main(int argc, char** argv)
     const auto right_before_transport = right_after_lift;
     const auto relative_before_transport = subtractPoints(
       right_before_transport.position, left_before_transport.position);
-    std::thread left_transport_thread([&left, &left_transport_traj]() {
-      left.execute(left_transport_traj);
-    });
-    std::thread right_transport_thread([&right, &right_transport_traj]() {
-      right.execute(right_transport_traj);
-    });
-    left_transport_thread.join();
-    right_transport_thread.join();
+    if (!executeSynchronously(left, left_transport_traj, right, right_transport_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "COMMON_TRANSPORT 同步执行失败。");
+      break;
+    }
     std::this_thread::sleep_for(std::chrono::duration<double>(settle_sec));
 
     const auto box_after_transport = pose_buffer->get();
@@ -933,14 +955,11 @@ int main(int argc, char** argv)
       transport_delta_x, transport_delta_y);
 
 #ifdef TASK13_SHARED_PLACE
-    std::thread left_descent_thread([&left, &left_descent_traj]() {
-      left.execute(left_descent_traj);
-    });
-    std::thread right_descent_thread([&right, &right_descent_traj]() {
-      right.execute(right_descent_traj);
-    });
-    left_descent_thread.join();
-    right_descent_thread.join();
+    if (!executeSynchronously(left, left_descent_traj, right, right_descent_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "COMMON_DESCENT 同步执行失败。");
+      break;
+    }
 
     std::thread left_release_thread([&left]() { left.commandSuction(false); });
     std::thread right_release_thread([&right]() { right.commandSuction(false); });
@@ -975,14 +994,11 @@ int main(int argc, char** argv)
       break;
     }
     std::this_thread::sleep_for(300ms);
-    std::thread left_retreat_thread([&left, &left_retreat_traj]() {
-      left.execute(left_retreat_traj);
-    });
-    std::thread right_retreat_thread([&right, &right_retreat_traj]() {
-      right.execute(right_retreat_traj);
-    });
-    left_retreat_thread.join();
-    right_retreat_thread.join();
+    if (!executeSynchronously(left, left_retreat_traj, right, right_retreat_traj))
+    {
+      RCLCPP_ERROR(node->get_logger(), "COMMON_RETREAT 同步执行失败。");
+      break;
+    }
     const bool placement_ok =
       placement_error <= placement_tolerance &&
       placement_orientation_error <= box_orientation_tolerance;
