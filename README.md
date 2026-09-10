@@ -29,6 +29,8 @@
 - [Task 09-A — 松协调延迟启动](docs/tasks/TASK09_TEMPORAL_COORDINATION.md)
 - [Task 09-B — 冲突窗口局部等待](docs/tasks/TASK09_LOCAL_WAIT.md)
 - [Task 09-B — 安全退出 + 局部等待](docs/tasks/TASK09_SAFE_EGRESS.md)
+- [Task 10 — 松协调连续多箱码垛](docs/tasks/TASK10_CONTINUOUS_PALLETIZING.md)
+- [Task 11 — 双吸盘共同物体基线](docs/tasks/TASK11_SHARED_OBJECT_BASELINE.md)
 
 ## 当前进度
 
@@ -45,7 +47,8 @@
 | 08 | 双臂完整任务轨迹与时空冲突检测 | ✅ Task08-A/B 完成：SAFE 与 CONFLICT 均已验收 |
 | 09 | 松协调时间协调 | ✅ Task09-C 已在 Task08 交叉场景完成一次 Isaac 双臂抓取、放置和安全退出运行时验收 |
 | 10 | 松协调完整码垛 Demo | ✅ 四箱、两批次连续 Isaac 码垛完成；每批均经 FCL 验收，第二批保留 A/B 为碰撞物 |
-| 11+ | 双吸盘共物体与紧协调 | 计划中 |
+| 11 | 双吸盘共同物体基线 | 🟡 场景与双 Surface Gripper Bridge 已建立，待 Isaac 双吸附验收 |
+| 12+ | 紧协调共同搬运与模式选择 | 计划中 |
 
 ## 当前核心工程结论
 
