@@ -1,0 +1,61 @@
+# 项目级 Skill：紧协调共同物体搬运
+#
+# 此文件不是 Codex skill。它把 Task11--Task13 已经实际通过的双 Surface
+# Gripper 共同物体闭环固化为项目复用契约；遇到一个大件需要两臂共同承载时，
+# 新任务应参数化复用该闭环，不能退化成两个独立物体 primitive。
+name: tight_coordination_shared_object
+version: 1
+mode: tight_coordination
+object_relation: one_shared_object
+
+applicability:
+  - 一个大件由左右 FR3 顶部两个分离吸附点共同承载。
+  - 共同物体在整个运输段必须保持双吸盘 CLOSED。
+  - 共同轨迹使用同一开始时刻，保持两臂的相对几何。
+
+reuse_contract:
+  reference_implementation: src/task11_shared_box_grasp.cpp
+  build_targets:
+    - task11_shared_box_grasp
+    - task12_shared_box_lift
+    - task12_shared_box_transport
+    - task13_shared_box_place
+  validated_tasks:
+    - Task11: 双 Surface Gripper 同时吸附同一 SharedBox
+    - Task12: 共同抬升和共同运输
+    - Task13: 共同下降、同步释放、Ground Truth 回写和共同退出
+
+required_event_order:
+  - DUAL_PRE_CONTACT
+  - DUAL_CONTACT
+  - BOTH_SUCTION_ON
+  - WAIT_BOTH_CLOSED
+  - COMMON_LIFT
+  - COMMON_TRANSPORT
+  - COMMON_PLACE
+  - PREPLAN_COMMON_RETREAT_WHILE_BOTH_ATTACHED
+  - BOTH_SUCTION_OFF
+  - WAIT_BOTH_OPEN
+  - PHYSX_SETTLE
+  - ISAAC_GROUND_TRUTH_WRITEBACK
+  - DETACH_SHARED_OBJECT
+  - ADD_SHARED_OBJECT_TO_WORLD
+  - EXECUTE_PREPLANNED_COMMON_RETREAT
+
+coordination_policy:
+  - 共同抬升、运输、下降和退出均以共享未来开始时刻同步发布。
+  - 释放前完成 RETREAT 规划；释放后不得因吸盘仍紧邻箱体而重新规划该 RETREAT。
+  - 物理释放和 settle 完成前，不得对 MoveIt 执行 detach。
+  - settle 后以 Isaac Ground Truth 重建 World CollisionObject。
+  - 共同物体只在预期接触的必要窗口临时从 MoveIt World 移除；不扩大 ACM，也不永久忽略箱体碰撞。
+
+forbidden_shortcuts:
+  - 不把同一物体同时作为两份独立 AttachedCollisionObject。
+  - 不在双吸盘 CLOSED 前开始共同抬升。
+  - 不在真实物理释放前 detach。
+  - 不以关闭大范围碰撞代替共同物体时序。
+
+acceptance:
+  - 两个 Surface Gripper 在共同运输窗口均保持 CLOSED。
+  - SharedBox 相对双 TCP 几何和最终位姿满足当前任务阈值。
+  - 释放后 SharedBox 的 Isaac Ground Truth 已回写 MoveIt World。

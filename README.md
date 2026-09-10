@@ -34,6 +34,9 @@
 - [Task 12 — 双吸盘共同抬升与运输](docs/tasks/TASK12_SHARED_BOX_LIFT.md)
 - [Task 13 — 双吸盘共同放置、释放与安全退出](docs/tasks/TASK13_SHARED_BOX_PLACE.md)
 - [Task 14-A — 双吸盘共同搬运连续几何观测](docs/tasks/TASK14_CONTINUOUS_GEOMETRY.md)
+- [Task 15 — 紧/松协调混合码垛场景与复用策略](docs/tasks/TASK15_HYBRID_PALLETIZING.md)
+- [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
+- [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
 
 ## 当前进度
 
@@ -54,7 +57,8 @@
 | 12 | 双吸盘共同抬升与运输 | ✅ +50 mm 抬升与 +100 mm X 向共同运输均通过；运输误差 0.311 mm、相对 `link8` 误差 0.123 mm |
 | 13 | 双吸盘共同放置、释放与安全退出 | ✅ 完整闭环通过；最终放置误差 0.947 mm、姿态误差 0.026° |
 | 14 | 紧协调连续几何观测 | 🟡 已实现双 TCP / SharedBox 连续 max-RMS 误差观测，待 Isaac 验收 |
-| 15+ | 紧协调改进控制与模式选择 | 计划中 |
+| 15 | 紧/松协调混合码垛 | 🟡 场景与项目级复用 skill 已就绪；待 Task15 专用 Bridge / 控制器与 Isaac 验收 |
+| 16+ | 紧协调改进控制与后续混合任务 | 计划中 |
 
 ## 当前核心工程结论
 
@@ -124,7 +128,7 @@ PRE_PICK
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## 当前阶段：Task09
+## 当前阶段：Task15 场景与复用策略
 
 Task06 已完成双臂基础设施，Task07 已完成两条独立 Task04 primitive 的并行执行。
 
@@ -138,3 +142,5 @@ HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已在 10 ms 联合采样下通过两项实际验收：Task07 分离通道为 `SAFE`，Task08 交叉通道报告 `ARM_ARM` 冲突。
 
 Task09-A 保留为 Full-task Start Delay baseline。Task09-B 已将 MoveIt 规划的 `RETREAT -> HOME SAFE_EGRESS` 与冲突窗口局部等待结合：若安全退出路径已经分离，则保持并行；否则只在 LIFT 后插入最小 HOLD。Task09-C 只消费 Task08-B/FCL 复检为 SAFE 的联合候选，以共享时钟同步驱动 Isaac 双臂，并在吸附、释放事件处全局 HOLD。2026-09-09 已在 Task08 交叉场景实际完成双臂抓取、放置与安全退出；详见 [Task09-C 记录](docs/tasks/TASK09_COORDINATED_EXECUTION.md)。
+
+Task11--Task13 随后完成了同一 `SharedBox` 的双吸盘共同吸附、共同抬升、共同运输、共同放置、同步释放和安全退出。Task15 不再重新实现这些闭环，而是将它们封装为仓库内的紧协调复用契约；四个独立小件则复用松协调契约。当前已建立 Task15 混合场景：先紧协调搬运大件，再让左右臂按“下层并行、落稳回写、上层并行”搬运小件。

@@ -1,0 +1,63 @@
+# 项目级 Skill：松协调独立物体码垛
+#
+# 此文件不是 Codex skill，也不在运行时生成新的运动算法。它是项目内的
+# 复用契约：遇到“左右臂搬运不同小箱体”的任务，控制层必须选择下面已经
+# 在 Task07--Task10 验收的模块与时序。
+name: loose_coordination_palletizing
+version: 1
+mode: loose_coordination
+object_relation: distinct_objects
+
+applicability:
+  - 左右 FR3 分别抓取不同的独立物体。
+  - 每个物体只由一个 Surface Gripper / AttachedCollisionObject 持有。
+  - 允许并行，但必须先通过联合时空碰撞检查。
+
+reuse_contract:
+  primitive: fr3_dual_palletize::PalletizePrimitive
+  candidate: fr3_dual_palletize::TaskTrajectoryCandidate
+  collision_check: fr3_dual_palletize::SpatioTemporalConflictDetector
+  schedule:
+    primary: simultaneous
+    fallback:
+      - fr3_dual_palletize::LocalWaitCoordinator
+      - fr3_dual_palletize::TemporalCoordinator
+  executor: fr3_dual_palletize::CoordinatedTaskExecutor
+  validated_tasks:
+    - Task04: 单臂顶部吸盘抓放事件单元
+    - Task07: 两个独立物体真正并行执行
+    - Task08: 完整候选与联合 FCL 时空检查
+    - Task09: 延迟启动、局部等待和共享时钟执行
+    - Task10: 两批次连续码垛与已放置物体回写
+
+required_event_order:
+  - PRE_PICK
+  - CONTACT
+  - SUCTION_ON
+  - ATTACH
+  - LIFT
+  - TRANSFER_OR_PRE_PLACE
+  - PLACE
+  - PREPLAN_RETREAT_WHILE_ATTACHED
+  - SUCTION_OFF
+  - PHYSX_SETTLE
+  - ISAAC_GROUND_TRUTH_WRITEBACK
+  - DETACH_AND_ADD_WORLD
+  - RETREAT
+
+coordination_policy:
+  - 分别生成左右完整 TaskTrajectoryCandidate，不修改单臂抓放事件单元。
+  - 先以 10 ms 联合采样做 FCL 时空冲突检查。
+  - SAFE 时共享时钟并行执行。
+  - CONFLICT 时优先在 LIFT 后插入最小局部等待；无解才使用延迟启动或重新规划。
+  - 已完成放置的物体必须以 Isaac Ground Truth 回写 MoveIt World，供后续批次碰撞检查。
+
+forbidden_shortcuts:
+  - 不永久忽略机器人与箱体碰撞。
+  - 不把两个独立物体伪装成一个共同 AttachedCollisionObject。
+  - 不绕过 FCL 检查直接并行执行。
+
+acceptance:
+  - 两个候选均规划成功。
+  - 协调后的联合候选为 FCL SAFE。
+  - 两臂事件、吸盘状态和已放置物体 Ground Truth 均可追溯记录。

@@ -179,6 +179,13 @@ install(
   DESTINATION include
 )
 
+# 项目级协调 skill 是可安装的复用契约：控制器根据物体类型选择已验收的
+# 松协调或紧协调流程，而不是为新任务复制一套抓放逻辑。
+install(
+  DIRECTORY skills/
+  DESTINATION share/${PROJECT_NAME}/skills
+)
+
 ament_export_include_directories(include)
 ament_export_dependencies(
   rclcpp
