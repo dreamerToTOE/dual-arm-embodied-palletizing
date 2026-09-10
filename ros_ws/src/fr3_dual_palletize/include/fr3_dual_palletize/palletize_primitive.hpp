@@ -98,6 +98,19 @@ public:
   // 返回前无论成功或失败都会把当前 object 恢复到其初始 world pose。
   bool planTaskTrajectoryCandidate(TaskTrajectoryCandidate& candidate);
 
+  // Task09 执行层使用的细粒度接口。CoordinatedTaskExecutor 以一条共享时钟
+  // 采样两条已经通过 Task08-B/FCL 复检的候选；它在离散事件处让两臂共同保持，
+  // 因而不会因等待 Surface Gripper 状态而破坏协调后的相对时间关系。
+  bool waitForTaskExecutionBridge();
+  bool publishTaskTrajectorySample(
+    const trajectory_msgs::msg::JointTrajectory& trajectory,
+    double time_sec);
+  bool applyTaskEvent(
+    const TaskEvent& event,
+    double grasp_timeout_sec,
+    double release_timeout_sec);
+  void emergencySuctionOff();
+
   // Task08 新接口：
   // 1) 执行 PRE_PICK -> CONTACT -> SUCTION ON -> ATTACH -> LIFT；
   // 2) 在 coordination_gate 等待另一臂也到 LIFT；

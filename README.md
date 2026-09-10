@@ -43,7 +43,7 @@
 | 06 | 双 FR3 + 双紧凑吸盘基础设施 | ✅ |
 | 07 | 双臂松协调并行码垛 | ✅ |
 | 08 | 双臂完整任务轨迹与时空冲突检测 | ✅ Task08-A/B 完成：SAFE 与 CONFLICT 均已验收 |
-| 09 | 松协调时间协调 | ✅ 安全退出 + 局部等待已生成 Task08 交叉场景 SAFE 候选；实际双臂执行待后续验收 |
+| 09 | 松协调时间协调 | ✅ Task09-C 已在 Task08 交叉场景完成一次 Isaac 双臂抓取、放置和安全退出运行时验收 |
 | 11+ | 双吸盘共物体与紧协调 | 计划中 |
 
 ## 当前核心工程结论
@@ -127,4 +127,4 @@ HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 
 每个候选同时包含完整关节轨迹和 ATTACH / DETACH 的统一时间事件。Task08-B 已在 10 ms 联合采样下通过两项实际验收：Task07 分离通道为 `SAFE`，Task08 交叉通道报告 `ARM_ARM` 冲突。
 
-Task09-A 保留为 Full-task Start Delay baseline。Task09-B 已将 MoveIt 规划的 `RETREAT -> HOME SAFE_EGRESS` 与冲突窗口局部等待结合：若安全退出路径已经分离，则保持并行；否则只在 LIFT 后插入最小 HOLD。当前 Task08 交叉场景已得到 Task08-B/FCL 的 SAFE 联合候选；实际执行验收仍由后续任务完成。
+Task09-A 保留为 Full-task Start Delay baseline。Task09-B 已将 MoveIt 规划的 `RETREAT -> HOME SAFE_EGRESS` 与冲突窗口局部等待结合：若安全退出路径已经分离，则保持并行；否则只在 LIFT 后插入最小 HOLD。Task09-C 只消费 Task08-B/FCL 复检为 SAFE 的联合候选，以共享时钟同步驱动 Isaac 双臂，并在吸附、释放事件处全局 HOLD。2026-09-09 已在 Task08 交叉场景实际完成双臂抓取、放置与安全退出；详见 [Task09-C 记录](docs/tasks/TASK09_COORDINATED_EXECUTION.md)。

@@ -9,7 +9,11 @@ namespace fr3_dual_palletize
 // time_sec 使用 TaskTrajectoryCandidate 的统一相对时间轴。
 enum class TaskEventType
 {
+  // 物理 Surface Gripper 的命令边界。它们不改变 Task08-B 中 Box 的
+  // World / Attached 几何状态，后者仍只由 ATTACH / DETACH 表示。
+  SUCTION_ON,
   ATTACH,
+  SUCTION_OFF,
   DETACH,
 };
 
@@ -25,8 +29,12 @@ inline const char* taskEventTypeName(TaskEventType type)
 {
   switch (type)
   {
+    case TaskEventType::SUCTION_ON:
+      return "SUCTION_ON";
     case TaskEventType::ATTACH:
       return "ATTACH";
+    case TaskEventType::SUCTION_OFF:
+      return "SUCTION_OFF";
     case TaskEventType::DETACH:
       return "DETACH";
   }

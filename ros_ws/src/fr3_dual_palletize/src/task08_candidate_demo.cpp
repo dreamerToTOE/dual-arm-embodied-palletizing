@@ -18,6 +18,7 @@
 #include <shape_msgs/msg/solid_primitive.hpp>
 
 #include "fr3_dual_palletize/palletize_primitive.hpp"
+#include "fr3_dual_palletize/coordinated_task_executor.hpp"
 #include "fr3_dual_palletize/local_wait_coordinator.hpp"
 #include "fr3_dual_palletize/spatiotemporal_conflict_detector.hpp"
 #include "fr3_dual_palletize/temporal_coordinator.hpp"
@@ -418,6 +419,8 @@ int main(int argc, char** argv)
     "enable_local_wait_coordination", false);
   const bool enable_safe_egress = pose_node->declare_parameter<bool>(
     "enable_safe_egress", enable_local_wait_coordination);
+  const bool execute_coordinated_candidate = pose_node->declare_parameter<bool>(
+    "execute_coordinated_candidate", false);
   const double delay_step_sec = pose_node->declare_parameter<double>(
     "delay_step_sec", 0.25);
   const double max_delay_sec = pose_node->declare_parameter<double>(
@@ -426,6 +429,10 @@ int main(int argc, char** argv)
     "wait_step_sec", 0.05);
   const double max_wait_sec = pose_node->declare_parameter<double>(
     "max_wait_sec", 15.0);
+  const double grasp_timeout_sec = pose_node->declare_parameter<double>(
+    "grasp_timeout_sec", 2.0);
+  const double release_timeout_sec = pose_node->declare_parameter<double>(
+    "release_timeout_sec", 2.0);
   ScenarioConfig scenario;
   if (!selectScenario(scenario_name, scenario))
   {
@@ -462,7 +469,7 @@ int main(int argc, char** argv)
     RCLCPP_INFO(
       pose_node->get_logger(),
       "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT -> HOME SAFE_EGRESS；"
-      "仅规划，不发布 joint command 或 suction command。"
+      "先完成联合 FCL 验证；仅在 Task09-C 开关开启且验证 SAFE 时执行。"
     );
   }
   else
@@ -470,7 +477,7 @@ int main(int argc, char** argv)
     RCLCPP_INFO(
       pose_node->get_logger(),
       "生成 HOME -> PRE_PICK -> CONTACT -> LIFT -> PRE_PLACE -> PLACE -> RETREAT；"
-      "仅规划，不发布 joint command 或 suction command。"
+      "先完成联合 FCL 验证；仅在 Task09-C 开关开启且验证 SAFE 时执行。"
     );
   }
   RCLCPP_INFO(
@@ -478,6 +485,10 @@ int main(int argc, char** argv)
     "Task08-B scenario=%s, expected=%s",
     scenario.name.c_str(),
     scenario.expected_conflict ? "CONFLICT" : "SAFE");
+  RCLCPP_INFO(
+    pose_node->get_logger(),
+    "Task09-C execution=%s（仅当联合 FCL 检查为 SAFE 后才允许下发命令）",
+    execute_coordinated_candidate ? "ENABLED" : "DISABLED");
 
   if (!pose_buffer->wait(10.0))
   {
@@ -551,6 +562,7 @@ int main(int argc, char** argv)
   const bool left_ok = left.planTaskTrajectoryCandidate(left_candidate);
   const bool right_ok = left_ok &&
     right.planTaskTrajectoryCandidate(right_candidate);
+  bool task_success = left_ok && right_ok;
 
   if (left_ok && right_ok)
   {
@@ -623,6 +635,13 @@ int main(int argc, char** argv)
       return 1;
     }
 
+    // 只有 FCL 已确认 SAFE 的完整候选才可能进入真实执行层。若原始候选
+    // 本来就 SAFE（例如 task07_safe），可直接使用；交叉场景则由下面的
+    // Task09-B 将这两个变量替换为插入局部 HOLD 后的联合安全候选。
+    auto execution_left = left_candidate;
+    auto execution_right = right_candidate;
+    bool execution_candidate_safe = !report.conflict;
+
     if (enable_temporal_coordination)
     {
       fr3_dual_palletize::TemporalCoordinationConfig config;
@@ -670,12 +689,44 @@ int main(int argc, char** argv)
         rclcpp::shutdown();
         return 1;
       }
+
+      execution_left = result.coordinated_left;
+      execution_right = result.coordinated_right;
+      execution_candidate_safe = !result.verification_report.conflict;
     }
 
-    RCLCPP_INFO(
-      pose_node->get_logger(),
-      "Task08-B PASS：结果符合 scenario 预期；未执行任何机器人或吸盘命令。"
-    );
+    if (!execute_coordinated_candidate)
+    {
+      RCLCPP_INFO(
+        pose_node->get_logger(),
+        "Task08-B PASS：结果符合 scenario 预期；Task09-C 执行开关关闭，未下发运动命令。"
+      );
+    }
+    else if (!execution_candidate_safe)
+    {
+      RCLCPP_ERROR(
+        pose_node->get_logger(),
+        "Task09-C REFUSED：当前候选仍有联合碰撞；不会向 Isaac 下发任何命令。"
+      );
+      task_success = false;
+    }
+    else
+    {
+      fr3_dual_palletize::CoordinatedTaskExecutionConfig execution_config;
+      execution_config.grasp_timeout_sec = grasp_timeout_sec;
+      execution_config.release_timeout_sec = release_timeout_sec;
+      fr3_dual_palletize::CoordinatedTaskExecutor task_executor(
+        pose_node->get_logger(), left, right);
+      const auto execution_result = task_executor.execute(
+        execution_left, execution_right, execution_config);
+      task_success = execution_result.valid && execution_result.completed;
+      if (!task_success)
+      {
+        RCLCPP_ERROR(
+          pose_node->get_logger(),
+          "Task09-C FAIL：%s", execution_result.error.c_str());
+      }
+    }
   }
   else
   {
@@ -693,5 +744,5 @@ int main(int argc, char** argv)
   }
 
   rclcpp::shutdown();
-  return (left_ok && right_ok) ? 0 : 1;
+  return task_success ? 0 : 1;
 }

@@ -184,6 +184,11 @@ bool PalletizePrimitive::waitForIsaacBridge()
   return false;
 }
 
+bool PalletizePrimitive::waitForTaskExecutionBridge()
+{
+  return waitForIsaacBridge();
+}
+
 bool PalletizePrimitive::configureMoveGroup(
   moveit::planning_interface::MoveGroupInterface& move_group,
   const moveit::core::JointModelGroup*& joint_model_group)
@@ -479,6 +484,62 @@ bool PalletizePrimitive::executeTrajectory(
   return true;
 }
 
+bool PalletizePrimitive::publishTaskTrajectorySample(
+  const trajectory_msgs::msg::JointTrajectory& input,
+  double time_sec)
+{
+  if (input.joint_names.empty() || input.points.empty())
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] 无法发布空的 TaskTrajectoryCandidate。",
+      config_.label.c_str());
+    return false;
+  }
+
+  auto trajectory = input;
+  ensureTrajectoryTiming(trajectory);
+  const auto isaac_names = isaacJointNames(trajectory.joint_names);
+  const double clamped_time = std::clamp(
+    time_sec, 0.0, pointTime(trajectory.points.back()));
+
+  std::size_t segment = 0;
+  while (segment + 1 < trajectory.points.size() &&
+         pointTime(trajectory.points[segment + 1]) < clamped_time)
+  {
+    ++segment;
+  }
+
+  std::vector<double> positions;
+  if (segment + 1 >= trajectory.points.size())
+  {
+    positions = trajectory.points.back().positions;
+  }
+  else
+  {
+    const auto& first = trajectory.points[segment];
+    const auto& second = trajectory.points[segment + 1];
+    const double first_time = pointTime(first);
+    const double second_time = pointTime(second);
+    const double alpha = second_time > first_time ? std::clamp(
+      (clamped_time - first_time) / (second_time - first_time), 0.0, 1.0) : 0.0;
+
+    positions.resize(first.positions.size());
+    for (std::size_t index = 0; index < positions.size(); ++index)
+    {
+      positions[index] = first.positions[index] +
+        alpha * (second.positions[index] - first.positions[index]);
+    }
+  }
+
+  sensor_msgs::msg::JointState msg;
+  msg.header.stamp = node_->now();
+  msg.name = isaac_names;
+  msg.position = std::move(positions);
+  command_pub_->publish(msg);
+  return true;
+}
+
 void PalletizePrimitive::commandSuction(bool on)
 {
   std_msgs::msg::Bool msg;
@@ -585,6 +646,93 @@ bool PalletizePrimitive::detachObject(
   }
   std::this_thread::sleep_for(300ms);
   return ok;
+}
+
+bool PalletizePrimitive::applyTaskEvent(
+  const TaskEvent& event,
+  double grasp_timeout_sec,
+  double release_timeout_sec)
+{
+  if (event.object_name != config_.object_id)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] TaskEvent object=%s 与 primitive object=%s 不一致。",
+      config_.label.c_str(), event.object_name.c_str(), config_.object_id.c_str());
+    return false;
+  }
+
+  switch (event.type)
+  {
+    case TaskEventType::SUCTION_ON:
+      // CONTACT 前目标 Box 仍是 World object；进入吸附状态前才删除它，
+      // 保持 Task08-B 的几何状态和 Task04 的真实抓取顺序一致。
+      removeWorldObject(config_.object_id);
+      commandSuction(true);
+      if (!waitForSuctionClosed(true, grasp_timeout_sec))
+      {
+        RCLCPP_ERROR(
+          node_->get_logger(),
+          "[%s] SUCTION_ON 后等待 CLOSED 超时。", config_.label.c_str());
+        return false;
+      }
+      RCLCPP_INFO(node_->get_logger(), "[%s] SUCTION CLOSED confirmed", config_.label.c_str());
+      return true;
+
+    case TaskEventType::ATTACH:
+      if (!suction_closed_.load() ||
+          !attachObject(config_.object_id, config_.eef_link))
+      {
+        RCLCPP_ERROR(node_->get_logger(), "[%s] MoveIt ATTACH 失败。", config_.label.c_str());
+        return false;
+      }
+      RCLCPP_INFO(node_->get_logger(), "[%s] MoveIt ATTACH completed", config_.label.c_str());
+      return true;
+
+    case TaskEventType::SUCTION_OFF:
+      commandSuction(false);
+      if (!waitForSuctionClosed(false, release_timeout_sec))
+      {
+        RCLCPP_ERROR(
+          node_->get_logger(),
+          "[%s] SUCTION_OFF 后等待 OPEN 超时。", config_.label.c_str());
+        return false;
+      }
+      RCLCPP_INFO(node_->get_logger(), "[%s] SUCTION OPEN confirmed", config_.label.c_str());
+      return true;
+
+    case TaskEventType::DETACH:
+    {
+      // 必须等 Isaac 已经物理释放后才从 MoveIt AttachedCollisionObject 脱离；
+      // 然后将最新 Ground Truth 回写为 World object，供安全退出段使用。
+      if (!detachObject(config_.object_id, config_.eef_link))
+      {
+        RCLCPP_ERROR(node_->get_logger(), "[%s] MoveIt DETACH 失败。", config_.label.c_str());
+        return false;
+      }
+
+      const auto settled_pose = pose_provider_(config_.pose_index);
+      removeWorldObject(config_.object_id);
+      if (!addWorldObject(config_.object_id, settled_pose))
+      {
+        RCLCPP_ERROR(node_->get_logger(), "[%s] 释放后 Box 回写 MoveIt World 失败。", config_.label.c_str());
+        return false;
+      }
+      RCLCPP_INFO(
+        node_->get_logger(),
+        "[%s] Isaac settle pose -> MoveIt World: (%.4f, %.4f, %.4f)",
+        config_.label.c_str(),
+        settled_pose.position.x, settled_pose.position.y, settled_pose.position.z);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void PalletizePrimitive::emergencySuctionOff()
+{
+  commandSuction(false);
 }
 
 std::vector<double> PalletizePrimitive::currentFrom(
@@ -803,7 +951,14 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     return false;
   }
 
-  // 对齐 Task04 的 nominal suction command 时间；随后 Cube 状态切换为 Attached。
+  // 对齐 Task04 的 nominal suction command 时间。物理吸盘命令与 MoveIt
+  // AttachedCollisionObject 分别记录：Task08-B 只在 ATTACH 时切换几何状态。
+  candidate.events.push_back(TaskEvent{
+    trajectoryDuration(candidate.trajectory),
+    TaskEventType::SUCTION_ON,
+    config_.object_id,
+    config_.eef_link
+  });
   if (!appendHold(candidate.trajectory, NOMINAL_SUCTION_COMMAND_SEC) ||
       !attachObject(config_.object_id, config_.eef_link))
   {
@@ -867,6 +1022,13 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     return false;
   }
   // 对齐 Task04：SUCTION OFF 命令窗口和 PhysX settle 后，才发生 MoveIt detach。
+  // 与 SUCTION_ON 相同，物理命令不直接改变 Task08-B 的碰撞对象状态。
+  candidate.events.push_back(TaskEvent{
+    trajectoryDuration(candidate.trajectory),
+    TaskEventType::SUCTION_OFF,
+    config_.object_id,
+    config_.eef_link
+  });
   if (!appendHold(
         candidate.trajectory,
         NOMINAL_SUCTION_COMMAND_SEC + NOMINAL_RELEASE_SETTLE_SEC))
