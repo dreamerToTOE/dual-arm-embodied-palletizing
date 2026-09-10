@@ -80,12 +80,28 @@ ament_target_dependencies(task10_continuous_demo
   moveit_ros_planning_interface
 )
 
+add_executable(task11_shared_box_grasp
+  src/task11_shared_box_grasp.cpp
+)
+ament_target_dependencies(task11_shared_box_grasp
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 install(
   TARGETS
     palletize_primitive
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
+    task11_shared_box_grasp
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

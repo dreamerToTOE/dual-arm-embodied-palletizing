@@ -1,6 +1,6 @@
 # Task11：双吸盘共同物体基线
 
-状态：🟡 场景与物理 Bridge 已建立，等待首次 Isaac 运行时验收。
+状态：🟡 场景、物理 Bridge 与双吸附验收节点已建立并编译，等待首次 Isaac 运行时验收。
 
 ## 目标
 
@@ -44,6 +44,8 @@ Task11 只验收双吸附建立和状态/位姿观测；共同抬升、保持相
 isaac/scripts/task11_shared_box_scene.py
 isaac/scripts/task11_shared_box_bridge.py
 
+fr3_dual_palletize/task11_shared_box_grasp
+
 /task11/left/suction_command   std_msgs/Bool
 /task11/left/suction_state     std_msgs/Bool
 /task11/right/suction_command  std_msgs/Bool
@@ -65,7 +67,27 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task11-shared-obje
 exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing-task11-shared-object-baseline/isaac/scripts/task11_shared_box_bridge.py").read())
 ```
 
-之后由 Task11 控制节点（下一步）将左右吸盘分别移动到表中参考点；再向两个 command topic 发送 `true`，并确认：
+Task11 控制节点先将左右吸盘分别移动到表中参考点，再同步下探至 CONTACT 并向两个 command topic 发送 `true`。先做只读预检：
+
+```bash
+cd ~/lmy/dual-arm-embodied-palletizing-task11-shared-object-baseline/ros_ws
+source /opt/ros/humble/setup.bash
+source ~/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+source install/setup.bash
+
+ros2 run fr3_dual_palletize task11_shared_box_grasp --ros-args \
+  -p execute:=false
+```
+
+预检成功后才执行真实双吸附：
+
+```bash
+ros2 run fr3_dual_palletize task11_shared_box_grasp --ros-args \
+  -p execute:=true \
+  -p grasp_timeout_sec:=3.0
+```
+
+真实执行成功时确认：
 
 ```text
 /task11/left/suction_state  = true
