@@ -1,6 +1,6 @@
 # Task10：松协调连续多箱码垛 Demo
 
-状态：🟡 已实现并编译；等待 Isaac 运行时验收。
+状态：✅ 已完成 Isaac 运行时验收（2026-09-10）。
 
 ## 目标
 
@@ -29,10 +29,14 @@ Batch 2: BoxC (left) + BoxD (right)
 | --- | --- | --- | --- |
 | A | 1 / left | `(0.320, -0.250, 0.065)` | `(0.820, +0.120, 0.065)` |
 | B | 1 / right | `(0.320, +0.250, 0.065)` | `(0.820, -0.120, 0.065)` |
-| C | 2 / left | `(0.420, -0.250, 0.065)` | `(0.740, +0.120, 0.065)` |
-| D | 2 / right | `(0.420, +0.250, 0.065)` | `(0.740, -0.120, 0.065)` |
+| C | 2 / left | `(0.380, -0.250, 0.065)` | `(0.740, -0.120, 0.065)` |
+| D | 2 / right | `(0.380, +0.250, 0.065)` | `(0.740, +0.120, 0.065)` |
 
-第一批刻意沿用 Task08 的交叉目标，用于验证 local wait；第二批目标位于 `x=0.740 m`，与第一批目标的 `x=0.820 m` 相差 80 mm。所有箱体为动态刚体、Collider、质量 0.20 kg。
+第一批刻意沿用 Task08 的交叉目标，用于验证时间协调；第二批保持左右各自通道，验证在 A/B 已放置为障碍物时仍能连续完成安全任务。第二批目标位于 `x=0.740 m`，与第一批目标的 `x=0.820 m` 相差 80 mm。所有箱体为动态刚体、Collider、质量 0.20 kg。
+
+第二批源位取 `x=0.380 m`，而非最初的 `x=0.420 m`：实际验证发现后者会让 Isaac 左臂进入接近物理关节限位的构型，造成吸盘中心偏离箱体顶部并使 3 mm 阈值下的吸附失败。新的源位距已验收的 Task07 源位 `x=0.320 m` 为 60 mm；A/C 与 B/D 的箱体净距均为 30 mm。
+
+Task10 的协调器优先只在 `LIFT_TO_PRE_PLACE` 插入局部等待。RRTConnect 的空间路径具有随机性：若 FCL 发现冲突发生在抓取前，则该等待点无法改变冲突。因此 Task10 显式启用二级 `TASK_START_HOME` 策略，让一臂从双方已验证安全的 HOME 保持后再启动；完整轨迹和全部抓放事件同时平移，且候选仍必须经 FCL 复检为 `SAFE` 才能执行。此扩展默认不影响 Task09。
 
 ## 新增接口
 
@@ -101,7 +105,7 @@ source install/setup.bash
 ros2 run fr3_dual_palletize task10_continuous_demo --ros-args \
   -p execute:=false \
   -p wait_step_sec:=0.20 \
-  -p max_wait_sec:=15.0
+  -p max_wait_sec:=30.0
 ```
 
 ### 5. 真实连续执行
@@ -112,8 +116,47 @@ ros2 run fr3_dual_palletize task10_continuous_demo --ros-args \
 ros2 run fr3_dual_palletize task10_continuous_demo --ros-args \
   -p execute:=true \
   -p wait_step_sec:=0.20 \
-  -p max_wait_sec:=15.0
+  -p max_wait_sec:=30.0
 ```
+
+## 运行时验收结果
+
+最终一次只读预检（`execute:=false`）通过：
+
+```text
+Batch 1: FCL SAFE
+  strategy=LOCAL_WAIT_RIGHT
+  wait_stage=TASK_START_HOME
+  wait=4.400 s
+
+Batch 2: FCL SAFE
+  strategy=SIMULTANEOUS
+```
+
+随后在同一干净 Isaac 场景执行真实两批任务。每次执行前都重新规划并重新做 FCL 检查；RRTConnect 的候选路径虽有差异，但均由协调器转换为安全时间表：
+
+```text
+Batch 1:
+  FCL SAFE, LOCAL_WAIT_LEFT at LIFT_TO_PRE_PLACE, wait=1.000 s
+  execution: events=8, candidate=28.588 s, physical pause=3.716 s, wall=32.809 s
+
+Batch 2 (A/B 已作为 MoveIt World 碰撞物):
+  FCL SAFE, LOCAL_WAIT_LEFT at TASK_START_HOME, wait=0.600 s
+  execution: events=8, candidate=22.001 s, physical pause=3.716 s, wall=26.219 s
+
+Task10 PASS：两批次连续松协调任务全部完成。
+```
+
+最终 `/task10/box_poses` Ground Truth，以表格中的目标中心为基准：
+
+| Box | 最终 center (m) | 水平误差 | 三维误差 |
+| --- | --- | ---: | ---: |
+| A | `(0.818837, 0.117698, 0.065000)` | 2.579 mm | 2.579 mm |
+| B | `(0.819923, -0.118935, 0.065000)` | 1.068 mm | 1.068 mm |
+| C | `(0.740301, -0.120192, 0.065000)` | 0.357 mm | 0.357 mm |
+| D | `(0.738574, 0.119332, 0.065000)` | 1.575 mm | 1.575 mm |
+
+四箱均完成 `SUCTION_ON -> ATTACH -> SUCTION_OFF -> DETACH`；第一批放置后的 A/B 被作为第二批的真实 MoveIt World 碰撞物保留，未通过扩大 ACM 或忽略箱体碰撞规避检查。
 
 ## 通过条件
 
@@ -125,7 +168,7 @@ Task10 BATCH_2_WITH_PLACED_OBSTACLES PASS：实际执行完成
 Task10 PASS：两批次连续松协调任务全部完成
 ```
 
-还需保存最终 `/task10/box_poses`，计算 A/B/C/D 各自的水平与三维目标误差。若任何一批无安全解、吸盘未闭合、MoveIt Attached/World 同步失败或执行失败，节点立即停止后续批次，不尝试未经验证的恢复轨迹。
+已保存最终 `/task10/box_poses` 并完成 A/B/C/D 误差统计。若后续运行中任何一批无安全解、吸盘未闭合、MoveIt Attached/World 同步失败或执行失败，节点仍会立即停止后续批次，不尝试未经验证的恢复轨迹。
 
 ## 构建记录
 

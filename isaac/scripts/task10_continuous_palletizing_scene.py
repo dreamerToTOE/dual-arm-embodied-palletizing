@@ -25,8 +25,11 @@ BOX_MASS = 0.20
 BOXES = (
     ("/World/BoxA", (0.320, -0.250, BOX_Z), (0.820, +0.120, BOX_Z), Gf.Vec3f(0.90, 0.30, 0.20)),
     ("/World/BoxB", (0.320, +0.250, BOX_Z), (0.820, -0.120, BOX_Z), Gf.Vec3f(0.20, 0.45, 0.95)),
-    ("/World/BoxC", (0.420, -0.250, BOX_Z), (0.740, +0.120, BOX_Z), Gf.Vec3f(0.95, 0.70, 0.15)),
-    ("/World/BoxD", (0.420, +0.250, BOX_Z), (0.740, -0.120, BOX_Z), Gf.Vec3f(0.55, 0.20, 0.85)),
+    # 第二批取点与 Task07 已验收的 x=0.320 m 工作区保持接近，避开
+    # x=0.420 m 附近 Isaac 物理关节限位导致的吸盘中心偏差。与 A/B 的
+    # x 向中心距为 60 mm，故 30 mm 箱体之间仍保留 30 mm 净距。
+    ("/World/BoxC", (0.380, -0.250, BOX_Z), (0.740, -0.120, BOX_Z), Gf.Vec3f(0.95, 0.70, 0.15)),
+    ("/World/BoxD", (0.380, +0.250, BOX_Z), (0.740, +0.120, BOX_Z), Gf.Vec3f(0.55, 0.20, 0.85)),
 )
 
 
@@ -83,7 +86,8 @@ for index, (path, pick_pose, target_pose, _) in enumerate(BOXES, start=1):
     print(f"Batch {(index - 1) // 2 + 1}: {path}")
     print(f"  pick   = {pick_pose}")
     print(f"  target = {target_pose}")
-print("目标格点：x=0.820 与 x=0.740，y=+/-0.120 m")
+print("第一批交叉目标：x=0.820，y=+/-0.120 m")
+print("第二批同侧目标：x=0.740，left=-0.120 / right=+0.120 m")
 print("已放置箱体在下一批仍保留为 MoveIt World 碰撞物。")
 print("下一步：Timeline Play 后运行 task10_quad_suction_bridge.py。")
 print("====================================================")

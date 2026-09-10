@@ -25,6 +25,9 @@ struct LocalWaitCoordinationConfig
   double max_wait_sec{15.0};
   // true 表示左臂优先通过公共工作区；相同代价时优先让右臂等待。
   bool prefer_left{true};
+  // Task10 连续任务可选的二级策略：若 LIFT 后等待无解，允许一臂
+  // 在共同安全的任务起点（HOME）保持后再启动。默认关闭以保持 Task09 行为。
+  bool allow_task_start_delay{false};
 };
 
 struct LocalWaitCoordinationResult
@@ -33,6 +36,7 @@ struct LocalWaitCoordinationResult
   bool coordinated{false};
   LocalWaitStrategy strategy{LocalWaitStrategy::NO_SOLUTION};
   std::string yielding_arm;
+  std::string wait_stage_name;
   double wait_start_time_sec{-1.0};
   double wait_duration_sec{0.0};
   double original_makespan_sec{0.0};

@@ -200,6 +200,7 @@ struct WaitCandidate
   bool found{false};
   LocalWaitStrategy strategy{LocalWaitStrategy::NO_SOLUTION};
   std::string yielding_arm;
+  std::string wait_stage_name;
   double wait_start_time_sec{-1.0};
   double wait_duration_sec{0.0};
   TaskTrajectoryCandidate left;
@@ -366,6 +367,7 @@ LocalWaitCoordinationResult LocalWaitCoordinator::solve(
       candidate.found = true;
       candidate.strategy = strategy;
       candidate.yielding_arm = wait_left ? "LEFT" : "RIGHT";
+      candidate.wait_stage_name = WAIT_STAGE_NAME;
       candidate.wait_start_time_sec = wait_start;
       candidate.wait_duration_sec = wait_duration;
       candidate.left = test_left;
@@ -380,16 +382,82 @@ LocalWaitCoordinationResult LocalWaitCoordinator::solve(
     }
   }
 
+  // Task09 的局部等待只从 LIFT 后开始。Task10 的完整双臂任务还可能
+  // 因 RRTConnect 的随机空间路径在抓取前相交；这时在 LIFT 点插入等待
+  // 不会改变早期冲突。若显式允许，则把其中一臂保留在双方已验证安全的
+  // HOME 起点，所有后续轨迹与 TaskEvent 一并平移，并再次通过 FCL 验收。
+  if (!best.found && config.allow_task_start_delay)
+  {
+    for (const auto strategy : {
+           config.prefer_left ? LocalWaitStrategy::LOCAL_WAIT_RIGHT :
+                                LocalWaitStrategy::LOCAL_WAIT_LEFT,
+           config.prefer_left ? LocalWaitStrategy::LOCAL_WAIT_LEFT :
+                                LocalWaitStrategy::LOCAL_WAIT_RIGHT})
+    {
+      const bool wait_left = strategy == LocalWaitStrategy::LOCAL_WAIT_LEFT;
+      const auto& original = wait_left ? left : right;
+      const double wait_start = pointTime(original.trajectory.points.front());
+
+      for (std::size_t step = 1; step <= steps; ++step)
+      {
+        const double wait_duration =
+          static_cast<double>(step) * config.wait_step_sec;
+        TaskTrajectoryCandidate altered;
+        std::string insertion_error;
+        if (!insertLocalWait(
+              original, wait_start, wait_duration, altered, insertion_error))
+        {
+          result.error = insertion_error;
+          return result;
+        }
+
+        const auto& test_left = wait_left ? altered : left;
+        const auto& test_right = wait_left ? right : altered;
+        auto report = detector_.check(
+          test_left, test_right, config.sample_period_sec);
+        ++result.schedules_checked;
+        if (!report.valid)
+        {
+          result.error = report.error;
+          return result;
+        }
+        if (report.conflict)
+        {
+          continue;
+        }
+
+        WaitCandidate candidate;
+        candidate.found = true;
+        candidate.strategy = strategy;
+        candidate.yielding_arm = wait_left ? "LEFT" : "RIGHT";
+        candidate.wait_stage_name = "TASK_START_HOME";
+        candidate.wait_start_time_sec = wait_start;
+        candidate.wait_duration_sec = wait_duration;
+        candidate.left = test_left;
+        candidate.right = test_right;
+        candidate.verification_report = std::move(report);
+        if (isBetterCandidate(candidate, best, config.prefer_left))
+        {
+          best = std::move(candidate);
+        }
+        break;
+      }
+    }
+  }
+
   result.valid = true;
   if (!best.found)
   {
-    result.error = "在给定 max_wait_sec 内，LIFT 后局部等待未找到安全解。";
+    result.error = config.allow_task_start_delay ?
+      "在给定 max_wait_sec 内，LIFT 后局部等待与 HOME 起点延迟均未找到安全解。" :
+      "在给定 max_wait_sec 内，LIFT 后局部等待未找到安全解。";
     return result;
   }
 
   result.coordinated = true;
   result.strategy = best.strategy;
   result.yielding_arm = best.yielding_arm;
+  result.wait_stage_name = best.wait_stage_name;
   result.wait_start_time_sec = best.wait_start_time_sec;
   result.wait_duration_sec = best.wait_duration_sec;
   result.coordinated_left = std::move(best.left);

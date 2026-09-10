@@ -66,9 +66,9 @@ const std::array<BatchConfig, 2> BATCHES{{
     2,
     3,
     0.740,
-    +0.120,
-    0.740,
     -0.120,
+    0.740,
+    +0.120,
   },
 }};
 
@@ -339,6 +339,7 @@ bool runBatch(
   coordination_config.wait_step_sec = wait_step_sec;
   coordination_config.max_wait_sec = max_wait_sec;
   coordination_config.prefer_left = true;
+  coordination_config.allow_task_start_delay = true;
   fr3_dual_palletize::LocalWaitCoordinator coordinator(detector);
   const auto coordination = coordinator.solve(
     left_candidate, right_candidate, coordination_config);
@@ -354,9 +355,10 @@ bool runBatch(
 
   RCLCPP_INFO(
     coordinator_node->get_logger(),
-    "Task10 %s：FCL SAFE，strategy=%s, yielding=%s, wait=%.3f s, makespan=%.3f s",
+    "Task10 %s：FCL SAFE，strategy=%s, wait_stage=%s, yielding=%s, wait=%.3f s, makespan=%.3f s",
     batch.name.c_str(),
     fr3_dual_palletize::localWaitStrategyName(coordination.strategy),
+    coordination.wait_stage_name.c_str(),
     coordination.yielding_arm.c_str(),
     coordination.wait_duration_sec,
     coordination.coordinated_makespan_sec);
@@ -410,7 +412,7 @@ int main(int argc, char** argv)
 
   const bool execute = coordinator_node->declare_parameter<bool>("execute", false);
   const double wait_step_sec = coordinator_node->declare_parameter<double>("wait_step_sec", 0.20);
-  const double max_wait_sec = coordinator_node->declare_parameter<double>("max_wait_sec", 15.0);
+  const double max_wait_sec = coordinator_node->declare_parameter<double>("max_wait_sec", 30.0);
   if (wait_step_sec <= 0.0 || max_wait_sec < wait_step_sec)
   {
     RCLCPP_ERROR(coordinator_node->get_logger(), "Task10 local wait 参数无效。");
