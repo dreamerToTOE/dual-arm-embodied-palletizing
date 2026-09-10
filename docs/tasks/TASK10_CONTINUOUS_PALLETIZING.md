@@ -21,6 +21,8 @@ Batch 2: BoxC (left) + BoxD (right)
 
 不使用 Task07 的无协调并行执行路径；两批均只消费 Task08-B/FCL 复检为 `SAFE` 的联合候选。
 
+若 Isaac 当前仍有 Task07/09 的 `task07_dual_suction_bridge.py`，Task10 Bridge 会在启动时关闭它并清理同一末端残留的 Task07 Surface Gripper Joint；无需同时运行两套 Bridge。
+
 ## 场景参数
 
 | Box | 执行批次 / 机械臂 | 初始 center (m) | 目标 center (m) |

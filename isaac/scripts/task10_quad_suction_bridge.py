@@ -101,9 +101,15 @@ class Task10QuadSuctionBridge:
             raise RuntimeError(f"缺少 {hand_path}。请先保留 Task06 双臂场景。")
 
         joint_path = f"{hand_path}/task10_surface_gripper_joint"
-        old_joint = self.stage.GetPrimAtPath(joint_path)
-        if old_joint.IsValid():
-            self.stage.RemovePrim(joint_path)
+        # Task10 可能从已运行的 Task07/09 场景切换而来；一个末端只能有一套
+        # Surface Gripper D6 Joint，先明确清理旧 Task07 和本 Task 残留。
+        for joint_name in (
+            "task07_surface_gripper_joint",
+            "task10_surface_gripper_joint",
+        ):
+            old_joint = self.stage.GetPrimAtPath(f"{hand_path}/{joint_name}")
+            if old_joint.IsValid():
+                self.stage.RemovePrim(old_joint.GetPath())
 
         props = Surface_Gripper_Properties()
         props.d6JointPath = joint_path
@@ -238,6 +244,13 @@ class Task10QuadSuctionBridge:
         except Exception:
             pass
 
+
+old_task07_bridge = getattr(builtins, "_task07_dual_suction_bridge", None)
+if old_task07_bridge is not None:
+    try:
+        old_task07_bridge.shutdown()
+    except Exception as exc:
+        print("清理旧 Task07 bridge 时出现非致命异常：", exc)
 
 old_bridge = getattr(builtins, "_task10_quad_suction_bridge", None)
 if old_bridge is not None:
