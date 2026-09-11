@@ -1,10 +1,14 @@
 # Task22：Learning-based Dual-arm Coordination / 深度强化学习研究线
 
-状态：⚪ 研究增强线，Task16--21 主线稳定后实施。
+> **状态：⚪ 仅讨论 / 远期研究备忘录。当前不实施、不编码、不训练。**
+>
+> **启动条件：只有在经典主线已经完整稳定后，且项目时间允许时，才重新评估是否开展 Task22。至少应先完成并稳定 Task08/FCL 安全链、Task16 规划鲁棒性、Task17--21 的随机多尺寸自主码垛主线。**
+>
+> 本文件当前只用于保留研究想法，不能被解释为近期开发任务，也不应阻塞或改变 Task16--21 的实施顺序。
 
-## 目标
+## 1. 讨论目标
 
-探索深度强化学习在松/紧协调码垛中的作用，但不直接删除 MoveIt / Task08 / FCL 安全链。
+未来如有余力，可探索深度强化学习在松/紧协调码垛中的作用，但不直接删除 MoveIt / Task08 / FCL 安全链。
 
 最终输入可来自：
 
@@ -17,11 +21,61 @@ Placement Planner
 
 学习策略根据当前双臂状态与任务目标生成协调动作、轨迹参数或航点。
 
-## 三种动作层级
+当前阶段只讨论方案，不进行训练环境、网络、reward 或部署代码的实际开发。
 
-### Level 1 — 高层协调策略（最推荐先做）
+---
 
-Policy 输出：
+## 2. DRL 与 Task16 RobustPlanner 的区别
+
+Task16 的经典鲁棒规划器负责：
+
+```text
+RRTConnect 生成多个候选完整路径
+        ↓
+经典指标评分
+        ↓
+剔除不良路径
+        ↓
+选择最佳可行路径
+```
+
+它是一个**候选路径择优器**。
+
+Task22 中更推荐讨论的 Level 2 DRL 不是简单替代这个评分器，而是更进一步：
+
+```text
+当前双臂状态 + pick/place + box/environment
+        ↓
+DRL Policy
+        ↓
+主动提出中间 Cartesian waypoint(s)
+preferred redundant posture
+trajectory timing / progress rate
+        ↓
+IK / trajectory construction
+        ↓
+Task08/FCL safety verification
+```
+
+因此二者职责不同：
+
+```text
+Task16 RobustPlanner：
+“已有多条完整路径，哪一条最好？”
+
+Task22 Level 2 DRL：
+“我主动提出应该从哪里绕、何时通过，构造一条候选轨迹骨架。”
+```
+
+未来如果 Task22 真正实施，可以把 Task16 作为 classical baseline，与 DRL waypoint/timing proposal 做统一随机任务对比。
+
+---
+
+## 3. 三种动作层级（仅研究备忘）
+
+### Level 1 — 高层协调策略
+
+Policy 可输出：
 
 ```text
 arm assignment
@@ -34,9 +88,9 @@ candidate placement index
 
 底层仍由 MoveIt + Task08/FCL 执行。
 
-优点：动作空间小、训练稳定、最容易与现有系统结合。
+优点：动作空间小、训练相对稳定、最容易与现有系统结合。
 
-### Level 2 — 轨迹 / 航点生成（推荐第二阶段）
+### Level 2 — 轨迹骨架 / 航点生成（当前认为最值得未来研究）
 
 Policy 不直接输出电机控制，而输出：
 
@@ -55,9 +109,9 @@ RL proposal
   -> execute if SAFE
 ```
 
-这是“学习生成轨迹”与现有工程最自然的结合点。
+这是“学习生成轨迹骨架”与现有工程最自然的结合点。
 
-### Level 3 — 直接双臂运动控制（研究价值最高、难度最高）
+### Level 3 — 直接双臂运动控制
 
 Policy 直接输出：
 
@@ -71,20 +125,13 @@ Policy 直接输出：
 12-D left/right Cartesian delta
 ```
 
-优点：理论上可学习非常灵活的在线协调。
+该方案研究价值高，但训练难度、安全验证和 sim-to-real 风险都最高，因此即使未来启动 Task22，也不作为第一阶段目标。
 
-缺点：
+---
 
-- 动作维度高；
-- reward shaping 难；
-- 双臂互碰、关节极限、奇异性、吸附事件都要处理；
-- 训练可能出现 reward hacking；
-- sim-to-real 风险最高；
-- 很难直接给出强安全保证。
+## 4. 推荐研究顺序（仅未来参考）
 
-因此不建议作为第一版。
-
-## 推荐研究路线
+如果未来决定真正启动 Task22，建议顺序为：
 
 ```text
 22-A  RL scheduler / coordinator
@@ -94,9 +141,13 @@ Policy 直接输出：
 22-C  optional low-level dual-arm policy
 ```
 
-## Observation 建议
+在 Task16--21 未完成前，不进入上述任何实现阶段。
 
-至少包含：
+---
+
+## 5. Observation 建议
+
+未来至少包含：
 
 ```text
 left/right joint position
@@ -111,11 +162,13 @@ other placed boxes / compact environment representation
 relative arm-arm geometry / distance features
 ```
 
-第一版可以只训练单个 Box 的随机 pick-to-place，再扩展多 Box。
+如果未来训练闭环低层策略，不能仅使用 Cube 起点和码垛终点，因为 policy 还必须知道机器人当前状态。
 
-## Action 方案建议
+---
 
-第一版优先：
+## 6. Action 方案建议
+
+如未来从较低风险版本开始，可优先考虑：
 
 ```text
 [coordination_mode,
@@ -127,9 +180,11 @@ relative arm-arm geometry / distance features
 
 而不是直接 14-D 电机控制。
 
-## Reward 建议
+---
 
-正奖励：
+## 7. Reward 讨论
+
+未来可能的正奖励：
 
 ```text
 task success
@@ -155,9 +210,13 @@ invalid grasp
 planner/FCL rejection
 ```
 
-## Safety Shield
+Task14 的连续 `relative_tcp_error`、箱体相对双 TCP 中点误差和姿态误差，未来可直接成为紧协调 RL 的 reward / constraint 候选指标。
 
-学习策略永远不作为最终安全判据。
+---
+
+## 8. Safety Shield 原则
+
+即使未来实施 Task22，学习策略也永远不作为最终安全判据。
 
 ```text
 RL candidate
@@ -170,11 +229,11 @@ SAFE -> execute
 UNSAFE -> reject / re-sample / fallback classical planner
 ```
 
-后续若研究在线低层控制，可再考虑 CBF-QP safety filter。
+只有在后续研究在线低层控制时，才再讨论 CBF-QP 等 safety filter。
 
-## Curriculum
+---
 
-建议训练顺序：
+## 9. 未来可能的 Curriculum
 
 ```text
 1. 单臂随机 reach
@@ -187,9 +246,13 @@ UNSAFE -> reject / re-sample / fallback classical planner
 8. mixed-size mixed-mode palletizing
 ```
 
-不要从最终完整混合码垛直接开始训练。
+不从最终完整混合码垛直接开始训练。
 
-## 感知接入顺序
+---
+
+## 10. 感知接入顺序
+
+如果未来启动：
 
 ```text
 第一阶段：Isaac Ground Truth
@@ -199,9 +262,11 @@ UNSAFE -> reject / re-sample / fallback classical planner
 
 保持 policy 输入接口不变，使 perception 与 control 可独立替换。
 
-## 需要比较的 baseline
+---
 
-学习方法必须与现有经典方法比较：
+## 11. 未来需要比较的 classical baseline
+
+学习方法若实施，必须与现有经典方法比较：
 
 ```text
 Task16 RobustPlanner
@@ -209,7 +274,7 @@ Task09 minimum local wait
 Task21 rule-based coordination router
 ```
 
-指标：
+指标可包括：
 
 ```text
 success rate
@@ -223,17 +288,34 @@ robustness to randomized initial poses
 robustness to size classes
 ```
 
-## 验收标准
+---
+
+## 12. 当前项目决策
+
+**截至当前版本，Task22 不进入实施。**
+
+近期唯一主线仍然是：
 
 ```text
-T22-01  建立可批量并行训练的 randomized environment
-T22-02  Policy 输入来自通用 BoxSpec / PlacementSpec，而非硬编码坐标
-T22-03  至少完成高层协调或 waypoint policy 的训练与 play
-T22-04  未经 FCL / safety shield 通过的动作不得进入正式执行链
-T22-05  与 classical baseline 做统一随机种子测试
-T22-06  仅在 Level 1/2 已有明确收益后，再决定是否做直接低层 14-D 控制
+Task16  Planning Robustness
+  ↓
+Task17  Box / Task Parameterization
+  ↓
+Task18  Randomized Scene
+  ↓
+Task19  Placement Planner
+  ↓
+Task20  Multi-size Palletizing
+  ↓
+Task21  Loose/Tight Coordination Router
 ```
 
-## 当前建议
+当上述经典系统稳定、Task08/FCL 安全验证完整、随机多尺寸码垛可以批量运行后，如果项目仍有充足时间和算力，再回到本文件重新决定是否启动 DRL。
 
-Task22 是重要的论文增强方向，但不应阻塞 Task16--21。优先让经典系统先具备：鲁棒规划、随机初始位置、自动 placement、多尺寸和自动模式路由；这样才能给 RL 提供稳定环境、清晰 baseline 与大量可自动生成的训练 episode。
+在此之前：
+
+```text
+DO NOT IMPLEMENT
+DO NOT TRAIN
+DO NOT BLOCK CLASSICAL PIPELINE
+```
