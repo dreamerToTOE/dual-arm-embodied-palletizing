@@ -20,13 +20,17 @@ def generate_launch_description():
         "max_wait_sec": ParameterValue(max_wait_sec, value_type=float),
     }
 
-    # Phase A 的可执行文件复用 Task11--13；只接受 execute 参数。
+    # Phase A 复用 Task11--13 协议。Task15 的水平运输保持在桌面上方 100 mm：
+    # 这为双臂前臂提供额外桌面净空，且所有同步段仍需通过 10 ms FCL。
     tight = Node(
         package="fr3_dual_palletize",
         executable="task15_tight_large_cube",
         name="task15_tight_large_cube",
         output="screen",
-        parameters=[{"execute": ParameterValue(execute, value_type=bool)}],
+        parameters=[{
+            "execute": ParameterValue(execute, value_type=bool),
+            "lift_height_m": 0.10,
+        }],
     )
 
     # Phase B 只能在 Phase A 正常退出后创建，避免大件尚未落稳便开始小件任务。

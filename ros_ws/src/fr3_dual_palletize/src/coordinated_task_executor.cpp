@@ -102,7 +102,8 @@ CoordinatedTaskExecutionResult CoordinatedTaskExecutor::execute(
   const CoordinatedTaskExecutionConfig& config)
 {
   CoordinatedTaskExecutionResult result;
-  if (config.command_period_sec <= 0.0 || config.grasp_timeout_sec <= 0.0 ||
+  if (config.command_period_sec <= 0.0 || config.execution_time_scale < 1.0 ||
+      config.grasp_timeout_sec <= 0.0 ||
       config.release_timeout_sec <= 0.0 || config.final_hold_sec < 0.0)
   {
     result.error = "Task09 执行参数无效。";
@@ -146,7 +147,8 @@ CoordinatedTaskExecutionResult CoordinatedTaskExecutor::execute(
     result.candidate_makespan_sec, events.size());
   RCLCPP_INFO(
     logger_,
-    "执行语义：共享时钟同步发送两臂关节命令；抓放事件期间两臂共同 HOLD。"
+    "执行语义：共享时钟同步发送两臂关节命令；抓放事件期间两臂共同 HOLD；"
+    "physical_time_scale=%.2f。", config.execution_time_scale
   );
 
   const auto execution_start = std::chrono::steady_clock::now();
@@ -157,7 +159,9 @@ CoordinatedTaskExecutionResult CoordinatedTaskExecutor::execute(
   while (!failed)
   {
     const auto now = std::chrono::steady_clock::now();
-    double active_time = std::chrono::duration<double>(now - active_start).count();
+    const double active_wall_time = std::chrono::duration<double>(
+      now - active_start).count();
+    const double active_time = active_wall_time / config.execution_time_scale;
     const double event_time = next_event < events.size() ?
       events[next_event].time_sec : result.candidate_makespan_sec;
 
@@ -216,8 +220,10 @@ CoordinatedTaskExecutionResult CoordinatedTaskExecutor::execute(
     {
       break;
     }
+    const double remaining_wall_time = std::max(
+      0.0, (event_time - active_time) * config.execution_time_scale);
     std::this_thread::sleep_for(std::chrono::duration<double>(
-      std::min(config.command_period_sec, std::max(0.0, event_time - active_time))));
+      std::min(config.command_period_sec, remaining_wall_time)));
   }
 
   if (failed)

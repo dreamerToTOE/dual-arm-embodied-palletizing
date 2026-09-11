@@ -312,6 +312,9 @@ fr3_dual_palletize::PrimitiveConfig makePrimitiveConfig(
   config.target_y = assignment.target_y;
   config.target_support_surface_z = target_support_surface_z;
   config.include_safe_egress = true;
+  // 下层/上层均只在 Ground Truth 放置误差验收通过后锁定为 kinematic 支撑块；
+  // Collider 保留，后续 Cube 的规划与 PhysX 接触都不会绕过它。
+  config.freeze_after_settle = true;
   return config;
 }
 
@@ -482,8 +485,14 @@ bool runBatch(
 
   fr3_dual_palletize::CoordinatedTaskExecutor executor(
     coordinator_node->get_logger(), left, right);
+  fr3_dual_palletize::CoordinatedTaskExecutionConfig execution_config;
+  // Task15 的 PhysX 小件搬运采用 2x 物理时间伸缩并在末点保持 2 s。这样
+  // Articulation position controller 与 Surface Gripper 有足够跟随时间；
+  // FCL 已验收的几何路径、LocalWait 时序相对关系和抓放事件顺序均保持不变。
+  execution_config.execution_time_scale = 2.0;
+  execution_config.final_hold_sec = 2.0;
   const auto execution = executor.execute(
-    coordination.coordinated_left, coordination.coordinated_right);
+    coordination.coordinated_left, coordination.coordinated_right, execution_config);
   if (!execution.valid || !execution.completed)
   {
     RCLCPP_ERROR(

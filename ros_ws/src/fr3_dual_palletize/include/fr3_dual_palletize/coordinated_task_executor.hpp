@@ -16,6 +16,10 @@ namespace fr3_dual_palletize
 struct CoordinatedTaskExecutionConfig
 {
   double command_period_sec{0.01};
+  // 候选时间轴是 MoveIt 的理想运动时间。Isaac Articulation position controller
+  // 不直接消费该速度信息；大负载或 Surface Gripper 约束下可将物理发送时间放慢，
+  // 轨迹几何、FCL 采样与事件先后顺序均不改变。
+  double execution_time_scale{1.0};
   double grasp_timeout_sec{2.0};
   double release_timeout_sec{2.0};
   double final_hold_sec{0.50};

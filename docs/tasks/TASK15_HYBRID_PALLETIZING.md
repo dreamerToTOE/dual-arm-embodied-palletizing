@@ -1,6 +1,6 @@
 # Task15 — 紧/松协调混合码垛场景与复用策略
 
-状态：🟡 场景、Task15 专用 Bridge 与两个复用控制器已实现；尚未进行 Isaac 实机执行验收。
+状态：🟢 已在本机 Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 完成一次完整物理执行验收。
 
 ## 目标
 
@@ -90,13 +90,16 @@ Phase B2 — 松协调（上层两个独立小件）
 
 因此“大件”与“小件”不会同时调度：紧协调完成并把大件回写为 World 障碍物后，才开始松协调。两层小件也不跨层并行，避免上层规划忽略尚未落稳的支撑物；但同一层左右两个独立小件会优先真正并行。
 
-## 当前验收边界
+## 验收边界
 
 - T15-01：Task15 场景不修改 Task06 的 FR3、吸盘、Table 或 ActionGraph。
 - T15-02：大件为可碰撞、可动力学搬运的 `1.00 kg` 物体，且复用 Task11--Task13 几何与 `+X 0.100 m` 运输。
 - T15-03：四个小件均为独立的 Dynamic Rigid Body + Collider。
 - T15-04：四个目标高度满足两层支撑几何。
-- T15-05：Task15 Bridge、紧协调复用目标和配置驱动松协调控制器均已构建；尚未进行 Isaac + MoveIt 物理执行验收。
+- T15-05：Task15 Bridge、紧协调复用目标和配置驱动松协调控制器均已构建。
+- T15-06：Phase A 的 CONTACT、共同抬升、运输、下降、退出均以完整双臂状态每 `10 ms` 做 FCL 检查；本次实测均通过。
+- T15-07：Phase A 大件与 Phase B 四个小件均完成 Isaac Ground Truth 放置误差验收，并在保留 Collider 的前提下成为稳定支撑物。
+- T15-08：总入口按 `Phase A -> Phase B1 -> Phase B2` 完整执行通过；同一层左右两个小件为真正并行的松协调搬运。
 
 ## 加载场景
 
@@ -125,6 +128,15 @@ Strategy Phase B2 / LOOSE: ...
 - `PrimitiveConfig::target_support_surface_z` 的默认值为 `0.050 m`，所以旧 Task04--Task10 不变。Task15 下层在 LargeCube 最新顶面释放；上层在对应下层小 Cube 最新 Ground Truth 顶面释放。释放前保持 `1 mm` gap，PhysX 落稳后的几何中心对应表中的 `0.145 / 0.175 m`。
 - Bridge：`isaac/scripts/task15_hybrid_suction_bridge.py` 发布 `/task15/large_cube_pose` 与按 `[SmallCube1, SmallCube2, SmallCube3, SmallCube4]` 排列的 `/task15/small_cube_poses`，并复用已验收的 `.003 m` 阈值、`1e6` force/torque limit 与 retry-close 参数。
 
+### 本次物理执行中的问题与修复
+
+这些处理只作用于 Task15，不改写已经验收的 Task11--Task13 或 Task04--Task10 路径。
+
+1. 初始的共同吸附横向偏置和 Pose 冗余解会使 `COMMON_TRANSPORT` 偶发产生不安全的 Cartesian 候选，或在 Isaac 中造成大件边缘受力。Task15 采用 `105 mm` 对称吸附偏置；到已离线验收的固定 `PRE_CONTACT` 关节目标仍走 MoveIt RRTConnect（最多 3 次），仅消除随机器械臂冗余解的差异。
+2. 单臂 `computeCartesianPath()` 不能正确表达“另一台臂也会同步离开”的情况。因此它只生成共同阶段候选；同步、统一时长后必须用完整双臂 RobotState 与桌面等静态 World 物体逐 `10 ms` 进行 FCL。任何碰撞都会中止任务，绝不因共同搬运而扩大 ACM 或关闭桌面/机器人碰撞。
+3. Isaac Articulation position controller 不消费 MoveIt 的点间速度。大件和小件若按候选墙钟时间发送，双吸盘约束可能尚未跟随就进入下一阶段。Task15 专用执行改为 `2.0x` 物理时间伸缩并在末点保持 `2 s`；候选几何、FCL 采样、LocalWait 相对时间和 ATTACH/DETACH 顺序不变。
+4. 每个物体先按 Isaac Ground Truth 验收（平面/高度误差均不超过 `10 mm`），才向 Bridge 请求 stable-support lock。Bridge 仅设置 RigidBody 的 `kinematicEnabled=true`，**不删除 Collider**：已放稳的大件能作为下层支撑面，已放稳的下层小件能作为上层支撑面，后续的 MoveIt 与 PhysX 碰撞仍真实存在。
+
 ## 单入口与失败重规划
 
 Task15 的紧协调和松协调不是两个需要人工衔接的命令。使用下面的总 launch 后，Phase A 成功退出才会自动启动 Phase B；Phase A 任意失败会以非零退出码停止 launch，绝不会在大件未放稳时启动小件码垛：
@@ -143,9 +155,67 @@ Phase B 的实际执行仍会检查大 Cube 已在紧协调目标 `(0.650, 0.000
 `task15_small_cube_1`--`task15_small_cube_4` Planning Scene 对象。这避免上一轮
 预检或中途失败遗留的小件目标碰撞物阻挡新一轮大件共同运输；不会删除桌面、机器人或其他任务对象。
 
-## 当前本地验证
+## 本机完整执行验证
 
-已完成静态和构建验证，尚未进行物理执行验收：
+以下记录对应一次从新 Isaac Stage 开始的完整 Task15 验收。为隔离本机其他 ROS 会话，三个终端都使用 `ROS_DOMAIN_ID=15` 与 `ROS_LOCALHOST_ONLY=1`。
+
+终端 1，启动 Isaac（`isaacsim.code_editor.vscode` 仅供自动化验证插件连接；不影响常规仿真）：
+
+```bash
+cd /home/ubuntu2004/isaacsim-4.5.0
+ROS_DOMAIN_ID=15 ROS_LOCALHOST_ONLY=1 \
+  ./isaac-sim.sh --enable isaacsim.code_editor.vscode
+```
+
+在 Isaac Script Editor 中，确认 Timeline 为 **Stop** 后加载完整场景；然后点击 **Play**，再加载 Task15 Bridge：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_palletizing_scene.py").read())
+
+# 点击 Play 后执行：
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_suction_bridge.py").read())
+```
+
+终端 2，启动双 FR3 MoveIt：
+
+```bash
+source /opt/ros/humble/setup.bash
+source /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+export ROS_DOMAIN_ID=15
+export ROS_LOCALHOST_ONLY=1
+ros2 launch fr3_dual_compact_suction_description moveit_dual_compact_suction.launch.py
+```
+
+终端 3，执行唯一的 Task15 入口：
+
+```bash
+source /opt/ros/humble/setup.bash
+source /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+export ROS_DOMAIN_ID=15
+export ROS_LOCALHOST_ONLY=1
+ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py execute:=true
+```
+
+本次结果：
+
+| 阶段 | 验收结果 |
+|---|---|
+| Phase A 共同抬升 | 大件期望 `z=0.1900 m`，实际 `(0.5503, -0.0001, 0.1897) m`；箱体误差 `0.454 mm`，双臂相对 `link8` 误差 `0.212 mm`。 |
+| Phase A 共同运输 | 期望 `(0.6503, -0.0001, 0.1897) m`，实际 `(0.6501, 0.0000, 0.1896) m`；箱体误差 `0.274 mm`。 |
+| Phase A 放置 | 期望 `(0.6500, 0.0000, 0.0900) m`，实际 `(0.6495, 0.0002, 0.0900) m`；放置误差 `0.509 mm`。 |
+| Phase B1 下层并行 | SmallCube1 实际 `(0.6495, -0.0801, 0.1450) m`，XY 误差 `0.529 mm`；SmallCube2 实际 `(0.6495, +0.0803, 0.1450) m`，XY 误差 `0.553 mm`。 |
+| Phase B2 上层并行 | SmallCube3 实际 `(0.6498, -0.0800, 0.1750) m`，XY 误差 `0.152 mm`；SmallCube4 实际 `(0.6486, +0.0803, 0.1750) m`，XY 误差 `1.477 mm`。 |
+
+运行结束后又通过 Isaac Stage 查询确认五个方块都位于上述目标层级，且五个 `RigidBodyAPI.kinematicEnabled` 都为 `true`（Collider 仍保留）。日志最终为：
+
+```text
+Task15 Phase A PASS
+Task15 Phase B lower PASS
+Task15 Phase B upper PASS
+Task15 Phase B PASS：两层四个独立小 Cube 已按配置完成松协调码垛。
+```
+
+构建与静态检查也已通过：
 
 ```bash
 cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
@@ -158,4 +228,4 @@ python3 -m py_compile \
   /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task15_hybrid_suction_bridge.py
 ```
 
-构建结果：`task15_tight_large_cube` 与 `task15_loose_layer_stack` 均已安装；Bridge 与场景 Python 语法检查通过。下一次验收应先以 `execute:=false` 分别验证两个 Phase 的规划/FCL，再在已重置 Isaac 场景中执行 `execute:=true`。
+构建结果：`task15_tight_large_cube` 与 `task15_loose_layer_stack` 均已安装；Bridge 与场景 Python 语法检查通过。需要预先检查时，可在已经启动场景、Bridge 与 MoveIt 后运行 `execute:=false`；真正验收使用以上 `execute:=true` 单入口。

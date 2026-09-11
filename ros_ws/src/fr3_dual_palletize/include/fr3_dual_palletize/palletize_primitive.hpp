@@ -15,6 +15,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 
 #include "fr3_dual_palletize/task_trajectory_candidate.hpp"
@@ -43,6 +44,9 @@ struct PrimitiveConfig
   // Task09-B 安全退出扩展：放置完成后追加 MoveIt 规划的安全退出段，终点回到本次候选的 HOME。
   // 默认关闭，保持 Task08-A/B 原有 HOME -> ... -> RETREAT 候选定义不变。
   bool include_safe_egress{false};
+  // Task15 的上层码垛中，已通过真实落稳误差验收的小件会请求 Isaac 将其设为
+  // kinematic 支撑块；Collider 保留，后续 Cube 仍必须与它发生真实碰撞。
+  bool freeze_after_settle{false};
 };
 
 // Task08 协调层读取的候选搬运轨迹。
@@ -219,6 +223,7 @@ private:
 
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr command_pub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr suction_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr lock_object_pub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr suction_state_sub_;
 
   std::atomic_bool suction_closed_{false};

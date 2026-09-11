@@ -12,7 +12,7 @@ import omni.kit.app
 import omni.physx
 import omni.physics.tensors
 import omni.usd
-from pxr import Usd, UsdGeom
+from pxr import Usd, UsdGeom, UsdPhysics
 
 extension_manager = omni.kit.app.get_app().get_extension_manager()
 extension_manager.set_extension_enabled_immediate(
@@ -28,7 +28,7 @@ import rclpy
 from geometry_msgs.msg import PoseArray, PoseStamped
 from rclpy.context import Context
 from rclpy.executors import SingleThreadedExecutor
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 
 
 SIDES = ("left", "right")
@@ -39,6 +39,14 @@ SMALL_CUBE_PATHS = (
     "/World/Task15SmallCube3",
     "/World/Task15SmallCube4",
 )
+
+LOCKABLE_OBJECT_PATHS = {
+    "task15_large_cube": LARGE_CUBE_PATH,
+    "task15_small_cube_1": SMALL_CUBE_PATHS[0],
+    "task15_small_cube_2": SMALL_CUBE_PATHS[1],
+    "task15_small_cube_3": SMALL_CUBE_PATHS[2],
+    "task15_small_cube_4": SMALL_CUBE_PATHS[3],
+}
 
 
 class Task15HybridSuctionBridge:
@@ -59,6 +67,8 @@ class Task15HybridSuctionBridge:
         self._retry_accum = {side: 0.0 for side in SIDES}
         self._retry_interval = 0.05
         self._publish_accum = 0.0
+        self._requested_locks = set()
+        self._locked_objects = set()
         self.grippers = {side: self._build_gripper(side) for side in SIDES}
 
         self.context = Context()
@@ -92,6 +102,12 @@ class Task15HybridSuctionBridge:
             "/task15/small_cube_poses",
             10,
         )
+        self.lock_sub = self.node.create_subscription(
+            String,
+            "/task15/lock_placed_object",
+            self._on_lock_request,
+            10,
+        )
 
         self.spin_thread = threading.Thread(target=self.executor.spin, daemon=True)
         self.spin_thread.start()
@@ -108,6 +124,7 @@ class Task15HybridSuctionBridge:
         print("RIGHT: /task15/right/suction_command <-> suction_state")
         print("PUB  : /task15/large_cube_pose geometry_msgs/PoseStamped")
         print("PUB  : /task15/small_cube_poses [SmallCube1, 2, 3, 4]")
+        print("SUB  : /task15/lock_placed_object std_msgs/String")
         print("Surface Gripper 参数复用 Task11--13 / Task10 已验收基线")
         print("====================================================")
 
@@ -163,9 +180,54 @@ class Task15HybridSuctionBridge:
         with self._lock:
             self._desired[side] = bool(message.data)
 
+    def _on_lock_request(self, message):
+        object_id = str(message.data)
+        if object_id not in LOCKABLE_OBJECT_PATHS:
+            print(
+                "[Task15 Isaac] Ignore invalid stable-support lock request: "
+                f"{object_id}"
+            )
+            return
+
+        with self._lock:
+            self._requested_locks.add(object_id)
+
+    def _apply_requested_locks(self):
+        with self._lock:
+            requested = set(self._requested_locks)
+
+        for object_id in requested:
+            if object_id in self._locked_objects:
+                continue
+
+            prim_path = LOCKABLE_OBJECT_PATHS[object_id]
+            prim = self.stage.GetPrimAtPath(prim_path)
+            if not prim.IsValid() or not prim.HasAPI(UsdPhysics.RigidBodyAPI):
+                print(
+                    "[Task15 Isaac] Cannot lock object without RigidBodyAPI: "
+                    f"{object_id} ({prim_path})"
+                )
+                continue
+
+            # 放置误差已由 ROS 端 Ground Truth 验收。此处仅把已落稳物体转为
+            # kinematic 稳定支撑块；Collider 不会删除，后续 cube 仍需真实碰撞。
+            rigid_body = UsdPhysics.RigidBodyAPI(prim)
+            rigid_body.CreateKinematicEnabledAttr().Set(True)
+            self._locked_objects.add(object_id)
+
+            pose = self._ground_truth_pose(prim_path).pose
+            print(
+                "[Task15 Isaac] STABLE SUPPORT LOCKED: "
+                f"{object_id} at "
+                f"({pose.position.x:.4f}, {pose.position.y:.4f}, "
+                f"{pose.position.z:.4f})"
+            )
+
     def _on_physics_step(self, dt):
         with self._lock:
             desired = dict(self._desired)
+
+        self._apply_requested_locks()
 
         for side in SIDES:
             gripper = self.grippers[side]

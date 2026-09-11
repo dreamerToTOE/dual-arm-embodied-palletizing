@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -12,8 +13,11 @@
 #include <vector>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit/collision_detection/collision_common.h>
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit/robot_state/robot_state.h>
 #include <moveit_msgs/msg/collision_object.hpp>
 #include <moveit_msgs/msg/robot_trajectory.hpp>
 #include <rclcpp/parameter_client.hpp>
@@ -21,6 +25,7 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <shape_msgs/msg/solid_primitive.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 
 using namespace std::chrono_literals;
@@ -35,8 +40,31 @@ constexpr double CONTACT_CLEARANCE_Z = 0.001;
 constexpr double PRE_CONTACT_CLEARANCE_Z = 0.065;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
+constexpr double SYNCHRONIZED_COLLISION_SAMPLE_PERIOD_SEC = 0.010;
 // 对随机采样规划及瞬时 Planning Scene 更新做显式外层重试。
 constexpr int MAX_PLANNING_RETRIES = 3;
+
+// 大件需要双吸盘落在顶面内侧。Task15 使用 105 mm 对称偏置：它比
+// Task11--13 已验收的 100 mm 稍向外避开相邻前臂，同时不会让双吸盘约束
+// 在大件边缘附近产生不必要的动态扭矩。完整同步轨迹仍须通过 10 ms FCL。
+#ifdef TASK15_TIGHT_PHASE
+constexpr double DEFAULT_SHARED_GRIP_Y_OFFSET_M = 0.105;
+// Isaac 的 Articulation position controller 不消费 MoveIt 的点间速度；紧协调
+// 搬运必须给 PhysX 与双吸盘约束足够的跟随时间，不能把轨迹点按墙钟过快推送。
+constexpr double DEFAULT_EXECUTION_TIME_SCALE = 2.0;
+constexpr int FINAL_COMMAND_HOLD_REPEATS = 200;
+// Task15-A 在 105 mm 对称吸附偏置、100 mm 共同抬升下离线 FCL 验收得到的
+// PRE_CONTACT 关节姿态。固定该冗余解可消除 RRT 姿态采样使后续同步 Cartesian
+// 候选偶发切换肘部构型的问题；到该姿态的 RRT 路径仍每次做碰撞检测与三次重试。
+constexpr std::array<double, 7> TASK15_LEFT_PRE_CONTACT_Q{
+  0.37910, -0.65746, 1.25502, -2.65743, 0.82499, 2.23021, 0.97346};
+constexpr std::array<double, 7> TASK15_RIGHT_PRE_CONTACT_Q{
+  -1.38519, -0.24313, -0.19564, -2.71551, -0.07425, 2.47476, -1.51658};
+#else
+constexpr double DEFAULT_SHARED_GRIP_Y_OFFSET_M = 0.100;
+constexpr double DEFAULT_EXECUTION_TIME_SCALE = 1.0;
+constexpr int FINAL_COMMAND_HOLD_REPEATS = 50;
+#endif
 
 // Task15 不复制 Task11--Task13 已验收的紧协调状态机，而是通过独立 target
 // 复用同一源文件。仅切换任务命名、ROS 话题与 Planning Scene object id。
@@ -142,6 +170,132 @@ bool synchronizeDurations(
   return true;
 }
 
+std::vector<double> interpolatePositions(
+  const trajectory_msgs::msg::JointTrajectory& trajectory,
+  double time_sec)
+{
+  const auto& points = trajectory.points;
+  if (points.empty())
+  {
+    return {};
+  }
+  if (time_sec <= pointTime(points.front()))
+  {
+    return points.front().positions;
+  }
+  if (time_sec >= pointTime(points.back()))
+  {
+    return points.back().positions;
+  }
+
+  for (std::size_t index = 1; index < points.size(); ++index)
+  {
+    const double before_time = pointTime(points[index - 1]);
+    const double after_time = pointTime(points[index]);
+    if (time_sec > after_time)
+    {
+      continue;
+    }
+    const double duration = after_time - before_time;
+    if (duration <= 1.0e-9)
+    {
+      return points[index].positions;
+    }
+    const double alpha = (time_sec - before_time) / duration;
+    std::vector<double> positions(points[index].positions.size());
+    for (std::size_t joint = 0; joint < positions.size(); ++joint)
+    {
+      positions[joint] = points[index - 1].positions[joint] +
+        alpha * (points[index].positions[joint] - points[index - 1].positions[joint]);
+    }
+    return positions;
+  }
+  return points.back().positions;
+}
+
+// 紧协调不是“左臂先完成、右臂再完成”。两个末端必须在同一时间轴上同步运动。
+// 因此单臂 Cartesian 仅以双方的共同阶段起点作为碰撞上下文；随后在完整双臂
+// RobotState 上逐 10 ms FCL 采样，验证真正将要执行的同步轨迹。
+bool validateSynchronizedStage(
+  const rclcpp::Node::SharedPtr& node,
+  const moveit::core::RobotModelConstPtr& model,
+  const std::vector<moveit_msgs::msg::CollisionObject>& static_world_objects,
+  const trajectory_msgs::msg::JointTrajectory& left_trajectory,
+  const trajectory_msgs::msg::JointTrajectory& right_trajectory,
+  const std::string& stage)
+{
+  if (!model || left_trajectory.joint_names.empty() || right_trajectory.joint_names.empty() ||
+      left_trajectory.points.empty() || right_trajectory.points.empty())
+  {
+    RCLCPP_ERROR(node->get_logger(), "Task12 %s：同步 FCL 输入不完整。", stage.c_str());
+    return false;
+  }
+
+  auto scene = std::make_shared<planning_scene::PlanningScene>(model);
+  for (const auto& object : static_world_objects)
+  {
+    if (!scene->processCollisionObjectMsg(object))
+    {
+      RCLCPP_ERROR(
+        node->get_logger(), "Task12 %s：无法载入静态碰撞物 %s。",
+        stage.c_str(), object.id.c_str());
+      return false;
+    }
+  }
+
+  const double duration = std::max(
+    pointTime(left_trajectory.points.back()), pointTime(right_trajectory.points.back()));
+  const std::size_t sample_count = static_cast<std::size_t>(
+    std::ceil(duration / SYNCHRONIZED_COLLISION_SAMPLE_PERIOD_SEC));
+  for (std::size_t index = 0; index <= sample_count; ++index)
+  {
+    const double sample_time = std::min(
+      static_cast<double>(index) * SYNCHRONIZED_COLLISION_SAMPLE_PERIOD_SEC, duration);
+    const auto left_positions = interpolatePositions(left_trajectory, sample_time);
+    const auto right_positions = interpolatePositions(right_trajectory, sample_time);
+    if (left_positions.size() != left_trajectory.joint_names.size() ||
+        right_positions.size() != right_trajectory.joint_names.size())
+    {
+      RCLCPP_ERROR(node->get_logger(), "Task12 %s：同步 FCL 轨迹点无效。", stage.c_str());
+      return false;
+    }
+
+    moveit::core::RobotState state(model);
+    state.setToDefaultValues();
+    state.setVariablePositions(left_trajectory.joint_names, left_positions);
+    state.setVariablePositions(right_trajectory.joint_names, right_positions);
+    state.update();
+
+    collision_detection::CollisionRequest request;
+    request.contacts = true;
+    request.max_contacts = 32;
+    request.max_contacts_per_pair = 1;
+    collision_detection::CollisionResult result;
+    scene->checkCollision(request, result, state);
+    if (!result.collision)
+    {
+      continue;
+    }
+
+    std::string pair = "unknown";
+    if (!result.contacts.empty())
+    {
+      const auto& first_contact = *result.contacts.begin();
+      pair = first_contact.first.first + " <-> " + first_contact.first.second;
+    }
+    RCLCPP_ERROR(
+      node->get_logger(),
+      "Task12 %s：同步 FCL 冲突，t=%.3f s，pair=%s。",
+      stage.c_str(), sample_time, pair.c_str());
+    return false;
+  }
+
+  RCLCPP_INFO(
+    node->get_logger(), "Task12 %s：同步 FCL PASS，samples=%zu。",
+    stage.c_str(), sample_count + 1);
+  return true;
+}
+
 double distance3d(
   const geometry_msgs::msg::Point& first,
   const geometry_msgs::msg::Point& second)
@@ -215,9 +369,15 @@ bool planCombinedCartesianStage(
 
     moveit_msgs::msg::RobotTrajectory robot_trajectory;
     moveit_msgs::msg::MoveItErrorCodes error;
+    // 两臂的真实轨迹将严格同步。若此处开启单臂 avoid_collisions，MoveIt 只能把
+    // 另一臂冻结在阶段起点，便会把“另一臂随后同步离开”的合法相对运动误判为
+    // 碰撞，导致 Cartesian fraction 从 0 开始。
+    //
+    // 因而这里只生成单臂几何候选；两条候选同步后必须通过
+    // validateSynchronizedStage() 的完整双臂 FCL 检查，未通过绝不执行。
     const double fraction = group.computeCartesianPath(
       std::vector<geometry_msgs::msg::Pose>{target}, CARTESIAN_EEF_STEP, 0.0,
-      robot_trajectory, true, &error);
+      robot_trajectory, false, &error);
     RCLCPP_INFO(
       node->get_logger(),
       "Task12 %s %s Cartesian fraction=%.4f, error=%d, attempt=%d/%d",
@@ -327,15 +487,48 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr subscription_;
 };
 
+#ifdef TASK15_TIGHT_PHASE
+bool requestTask15StableSupportLock(
+  const rclcpp::Node::SharedPtr& node,
+  const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr& publisher,
+  const std::string& object_id)
+{
+  for (int attempt = 0; attempt < 30; ++attempt)
+  {
+    if (publisher && publisher->get_subscription_count() > 0)
+    {
+      std_msgs::msg::String request;
+      request.data = object_id;
+      // Isaac 端对 object id 幂等；短间隔重发仅避免 DDS 刚发现时的首包丢失。
+      for (int repeat = 0; repeat < 3; ++repeat)
+      {
+        publisher->publish(request);
+        std::this_thread::sleep_for(50ms);
+      }
+      RCLCPP_INFO(
+        node->get_logger(), "Task15 stable-support lock requested: %s", object_id.c_str());
+      return true;
+    }
+    std::this_thread::sleep_for(100ms);
+  }
+  RCLCPP_ERROR(node->get_logger(), "Task15 lock bridge 未就绪：%s", object_id.c_str());
+  return false;
+}
+#endif
+
 class ArmControl
 {
 public:
-  ArmControl(const rclcpp::Node::SharedPtr& node, bool left)
+  ArmControl(
+    const rclcpp::Node::SharedPtr& node,
+    bool left,
+    double execution_time_scale)
     : node_(node),
       side_(left ? "left" : "right"),
       group_name_(left ? "left_arm" : "right_arm"),
       eef_link_(left ? "left_fr3_link8" : "right_fr3_link8"),
-      joint_prefix_(left ? "left_" : "right_")
+      joint_prefix_(left ? "left_" : "right_"),
+      execution_time_scale_(execution_time_scale)
   {
     command_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>(
       "/" + side_ + "/joint_command", 10);
@@ -407,6 +600,54 @@ public:
     RCLCPP_ERROR(
       node_->get_logger(),
       "Task11 %s PRE_CONTACT：三次 RRTConnect 规划均失败，停止任务。",
+      side_.c_str());
+    return false;
+  }
+
+  bool planJointTarget(
+    moveit::planning_interface::MoveGroupInterface& group,
+    const std::vector<double>& target_q,
+    trajectory_msgs::msg::JointTrajectory& output) const
+  {
+    const auto* joint_model_group = group.getRobotModel()->getJointModelGroup(group_name_);
+    if (joint_model_group == nullptr ||
+        target_q.size() != joint_model_group->getVariableCount())
+    {
+      return false;
+    }
+
+    group.setPlannerId("RRTConnectkConfigDefault");
+    group.setPlanningTime(5.0);
+    group.setNumPlanningAttempts(1);
+    group.setMaxVelocityScalingFactor(0.15);
+    group.setMaxAccelerationScalingFactor(0.15);
+    group.clearPoseTargets();
+    group.setJointValueTarget(target_q);
+
+    for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
+    {
+      group.setStartStateToCurrentState();
+      moveit::planning_interface::MoveGroupInterface::Plan plan;
+      if (group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+          !plan.trajectory_.joint_trajectory.points.empty())
+      {
+        output = plan.trajectory_.joint_trajectory;
+        ensureTiming(output);
+        RCLCPP_INFO(
+          node_->get_logger(),
+          "Task15 %s FIXED PRE_CONTACT joint plan OK, attempt=%d/%d",
+          side_.c_str(), attempt, MAX_PLANNING_RETRIES);
+        return true;
+      }
+      RCLCPP_WARN(
+        node_->get_logger(),
+        "Task15 %s FIXED PRE_CONTACT RRTConnect 失败，attempt=%d/%d。",
+        side_.c_str(), attempt, MAX_PLANNING_RETRIES);
+    }
+
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "Task15 %s FIXED PRE_CONTACT：三次 RRTConnect 规划均失败，停止任务。",
       side_.c_str());
     return false;
   }
@@ -488,12 +729,13 @@ public:
       message.position = positions;
       command_pub_->publish(message);
     };
-    const double duration = pointTime(trajectory.points.back());
+    const double logical_duration = pointTime(trajectory.points.back());
     while (true)
     {
-      const double time = std::chrono::duration<double>(
+      const double wall_time = std::chrono::duration<double>(
         std::chrono::steady_clock::now() - start).count();
-      if (time > duration)
+      const double time = wall_time / execution_time_scale_;
+      if (time > logical_duration)
       {
         break;
       }
@@ -518,7 +760,7 @@ public:
       publish(positions);
       std::this_thread::sleep_for(10ms);
     }
-    for (int repeat = 0; repeat < 50; ++repeat)
+    for (int repeat = 0; repeat < FINAL_COMMAND_HOLD_REPEATS; ++repeat)
     {
       publish(trajectory.points.back().positions);
       std::this_thread::sleep_for(10ms);
@@ -562,6 +804,7 @@ private:
   std::string group_name_;
   std::string eef_link_;
   std::string joint_prefix_;
+  double execution_time_scale_;
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr command_pub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr suction_pub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr state_sub_;
@@ -611,6 +854,10 @@ int main(int argc, char** argv)
 #endif
   const bool execute = node->declare_parameter<bool>("execute", false);
   const double grasp_timeout = node->declare_parameter<double>("grasp_timeout_sec", 3.0);
+  const double shared_grip_y_offset = node->declare_parameter<double>(
+    "shared_grip_y_offset_m", DEFAULT_SHARED_GRIP_Y_OFFSET_M);
+  const double execution_time_scale = node->declare_parameter<double>(
+    "execution_time_scale", DEFAULT_EXECUTION_TIME_SCALE);
 #ifdef TASK12_SHARED_LIFT
   const double lift_height = node->declare_parameter<double>(
     "lift_height_m", DEFAULT_LIFT_HEIGHT_M);
@@ -637,7 +884,9 @@ int main(int argc, char** argv)
 #endif
 #endif
 
-  if (!copyRobotModelParameters(node) || grasp_timeout <= 0.0
+  if (!copyRobotModelParameters(node) || grasp_timeout <= 0.0 ||
+      shared_grip_y_offset <= 0.0 || shared_grip_y_offset >= 0.5 * BOX_Y ||
+      execution_time_scale < 1.0
 #ifdef TASK12_SHARED_LIFT
       || lift_height <= 0.0 || settle_sec < 0.0 || box_lift_tolerance <= 0.0 ||
       relative_tcp_tolerance <= 0.0 || box_orientation_tolerance <= 0.0
@@ -690,13 +939,17 @@ int main(int argc, char** argv)
       RCLCPP_ERROR(node->get_logger(), "等待 %s 超时。", SHARED_POSE_TOPIC);
       break;
     }
-    ArmControl left(node, true);
-    ArmControl right(node, false);
+    ArmControl left(node, true, execution_time_scale);
+    ArmControl right(node, false, execution_time_scale);
     if (!left.waitForBridge() || !right.waitForBridge())
     {
       RCLCPP_ERROR(node->get_logger(), "Task11 Isaac bridge 未就绪。");
       break;
     }
+#ifdef TASK15_TIGHT_PHASE
+    const auto task15_lock_pub = node->create_publisher<std_msgs::msg::String>(
+      "/task15/lock_placed_object", 10);
+#endif
 
     moveit::planning_interface::PlanningSceneInterface scene;
     // Task15 是单入口可重复执行任务。Phase B 的预检或中途失败可能把四个小件
@@ -726,22 +979,37 @@ int main(int argc, char** argv)
 
     const double contact_z = box_pose.position.z + 0.5 * BOX_Z + CONTACT_CLEARANCE_Z;
     const auto left_contact = topDownPose(
-      box_pose.position.x, box_pose.position.y - 0.100, contact_z);
+      box_pose.position.x, box_pose.position.y - shared_grip_y_offset, contact_z);
     const auto right_contact = topDownPose(
-      box_pose.position.x, box_pose.position.y + 0.100, contact_z);
+      box_pose.position.x, box_pose.position.y + shared_grip_y_offset, contact_z);
+#ifndef TASK15_TIGHT_PHASE
     const auto left_pre = topDownPose(
-      box_pose.position.x, box_pose.position.y - 0.100,
+      box_pose.position.x, box_pose.position.y - shared_grip_y_offset,
       contact_z + PRE_CONTACT_CLEARANCE_Z);
     const auto right_pre = topDownPose(
-      box_pose.position.x, box_pose.position.y + 0.100,
+      box_pose.position.x, box_pose.position.y + shared_grip_y_offset,
       contact_z + PRE_CONTACT_CLEARANCE_Z);
+#endif
 
     moveit::planning_interface::MoveGroupInterface left_group(node, left.groupName());
     moveit::planning_interface::MoveGroupInterface right_group(node, right.groupName());
     trajectory_msgs::msg::JointTrajectory left_pre_traj;
     trajectory_msgs::msg::JointTrajectory right_pre_traj;
+#ifdef TASK15_TIGHT_PHASE
+    if (!left.planJointTarget(
+          left_group,
+          std::vector<double>(
+            TASK15_LEFT_PRE_CONTACT_Q.begin(), TASK15_LEFT_PRE_CONTACT_Q.end()),
+          left_pre_traj) ||
+        !right.planJointTarget(
+          right_group,
+          std::vector<double>(
+            TASK15_RIGHT_PRE_CONTACT_Q.begin(), TASK15_RIGHT_PRE_CONTACT_Q.end()),
+          right_pre_traj))
+#else
     if (!left.planPose(left_group, left_pre, left_pre_traj) ||
         !right.planPose(right_group, right_pre, right_pre_traj))
+#endif
     {
       RCLCPP_ERROR(node->get_logger(), "Task11 PRE_CONTACT 规划失败。");
       break;
@@ -749,11 +1017,20 @@ int main(int argc, char** argv)
 
     if (execute)
     {
-      // 右臂的 pre-contact 规划必须在左臂到位后重新生成，使 MoveIt 使用
-      // 左臂真实静止状态，而非预检时的 HOME 状态。
-      if (!left.execute(left_pre_traj) ||
-          !right.planPose(right_group, right_pre, right_pre_traj) ||
-          !right.execute(right_pre_traj))
+      // Task15 固定已验收的冗余关节目标，避免右臂在左臂到位后再次采样出
+      // 不同肘部构型。其 RRT 路径仍通过 MoveIt 的全机器人碰撞检查。
+      if (!left.execute(left_pre_traj)
+#ifdef TASK15_TIGHT_PHASE
+          || !right.planJointTarget(
+            right_group,
+            std::vector<double>(
+              TASK15_RIGHT_PRE_CONTACT_Q.begin(), TASK15_RIGHT_PRE_CONTACT_Q.end()),
+            right_pre_traj)
+#else
+          // 旧 Task11--13 保持原有行为：右臂到左臂静止后的当前状态重新规划。
+          || !right.planPose(right_group, right_pre, right_pre_traj)
+#endif
+          || !right.execute(right_pre_traj))
       {
         RCLCPP_ERROR(node->get_logger(), "Task11 PRE_CONTACT 执行失败。");
         break;
@@ -767,12 +1044,29 @@ int main(int argc, char** argv)
     // 两个 Surface Gripper 物理约束负责。
     scene.removeCollisionObjects({SHARED_OBJECT_ID});
     std::this_thread::sleep_for(250ms);
+    // SharedBox 在双吸盘保持期间由 Isaac PhysX 约束表示，不能同时 attach 到两条
+    // MoveIt link。同步 FCL 因此只载入仍存在于 World 的静态物体（桌面等）。
+    std::vector<moveit_msgs::msg::CollisionObject> static_world_objects;
+    for (const auto& [object_id, object] : scene.getObjects())
+    {
+      if (object_id != SHARED_OBJECT_ID)
+      {
+        static_world_objects.push_back(object);
+      }
+    }
     trajectory_msgs::msg::JointTrajectory left_contact_traj;
     trajectory_msgs::msg::JointTrajectory right_contact_traj;
     if (!left.planCartesianContact(
           left_group, finalPositions(left_pre_traj), left_contact, left_contact_traj) ||
         !right.planCartesianContact(
-          right_group, finalPositions(right_pre_traj), right_contact, right_contact_traj))
+          right_group, finalPositions(right_pre_traj), right_contact, right_contact_traj)
+#ifdef TASK12_SHARED_LIFT
+        || !synchronizeDurations(left_contact_traj, right_contact_traj)
+        || !validateSynchronizedStage(
+          node, left_group.getRobotModel(), static_world_objects,
+          left_contact_traj, right_contact_traj, "CONTACT")
+#endif
+        )
     {
       RCLCPP_ERROR(node->get_logger(), "Task11 CONTACT Cartesian 规划失败。");
       break;
@@ -783,9 +1077,9 @@ int main(int argc, char** argv)
     // attach 到两个末端的 AttachedBody 表示。因此共同抬升采用完整双臂 RobotState
     // 做臂-臂碰撞检查；箱体只在有意接触与吸附期间临时移出 MoveIt World。
     const auto left_lift_target = topDownPose(
-      box_pose.position.x, box_pose.position.y - 0.100, contact_z + lift_height);
+      box_pose.position.x, box_pose.position.y - shared_grip_y_offset, contact_z + lift_height);
     const auto right_lift_target = topDownPose(
-      box_pose.position.x, box_pose.position.y + 0.100, contact_z + lift_height);
+      box_pose.position.x, box_pose.position.y + shared_grip_y_offset, contact_z + lift_height);
     trajectory_msgs::msg::JointTrajectory left_lift_traj;
     trajectory_msgs::msg::JointTrajectory right_lift_traj;
     if (!planCombinedCartesianStage(
@@ -796,7 +1090,10 @@ int main(int argc, char** argv)
           node, right_group, right.groupName(), left.groupName(),
           finalPositions(right_contact_traj), finalPositions(left_contact_traj),
           right_lift_target, "COMMON_LIFT", right.side(), right_lift_traj) ||
-        !synchronizeDurations(left_lift_traj, right_lift_traj))
+        !synchronizeDurations(left_lift_traj, right_lift_traj) ||
+        !validateSynchronizedStage(
+          node, left_group.getRobotModel(), static_world_objects,
+          left_lift_traj, right_lift_traj, "COMMON_LIFT"))
     {
       RCLCPP_ERROR(node->get_logger(), "Task12 COMMON_LIFT 规划或同步失败。");
       break;
@@ -807,11 +1104,11 @@ int main(int argc, char** argv)
     // 使每次 Cartesian 计算都以另一台机械臂真实的共同搬运姿态为碰撞上下文。
     const auto left_transport_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y - 0.100 + transport_delta_y,
+      box_pose.position.y - shared_grip_y_offset + transport_delta_y,
       contact_z + lift_height);
     const auto right_transport_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y + 0.100 + transport_delta_y,
+      box_pose.position.y + shared_grip_y_offset + transport_delta_y,
       contact_z + lift_height);
     trajectory_msgs::msg::JointTrajectory left_transport_traj;
     trajectory_msgs::msg::JointTrajectory right_transport_traj;
@@ -823,7 +1120,10 @@ int main(int argc, char** argv)
           node, right_group, right.groupName(), left.groupName(),
           finalPositions(right_lift_traj), finalPositions(left_lift_traj),
           right_transport_target, "COMMON_TRANSPORT", right.side(), right_transport_traj) ||
-        !synchronizeDurations(left_transport_traj, right_transport_traj))
+        !synchronizeDurations(left_transport_traj, right_transport_traj) ||
+        !validateSynchronizedStage(
+          node, left_group.getRobotModel(), static_world_objects,
+          left_transport_traj, right_transport_traj, "COMMON_TRANSPORT"))
     {
       RCLCPP_ERROR(node->get_logger(), "Task12 COMMON_TRANSPORT 规划或同步失败。");
       break;
@@ -834,11 +1134,11 @@ int main(int argc, char** argv)
     // 使箱体底面在释放前恰好悬于桌面顶面上方，随后由 PhysX 自然落稳。
     const auto left_place_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y - 0.100 + transport_delta_y,
+      box_pose.position.y - shared_grip_y_offset + transport_delta_y,
       contact_z);
     const auto right_place_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y + 0.100 + transport_delta_y,
+      box_pose.position.y + shared_grip_y_offset + transport_delta_y,
       contact_z);
     trajectory_msgs::msg::JointTrajectory left_descent_traj;
     trajectory_msgs::msg::JointTrajectory right_descent_traj;
@@ -850,7 +1150,10 @@ int main(int argc, char** argv)
           node, right_group, right.groupName(), left.groupName(),
           finalPositions(right_transport_traj), finalPositions(left_transport_traj),
           right_place_target, "COMMON_DESCENT", right.side(), right_descent_traj) ||
-        !synchronizeDurations(left_descent_traj, right_descent_traj))
+        !synchronizeDurations(left_descent_traj, right_descent_traj) ||
+        !validateSynchronizedStage(
+          node, left_group.getRobotModel(), static_world_objects,
+          left_descent_traj, right_descent_traj, "COMMON_DESCENT"))
     {
       RCLCPP_ERROR(node->get_logger(), "Task13 COMMON_DESCENT 规划或同步失败。");
       break;
@@ -860,11 +1163,11 @@ int main(int argc, char** argv)
     // 夹在吸盘下方的 World CollisionObject。释放、落稳、回写 MoveIt World 后只执行。
     const auto left_retreat_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y - 0.100 + transport_delta_y,
+      box_pose.position.y - shared_grip_y_offset + transport_delta_y,
       contact_z + PRE_CONTACT_CLEARANCE_Z);
     const auto right_retreat_target = topDownPose(
       box_pose.position.x + transport_delta_x,
-      box_pose.position.y + 0.100 + transport_delta_y,
+      box_pose.position.y + shared_grip_y_offset + transport_delta_y,
       contact_z + PRE_CONTACT_CLEARANCE_Z);
     trajectory_msgs::msg::JointTrajectory left_retreat_traj;
     trajectory_msgs::msg::JointTrajectory right_retreat_traj;
@@ -876,7 +1179,10 @@ int main(int argc, char** argv)
           node, right_group, right.groupName(), left.groupName(),
           finalPositions(right_descent_traj), finalPositions(left_descent_traj),
           right_retreat_target, "COMMON_RETREAT", right.side(), right_retreat_traj) ||
-        !synchronizeDurations(left_retreat_traj, right_retreat_traj))
+        !synchronizeDurations(left_retreat_traj, right_retreat_traj) ||
+        !validateSynchronizedStage(
+          node, left_group.getRobotModel(), static_world_objects,
+          left_retreat_traj, right_retreat_traj, "COMMON_RETREAT"))
     {
       RCLCPP_ERROR(node->get_logger(), "Task13 COMMON_RETREAT 规划或同步失败。");
       break;
@@ -1080,6 +1386,14 @@ int main(int argc, char** argv)
       break;
     }
     std::this_thread::sleep_for(300ms);
+#ifdef TASK15_TIGHT_PHASE
+    // Phase A 的大件已通过真实落稳测量。将其锁定为保留 Collider 的稳定支撑面，
+    // 避免后续小件搬运时被末端轻微接触推离目标；绝不从 MoveIt/PhysX 中忽略它。
+    if (!requestTask15StableSupportLock(node, task15_lock_pub, SHARED_OBJECT_ID))
+    {
+      break;
+    }
+#endif
     if (!executeSynchronously(left, left_retreat_traj, right, right_retreat_traj))
     {
       RCLCPP_ERROR(node->get_logger(), "COMMON_RETREAT 同步执行失败。");

@@ -33,6 +33,8 @@ constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
 // 规划器带有随机性。每个阶段独立尝试三次；第三次仍失败才把失败交给上层任务。
 constexpr int MAX_PLANNING_RETRIES = 3;
+constexpr double SETTLED_PLACEMENT_XY_TOLERANCE_M = 0.010;
+constexpr double SETTLED_PLACEMENT_Z_TOLERANCE_M = 0.010;
 
 // Task08-A 以 Task04 的既有控制时序构造名义时间轴。
 // 轨迹候选不接入 Isaac，因此 SUCTION state 的实际异步等待不在此处估计。
@@ -145,6 +147,11 @@ PalletizePrimitive::PalletizePrimitive(
     config_.joint_command_topic, 10);
   suction_pub_ = node_->create_publisher<std_msgs::msg::Bool>(
     config_.suction_command_topic, 10);
+  if (config_.freeze_after_settle)
+  {
+    lock_object_pub_ = node_->create_publisher<std_msgs::msg::String>(
+      "/task15/lock_placed_object", 10);
+  }
 
   suction_state_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
     config_.suction_state_topic,
@@ -167,6 +174,8 @@ bool PalletizePrimitive::waitForIsaacBridge()
   {
     if (command_pub_->get_subscription_count() > 0 &&
         suction_pub_->get_subscription_count() > 0 &&
+        (!config_.freeze_after_settle ||
+         (lock_object_pub_ && lock_object_pub_->get_subscription_count() > 0)) &&
         have_suction_state_.load())
     {
       RCLCPP_INFO(node_->get_logger(), "[%s] bridge READY", config_.label.c_str());
@@ -177,11 +186,12 @@ bool PalletizePrimitive::waitForIsaacBridge()
 
   RCLCPP_ERROR(
     node_->get_logger(),
-    "[%s] bridge 超时：检查 %s / %s / %s",
+    "[%s] bridge 超时：检查 %s / %s / %s%s",
     config_.label.c_str(),
     config_.joint_command_topic.c_str(),
     config_.suction_command_topic.c_str(),
-    config_.suction_state_topic.c_str());
+    config_.suction_state_topic.c_str(),
+    config_.freeze_after_settle ? " /task15/lock_placed_object" : "");
   return false;
 }
 
@@ -728,6 +738,25 @@ bool PalletizePrimitive::applyTaskEvent(
       }
 
       const auto settled_pose = pose_provider_(config_.pose_index);
+      const double expected_settled_z = config_.target_support_surface_z + BOX_HALF;
+      const double xy_error = std::hypot(
+        settled_pose.position.x - config_.target_x,
+        settled_pose.position.y - config_.target_y);
+      const double z_error = std::abs(settled_pose.position.z - expected_settled_z);
+      if (xy_error > SETTLED_PLACEMENT_XY_TOLERANCE_M ||
+          z_error > SETTLED_PLACEMENT_Z_TOLERANCE_M)
+      {
+        RCLCPP_ERROR(
+          node_->get_logger(),
+          "[%s] 放置 Ground Truth 超限：actual=(%.4f, %.4f, %.4f), expected=(%.4f, %.4f, %.4f), "
+          "xy=%.3f mm (<=%.3f), z=%.3f mm (<=%.3f)。",
+          config_.label.c_str(),
+          settled_pose.position.x, settled_pose.position.y, settled_pose.position.z,
+          config_.target_x, config_.target_y, expected_settled_z,
+          xy_error * 1000.0, SETTLED_PLACEMENT_XY_TOLERANCE_M * 1000.0,
+          z_error * 1000.0, SETTLED_PLACEMENT_Z_TOLERANCE_M * 1000.0);
+        return false;
+      }
       removeWorldObject(config_.object_id);
       if (!addWorldObject(config_.object_id, settled_pose))
       {
@@ -739,6 +768,29 @@ bool PalletizePrimitive::applyTaskEvent(
         "[%s] Isaac settle pose -> MoveIt World: (%.4f, %.4f, %.4f)",
         config_.label.c_str(),
         settled_pose.position.x, settled_pose.position.y, settled_pose.position.z);
+      RCLCPP_INFO(
+        node_->get_logger(),
+        "[%s] placement verified: xy=%.3f mm, z=%.3f mm",
+        config_.label.c_str(), xy_error * 1000.0, z_error * 1000.0);
+      if (config_.freeze_after_settle)
+      {
+        if (!lock_object_pub_ || lock_object_pub_->get_subscription_count() == 0)
+        {
+          RCLCPP_ERROR(
+            node_->get_logger(), "[%s] Task15 lock bridge 未就绪。", config_.label.c_str());
+          return false;
+        }
+        std_msgs::msg::String lock_request;
+        lock_request.data = config_.object_id;
+        // 多次短间隔发布仅为跨进程发现/调度留出余量；Isaac 端对同一 object id 幂等。
+        for (int attempt = 0; attempt < 3; ++attempt)
+        {
+          lock_object_pub_->publish(lock_request);
+          std::this_thread::sleep_for(50ms);
+        }
+        RCLCPP_INFO(
+          node_->get_logger(), "[%s] Task15 stable-support lock requested.", config_.label.c_str());
+      }
       return true;
     }
   }
