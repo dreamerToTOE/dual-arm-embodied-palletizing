@@ -20,8 +20,6 @@ namespace fr3_dual_palletize
 {
 namespace
 {
-constexpr double BOX_SIZE = 0.030;
-constexpr double BOX_HALF = BOX_SIZE * 0.5;
 constexpr double SUCTION_TCP_OFFSET_Z = 0.105;
 constexpr double CONTACT_TCP_CLEARANCE = 0.001;
 constexpr double PI = 3.14159265358979323846;
@@ -269,7 +267,11 @@ moveit_msgs::msg::CollisionObject makeWorldBox(
 
   shape_msgs::msg::SolidPrimitive shape;
   shape.type = shape_msgs::msg::SolidPrimitive::BOX;
-  shape.dimensions = {BOX_SIZE, BOX_SIZE, BOX_SIZE};
+  shape.dimensions = {
+    candidate.object_dimensions[0],
+    candidate.object_dimensions[1],
+    candidate.object_dimensions[2],
+  };
   object.primitives.push_back(shape);
   object.primitive_poses.push_back(
     state == ObjectState::WORLD_INITIAL ?
@@ -284,14 +286,17 @@ void attachBoxToState(
   const TaskTrajectoryCandidate& candidate)
 {
   std::vector<shapes::ShapeConstPtr> shapes;
-  shapes.push_back(std::make_shared<shapes::Box>(BOX_SIZE, BOX_SIZE, BOX_SIZE));
+  shapes.push_back(std::make_shared<shapes::Box>(
+    candidate.object_dimensions[0],
+    candidate.object_dimensions[1],
+    candidate.object_dimensions[2]));
 
   EigenSTL::vector_Isometry3d shape_poses;
   shape_poses.push_back(Eigen::Isometry3d::Identity());
 
   Eigen::Isometry3d relative_pose = Eigen::Isometry3d::Identity();
   relative_pose.translation().z() =
-    SUCTION_TCP_OFFSET_Z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    SUCTION_TCP_OFFSET_Z + 0.5 * candidate.object_dimensions[2] + CONTACT_TCP_CLEARANCE;
   relative_pose.rotate(Eigen::AngleAxisd(PI, Eigen::Vector3d::UnitX()));
 
   const std::vector<std::string> touch_links = candidate.object_touch_links.empty() ?

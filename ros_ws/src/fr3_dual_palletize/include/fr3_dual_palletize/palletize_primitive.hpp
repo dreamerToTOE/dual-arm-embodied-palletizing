@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <atomic>
 #include <condition_variable>
 #include <cstddef>
@@ -35,6 +36,9 @@ struct PrimitiveConfig
   std::string suction_command_topic;
   std::string suction_state_topic;
   std::string object_id;
+  // Task17：物体几何属于任务输入，不能假设所有任务都是 30 mm cube。
+  // 顺序为 x/y/z，m；默认仅用于兼容 Task04--Task16 的历史小 Cube。
+  std::array<double, 3> object_dimensions{{0.030, 0.030, 0.030}};
   std::size_t pose_index{0};
   double target_x{0.0};
   double target_y{0.0};

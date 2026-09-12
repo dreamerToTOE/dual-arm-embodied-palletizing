@@ -20,8 +20,6 @@ namespace fr3_dual_palletize
 {
 namespace
 {
-constexpr double BOX_SIZE = 0.030;
-constexpr double BOX_HALF = 0.5 * BOX_SIZE;
 constexpr double SUCTION_TCP_OFFSET_Z = 0.105;
 constexpr double CONTACT_TCP_CLEARANCE = 0.001;
 constexpr double PLACEMENT_RELEASE_GAP = 0.001;
@@ -83,6 +81,7 @@ void ensureTrajectoryTiming(trajectory_msgs::msg::JointTrajectory& trajectory)
 moveit_msgs::msg::CollisionObject makeBoxObject(
   const std::string& id,
   const geometry_msgs::msg::Pose& pose,
+  const std::array<double, 3>& dimensions,
   int operation)
 {
   moveit_msgs::msg::CollisionObject object;
@@ -91,12 +90,17 @@ moveit_msgs::msg::CollisionObject makeBoxObject(
 
   shape_msgs::msg::SolidPrimitive shape;
   shape.type = shape_msgs::msg::SolidPrimitive::BOX;
-  shape.dimensions = {BOX_SIZE, BOX_SIZE, BOX_SIZE};
+  shape.dimensions = {dimensions[0], dimensions[1], dimensions[2]};
 
   object.primitives.push_back(shape);
   object.primitive_poses.push_back(pose);
   object.operation = operation;
   return object;
+}
+
+double boxHalfHeight(const PrimitiveConfig& config)
+{
+  return 0.5 * config.object_dimensions[2];
 }
 
 }  // namespace
@@ -608,7 +612,7 @@ bool PalletizePrimitive::addWorldObject(
     std::lock_guard<std::mutex> lock(*planning_scene_mutex_);
     moveit::planning_interface::PlanningSceneInterface psi;
     ok = psi.applyCollisionObject(makeBoxObject(
-      object_id, pose, moveit_msgs::msg::CollisionObject::ADD));
+      object_id, pose, config_.object_dimensions, moveit_msgs::msg::CollisionObject::ADD));
   }
   std::this_thread::sleep_for(250ms);
   return ok;
@@ -626,11 +630,15 @@ bool PalletizePrimitive::attachObject(
 
   shape_msgs::msg::SolidPrimitive shape;
   shape.type = shape_msgs::msg::SolidPrimitive::BOX;
-  shape.dimensions = {BOX_SIZE, BOX_SIZE, BOX_SIZE};
+  shape.dimensions = {
+    config_.object_dimensions[0],
+    config_.object_dimensions[1],
+    config_.object_dimensions[2],
+  };
 
   geometry_msgs::msg::Pose relative_pose;
   relative_pose.position.z =
-    SUCTION_TCP_OFFSET_Z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    SUCTION_TCP_OFFSET_Z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   relative_pose.orientation.x = 1.0;
   relative_pose.orientation.w = 0.0;
 
@@ -731,7 +739,7 @@ bool PalletizePrimitive::applyTaskEvent(
       }
 
       const auto settled_pose = pose_provider_(config_.pose_index);
-      const double expected_settled_z = config_.target_support_surface_z + BOX_HALF;
+      const double expected_settled_z = config_.target_support_surface_z + boxHalfHeight(config_);
       const double xy_error = std::hypot(
         settled_pose.position.x - config_.target_x,
         settled_pose.position.y - config_.target_y);
@@ -918,14 +926,14 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
 
   const geometry_msgs::msg::Pose pick_pose = pose_provider_(config_.pose_index);
   const double pick_contact_tcp_z =
-    pick_pose.position.z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    pick_pose.position.z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   const double pre_pick_tcp_z = pick_contact_tcp_z + PRE_PICK_CLEARANCE;
   const double lift_tcp_z = pick_contact_tcp_z + LIFT_CLEARANCE;
 
   const double planned_release_center_z =
-    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + boxHalfHeight(config_) + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
-    planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    planned_release_center_z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
     std::max(MIN_PRE_PLACE_TCP_Z, place_tcp_z + PRE_PLACE_CLEARANCE);
 
@@ -935,6 +943,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   candidate.planning_group = config_.planning_group;
   candidate.object_id = config_.object_id;
   candidate.eef_link = config_.eef_link;
+  candidate.object_dimensions = config_.object_dimensions;
   candidate.object_touch_links = {config_.eef_link, config_.tool_link};
   candidate.start_q = current_q;
   candidate.initial_object_pose = pick_pose;
@@ -1234,7 +1243,7 @@ bool PalletizePrimitive::prepareTransferCandidateImpl(
 
   const geometry_msgs::msg::Pose pick_pose = pose_provider_(config_.pose_index);
   const double pick_contact_tcp_z =
-    pick_pose.position.z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    pick_pose.position.z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   const double pre_pick_tcp_z = pick_contact_tcp_z + PRE_PICK_CLEARANCE;
   const double lift_tcp_z = pick_contact_tcp_z + LIFT_CLEARANCE;
 
@@ -1317,9 +1326,9 @@ bool PalletizePrimitive::prepareTransferCandidateImpl(
   }
 
   const double planned_release_center_z =
-    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + boxHalfHeight(config_) + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
-    planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    planned_release_center_z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
     std::max(MIN_PRE_PLACE_TCP_Z, place_tcp_z + PRE_PLACE_CLEARANCE);
 
@@ -1412,9 +1421,9 @@ bool PalletizePrimitive::finishPreparedTransferImpl(
   }
 
   const double planned_release_center_z =
-    config_.target_support_surface_z + BOX_HALF + PLACEMENT_RELEASE_GAP;
+    config_.target_support_surface_z + boxHalfHeight(config_) + PLACEMENT_RELEASE_GAP;
   const double place_tcp_z =
-    planned_release_center_z + BOX_HALF + CONTACT_TCP_CLEARANCE;
+    planned_release_center_z + boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
   const double pre_place_tcp_z =
     std::max(MIN_PRE_PLACE_TCP_Z, place_tcp_z + PRE_PLACE_CLEARANCE);
 

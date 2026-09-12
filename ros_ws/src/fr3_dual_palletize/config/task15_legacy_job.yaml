@@ -1,0 +1,117 @@
+# Task17 兼容配置：数值严格复现已验收的 Task15 场景。
+# 该文件表达任务事实；左右臂分配、Task08/09 协调与 Isaac Prim/topic 绑定仍由
+# Task15 adapter 负责，后续 Task18 会把运行时 Ground Truth 映射到相同 Box id。
+job_id: task15_hybrid_legacy
+
+pallet_region:
+  frame_id: world
+  min_x: 0.540
+  max_x: 0.760
+  min_y: -0.160
+  max_y: 0.160
+  support_height: 0.050
+
+boxes:
+  - id: task15_large_cube
+    dimensions: [0.220, 0.320, 0.080]
+    mass: 1.000
+    payload_class: shared_heavy
+    allowed_modes: [tight_shared_object]
+    initial_pose:
+      position: [0.550, 0.000, 0.090]
+    grasp_candidates:
+      - id: left_top
+        local_pose:
+          position: [0.000, -0.080, 0.040]
+      - id: right_top
+        local_pose:
+          position: [0.000, 0.080, 0.040]
+
+  - id: task15_small_cube_1
+    dimensions: [0.030, 0.030, 0.030]
+    mass: 0.200
+    payload_class: single_light
+    allowed_modes: [loose_left, loose_dual_parallel]
+    initial_pose:
+      position: [0.320, -0.250, 0.065]
+    grasp_candidates:
+      - id: center_top
+        local_pose:
+          position: [0.000, 0.000, 0.015]
+
+  - id: task15_small_cube_2
+    dimensions: [0.030, 0.030, 0.030]
+    mass: 0.200
+    payload_class: single_light
+    allowed_modes: [loose_right, loose_dual_parallel]
+    initial_pose:
+      position: [0.320, 0.250, 0.065]
+    grasp_candidates:
+      - id: center_top
+        local_pose:
+          position: [0.000, 0.000, 0.015]
+
+  - id: task15_small_cube_3
+    dimensions: [0.030, 0.030, 0.030]
+    mass: 0.200
+    payload_class: single_light
+    allowed_modes: [loose_left, loose_dual_parallel]
+    initial_pose:
+      position: [0.380, -0.250, 0.065]
+    grasp_candidates:
+      - id: center_top
+        local_pose:
+          position: [0.000, 0.000, 0.015]
+
+  - id: task15_small_cube_4
+    dimensions: [0.030, 0.030, 0.030]
+    mass: 0.200
+    payload_class: single_light
+    allowed_modes: [loose_right, loose_dual_parallel]
+    initial_pose:
+      position: [0.380, 0.250, 0.065]
+    grasp_candidates:
+      - id: center_top
+        local_pose:
+          position: [0.000, 0.000, 0.015]
+
+placements:
+  - id: task15_large_target
+    object_id: task15_large_cube
+    target_pose:
+      position: [0.650, 0.000, 0.090]
+    support_surface_id: table
+    support_height: 0.050
+    orientation_tolerance_rad: 0.035
+
+  - id: task15_lower_left
+    object_id: task15_small_cube_1
+    target_pose:
+      position: [0.650, -0.080, 0.145]
+    support_surface_id: task15_large_cube
+    support_height: 0.130
+    orientation_tolerance_rad: 0.035
+
+  - id: task15_lower_right
+    object_id: task15_small_cube_2
+    target_pose:
+      position: [0.650, 0.080, 0.145]
+    support_surface_id: task15_large_cube
+    support_height: 0.130
+    orientation_tolerance_rad: 0.035
+
+  - id: task15_upper_left
+    object_id: task15_small_cube_3
+    target_pose:
+      position: [0.650, -0.080, 0.175]
+    support_surface_id: task15_small_cube_1
+    support_height: 0.160
+    orientation_tolerance_rad: 0.035
+
+  - id: task15_upper_right
+    object_id: task15_small_cube_4
+    target_pose:
+      position: [0.650, 0.080, 0.175]
+    support_surface_id: task15_small_cube_2
+    support_height: 0.160
+    orientation_tolerance_rad: 0.035

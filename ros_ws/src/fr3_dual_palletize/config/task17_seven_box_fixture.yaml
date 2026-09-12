@@ -1,0 +1,103 @@
+# Task17 扩展性 fixture：第 7 个 Box 仅通过 YAML 加入，用于验证核心解析器和
+# CollisionObject 生成不依赖固定数量、固定尺寸或“大/小”二分类。
+job_id: task17_seven_box_fixture
+
+pallet_region:
+  frame_id: world
+  min_x: 0.500
+  max_x: 0.900
+  min_y: -0.300
+  max_y: 0.300
+  support_height: 0.050
+
+boxes:
+  - id: fixture_box_1
+    dimensions: [0.030, 0.030, 0.030]
+    mass: 0.200
+    payload_class: small
+    allowed_modes: [loose_left, loose_right]
+    initial_pose: {position: [0.300, -0.240, 0.065]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.015]}}]
+  - id: fixture_box_2
+    dimensions: [0.040, 0.040, 0.030]
+    mass: 0.280
+    payload_class: small_wide
+    allowed_modes: [loose_left, loose_right]
+    initial_pose: {position: [0.330, -0.160, 0.065]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.015]}}]
+  - id: fixture_box_3
+    dimensions: [0.060, 0.030, 0.025]
+    mass: 0.300
+    payload_class: slim
+    allowed_modes: [loose_left, loose_right]
+    initial_pose: {position: [0.350, -0.080, 0.0625]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.0125]}}]
+  - id: fixture_box_4
+    dimensions: [0.050, 0.050, 0.050]
+    mass: 0.500
+    payload_class: medium
+    allowed_modes: [loose_left, loose_right]
+    initial_pose: {position: [0.300, 0.080, 0.075]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.025]}}]
+  - id: fixture_box_5
+    dimensions: [0.100, 0.060, 0.040]
+    mass: 0.700
+    payload_class: medium_wide
+    allowed_modes: [loose_left, loose_right, tight_shared_object]
+    initial_pose: {position: [0.350, 0.160, 0.070]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.020]}}]
+  - id: fixture_box_6
+    dimensions: [0.140, 0.100, 0.060]
+    mass: 1.200
+    payload_class: large
+    allowed_modes: [tight_shared_object]
+    initial_pose: {position: [0.390, 0.230, 0.080]}
+    grasp_candidates:
+      - id: left_top
+        local_pose: {position: [0.000, -0.030, 0.030]}
+      - id: right_top
+        local_pose: {position: [0.000, 0.030, 0.030]}
+  - id: fixture_box_7
+    dimensions: [0.080, 0.040, 0.090]
+    mass: 0.850
+    payload_class: tall
+    allowed_modes: [loose_left, loose_right]
+    initial_pose: {position: [0.420, 0.000, 0.095]}
+    grasp_candidates: [{id: center_top, local_pose: {position: [0.000, 0.000, 0.045]}}]
+
+placements:
+  - id: fixture_target_1
+    object_id: fixture_box_1
+    target_pose: {position: [0.580, -0.200, 0.065]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_2
+    object_id: fixture_box_2
+    target_pose: {position: [0.640, -0.160, 0.065]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_3
+    object_id: fixture_box_3
+    target_pose: {position: [0.700, -0.100, 0.0625]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_4
+    object_id: fixture_box_4
+    target_pose: {position: [0.560, 0.080, 0.075]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_5
+    object_id: fixture_box_5
+    target_pose: {position: [0.660, 0.120, 0.070]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_6
+    object_id: fixture_box_6
+    target_pose: {position: [0.760, 0.000, 0.080]}
+    support_surface_id: table
+    support_height: 0.050
+  - id: fixture_target_7
+    object_id: fixture_box_7
+    target_pose: {position: [0.820, 0.160, 0.095]}
+    support_surface_id: table
+    support_height: 0.050

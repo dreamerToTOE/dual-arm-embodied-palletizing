@@ -16,6 +16,24 @@ find_package(moveit_msgs REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(ompl REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
+# Task17：配置驱动的 BoxSpec / PlacementSpec 数据模型。它不依赖某个 Task 的
+# 执行器，Task18 随机场景、Task19 放置规划和 Task21 路由可直接复用。
+add_library(palletizing_job
+  src/palletizing_job_loader.cpp
+)
+target_include_directories(palletizing_job
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(palletizing_job yaml-cpp)
+ament_target_dependencies(palletizing_job
+  geometry_msgs
+  shape_msgs
+  moveit_msgs
+)
 
 add_library(palletize_primitive
   src/palletize_primitive.cpp
@@ -196,6 +214,17 @@ ament_target_dependencies(task15_loose_layer_stack
 add_executable(task16_planning_benchmark
   src/task16_planning_benchmark.cpp
 )
+
+add_executable(task17_job_validate
+  src/task17_job_validate.cpp
+)
+target_link_libraries(task17_job_validate palletizing_job)
+ament_target_dependencies(task17_job_validate
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  moveit_msgs
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -223,6 +252,7 @@ ament_target_dependencies(task14_shared_box_geometry_monitor
 install(
   TARGETS
     palletize_primitive
+    palletizing_job
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
@@ -233,6 +263,7 @@ install(
     task15_tight_large_cube
     task15_loose_layer_stack
     task16_planning_benchmark
+    task17_job_validate
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -252,6 +283,11 @@ install(
 )
 
 install(
+  DIRECTORY config/
+  DESTINATION share/${PROJECT_NAME}/config
+)
+
+install(
   DIRECTORY launch/
   DESTINATION share/${PROJECT_NAME}/launch
 )
@@ -267,6 +303,7 @@ ament_export_dependencies(
   moveit_msgs
   moveit_core
   moveit_ros_planning_interface
+  yaml-cpp
 )
 
 ament_package()

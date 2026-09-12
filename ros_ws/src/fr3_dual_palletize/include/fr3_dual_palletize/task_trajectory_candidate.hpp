@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,6 +34,9 @@ struct TaskTrajectoryCandidate
   std::string planning_group;
   std::string object_id;
   std::string eef_link;
+  // Task17：必须随完整任务候选传递物体几何，Task08/FCL 才不会把所有携带物
+  // 误建模为 30 mm cube。默认值只保持历史 Task08 demo 的 ABI/行为兼容。
+  std::array<double, 3> object_dimensions{{0.030, 0.030, 0.030}};
   // ATTACH 后允许 Box 与这些末端部件发生安装/吸附接触。
   // Task08-B 在私有 RobotState 中重建 AttachedBody 时复用该 ACM 语义。
   std::vector<std::string> object_touch_links;
