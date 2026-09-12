@@ -293,7 +293,8 @@ double supportSurfaceHeight(
 fr3_dual_palletize::PrimitiveConfig makePrimitiveConfig(
   const ArmAssignment& assignment,
   bool left,
-  double target_support_surface_z)
+  double target_support_surface_z,
+  const fr3_dual_palletize::RobustPlannerConfig& robust_planner)
 {
   fr3_dual_palletize::PrimitiveConfig config;
   config.label = assignment.label;
@@ -315,6 +316,7 @@ fr3_dual_palletize::PrimitiveConfig makePrimitiveConfig(
   // 下层/上层均只在 Ground Truth 放置误差验收通过后锁定为 kinematic 支撑块；
   // Collider 保留，后续 Cube 的规划与 PhysX 接触都不会绕过它。
   config.freeze_after_settle = true;
+  config.robust_planner = robust_planner;
   return config;
 }
 
@@ -390,7 +392,8 @@ bool runBatch(
   const std::shared_ptr<std::mutex>& scene_mutex,
   bool execute,
   double wait_step_sec,
-  double max_wait_sec)
+  double max_wait_sec,
+  const fr3_dual_palletize::RobustPlannerConfig& robust_planner)
 {
   const auto large_pose = pose_buffer->largePose();
   const auto small_poses = pose_buffer->smallSnapshot();
@@ -409,9 +412,11 @@ bool runBatch(
     return pose_buffer->smallPose(index);
   };
   fr3_dual_palletize::PalletizePrimitive left(
-    left_node, makePrimitiveConfig(batch.left, true, left_support), provider, scene_mutex);
+    left_node, makePrimitiveConfig(
+      batch.left, true, left_support, robust_planner), provider, scene_mutex);
   fr3_dual_palletize::PalletizePrimitive right(
-    right_node, makePrimitiveConfig(batch.right, false, right_support), provider, scene_mutex);
+    right_node, makePrimitiveConfig(
+      batch.right, false, right_support, robust_planner), provider, scene_mutex);
 
   fr3_dual_palletize::TaskTrajectoryCandidate left_candidate;
   fr3_dual_palletize::TaskTrajectoryCandidate right_candidate;
@@ -521,12 +526,24 @@ int main(int argc, char** argv)
   const bool execute = coordinator_node->declare_parameter<bool>("execute", false);
   const double wait_step_sec = coordinator_node->declare_parameter<double>("wait_step_sec", 0.20);
   const double max_wait_sec = coordinator_node->declare_parameter<double>("max_wait_sec", 30.0);
-  if (wait_step_sec <= 0.0 || max_wait_sec < wait_step_sec)
+  const int planner_candidate_count = coordinator_node->declare_parameter<int>(
+    "planner_candidate_count", 3);
+  const std::string redundancy_mode_name = coordinator_node->declare_parameter<std::string>(
+    "redundancy_mode", "soft_preference");
+  fr3_dual_palletize::RedundancyMode redundancy_mode;
+  if (wait_step_sec <= 0.0 || max_wait_sec < wait_step_sec ||
+      planner_candidate_count <= 0 ||
+      !fr3_dual_palletize::parseRedundancyMode(redundancy_mode_name, redundancy_mode))
   {
-    RCLCPP_ERROR(coordinator_node->get_logger(), "Task15 LocalWait 参数无效。");
+    RCLCPP_ERROR(
+      coordinator_node->get_logger(),
+      "Task15 LocalWait / Task16 RobustPlanner 参数无效。");
     rclcpp::shutdown();
     return 1;
   }
+  fr3_dual_palletize::RobustPlannerConfig robust_planner;
+  robust_planner.candidate_count = static_cast<std::size_t>(planner_candidate_count);
+  robust_planner.redundancy_mode = redundancy_mode;
   if (!copyRobotModelParameters(left_node) || !copyRobotModelParameters(right_node))
   {
     rclcpp::shutdown();
@@ -548,6 +565,11 @@ int main(int argc, char** argv)
       coordinator_node->get_logger(),
       "========== Task15 Phase B / LOOSE LAYER STACK: execute=%s ==========" ,
       execute ? "true" : "false");
+    RCLCPP_INFO(
+      coordinator_node->get_logger(),
+      "Task16 RobustPlanner: candidate_count=%zu, redundancy_mode=%s",
+      robust_planner.candidate_count,
+      fr3_dual_palletize::redundancyModeName(robust_planner.redundancy_mode));
     if (!pose_buffer->wait(10.0))
     {
       RCLCPP_ERROR(
@@ -602,7 +624,8 @@ int main(int argc, char** argv)
             scene_mutex,
             execute,
             wait_step_sec,
-            max_wait_sec))
+            max_wait_sec,
+            robust_planner))
       {
         success = false;
         break;

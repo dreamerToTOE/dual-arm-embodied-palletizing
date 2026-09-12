@@ -15,9 +15,11 @@ find_package(trajectory_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(ompl REQUIRED)
 
 add_library(palletize_primitive
   src/palletize_primitive.cpp
+  src/robust_planner.cpp
   src/spatiotemporal_conflict_detector.cpp
   src/temporal_coordinator.cpp
   src/local_wait_coordinator.cpp
@@ -189,6 +191,26 @@ ament_target_dependencies(task15_loose_layer_stack
   moveit_ros_planning_interface
 )
 
+# Task16-D：只读规划 benchmark。它复用 Task15 下层任务几何、Task08 FCL 和
+# Task09 LocalWait，但不连接 Isaac 的执行/吸盘话题。
+add_executable(task16_planning_benchmark
+  src/task16_planning_benchmark.cpp
+)
+target_link_libraries(task16_planning_benchmark
+  palletize_primitive
+  ompl::ompl
+)
+ament_target_dependencies(task16_planning_benchmark
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 add_executable(task14_shared_box_geometry_monitor
   src/task14_shared_box_geometry_monitor.cpp
 )
@@ -210,6 +232,7 @@ install(
     task13_shared_box_place
     task15_tight_large_cube
     task15_loose_layer_stack
+    task16_planning_benchmark
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

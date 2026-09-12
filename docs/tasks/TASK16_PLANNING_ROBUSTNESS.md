@@ -1,6 +1,6 @@
 # Task16：Planning Robustness / 鲁棒运动规划
 
-状态：⚪ 待实现。
+状态：🟢 第一版已完成（2026-09-12）。
 
 ## 目标
 
@@ -10,7 +10,7 @@ Task16 不要求更换主 planner。第一版仍以 `RRTConnectkConfigDefault` �
 
 ## 当前基线
 
-当前 `PalletizePrimitive`：
+Task16 实现前 `PalletizePrimitive`：
 
 ```text
 planner = RRTConnectkConfigDefault
@@ -189,6 +189,135 @@ T16-05  完成固定 Task15 场景的多次 benchmark
 T16-06  最终执行候选仍通过现有 Task08/FCL 安全门禁
 T16-07  根据数据确定默认冗余策略，不凭单次演示决定
 ```
+
+## 实现
+
+新增 `RobustPlanner`，并接入 `PalletizePrimitive` 的自由空间阶段：
+
+```text
+HOME/current -> PRE_PICK
+LIFT -> PRE_PLACE
+RETREAT -> SAFE_EGRESS/HOME
+```
+
+每一个阶段显式调用 `RRTConnectkConfigDefault` 共 `N` 次（每次 MoveIt
+内部 attempts 固定为 1），保留每一候选的结果，再按下式选择最低 `J`，而
+非“第一条成功即采用”：
+
+```text
+J = 1.0 * normalized_joint_path_length
+  + 0.2 * joint_limit_cost
+  + 0.2 * soft_redundancy_cost
+
+joint_limit_cost = 1 / (minimum_normalized_joint_margin + 0.02)
+```
+
+其中软冗余项仅在 `soft_preference` 模式启用，使用 FR3 arm group 的
+`joint7`（或显式参数指定的冗余变量）相对 stage 起始值的归一化平方偏差。
+所有候选仍由 MoveIt 完整 Planning Scene 做碰撞检查；该评分不会扩大 ACM，
+也不会取代 Task08/FCL 门禁。
+
+标准结构段保持确定性 Cartesian：
+
+```text
+PRE_PICK -> CONTACT
+CONTACT -> LIFT
+PRE_PLACE -> PLACE
+PLACE -> RETREAT
+```
+
+新增只读程序 `task16_planning_benchmark`。它构造 Task15 下层参考场景，
+生成左右完整 `TaskTrajectoryCandidate`，再复用 Task08
+`SpatioTemporalConflictDetector` 与 Task09 `LocalWaitCoordinator`；它只发布
+合成的初始 `joint_states`，不发布关节命令、吸盘命令或 Isaac 物理动作。
+
+输出路径由用户参数指定，程序不会创建目录。CSV 逐候选记录：
+
+```text
+trial_id, redundancy_mode, arm, stage, candidate_index, selected,
+plan_success, candidate_count, planning_time_sec, path_length,
+min_joint_limit_margin, joint_limit_cost, redundancy_cost, total_cost,
+full_primitive_success, task08_safe, task09_strategy, task09_wait_sec,
+failure_reason
+```
+
+JSON 则汇总每一次 trial 的双臂 primitive、Task08 和 Task09 结果。
+
+## 固定场景正式对照（2026-09-12）
+
+共同条件：Task15 lower-layer reference、`random_seed=20260912`、3 trials、
+每个随机自由空间阶段 `N=5`、Release build、同一 headless MoveIt 场景。
+原始 CSV/JSON 位于本机 `artifacts/`，作为可再生实验产物，不提交版本库。
+
+| 模式 | 双臂完整 primitive | 候选成功率 | 选中路径均长 | 选中最小 joint margin 均值 | Task08 初始安全 | Task09 可协调 | 平均额外等待 |
+| --- | --- | --- | ---: | ---: | --- | --- | ---: |
+| `free_7dof` | 3/3 | 88/90 (97.8%) | 0.820912 | 0.035307 | 1/3 | 3/3 | 0.400 s |
+| `hard_lock_joint` | 0/3 | 27/60* | 1.230780 | 0.011790 | 未进入 | 未进入 | — |
+| `soft_preference` | 3/3 | 90/90 (100%) | 0.783359 | 0.036217 | 1/3 | 3/3 | 0.200 s |
+
+\* 硬锁定能生成部分 HOME -> PRE_PICK 候选，但三个 trial 的左右臂均在
+`LIFT -> PRE_PLACE` 的全部 5 个候选失败，故并非可执行策略。
+
+结论：在此固定 Task15 场景中，`soft_preference` 保持了完整可达性，
+候选成功率和路径/关节余量指标略优于自由 7-DOF，并将 Task09 平均等待从
+0.400 s 降为 0.200 s。因此当前 Task15 Phase B 的默认
+`redundancy_mode` 设为 `soft_preference`，`planner_candidate_count` 默认为 3。
+这不是对所有未来工作空间的永久结论：新增场景、障碍物或末端工具后必须重跑
+本 benchmark，再决定是否调整默认。
+
+## 验证命令
+
+先在一个终端启动 headless MoveIt：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_DOMAIN_ID=15
+export ROS_LOCALHOST_ONLY=1
+ros2 launch fr3_dual_compact_suction_description \
+  moveit_dual_compact_suction.launch.py use_rviz:=false
+```
+
+在第二个终端构建并运行三组 benchmark（以下仅展示 soft-preference；将模式和
+输出文件名替换为 `free_7dof`、`hard_lock_joint` 即可复现完整对照）：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+colcon build --packages-select fr3_dual_palletize --symlink-install \
+  --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+export ROS_DOMAIN_ID=15
+export ROS_LOCALHOST_ONLY=1
+
+ros2 run fr3_dual_palletize task16_planning_benchmark --ros-args \
+  -p number_of_trials:=3 \
+  -p planner_candidate_count:=5 \
+  -p redundancy_mode:=soft_preference \
+  -p random_seed:=20260912 \
+  -p output_csv:=/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/artifacts/task16_soft_20260912.csv \
+  -p output_json:=/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/artifacts/task16_soft_20260912.json
+```
+
+`task15_hybrid_palletizing.launch.py` 也暴露了同名参数，可在真实 Task15
+一键紧/松协调运行时显式覆盖，例如：
+
+```bash
+ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py \
+  execute:=true planner_candidate_count:=5 redundancy_mode:=soft_preference
+```
+
+## 验收结论
+
+- T16-01 至 T16-03：通过。每个自由空间 stage 都有 5 条独立候选、失败原因和
+  完整评分日志。
+- T16-04：通过。三种冗余模式均完成同条件比较；硬锁定的负结果已记录。
+- T16-05：通过。Task15 固定场景完成每组 3 trials，并输出 CSV/JSON。
+- T16-06：通过。成功 candidate 必须再经 Task08；初始冲突时 Task09 仅在
+  找到安全 LocalWait 后才报告可协调。
+- T16-07：通过。默认选择来自上述数据，当前为 `soft_preference`，不是单次
+  可视化演示的预设。
 
 ## 不在本 Task 范围
 

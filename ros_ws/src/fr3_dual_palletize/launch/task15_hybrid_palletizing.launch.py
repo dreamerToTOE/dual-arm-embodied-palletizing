@@ -13,11 +13,15 @@ def generate_launch_description():
     execute = LaunchConfiguration("execute")
     wait_step_sec = LaunchConfiguration("wait_step_sec")
     max_wait_sec = LaunchConfiguration("max_wait_sec")
+    planner_candidate_count = LaunchConfiguration("planner_candidate_count")
+    redundancy_mode = LaunchConfiguration("redundancy_mode")
 
     common_parameters = {
         "execute": ParameterValue(execute, value_type=bool),
         "wait_step_sec": ParameterValue(wait_step_sec, value_type=float),
         "max_wait_sec": ParameterValue(max_wait_sec, value_type=float),
+        "planner_candidate_count": ParameterValue(planner_candidate_count, value_type=int),
+        "redundancy_mode": redundancy_mode,
     }
 
     # Phase A 复用 Task11--13 协议。Task15 的水平运输保持在桌面上方 100 mm：
@@ -83,6 +87,17 @@ def generate_launch_description():
             "max_wait_sec",
             default_value="30.0",
             description="松协调单臂最大允许等待时间（秒）。",
+        ),
+        DeclareLaunchArgument(
+            "planner_candidate_count",
+            default_value="3",
+            description="Task16 自由空间阶段生成并评分的 RRTConnect 候选数。",
+        ),
+        DeclareLaunchArgument(
+            "redundancy_mode",
+            default_value="soft_preference",
+            choices=["free_7dof", "hard_lock_joint", "soft_preference"],
+            description="Task16 冗余管理模式；默认 soft_preference 由 Task16 benchmark 确定。",
         ),
         LogInfo(
             msg=(

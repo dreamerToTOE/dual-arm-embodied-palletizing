@@ -18,6 +18,7 @@
 #include <std_msgs/msg/string.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 
+#include "fr3_dual_palletize/robust_planner.hpp"
 #include "fr3_dual_palletize/task_trajectory_candidate.hpp"
 
 namespace fr3_dual_palletize
@@ -47,6 +48,9 @@ struct PrimitiveConfig
   // Task15 的上层码垛中，已通过真实落稳误差验收的小件会请求 Isaac 将其设为
   // kinematic 支撑块；Collider 保留，后续 Cube 仍必须与它发生真实碰撞。
   bool freeze_after_settle{false};
+  // Task16：自由空间阶段从多条 RRTConnect 可行候选中选择代价最低者。
+  // 默认维持 7-DOF 自由模式；硬锁定/软偏好只作为可配置实验变量。
+  RobustPlannerConfig robust_planner;
 };
 
 // Task08 协调层读取的候选搬运轨迹。
@@ -91,12 +95,16 @@ class PalletizePrimitive
 {
 public:
   using PoseProvider = std::function<geometry_msgs::msg::Pose(std::size_t)>;
+  using RobustPlanObserver = std::function<void(
+    const std::string& stage_name,
+    const RobustPlanResult& result)>;
 
   PalletizePrimitive(
     rclcpp::Node::SharedPtr node,
     PrimitiveConfig config,
     PoseProvider pose_provider,
-    std::shared_ptr<std::mutex> planning_scene_mutex);
+    std::shared_ptr<std::mutex> planning_scene_mutex,
+    RobustPlanObserver robust_plan_observer = {});
 
   // Task07 兼容入口：完整执行一次 Task04 canonical primitive。
   bool runOnce(StartGate& start_gate);
@@ -220,6 +228,7 @@ private:
   PrimitiveConfig config_;
   PoseProvider pose_provider_;
   std::shared_ptr<std::mutex> planning_scene_mutex_;
+  RobustPlanObserver robust_plan_observer_;
 
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr command_pub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr suction_pub_;

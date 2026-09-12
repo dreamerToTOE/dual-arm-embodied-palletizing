@@ -31,7 +31,8 @@ constexpr double MIN_PRE_PLACE_TCP_Z = 0.180;
 constexpr double PRE_PLACE_CLEARANCE = 0.070;
 constexpr double CARTESIAN_EEF_STEP = 0.002;
 constexpr double CARTESIAN_MIN_FRACTION = 0.999;
-// 规划器带有随机性。每个阶段独立尝试三次；第三次仍失败才把失败交给上层任务。
+// Cartesian IK 仍可能因当前 RobotState / 碰撞上下文出现瞬时失败，保留三次
+// 显式尝试；自由空间 RRTConnect 阶段已由 Task16 RobustPlanner 多候选选择接管。
 constexpr int MAX_PLANNING_RETRIES = 3;
 constexpr double SETTLED_PLACEMENT_XY_TOLERANCE_M = 0.010;
 constexpr double SETTLED_PLACEMENT_Z_TOLERANCE_M = 0.010;
@@ -137,11 +138,13 @@ PalletizePrimitive::PalletizePrimitive(
   rclcpp::Node::SharedPtr node,
   PrimitiveConfig config,
   PoseProvider pose_provider,
-  std::shared_ptr<std::mutex> planning_scene_mutex)
+  std::shared_ptr<std::mutex> planning_scene_mutex,
+  RobustPlanObserver robust_plan_observer)
   : node_(std::move(node)),
     config_(std::move(config)),
     pose_provider_(std::move(pose_provider)),
-    planning_scene_mutex_(std::move(planning_scene_mutex))
+    planning_scene_mutex_(std::move(planning_scene_mutex)),
+    robust_plan_observer_(std::move(robust_plan_observer))
 {
   command_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>(
     config_.joint_command_topic, 10);
@@ -272,47 +275,42 @@ bool PalletizePrimitive::planPoseStage(
   const std::string& stage_name,
   trajectory_msgs::msg::JointTrajectory& trajectory_out)
 {
-  move_group.clearPoseTargets();
-  if (!move_group.setPoseTarget(target_pose, eef_link))
+  auto full_state = move_group.getCurrentState(2.0);
+  if (!full_state)
   {
     RCLCPP_ERROR(
       node_->get_logger(),
-      "[%s] %s：无法设置末端位姿目标。",
+      "[%s] %s：无法读取双臂当前 RobotState。",
       config_.label.c_str(), stage_name.c_str());
     return false;
   }
+  full_state->setJointGroupPositions(joint_model_group, start_q);
+  full_state->update();
 
-  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
+  RobustPlanner planner(node_->get_logger(), config_.robust_planner);
+  const auto result = planner.planPose(
+    move_group, *full_state, joint_model_group, target_pose, eef_link, stage_name);
+  if (robust_plan_observer_)
   {
-    if (!setStartStateForGroup(move_group, joint_model_group, start_q))
-    {
-      return false;
-    }
-
-    moveit::planning_interface::MoveGroupInterface::Plan plan;
-    if (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
-        !plan.trajectory_.joint_trajectory.points.empty())
-    {
-      trajectory_out = plan.trajectory_.joint_trajectory;
-      RCLCPP_INFO(
-        node_->get_logger(),
-        "[%s] %s：plan OK, attempt=%d/%d, points=%zu, duration=%.3f s",
-        config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES,
-        trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
-      return true;
-    }
-
-    RCLCPP_WARN(
-      node_->get_logger(),
-      "[%s] %s：RRTConnect 规划失败，attempt=%d/%d。",
-      config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES);
+    robust_plan_observer_(stage_name, result);
+  }
+  if (!result.valid || result.selected_trajectory.points.empty())
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(), "[%s] %s：Task16 RobustPlanner 失败：%s",
+      config_.label.c_str(), stage_name.c_str(), result.error.c_str());
+    return false;
   }
 
-  RCLCPP_ERROR(
+  trajectory_out = result.selected_trajectory;
+  ensureTrajectoryTiming(trajectory_out);
+  RCLCPP_INFO(
     node_->get_logger(),
-    "[%s] %s：三次 RRTConnect 规划均失败，停止此任务。",
-    config_.label.c_str(), stage_name.c_str());
-  return false;
+    "[%s] %s：Task16 selected candidate=%zu/%zu, points=%zu, duration=%.3f s",
+    config_.label.c_str(), stage_name.c_str(), result.selected_attempt_index,
+    result.requested_candidate_count, trajectory_out.points.size(),
+    pointTime(trajectory_out.points.back()));
+  return true;
 }
 
 bool PalletizePrimitive::planCartesianStage(
@@ -371,47 +369,42 @@ bool PalletizePrimitive::planJointStage(
   const std::string& stage_name,
   trajectory_msgs::msg::JointTrajectory& trajectory_out)
 {
-  move_group.clearPoseTargets();
-  if (!move_group.setJointValueTarget(target_q))
+  auto full_state = move_group.getCurrentState(2.0);
+  if (!full_state)
   {
     RCLCPP_ERROR(
       node_->get_logger(),
-      "[%s] %s：无法设置关节目标。",
+      "[%s] %s：无法读取双臂当前 RobotState。",
       config_.label.c_str(), stage_name.c_str());
     return false;
   }
+  full_state->setJointGroupPositions(joint_model_group, start_q);
+  full_state->update();
 
-  for (int attempt = 1; attempt <= MAX_PLANNING_RETRIES; ++attempt)
+  RobustPlanner planner(node_->get_logger(), config_.robust_planner);
+  const auto result = planner.planJointTarget(
+    move_group, *full_state, joint_model_group, target_q, stage_name);
+  if (robust_plan_observer_)
   {
-    if (!setStartStateForGroup(move_group, joint_model_group, start_q))
-    {
-      return false;
-    }
-
-    moveit::planning_interface::MoveGroupInterface::Plan plan;
-    if (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
-        !plan.trajectory_.joint_trajectory.points.empty())
-    {
-      trajectory_out = plan.trajectory_.joint_trajectory;
-      RCLCPP_INFO(
-        node_->get_logger(),
-        "[%s] %s：plan OK, attempt=%d/%d, points=%zu, duration=%.3f s",
-        config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES,
-        trajectory_out.points.size(), pointTime(trajectory_out.points.back()));
-      return true;
-    }
-
-    RCLCPP_WARN(
-      node_->get_logger(),
-      "[%s] %s：关节规划失败，attempt=%d/%d。",
-      config_.label.c_str(), stage_name.c_str(), attempt, MAX_PLANNING_RETRIES);
+    robust_plan_observer_(stage_name, result);
+  }
+  if (!result.valid || result.selected_trajectory.points.empty())
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(), "[%s] %s：Task16 RobustPlanner 失败：%s",
+      config_.label.c_str(), stage_name.c_str(), result.error.c_str());
+    return false;
   }
 
-  RCLCPP_ERROR(
+  trajectory_out = result.selected_trajectory;
+  ensureTrajectoryTiming(trajectory_out);
+  RCLCPP_INFO(
     node_->get_logger(),
-    "[%s] %s：三次关节规划均失败，停止此任务。",
-    config_.label.c_str(), stage_name.c_str());
-  return false;
+    "[%s] %s：Task16 selected candidate=%zu/%zu, points=%zu, duration=%.3f s",
+    config_.label.c_str(), stage_name.c_str(), result.selected_attempt_index,
+    result.requested_candidate_count, trajectory_out.points.size(),
+    pointTime(trajectory_out.points.back()));
+  return true;
 }
 
 std::vector<std::string> PalletizePrimitive::isaacJointNames(
