@@ -49,7 +49,8 @@ struct PrimitiveConfig
   // kinematic 支撑块；Collider 保留，后续 Cube 仍必须与它发生真实碰撞。
   bool freeze_after_settle{false};
   // Task16：自由空间阶段从多条 RRTConnect 可行候选中选择代价最低者。
-  // 默认维持 7-DOF 自由模式；硬锁定/软偏好只作为可配置实验变量。
+  // Task15 固定场景的 benchmark 当前选择 soft_preference 为默认；三种模式仍可
+  // 配置切换，并要求在新场景中重新做对照验证。
   RobustPlannerConfig robust_planner;
 };
 
