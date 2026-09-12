@@ -17,6 +17,15 @@ find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(ompl REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+# Task18：Isaac Ground Truth 与未来感知模块共享的运行时输入接口。
+# 自定义消息只表达观测结果；它不绑定某个 Task 的固定物体数量或坐标。
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/BoxState.msg"
+  "msg/BoxStateArray.msg"
+  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
+)
 
 # Task17：配置驱动的 BoxSpec / PlacementSpec 数据模型。它不依赖某个 Task 的
 # 执行器，Task18 随机场景、Task19 放置规划和 Task21 路由可直接复用。
@@ -33,6 +42,24 @@ ament_target_dependencies(palletizing_job
   geometry_msgs
   shape_msgs
   moveit_msgs
+)
+
+# Task18：把运行时 BoxState 转换为 Task17 BoxSpec，并以世界 pose 组合局部
+# grasp candidate。Task19+ 的控制器可直接复用，而不再读取硬编码初始坐标。
+add_library(runtime_box_state
+  src/runtime_box_state.cpp
+)
+target_include_directories(runtime_box_state
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(runtime_box_state palletizing_job)
+ament_target_dependencies(runtime_box_state
+  geometry_msgs
+)
+rosidl_target_interfaces(runtime_box_state
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
 
 add_library(palletize_primitive
@@ -225,6 +252,23 @@ ament_target_dependencies(task17_job_validate
   shape_msgs
   moveit_msgs
 )
+
+add_executable(task18_runtime_input_demo
+  src/task18_runtime_input_demo.cpp
+)
+target_link_libraries(task18_runtime_input_demo
+  runtime_box_state
+  palletizing_job
+)
+ament_target_dependencies(task18_runtime_input_demo
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  moveit_msgs
+)
+rosidl_target_interfaces(task18_runtime_input_demo
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -253,6 +297,7 @@ install(
   TARGETS
     palletize_primitive
     palletizing_job
+    runtime_box_state
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
@@ -264,6 +309,7 @@ install(
     task15_loose_layer_stack
     task16_planning_benchmark
     task17_job_validate
+    task18_runtime_input_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -304,6 +350,7 @@ ament_export_dependencies(
   moveit_core
   moveit_ros_planning_interface
   yaml-cpp
+  rosidl_default_runtime
 )
 
 ament_package()
