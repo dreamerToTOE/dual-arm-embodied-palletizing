@@ -62,6 +62,19 @@ rosidl_target_interfaces(runtime_box_state
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
 
+# Task19：可解释的几何 / height-map placement planner。它只产生 PlacementSpec；
+# Task16 RobustPlanner 仍独立决定机器人如何到达该目标。
+add_library(placement_planner
+  src/placement_planner.cpp
+)
+target_include_directories(placement_planner
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(placement_planner palletizing_job)
+ament_target_dependencies(placement_planner geometry_msgs)
+
 add_library(palletize_primitive
   src/palletize_primitive.cpp
   src/robust_planner.cpp
@@ -269,6 +282,12 @@ ament_target_dependencies(task18_runtime_input_demo
 rosidl_target_interfaces(task18_runtime_input_demo
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
+
+add_executable(task19_placement_planner_demo
+  src/task19_placement_planner_demo.cpp
+)
+target_link_libraries(task19_placement_planner_demo placement_planner palletizing_job)
+ament_target_dependencies(task19_placement_planner_demo rclcpp geometry_msgs)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -298,6 +317,7 @@ install(
     palletize_primitive
     palletizing_job
     runtime_box_state
+    placement_planner
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
@@ -310,6 +330,7 @@ install(
     task16_planning_benchmark
     task17_job_validate
     task18_runtime_input_demo
+    task19_placement_planner_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
