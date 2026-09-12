@@ -262,6 +262,8 @@ JSON 则汇总每一次 trial 的双臂 primitive、Task08 和 Task09 结果。
 候选成功率和路径/关节余量指标略优于自由 7-DOF，并将 Task09 平均等待从
 0.400 s 降为 0.200 s。因此当前 Task15 Phase B 的默认
 `redundancy_mode` 设为 `soft_preference`，`planner_candidate_count` 默认为 3。
+Task15 默认 `preferred_redundant_joint=0.0 rad`，与上述 benchmark 一致，
+并可通过 launch 参数显式覆盖。
 这不是对所有未来工作空间的永久结论：新增场景、障碍物或末端工具后必须重跑
 本 benchmark，再决定是否调整默认。
 
@@ -305,7 +307,8 @@ ros2 run fr3_dual_palletize task16_planning_benchmark --ros-args \
 
 ```bash
 ros2 launch fr3_dual_palletize task15_hybrid_palletizing.launch.py \
-  execute:=true planner_candidate_count:=5 redundancy_mode:=soft_preference
+  execute:=true planner_candidate_count:=5 redundancy_mode:=soft_preference \
+  preferred_redundant_joint:=0.0
 ```
 
 ## 验收结论

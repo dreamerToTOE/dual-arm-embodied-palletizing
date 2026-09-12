@@ -15,6 +15,7 @@ def generate_launch_description():
     max_wait_sec = LaunchConfiguration("max_wait_sec")
     planner_candidate_count = LaunchConfiguration("planner_candidate_count")
     redundancy_mode = LaunchConfiguration("redundancy_mode")
+    preferred_redundant_joint = LaunchConfiguration("preferred_redundant_joint")
 
     common_parameters = {
         "execute": ParameterValue(execute, value_type=bool),
@@ -22,6 +23,7 @@ def generate_launch_description():
         "max_wait_sec": ParameterValue(max_wait_sec, value_type=float),
         "planner_candidate_count": ParameterValue(planner_candidate_count, value_type=int),
         "redundancy_mode": redundancy_mode,
+        "preferred_redundant_joint": ParameterValue(preferred_redundant_joint, value_type=float),
     }
 
     # Phase A 复用 Task11--13 协议。Task15 的水平运输保持在桌面上方 100 mm：
@@ -98,6 +100,11 @@ def generate_launch_description():
             default_value="soft_preference",
             choices=["free_7dof", "hard_lock_joint", "soft_preference"],
             description="Task16 冗余管理模式；默认 soft_preference 由 Task16 benchmark 确定。",
+        ),
+        DeclareLaunchArgument(
+            "preferred_redundant_joint",
+            default_value="0.0",
+            description="Task16 joint7 的软偏好/硬锁定参考值（弧度）；默认与 benchmark 一致。",
         ),
         LogInfo(
             msg=(

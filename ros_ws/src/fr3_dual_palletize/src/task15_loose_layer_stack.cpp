@@ -530,6 +530,11 @@ int main(int argc, char** argv)
     "planner_candidate_count", 3);
   const std::string redundancy_mode_name = coordinator_node->declare_parameter<std::string>(
     "redundancy_mode", "soft_preference");
+  // 与 Task16 固定场景 benchmark 保持一致：soft_preference 以中性 joint7=0
+  // 为参考。它只参与候选排序，不构成 path constraint；因此仍可为可达性绕开
+  // 障碍或远离关节极限而使用第七自由度。
+  const double preferred_redundant_joint = coordinator_node->declare_parameter<double>(
+    "preferred_redundant_joint", 0.0);
   fr3_dual_palletize::RedundancyMode redundancy_mode;
   if (wait_step_sec <= 0.0 || max_wait_sec < wait_step_sec ||
       planner_candidate_count <= 0 ||
@@ -544,6 +549,7 @@ int main(int argc, char** argv)
   fr3_dual_palletize::RobustPlannerConfig robust_planner;
   robust_planner.candidate_count = static_cast<std::size_t>(planner_candidate_count);
   robust_planner.redundancy_mode = redundancy_mode;
+  robust_planner.preferred_redundant_joint = preferred_redundant_joint;
   if (!copyRobotModelParameters(left_node) || !copyRobotModelParameters(right_node))
   {
     rclcpp::shutdown();
@@ -567,9 +573,10 @@ int main(int argc, char** argv)
       execute ? "true" : "false");
     RCLCPP_INFO(
       coordinator_node->get_logger(),
-      "Task16 RobustPlanner: candidate_count=%zu, redundancy_mode=%s",
+      "Task16 RobustPlanner: candidate_count=%zu, redundancy_mode=%s, preferred_joint7=%.4f rad",
       robust_planner.candidate_count,
-      fr3_dual_palletize::redundancyModeName(robust_planner.redundancy_mode));
+      fr3_dual_palletize::redundancyModeName(robust_planner.redundancy_mode),
+      robust_planner.preferred_redundant_joint);
     if (!pose_buffer->wait(10.0))
     {
       RCLCPP_ERROR(
