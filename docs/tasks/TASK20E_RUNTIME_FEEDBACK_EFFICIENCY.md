@@ -116,3 +116,72 @@ Task20 runtime EXECUTION PASS
 
 任一 `RELEASE TCP NOT READY`、放置误差超限或 FCL 拒绝均为未通过，不扩大 ACM、
 不增大吸附阈值、不手动移动物体绕过。
+
+## Isaac 物理验收步骤
+
+### 1. MoveIt 终端
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+ros2 launch fr3_dual_compact_suction_description \
+  moveit_dual_compact_suction.launch.py
+```
+
+### 2. Isaac Sim 启动终端
+
+```bash
+source /opt/ros/humble/setup.bash
+source /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+cd /home/ubuntu2004/isaacsim-4.5.0
+./isaac-sim.sh
+```
+
+### 3. Isaac Script Editor
+
+保持 Timeline **Stop**，运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task20e_runtime_feedback_scene.py").read())
+```
+
+确认 Console 打印 `fixed replay seed = 20260924`、三个 `task18_box_*` 源位姿和
+`Task20-E runtime feedback / efficiency scene ready`。点击 Timeline **Play**，依次运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task18_ground_truth_bridge.py").read())
+
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task20_runtime_suction_bridge.py").read())
+```
+
+### 4. 执行终端
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+ros2 topic echo /task18/box_states --once
+ros2 topic echo /task20/right/suction_tcp_pose --once
+ros2 launch fr3_dual_palletize task20e_runtime_feedback_acceptance.launch.py
+```
+
+先观察每一件的 `PROFILE` 和每次松协调 release 的 `RELEASE TCP READY`。若出现
+`RELEASE TCP NOT READY`，记录 expected/actual TCP 后停止并重置场景；该运行不应被
+记为通过。
+
+## 当前静态验证
+
+```text
+colcon build --packages-select fr3_dual_palletize --symlink-install  PASS
+python3 isaac/scripts/task18_randomized_scene.py --validate          PASS
+ros2 launch ... task20e_runtime_feedback_acceptance.launch.py --show-args  PASS
+```
+
+这不替代上面的 Isaac 物理验收；Task20-E 状态在获得真实三件执行日志前保持 🟡。
