@@ -152,7 +152,34 @@ bool collidesPlaced(
 
 }  // namespace
 
-PlacementPlanner::PlacementPlanner(PlacementPlannerConfig config) : config_(std::move(config)) {}
+std::string GeometricPlacementSelectionModel::id() const
+{
+  return "geometric_v1";
+}
+
+bool GeometricPlacementSelectionModel::scoreCandidates(
+  const PlacementSelectionContext& context,
+  std::vector<PlacementCandidate>& candidates,
+  std::string& error) const
+{
+  (void)context;
+  (void)error;
+  for (auto& candidate : candidates)
+  {
+    candidate.selection_cost = candidate.geometric_cost;
+    candidate.selection_reason = "geometric_height_center_support";
+  }
+  return true;
+}
+
+PlacementPlanner::PlacementPlanner(
+  PlacementPlannerConfig config,
+  std::shared_ptr<const PlacementSelectionModel> selection_model)
+: config_(std::move(config)),
+  selection_model_(selection_model ? std::move(selection_model) :
+    std::make_shared<GeometricPlacementSelectionModel>())
+{
+}
 
 PlacementPlanResult PlacementPlanner::plan(
   const BoxSpec& box, const PalletRegion& region, const std::vector<PlacedBox>& placed,
@@ -190,7 +217,7 @@ PlacementPlanResult PlacementPlanner::plan(
     const double center_distance = std::hypot(
       pose.position.x - 0.5 * (region.min_x + region.max_x),
       pose.position.y - 0.5 * (region.min_y + region.max_y));
-    candidate.cost = 10.0 * pose.position.z + 0.10 * center_distance +
+    candidate.geometric_cost = 10.0 * pose.position.z + 0.10 * center_distance +
       (support_id == "table" ? 0.0 : 0.02);
     result.candidates.push_back(std::move(candidate));
   };
@@ -249,8 +276,25 @@ PlacementPlanResult PlacementPlanner::plan(
           support.box.id, support_top, true);
     }
   }
+  result.selection_model_id = selection_model_->id();
+  std::string selection_error;
+  if (!selection_model_->scoreCandidates(
+      PlacementSelectionContext{box, region, placed}, result.candidates, selection_error))
+  {
+    result.error = "选择模型 '" + result.selection_model_id + "' 失败：" + selection_error;
+    return result;
+  }
+  for (const auto& candidate : result.candidates)
+  {
+    if (!std::isfinite(candidate.selection_cost))
+    {
+      result.error = "选择模型 '" + result.selection_model_id + "' 返回非有限 candidate score。";
+      return result;
+    }
+  }
   std::sort(result.candidates.begin(), result.candidates.end(),
-    [](const PlacementCandidate& first, const PlacementCandidate& second) { return first.cost < second.cost; });
+    [](const PlacementCandidate& first, const PlacementCandidate& second)
+    { return first.selection_cost < second.selection_cost; });
   for (const auto& candidate : result.candidates)
   {
     std::string reason;

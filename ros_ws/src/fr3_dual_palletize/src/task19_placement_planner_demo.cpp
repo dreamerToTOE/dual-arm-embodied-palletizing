@@ -12,9 +12,16 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("task19_placement_planner_demo");
   const auto job_path = node->declare_parameter<std::string>("job_config", "");
+  const auto selection_model = node->declare_parameter<std::string>("selection_model", "geometric_v1");
   if (job_path.empty())
   {
     RCLCPP_ERROR(node->get_logger(), "Task19 需要 job_config:=/absolute/path/to/job.yaml。");
+    rclcpp::shutdown(); return 1;
+  }
+  if (selection_model != "geometric_v1")
+  {
+    RCLCPP_ERROR(node->get_logger(),
+      "当前 demo 仅注册 geometric_v1；自定义模型请实现 PlacementSelectionModel 并注入 PlacementPlanner。");
     rclcpp::shutdown(); return 1;
   }
   fr3_dual_palletize::PalletizingJob job;
@@ -30,7 +37,8 @@ int main(int argc, char** argv)
   config.clearance = 0.0;
   fr3_dual_palletize::PlacementPlanner planner(config);
   std::vector<fr3_dual_palletize::PlacedBox> placed;
-  RCLCPP_INFO(node->get_logger(), "========== Task19 PLACEMENT PLANNER: job=%s ==========" , job.id.c_str());
+  RCLCPP_INFO(node->get_logger(), "========== Task19 PLACEMENT PLANNER: job=%s, model=%s ==========" ,
+    job.id.c_str(), selection_model.c_str());
   for (const auto& box : job.boxes)
   {
     const auto plan = planner.plan(box, job.pallet_region, placed);
@@ -43,7 +51,7 @@ int main(int argc, char** argv)
     RCLCPP_INFO(node->get_logger(), "Box=%s candidates=%zu chosen=%s support=%s pose=(%.3f, %.3f, %.3f) cost=%.3f",
       box.id.c_str(), plan.candidates.size(), plan.chosen.placement.id.c_str(),
       plan.chosen.placement.support_surface_id.c_str(), pose.position.x, pose.position.y,
-      pose.position.z, plan.chosen.cost);
+      pose.position.z, plan.chosen.selection_cost);
     placed.push_back({box, pose});
   }
   // 以拒绝 table 候选的可达性 callback 验证“不可达时回退到下一 candidate”。

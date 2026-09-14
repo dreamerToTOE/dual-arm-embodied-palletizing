@@ -94,6 +94,44 @@ table height-map + 已放箱体顶面 height-map
 那里”。`PlacementReachabilityCheck` 是后续 MoveIt 快速预检的接入点，当前 demo
 用可控 callback 验证 fallback，不向 MoveIt 或 Isaac 发布命令。
 
+### 码垛点选择模型预留接口
+
+`PlacementPlanner` 现在明确分成两层：
+
+```text
+几何候选生成 + 边界/碰撞/完整支撑门禁（不可绕过）
+                         ↓
+PlacementSelectionModel::scoreCandidates(...)（可替换）
+                         ↓
+按 selection_cost 排序 + reachability fallback
+```
+
+默认注册 `GeometricPlacementSelectionModel`，运行参数为：
+
+```bash
+-p selection_model:=geometric_v1
+```
+
+未来自定义模型只需继承 `PlacementSelectionModel`，实现：
+
+```cpp
+std::string id() const;
+bool scoreCandidates(
+  const PlacementSelectionContext& context,
+  std::vector<PlacementCandidate>& candidates,
+  std::string& error) const;
+```
+
+模型可读取 box、托盘、已放物体和所有安全候选，并为每项写入
+`selection_cost / selection_reason`；然后通过：
+
+```cpp
+PlacementPlanner planner(config, std::make_shared<MyPlacementModel>());
+```
+
+注入。模型不能新增候选、不能改变 pose/support，也不能绕过几何门禁或后续
+MoveIt reachability/FCL 检查，因而可安全替换为你的启发式、优化器或学习模型。
+
 针对 Task15 兼容配置，planner 得到与历史大件目标等价的
 `(0.650, 0.000, 0.090)`，随后在大件顶面为四件小箱分别生成 50/46/44/42 个完整
 支撑、无重叠候选。遗留 Task15 executor 保持不改，仍作为已验收基线；Task20 的
@@ -109,7 +147,8 @@ colcon build --packages-select fr3_dual_palletize --symlink-install \
 source install/setup.bash
 
 ros2 run fr3_dual_palletize task19_placement_planner_demo --ros-args \
-  -p job_config:=/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/fr3_dual_palletize/config/task15_legacy_job.yaml
+  -p job_config:=/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/fr3_dual_palletize/config/task15_legacy_job.yaml \
+  -p selection_model:=geometric_v1
 ```
 
 实际末行：
