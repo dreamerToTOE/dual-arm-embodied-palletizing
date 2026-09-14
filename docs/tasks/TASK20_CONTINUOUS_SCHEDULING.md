@@ -9,8 +9,8 @@ Task20-C 已真实通过一件大件的紧协调搬运。本 Task20-D 将验收�
 
 ```text
 task18_box_01 large_shared_box  -> 紧协调共同搬运
-task18_box_02 tall_box           -> 松协调单臂搬运
 task18_box_03 tall_box           -> 松协调单臂搬运
+task18_box_05 tall_box           -> 松协调单臂搬运
 ```
 
 固定 replay seed 为 `20260922`，物体按体积从大到小选择。首件大件的目标为窄托盘的
