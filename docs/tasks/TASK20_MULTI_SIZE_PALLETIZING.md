@@ -1,8 +1,7 @@
 # Task20：Multi-size Palletizing / 多尺寸连续码垛
 
-状态：🟡 Task20-A 已完成；Task20-B 的 loose 运行时 Motion / FCL preflight 已完成。
-通用紧协调 planner 与真实执行仍待后续阶段；Task21 已将 loose preflight 的真实
-Task16/FCL 结果接入可解释路由（2026-09-14）。
+状态：🟡 Task20-A 已完成；Task20-B 已完成 loose 与 generic tight 的运行时
+Motion / FCL preflight。物理执行层仍待后续阶段（2026-09-14）。
 
 ## 目标
 
@@ -94,7 +93,7 @@ ros2 run fr3_dual_palletize task20_multi_size_episode --ros-args \
 可以通过 `pallet_min_x/max_x/min_y/max_y/support_height` 覆盖自动放置区域；这些
 是输入参数，不是控制器内固定目标点。
 
-## Task20-B：运行时 Motion / FCL Preflight（loose）
+## Task20-B：运行时 Motion / FCL Preflight（loose + tight）
 
 新增 `task20_motion_preflight`，将每个运行时 loose 任务接入已验收组件：
 
@@ -117,10 +116,27 @@ RRTConnect 三候选全部失败时，会尝试另一允许的臂；这是基于
 运行时随机 yaw 现在也随 `PlacementSpec` 传递到 `PalletizePrimitive` 的取放顶部姿态
 与 `planned_release_pose`；旧 Task04--Task16 默认为 yaw=0，行为保持不变。
 
-这个节点严格是 preflight：**不会发布 `joint_command`、suction command，也不会调用
-执行接口。** 为避免把现有 Task12/13 的固定共享搬运误当成通用算法，收到仅允许
-`tight_shared_object` 的箱体时会 `SAFE_REJECT` 并以非零状态退出；不会声称它已经
-通过 loose 安全门禁。
+对于 `tight_shared_object`，`SharedObjectPlanner` 接收运行时 `BoxSpec`、Task19 自动
+产生的 `PlacementSpec` 和两个局部顶面 grasp candidate；不依赖 Task11--15 的物体 ID、
+绝对坐标或固定抓取偏置。它生成并检查：
+
+```text
+left / right sequential PRE_CONTACT
+-> DUAL_CONTACT
+-> COMMON_LIFT
+-> COMMON_TRANSPORT
+-> COMMON_DESCENT
+-> preplanned COMMON_RETREAT
+```
+
+共同阶段按 10 ms 同步重采样；每个采样点都在私有 PlanningScene 中加入运行时 Shared
+Box 碰撞体，并检查双臂、桌面、其他运行时箱体和 Shared Box。私有 ACM **仅**允许
+Shared Box 与两只 compact suction 的预期安装接触，绝不修改 `/move_group` 的 ACM。
+同时检验双 TCP 对各自 grasp 的相对位置/姿态约束，以及反推 Box 到规划路径线段的误差。
+
+该节点严格是 preflight：**不会发布 `joint_command`、suction command，也不会调用
+执行接口。** 输入 Box 在检查完成后恢复到 MoveIt World 的初始 pose；放置目标仅用于
+候选和私有 FCL 验证，不会改变运行中的真实场景。
 
 ### 验证结果
 
@@ -136,17 +152,30 @@ executed=0
 Task20-B PASS
 ```
 
-每个接受的候选都输出 `Task16 robust + Task08/FCL PASS; NOT_EXECUTED`。其中某些
+每个 loose 候选都输出 `Task16 robust + Task08/FCL PASS; NOT_EXECUTED`。其中某些
 source/arm 组合的 RRTConnect 会在 3 次候选后超时，系统未放行该组合，而是选择另一臂
-的完整可行候选。另以 `large_shared_box` fixture 验证了紧协调路径的安全拒绝：
+的完整可行候选。另以 `large_shared_box` fixture 验证了通用紧协调路径：
 
 ```text
-SAFE_REJECT ... modes=tight_shared_object
-generic shared-object planner is not available; no trajectory accepted
+seed=20260920  TIGHT_SHARED_OBJECT PASS  duration=20.195 s  fcl_samples=727
+seed=20260921  TIGHT_SHARED_OBJECT PASS  duration=21.720 s  fcl_samples=814
+seed=20260923  TIGHT_SHARED_OBJECT PASS  duration=19.816 s  fcl_samples=615
 ```
 
-这两个结果分别验证了“可行时接受”和“没有通用 tight solver 时拒绝”，不把不完整能力
-伪装为成功。
+三次均为同一运行时大件几何、不同随机规划采样；所有共同阶段均为 Cartesian
+fraction=1.0000 且通过私有 FCL/TCP 约束。另用混合 fixture 验证自动路由与连续场景
+更新：
+
+```text
+seed=20260922
+task20_large  -> TIGHT_SHARED_OBJECT  duration=22.228 s  fcl_samples=765
+task20_small  -> LOOSE_LEFT           duration=19.821 s
+tasks=2  loose_safe=1  tight_safe=1  tight_deferred=0  executed=0
+Task20-B PASS
+```
+
+上述是稳定的规划/碰撞预检结论，不等价于已经完成通用双吸盘 PhysX 执行验收；固定几何
+的实际共同吸附、抬升、运输和放置仍以 Task11--13 的已验收结果为基线。
 
 ### 运行命令
 
@@ -203,5 +232,6 @@ T20-07  失败可按 seed 复现
 - ✅ T20-06（规划统计层）：每个 episode 输出 seed 与规划统计。
 - ✅ T20-07：输入 seed 随 BoxStateArray 记录，随机布局可重放。
 - 🟡 T20-05：所有 loose runtime task 已通过 Task16 / Task08-FCL preflight；
-  `tight_shared_object` 必须等待通用共享物 planner 后再验收，当前会安全拒绝。
+  loose 与 `tight_shared_object` 均已走运行时全链路的几何门禁；tight 额外通过
+  Shared Box 私有 FCL、双 TCP grasp 和 Box-path 约束。物理执行验收仍待后续阶段。
 - 🟡 物理执行：仍待后续执行层；不能以 Task20-A/B 的只读 PASS 代替。

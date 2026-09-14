@@ -87,6 +87,30 @@ target_include_directories(coordination_router
 )
 target_link_libraries(coordination_router palletizing_job)
 
+# Task21 tight：将 Task11--13 已验收的共同抬升/运输时序参数化为运行时
+# SharedObjectPlanner。它只生成并验证轨迹，不含任何 Isaac 执行命令。
+add_library(shared_object_planner
+  src/shared_object_planner.cpp
+)
+target_include_directories(shared_object_planner
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(shared_object_planner
+  runtime_box_state
+  palletizing_job
+)
+ament_target_dependencies(shared_object_planner
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 add_library(palletize_primitive
   src/palletize_primitive.cpp
   src/robust_planner.cpp
@@ -324,6 +348,7 @@ target_link_libraries(task20_motion_preflight
   runtime_box_state
   placement_planner
   coordination_router
+  shared_object_planner
   palletizing_job
 )
 ament_target_dependencies(task20_motion_preflight
@@ -376,6 +401,7 @@ install(
     runtime_box_state
     placement_planner
     coordination_router
+    shared_object_planner
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo

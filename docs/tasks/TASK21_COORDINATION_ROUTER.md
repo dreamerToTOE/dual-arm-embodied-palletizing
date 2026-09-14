@@ -1,7 +1,7 @@
 # Task21：Automatic Loose / Tight Coordination Router
 
-状态：🟡 可解释 Router 与 loose runtime 接入已完成；通用 shared-object planner
-尚未完成，因此 tight 输入会明确拒绝，不能作为 Task21 的物理执行验收（2026-09-14）。
+状态：🟡 可解释 Router 已接入 loose 与 generic tight runtime preflight；物理执行
+验收仍待后续阶段（2026-09-14）。
 
 ## 目标
 
@@ -109,8 +109,9 @@ duration_weight * estimated_duration_sec
 
 这不是把最短轨迹绕开 Router 的旁路：如果左臂的 candidate 失败，`left.pick_reachable /
 place_reachable` 就不成立；如果 FCL 拒绝，`left.fcl_safe` 就不成立。紧协调 runtime
-输入则以 `shared_transport_planner_ready=false` 进入 Router，结果必为
-`NO_FEASIBLE_MODE`，并由 Task20-B `SAFE_REJECT`。
+输入由 `SharedObjectPlanner` 写入真实的 `geometry_safe`、时长、planning cost 与诊断；
+该候选必须通过 private-scene Shared Box FCL、两个 TCP grasp 约束与 Box-path 约束，
+Router 才能输出 `TIGHT_SHARED_OBJECT`。
 
 `loose_payload_limit_kg` 是显式运行参数（默认 `0.50` kg），不是尺寸类别 if/else。
 Task18 当前只发布已验证的顶部吸盘抓取 candidate；未来稳定性模型可替换上游
@@ -135,15 +136,19 @@ tight-only 且 generic shared planner 不可用时选择 NO_FEASIBLE_MODE
 两条不同单臂任务经 Task08 + Task09 后选择 LOOSE_DUAL_PARALLEL
 ```
 
-另在双 FR3 MoveIt 隔离回归中，将两件运行时 loose Box 送入 Task20-B；实际日志为：
+另在双 FR3 MoveIt 隔离回归中，将一个运行时大件和一个运行时小件送入 Task20-B；
+实际日志为：
 
 ```text
-object=task21_right route=LOOSE_LEFT ... Task16 robust + Task08/FCL PASS
-object=task21_left  route=LOOSE_RIGHT ... Task16 robust + Task08/FCL PASS
-Task20-B PASS, executed=0
+object=task20_large route=TIGHT_SHARED_OBJECT ... shared-object FCL + dual TCP constraint PASS
+object=task20_small route=LOOSE_LEFT ... Task16 robust + Task08/FCL PASS
+seed=20260922 tasks=2 loose_safe=1 tight_safe=1 tight_deferred=0 executed=0
+Task20-B PASS
 ```
 
-未向 Isaac 发布任何机器人或吸盘执行命令。
+另外在 3 次同一 runtime `large_shared_box` 采样回归中，tight route 均通过；时长范围
+19.816--21.720 s，private-scene FCL 样本范围 615--814。未向 Isaac 发布任何机器人或
+吸盘执行命令。
 
 ## 验收标准
 
@@ -162,7 +167,7 @@ T21-06  最终候选仍分别走现有 loose / tight 安全门禁
 - ✅ T21-02：负载、完整路径可达性、吸盘稳定性与 FCL 都是 route 输入与硬门禁。
 - ✅ T21-03：没有可行模式时输出 `NO_FEASIBLE_MODE`，Task20-B 拒绝而不执行。
 - ✅ T21-04：每个 mode 保留 score 与具体拒绝理由。
-- 🟡 T21-05：loose runtime 已与 Task20-B 的多尺寸输入联调；包含 tight 大件的
-  完整随机 episode 要等通用 shared-object planner 才能闭环。
-- 🟡 T21-06：loose 最终候选已经过 Task08/FCL；tight 会安全拒绝，尚不能声称
-  shared-object geometry gate 已通用化。
+- ✅ T21-05（preflight）：混合 runtime episode 自动选择 tight 大件与 loose 小件，
+  并已通过组合回归。
+- ✅ T21-06（preflight）：loose 最终候选经过 Task08/FCL；tight 最终候选经过
+  Shared Box private FCL、双 TCP grasp 与 Box-path 门禁。物理执行验收仍待后续阶段。

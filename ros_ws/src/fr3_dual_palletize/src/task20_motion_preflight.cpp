@@ -36,6 +36,7 @@
 #include "fr3_dual_palletize/palletize_primitive.hpp"
 #include "fr3_dual_palletize/placement_planner.hpp"
 #include "fr3_dual_palletize/runtime_box_state.hpp"
+#include "fr3_dual_palletize/shared_object_planner.hpp"
 #include "fr3_dual_palletize/spatiotemporal_conflict_detector.hpp"
 
 using namespace std::chrono_literals;
@@ -391,14 +392,16 @@ std::vector<double> passiveJointPositions(
   return q;
 }
 
-bool planLooseTask(
+bool planRuntimeTask(
   const PlannedTask& task,
   const rclcpp::Node::SharedPtr& left_node,
   const rclcpp::Node::SharedPtr& right_node,
   const std::shared_ptr<std::mutex>& scene_mutex,
   double loose_payload_limit_kg,
+  double tight_payload_limit_kg,
   const fr3_dual_palletize::CoordinationRouter& router,
   ArmCandidate& selected,
+  fr3_dual_palletize::SharedObjectPlan& tight_plan,
   fr3_dual_palletize::CoordinationRouteDecision& route)
 {
   fr3_dual_palletize::CoordinationRouteRequest request;
@@ -406,12 +409,12 @@ bool planLooseTask(
   request.placement = &task.placement;
   request.tight.allowed_by_task = allowsMode(task.box, "tight_shared_object");
   request.tight.dual_grasp_feasible = task.box.grasp_candidates.size() >= 2;
-  request.tight.payload_safe = task.box.mass > 0.0;
-  // Task20-B 目前没有通用共享物 transport planner；必须让 Router 明确看到
-  // 这一事实，不能静默降级为 loose。
-  request.tight.shared_transport_planner_ready = false;
+  request.tight.payload_safe = task.box.mass <= tight_payload_limit_kg;
+  // shared_transport_planner_ready 表示通用模块已经接入，不等价于本次候选
+  // 已通过。实际几何与 FCL 结果写入 geometry_safe，避免由尺寸猜测 tight 可行性。
+  request.tight.shared_transport_planner_ready = request.tight.allowed_by_task;
   request.tight.geometry_safe = false;
-  request.tight.diagnostics = "generic shared-object planner is not available";
+  request.tight.diagnostics = "tight mode not evaluated";
 
   const bool top_suction_candidate_available = !task.box.grasp_candidates.empty();
   const auto initializeEstimate =
@@ -427,6 +430,42 @@ bool planLooseTask(
     };
   initializeEstimate(Arm::LEFT, request.left);
   initializeEstimate(Arm::RIGHT, request.right);
+
+  if (request.tight.allowed_by_task)
+  {
+    if (!request.tight.dual_grasp_feasible)
+    {
+      request.tight.diagnostics = "runtime BoxSpec has fewer than two grasp candidates";
+    }
+    else if (!request.tight.payload_safe)
+    {
+      request.tight.diagnostics = "shared-object payload exceeds tight_payload_limit_kg";
+    }
+    else
+    {
+      fr3_dual_palletize::SharedObjectPlanner planner(left_node, scene_mutex);
+      if (planner.plan(task.box, task.placement, tight_plan))
+      {
+        request.tight.geometry_safe = true;
+        request.tight.estimated_duration_sec = tight_plan.duration_sec;
+        request.tight.planning_cost = tight_plan.planning_cost;
+        request.tight.diagnostics = tight_plan.diagnostics;
+        RCLCPP_INFO(
+          left_node->get_logger(),
+          "Task20-B tight object=%s: generic shared candidate PASS, duration=%.3f s, "
+          "fcl_samples=%zu",
+          task.box.id.c_str(), tight_plan.duration_sec, tight_plan.fcl_samples);
+      }
+      else
+      {
+        request.tight.diagnostics = tight_plan.diagnostics.empty() ?
+          "generic shared-object planner rejected candidate" : tight_plan.diagnostics;
+        RCLCPP_WARN(
+          left_node->get_logger(), "Task20-B tight object=%s: generic shared candidate REJECT: %s",
+          task.box.id.c_str(), request.tight.diagnostics.c_str());
+      }
+    }
+  }
 
   std::vector<ArmCandidate> feasible;
   for (const Arm arm : {Arm::LEFT, Arm::RIGHT})
@@ -474,9 +513,16 @@ bool planLooseTask(
     feasible.push_back(std::move(trial));
   }
   route = router.decide(request);
-  if (!route.feasible ||
-      (route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_LEFT &&
-       route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_RIGHT))
+  if (!route.feasible)
+  {
+    return false;
+  }
+  if (route.mode == fr3_dual_palletize::CoordinationMode::TIGHT_SHARED_OBJECT)
+  {
+    return tight_plan.valid;
+  }
+  if (route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_LEFT &&
+      route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_RIGHT)
   {
     return false;
   }
@@ -510,6 +556,8 @@ int main(int argc, char** argv)
     "allow_tight_deferred", false);
   const double loose_payload_limit_kg = coordinator_node->declare_parameter<double>(
     "loose_payload_limit_kg", 0.50);
+  const double tight_payload_limit_kg = coordinator_node->declare_parameter<double>(
+    "tight_payload_limit_kg", 2.00);
   fr3_dual_palletize::PalletRegion region;
   region.frame_id = "world";
   region.min_x = coordinator_node->declare_parameter<double>("pallet_min_x", 0.500);
@@ -517,7 +565,7 @@ int main(int argc, char** argv)
   region.min_y = coordinator_node->declare_parameter<double>("pallet_min_y", -0.300);
   region.max_y = coordinator_node->declare_parameter<double>("pallet_max_y", 0.300);
   region.support_height = coordinator_node->declare_parameter<double>("pallet_support_height", 0.050);
-  if (timeout_sec <= 0.0 || loose_payload_limit_kg <= 0.0 ||
+  if (timeout_sec <= 0.0 || loose_payload_limit_kg <= 0.0 || tight_payload_limit_kg <= 0.0 ||
       region.min_x >= region.max_x || region.min_y >= region.max_y)
   {
     RCLCPP_ERROR(coordinator_node->get_logger(), "Task20-B 参数无效。");
@@ -631,15 +679,17 @@ int main(int argc, char** argv)
     const auto scene_mutex = std::make_shared<std::mutex>();
     const fr3_dual_palletize::CoordinationRouter router;
     std::size_t loose_safe = 0;
+    std::size_t tight_safe = 0;
     std::size_t tight_deferred = 0;
     bool all_safe = true;
     for (const auto& task : tasks)
     {
       ArmCandidate chosen;
+      fr3_dual_palletize::SharedObjectPlan tight_plan;
       fr3_dual_palletize::CoordinationRouteDecision route;
-      if (!planLooseTask(
+      if (!planRuntimeTask(
             task, left_node, right_node, scene_mutex, loose_payload_limit_kg,
-            router, chosen, route))
+            tight_payload_limit_kg, router, chosen, tight_plan, route))
       {
         const bool tight_only = allowsMode(task.box, "tight_shared_object") &&
           !allowsMode(task.box, "loose_left") && !allowsMode(task.box, "loose_right");
@@ -667,22 +717,38 @@ int main(int argc, char** argv)
         all_safe = false;
         break;
       }
-      ++loose_safe;
-      RCLCPP_INFO(
-        coordinator_node->get_logger(),
-        "Task20-B ACCEPT object=%s route=%s arm=%s duration=%.3f s target=(%.3f, %.3f, %.3f) "
-        "[Task16 robust + Task08/FCL PASS; NOT_EXECUTED]",
-        task.box.id.c_str(), fr3_dual_palletize::coordinationModeName(route.mode),
-        armName(chosen.arm), chosen.duration_sec,
-        task.placement.target_pose.position.x, task.placement.target_pose.position.y,
-        task.placement.target_pose.position.z);
+      if (route.mode == fr3_dual_palletize::CoordinationMode::TIGHT_SHARED_OBJECT)
+      {
+        ++tight_safe;
+        RCLCPP_INFO(
+          coordinator_node->get_logger(),
+          "Task20-B ACCEPT object=%s route=TIGHT_SHARED_OBJECT duration=%.3f s "
+          "fcl_samples=%zu target=(%.3f, %.3f, %.3f) "
+          "[shared-object FCL + dual TCP constraint PASS; NOT_EXECUTED]",
+          task.box.id.c_str(), tight_plan.duration_sec, tight_plan.fcl_samples,
+          task.placement.target_pose.position.x, task.placement.target_pose.position.y,
+          task.placement.target_pose.position.z);
+      }
+      else
+      {
+        ++loose_safe;
+        RCLCPP_INFO(
+          coordinator_node->get_logger(),
+          "Task20-B ACCEPT object=%s route=%s arm=%s duration=%.3f s target=(%.3f, %.3f, %.3f) "
+          "[Task16 robust + Task08/FCL PASS; NOT_EXECUTED]",
+          task.box.id.c_str(), fr3_dual_palletize::coordinationModeName(route.mode),
+          armName(chosen.arm), chosen.duration_sec,
+          task.placement.target_pose.position.x, task.placement.target_pose.position.y,
+          task.placement.target_pose.position.z);
+      }
     }
     RCLCPP_INFO(
       coordinator_node->get_logger(),
       "========== Task20-B PREFLIGHT STATS: seed=%lu tasks=%zu loose_safe=%zu "
-      "tight_deferred=%zu executed=0 ==========" ,
-      static_cast<unsigned long>(input.seed), tasks.size(), loose_safe, tight_deferred);
-    success = all_safe && tight_deferred == 0 && loose_safe == tasks.size();
+      "tight_safe=%zu tight_deferred=%zu executed=0 ==========" ,
+      static_cast<unsigned long>(input.seed), tasks.size(), loose_safe, tight_safe,
+      tight_deferred);
+    success = all_safe && tight_deferred == 0 && loose_safe + tight_safe == tasks.size();
     if (!success && allow_tight_deferred && all_safe)
     {
       RCLCPP_WARN(
@@ -704,7 +770,7 @@ int main(int argc, char** argv)
   {
     RCLCPP_INFO(
       coordinator_node->get_logger(),
-      "Task20-B PASS: all runtime loose tasks passed Task16 + Task08/FCL; no robot was executed.");
+      "Task20-B PASS: all runtime loose/tight tasks passed their geometry gates; no robot was executed.");
   }
   else
   {
