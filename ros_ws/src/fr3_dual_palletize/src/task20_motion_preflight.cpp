@@ -32,6 +32,7 @@
 
 #include "fr3_dual_palletize/local_wait_coordinator.hpp"
 #include "fr3_dual_palletize/msg/box_state_array.hpp"
+#include "fr3_dual_palletize/coordination_router.hpp"
 #include "fr3_dual_palletize/palletize_primitive.hpp"
 #include "fr3_dual_palletize/placement_planner.hpp"
 #include "fr3_dual_palletize/runtime_box_state.hpp"
@@ -304,6 +305,25 @@ bool fclGate(
   return true;
 }
 
+void removeExistingObjects(
+  moveit::planning_interface::PlanningSceneInterface& scene,
+  const std::vector<std::string>& ids)
+{
+  // PlanningSceneInterface 会对不存在的 id 打出警告。Task20 的每个 episode
+  // 都可能是首次运行，因此先取得实际存在项，再删除，保持测试日志可读。
+  const auto existing = scene.getObjects(ids);
+  std::vector<std::string> existing_ids;
+  existing_ids.reserve(existing.size());
+  for (const auto& item : existing)
+  {
+    existing_ids.push_back(item.first);
+  }
+  if (!existing_ids.empty())
+  {
+    scene.removeCollisionObjects(existing_ids);
+  }
+}
+
 bool initializeRuntimeWorld(const std::vector<fr3_dual_palletize::BoxSpec>& boxes)
 {
   moveit::planning_interface::PlanningSceneInterface scene;
@@ -316,7 +336,7 @@ bool initializeRuntimeWorld(const std::vector<fr3_dual_palletize::BoxSpec>& boxe
     ids.push_back(box.id);
     objects.push_back(fr3_dual_palletize::makeCollisionObject(box, box.initial_pose));
   }
-  scene.removeCollisionObjects(ids);
+  removeExistingObjects(scene, ids);
   std::this_thread::sleep_for(std::chrono::duration<double>(SCENE_SYNC_WAIT_SEC));
   if (!scene.applyCollisionObjects(objects))
   {
@@ -331,7 +351,7 @@ bool replaceWorldObject(
   const geometry_msgs::msg::Pose& pose)
 {
   moveit::planning_interface::PlanningSceneInterface scene;
-  scene.removeCollisionObjects({box.id});
+  removeExistingObjects(scene, {box.id});
   std::this_thread::sleep_for(std::chrono::duration<double>(SCENE_SYNC_WAIT_SEC));
   if (!scene.applyCollisionObject(fr3_dual_palletize::makeCollisionObject(box, pose)))
   {
@@ -350,7 +370,7 @@ void clearRuntimeWorld(const std::vector<fr3_dual_palletize::BoxSpec>& boxes)
     ids.push_back(box.id);
   }
   moveit::planning_interface::PlanningSceneInterface scene;
-  scene.removeCollisionObjects(ids);
+  removeExistingObjects(scene, ids);
 }
 
 std::vector<double> passiveJointPositions(
@@ -376,13 +396,44 @@ bool planLooseTask(
   const rclcpp::Node::SharedPtr& left_node,
   const rclcpp::Node::SharedPtr& right_node,
   const std::shared_ptr<std::mutex>& scene_mutex,
-  ArmCandidate& selected)
+  double loose_payload_limit_kg,
+  const fr3_dual_palletize::CoordinationRouter& router,
+  ArmCandidate& selected,
+  fr3_dual_palletize::CoordinationRouteDecision& route)
 {
+  fr3_dual_palletize::CoordinationRouteRequest request;
+  request.box = &task.box;
+  request.placement = &task.placement;
+  request.tight.allowed_by_task = allowsMode(task.box, "tight_shared_object");
+  request.tight.dual_grasp_feasible = task.box.grasp_candidates.size() >= 2;
+  request.tight.payload_safe = task.box.mass > 0.0;
+  // Task20-B 目前没有通用共享物 transport planner；必须让 Router 明确看到
+  // 这一事实，不能静默降级为 loose。
+  request.tight.shared_transport_planner_ready = false;
+  request.tight.geometry_safe = false;
+  request.tight.diagnostics = "generic shared-object planner is not available";
+
+  const bool top_suction_candidate_available = !task.box.grasp_candidates.empty();
+  const auto initializeEstimate =
+    [&](Arm arm, fr3_dual_palletize::LooseModeEstimate& estimate)
+    {
+      estimate.allowed_by_task = allowsMode(
+        task.box, arm == Arm::LEFT ? "loose_left" : "loose_right");
+      estimate.payload_safe = task.box.mass <= loose_payload_limit_kg;
+      // Task18 的 grasp contract 目前只发布已验证的 top-suction candidates；
+      // 未来吸盘稳定性模型可直接替换此上游 bool，而 Router 接口无需改变。
+      estimate.top_suction_stable = top_suction_candidate_available;
+      estimate.diagnostics = "Task20-B runtime candidate not planned";
+    };
+  initializeEstimate(Arm::LEFT, request.left);
+  initializeEstimate(Arm::RIGHT, request.right);
+
   std::vector<ArmCandidate> feasible;
   for (const Arm arm : {Arm::LEFT, Arm::RIGHT})
   {
-    const std::string allowed = arm == Arm::LEFT ? "loose_left" : "loose_right";
-    if (!allowsMode(task.box, allowed))
+    auto& estimate = arm == Arm::LEFT ? request.left : request.right;
+    if (!estimate.allowed_by_task || !estimate.payload_safe ||
+        !estimate.top_suction_stable)
     {
       continue;
     }
@@ -394,34 +445,51 @@ bool planLooseTask(
     trial.arm = arm;
     if (!primitive.planTaskTrajectoryCandidate(trial.candidate))
     {
+      estimate.diagnostics = "Task16 full candidate failed";
       RCLCPP_WARN(
         node->get_logger(), "Task20-B arm=%s object=%s: Task16 candidate FAIL",
         armName(arm), task.box.id.c_str());
       continue;
     }
+    estimate.pick_reachable = true;
+    estimate.place_reachable = true;
     const auto passive_q = passiveJointPositions(
       arm == Arm::LEFT ? right_node : left_node, oppositeArm(arm));
     if (passive_q.size() != HOME_Q.size() ||
         !fclGate(node, arm, trial.candidate, passive_q, node->get_logger()))
     {
+      estimate.diagnostics = "Task08/FCL gate rejected complete candidate";
       RCLCPP_WARN(
         node->get_logger(), "Task20-B arm=%s object=%s: Task08/FCL gate REJECT",
         armName(arm), task.box.id.c_str());
       continue;
     }
     trial.duration_sec = trial.candidate.duration_sec;
+    estimate.fcl_safe = true;
+    estimate.estimated_duration_sec = trial.duration_sec;
+    // Task16 已在自由空间阶段完成多候选评分；Task20-B 用完整候选时长作为
+    // Router 的可解释 planning cost，避免回退到按尺寸或坐标分流。
+    estimate.planning_cost = trial.duration_sec;
+    estimate.diagnostics = "Task16 full candidate + Task08/FCL passed";
     feasible.push_back(std::move(trial));
   }
-  if (feasible.empty())
+  route = router.decide(request);
+  if (!route.feasible ||
+      (route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_LEFT &&
+       route.mode != fr3_dual_palletize::CoordinationMode::LOOSE_RIGHT))
   {
     return false;
   }
-  selected = *std::min_element(
+  const Arm selected_arm = route.mode == fr3_dual_palletize::CoordinationMode::LOOSE_LEFT ?
+    Arm::LEFT : Arm::RIGHT;
+  const auto iterator = std::find_if(
     feasible.begin(), feasible.end(),
-    [](const ArmCandidate& first, const ArmCandidate& second)
-    {
-      return first.duration_sec < second.duration_sec;
-    });
+    [selected_arm](const ArmCandidate& candidate) { return candidate.arm == selected_arm; });
+  if (iterator == feasible.end())
+  {
+    return false;
+  }
+  selected = *iterator;
   return true;
 }
 
@@ -440,6 +508,8 @@ int main(int argc, char** argv)
     "publish_home_joint_state", false);
   const bool allow_tight_deferred = coordinator_node->declare_parameter<bool>(
     "allow_tight_deferred", false);
+  const double loose_payload_limit_kg = coordinator_node->declare_parameter<double>(
+    "loose_payload_limit_kg", 0.50);
   fr3_dual_palletize::PalletRegion region;
   region.frame_id = "world";
   region.min_x = coordinator_node->declare_parameter<double>("pallet_min_x", 0.500);
@@ -447,7 +517,8 @@ int main(int argc, char** argv)
   region.min_y = coordinator_node->declare_parameter<double>("pallet_min_y", -0.300);
   region.max_y = coordinator_node->declare_parameter<double>("pallet_max_y", 0.300);
   region.support_height = coordinator_node->declare_parameter<double>("pallet_support_height", 0.050);
-  if (timeout_sec <= 0.0 || region.min_x >= region.max_x || region.min_y >= region.max_y)
+  if (timeout_sec <= 0.0 || loose_payload_limit_kg <= 0.0 ||
+      region.min_x >= region.max_x || region.min_y >= region.max_y)
   {
     RCLCPP_ERROR(coordinator_node->get_logger(), "Task20-B 参数无效。");
     rclcpp::shutdown();
@@ -558,36 +629,33 @@ int main(int argc, char** argv)
     }
 
     const auto scene_mutex = std::make_shared<std::mutex>();
+    const fr3_dual_palletize::CoordinationRouter router;
     std::size_t loose_safe = 0;
     std::size_t tight_deferred = 0;
     bool all_safe = true;
     for (const auto& task : tasks)
     {
-      const bool loose = allowsMode(task.box, "loose_left") ||
-        allowsMode(task.box, "loose_right");
-      if (!loose)
-      {
-        ++tight_deferred;
-        RCLCPP_ERROR(
-          coordinator_node->get_logger(),
-          "Task20-B SAFE_REJECT object=%s modes=tight_shared_object: "
-          "generic shared-object planner is not available; no trajectory accepted.",
-          task.box.id.c_str());
-        if (!allow_tight_deferred)
-        {
-          all_safe = false;
-          break;
-        }
-        continue;
-      }
-
       ArmCandidate chosen;
-      if (!planLooseTask(task, left_node, right_node, scene_mutex, chosen))
+      fr3_dual_palletize::CoordinationRouteDecision route;
+      if (!planLooseTask(
+            task, left_node, right_node, scene_mutex, loose_payload_limit_kg,
+            router, chosen, route))
       {
+        const bool tight_only = allowsMode(task.box, "tight_shared_object") &&
+          !allowsMode(task.box, "loose_left") && !allowsMode(task.box, "loose_right");
+        if (tight_only)
+        {
+          ++tight_deferred;
+        }
         RCLCPP_ERROR(
           coordinator_node->get_logger(),
-          "Task20-B SAFE_REJECT object=%s: no loose Arm candidate passed Task16 + Task08/FCL.",
-          task.box.id.c_str());
+          "Task20-B SAFE_REJECT object=%s route=%s: %s",
+          task.box.id.c_str(),
+          fr3_dual_palletize::coordinationModeName(route.mode), route.reason.c_str());
+        if (tight_only && allow_tight_deferred)
+        {
+          continue;
+        }
         all_safe = false;
         break;
       }
@@ -602,9 +670,10 @@ int main(int argc, char** argv)
       ++loose_safe;
       RCLCPP_INFO(
         coordinator_node->get_logger(),
-        "Task20-B ACCEPT object=%s arm=%s duration=%.3f s target=(%.3f, %.3f, %.3f) "
+        "Task20-B ACCEPT object=%s route=%s arm=%s duration=%.3f s target=(%.3f, %.3f, %.3f) "
         "[Task16 robust + Task08/FCL PASS; NOT_EXECUTED]",
-        task.box.id.c_str(), armName(chosen.arm), chosen.duration_sec,
+        task.box.id.c_str(), fr3_dual_palletize::coordinationModeName(route.mode),
+        armName(chosen.arm), chosen.duration_sec,
         task.placement.target_pose.position.x, task.placement.target_pose.position.y,
         task.placement.target_pose.position.z);
     }

@@ -70,7 +70,7 @@
 | 18 | 随机场景 + Ground Truth 输入 | ✅ 固定 seed `20260912` Isaac Ground Truth → BoxStateArray → runtime pick pose 端到端通过 |
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
 | 20 | 多尺寸连续码垛 | 🟡 Task20-A 完成；Task20-B 已实现 loose runtime Motion / Task08-FCL preflight（5 类 fixture 5/5 PASS、零执行）；通用 tight planner 与执行待完成 |
-| 21 | 松/紧协调自动路由 | ⚪ 后续：根据运行时任务属性自动选择复用 skill |
+| 21 | 松/紧协调自动路由 | 🟡 可解释 Router 已接入 Task20-B 的真实 Task16/FCL 结果；loose route 已回归通过，通用 tight planner 待完成 |
 
 ## 当前核心工程结论
 

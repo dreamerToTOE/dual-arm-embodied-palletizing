@@ -75,6 +75,18 @@ target_include_directories(placement_planner
 target_link_libraries(placement_planner palletizing_job)
 ament_target_dependencies(placement_planner geometry_msgs)
 
+# Task21：只消费上游提供的负载、完整路径可达性和安全事实，输出可解释的
+# loose/tight 路由决定；不在这里以尺寸阈值替代 Motion / FCL 检查。
+add_library(coordination_router
+  src/coordination_router.cpp
+)
+target_include_directories(coordination_router
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(coordination_router palletizing_job)
+
 add_library(palletize_primitive
   src/palletize_primitive.cpp
   src/robust_planner.cpp
@@ -311,6 +323,7 @@ target_link_libraries(task20_motion_preflight
   palletize_primitive
   runtime_box_state
   placement_planner
+  coordination_router
   palletizing_job
 )
 ament_target_dependencies(task20_motion_preflight
@@ -326,6 +339,12 @@ ament_target_dependencies(task20_motion_preflight
 rosidl_target_interfaces(task20_motion_preflight
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
+
+add_executable(task21_coordination_router_demo
+  src/task21_coordination_router_demo.cpp
+)
+target_link_libraries(task21_coordination_router_demo coordination_router)
+ament_target_dependencies(task21_coordination_router_demo rclcpp)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -356,6 +375,7 @@ install(
     palletizing_job
     runtime_box_state
     placement_planner
+    coordination_router
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
@@ -371,6 +391,7 @@ install(
     task19_placement_planner_demo
     task20_multi_size_episode
     task20_motion_preflight
+    task21_coordination_router_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

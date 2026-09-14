@@ -1,7 +1,8 @@
 # Task20：Multi-size Palletizing / 多尺寸连续码垛
 
 状态：🟡 Task20-A 已完成；Task20-B 的 loose 运行时 Motion / FCL preflight 已完成。
-通用紧协调 planner、真实执行与自动路由仍待后续阶段（2026-09-14）。
+通用紧协调 planner 与真实执行仍待后续阶段；Task21 已将 loose preflight 的真实
+Task16/FCL 结果接入可解释路由（2026-09-14）。
 
 ## 目标
 
