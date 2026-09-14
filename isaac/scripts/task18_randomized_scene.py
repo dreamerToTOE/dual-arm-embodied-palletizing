@@ -92,6 +92,22 @@ BOX_CATALOG = (
         "grasp_builder": lambda size: (_top_grasp("center_top", (0.0, 0.0, 0.5 * size[2])),),
     },
     {
+        "type": "flat_box",
+        "size": (0.060, 0.050, 0.020),
+        "mass": 0.28,
+        "payload_class": "flat",
+        "allowed_modes": ("loose_left", "loose_right"),
+        "grasp_builder": lambda size: (_top_grasp("center_top", (0.0, 0.0, 0.5 * size[2])),),
+    },
+    {
+        "type": "tall_box",
+        "size": (0.040, 0.040, 0.080),
+        "mass": 0.45,
+        "payload_class": "tall",
+        "allowed_modes": ("loose_left", "loose_right"),
+        "grasp_builder": lambda size: (_top_grasp("center_top", (0.0, 0.0, 0.5 * size[2])),),
+    },
+    {
         "type": "large_shared_box",
         "size": (0.220, 0.320, 0.080),
         "mass": 1.00,
@@ -180,6 +196,34 @@ def _sample_pose(rng, box_type, side, accepted):
         }
         if _within_table_boundary(candidate) and _does_not_overlap(candidate, accepted):
             return candidate
+
+    # 随机拒绝采样在“同侧 3 个宽/扁平箱”时可能偶然没有命中可行三角排列。
+    # 这里追加确定性网格回退，而不是扩大桌面边界或接受重叠；因此每个合法 seed
+    # 都能产生 episode，同时仍保留前面的随机 x/y/yaw 主采样。
+    has_shared_object = any(item["reachable_by"] == "both" for item in accepted)
+    if side == "shared":
+        x_range, y_range = SHARED_X_RANGE, SHARED_Y_RANGE
+    elif side == "left":
+        x_range = LOOSE_X_RANGE
+        y_range = LEFT_LOOSE_Y_WITH_SHARED_RANGE if has_shared_object else LEFT_LOOSE_Y_RANGE
+    else:
+        x_range = LOOSE_X_RANGE
+        y_range = RIGHT_LOOSE_Y_WITH_SHARED_RANGE if has_shared_object else RIGHT_LOOSE_Y_RANGE
+    for x_fraction in (0.0, 0.25, 0.5, 0.75, 1.0):
+        for y_fraction in (0.0, 0.25, 0.5, 0.75, 1.0):
+            candidate = {
+                "pose": {
+                    "position": (
+                        x_range[0] + x_fraction * (x_range[1] - x_range[0]),
+                        y_range[0] + y_fraction * (y_range[1] - y_range[0]),
+                        TABLE_SUPPORT_Z + 0.5 * size[2],
+                    ),
+                    "orientation": _yaw_quaternion(0.0),
+                },
+                "radius": _footprint_radius(size),
+            }
+            if _within_table_boundary(candidate) and _does_not_overlap(candidate, accepted):
+                return candidate
     raise RuntimeError(
         "Task18 随机布局在 250 次内未找到无重叠、可达且满足桌边安全边界的候选；"
         "请缩小 count 或调整 catalog/workspace envelope。"
@@ -250,6 +294,8 @@ def _layout_signature(layout):
 def _validate_layout_generation():
     """不导入 omni 的确定性/安全性自检：python3 ... --validate。"""
     seed = 20260912
+    if len(BOX_CATALOG) < 6:
+        raise RuntimeError("Task20 FAIL：Task18 catalog 必须至少包含 6 类尺寸。")
     actual_a, layout_a = generate_layout(seed)
     actual_b, layout_b = generate_layout(seed)
     _, layout_c = generate_layout(seed + 1)
@@ -263,6 +309,7 @@ def _validate_layout_generation():
         ):
             raise RuntimeError("Task18 布局安全检查 FAIL。")
     print("Task18 layout generator PASS")
+    print(f"Task20 multi-size catalog PASS: types={len(BOX_CATALOG)}")
     print(f"same seed={seed}: count={len(layout_a)}, deterministic=true")
     print(f"different seed={seed + 1}: different_layout=true")
     for candidate in layout_a:

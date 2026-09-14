@@ -288,6 +288,19 @@ add_executable(task19_placement_planner_demo
 )
 target_link_libraries(task19_placement_planner_demo placement_planner palletizing_job)
 ament_target_dependencies(task19_placement_planner_demo rclcpp geometry_msgs)
+
+add_executable(task20_multi_size_episode
+  src/task20_multi_size_episode.cpp
+)
+target_link_libraries(task20_multi_size_episode
+  runtime_box_state
+  placement_planner
+  palletizing_job
+)
+ament_target_dependencies(task20_multi_size_episode rclcpp geometry_msgs)
+rosidl_target_interfaces(task20_multi_size_episode
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -331,6 +344,7 @@ install(
     task17_job_validate
     task18_runtime_input_demo
     task19_placement_planner_demo
+    task20_multi_size_episode
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

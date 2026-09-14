@@ -72,8 +72,8 @@ seed = random  # 压力测试
 随机 /World/Task18Box_01 ... N
 ```
 
-因此不依赖此前打开过 Task06 或 Task15。随机类型包括 small/medium/slim 单臂
-物体与 `large_shared_box` 双臂物体；每个 episode 随机生成 3--6 件、至多一个
+因此不依赖此前打开过 Task06 或 Task15。随机类型包括 small/medium/slim/flat/tall
+单臂物体与 `large_shared_box` 双臂物体；每个 episode 随机生成 3--6 件、至多一个
 大件。采样器使用 Task15 已成功取料区的保守可达 envelope，并逐一检查：
 
 - 外接圆保守 no-overlap，物体间最小额外间隙 20 mm；
