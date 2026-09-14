@@ -55,6 +55,9 @@ struct PrimitiveConfig
   // Task15 的上层码垛中，已通过真实落稳误差验收的小件会请求 Isaac 将其设为
   // kinematic 支撑块；Collider 保留，后续 Cube 仍必须与它发生真实碰撞。
   bool freeze_after_settle{false};
+  // 稳定支撑锁请求 topic 默认保持 Task15 行为；运行时连续调度可指向自己的
+  // Isaac bridge，避免把 lock 请求投递到另一个场景。
+  std::string stable_support_lock_topic{"/task15/lock_placed_object"};
   // Task16：自由空间阶段从多条 RRTConnect 可行候选中选择代价最低者。
   // Task15 固定场景的 benchmark 当前选择 soft_preference 为默认；三种模式仍可
   // 配置切换，并要求在新场景中重新做对照验证。

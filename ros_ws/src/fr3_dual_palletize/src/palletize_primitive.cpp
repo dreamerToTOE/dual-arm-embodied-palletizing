@@ -207,7 +207,7 @@ PalletizePrimitive::PalletizePrimitive(
   if (config_.freeze_after_settle)
   {
     lock_object_pub_ = node_->create_publisher<std_msgs::msg::String>(
-      "/task15/lock_placed_object", 10);
+      config_.stable_support_lock_topic, 10);
   }
 
   suction_state_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
@@ -222,6 +222,8 @@ PalletizePrimitive::PalletizePrimitive(
 
 bool PalletizePrimitive::waitForIsaacBridge()
 {
+  const std::string lock_suffix = config_.freeze_after_settle ?
+    " / " + config_.stable_support_lock_topic : "";
   RCLCPP_INFO(
     node_->get_logger(),
     "[%s] 等待 Isaac 控制链与吸盘 bridge...",
@@ -248,7 +250,7 @@ bool PalletizePrimitive::waitForIsaacBridge()
     config_.joint_command_topic.c_str(),
     config_.suction_command_topic.c_str(),
     config_.suction_state_topic.c_str(),
-    config_.freeze_after_settle ? " /task15/lock_placed_object" : "");
+    lock_suffix.c_str());
   return false;
 }
 
@@ -839,7 +841,8 @@ bool PalletizePrimitive::applyTaskEvent(
         if (!lock_object_pub_ || lock_object_pub_->get_subscription_count() == 0)
         {
           RCLCPP_ERROR(
-            node_->get_logger(), "[%s] Task15 lock bridge 未就绪。", config_.label.c_str());
+            node_->get_logger(), "[%s] stable-support lock bridge 未就绪：%s。",
+            config_.label.c_str(), config_.stable_support_lock_topic.c_str());
           return false;
         }
         std_msgs::msg::String lock_request;
@@ -851,7 +854,8 @@ bool PalletizePrimitive::applyTaskEvent(
           std::this_thread::sleep_for(50ms);
         }
         RCLCPP_INFO(
-          node_->get_logger(), "[%s] Task15 stable-support lock requested.", config_.label.c_str());
+          node_->get_logger(), "[%s] stable-support lock requested on %s.",
+          config_.label.c_str(), config_.stable_support_lock_topic.c_str());
       }
       return true;
     }

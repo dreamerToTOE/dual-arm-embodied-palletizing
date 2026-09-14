@@ -228,6 +228,7 @@ bool SharedObjectExecutor::waitForBridge() const
         right_command_pub_->get_subscription_count() > 0 &&
         left_suction_pub_->get_subscription_count() > 0 &&
         right_suction_pub_->get_subscription_count() > 0 &&
+        lock_object_pub_->get_subscription_count() > 0 &&
         have_left_suction_state_.load() && have_right_suction_state_.load() && have_tcp)
     {
       return true;
@@ -577,7 +578,12 @@ bool SharedObjectExecutor::execute(
       result.error = "无法将 release 后 SharedBox Ground Truth 写回 MoveIt World。";
       break;
     }
-    if (lock_object_pub_->get_subscription_count() > 0)
+    if (lock_object_pub_->get_subscription_count() == 0)
+    {
+      result.error = "Task20 stable-support lock bridge 在释放后不可用。";
+      break;
+    }
+    else
     {
       std_msgs::msg::String lock;
       lock.data = box.id;
