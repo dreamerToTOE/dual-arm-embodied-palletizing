@@ -42,6 +42,9 @@ struct PrimitiveConfig
   std::size_t pose_index{0};
   double target_x{0.0};
   double target_y{0.0};
+  // Task20：目标姿态同样属于运行时任务输入。默认 0 保持 Task04--Task16
+  // 历史场景的 world 对齐放置行为；随机箱体则由 PlacementSpec 提供该 yaw。
+  double target_yaw{0.0};
   // 目标物体在释放后应落到的支撑面高度。默认桌面顶面 z=0.050 m，
   // 因而完全保持 Task04--Task10 的地面码垛几何；Task15 上层码垛只需
   // 按配置提供已落稳下层的顶面高度，而不复制 primitive 状态机。

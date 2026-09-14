@@ -301,6 +301,31 @@ ament_target_dependencies(task20_multi_size_episode rclcpp geometry_msgs)
 rosidl_target_interfaces(task20_multi_size_episode
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
+
+# Task20-B：将运行时多尺寸 placement 接入 Task16 多候选规划与 Task08/FCL。
+# 它是严格无执行 preflight，不发布机器人或吸盘命令。
+add_executable(task20_motion_preflight
+  src/task20_motion_preflight.cpp
+)
+target_link_libraries(task20_motion_preflight
+  palletize_primitive
+  runtime_box_state
+  placement_planner
+  palletizing_job
+)
+ament_target_dependencies(task20_motion_preflight
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task20_motion_preflight
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -345,6 +370,7 @@ install(
     task18_runtime_input_demo
     task19_placement_planner_demo
     task20_multi_size_episode
+    task20_motion_preflight
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

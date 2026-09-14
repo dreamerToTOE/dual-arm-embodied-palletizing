@@ -249,6 +249,17 @@ geometry_msgs::msg::Pose PalletizePrimitive::makeTopDownPose(
   return pose;
 }
 
+double yawFromQuaternion(const geometry_msgs::msg::Quaternion& quaternion)
+{
+  // 顶部吸盘只需要 Box 绕 world Z 的朝向。BoxState 在 Task18 输入边界已
+  // 做单位化；此处仍使用标准展开式，避免引入 TF 运行时依赖。
+  const double sin_yaw = 2.0 * (
+    quaternion.w * quaternion.z + quaternion.x * quaternion.y);
+  const double cos_yaw = 1.0 - 2.0 * (
+    quaternion.y * quaternion.y + quaternion.z * quaternion.z);
+  return std::atan2(sin_yaw, cos_yaw);
+}
+
 bool PalletizePrimitive::setStartStateForGroup(
   moveit::planning_interface::MoveGroupInterface& move_group,
   const moveit::core::JointModelGroup* joint_model_group,
@@ -951,6 +962,11 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   candidate.planned_release_pose.position.x = config_.target_x;
   candidate.planned_release_pose.position.y = config_.target_y;
   candidate.planned_release_pose.position.z = planned_release_center_z;
+  const double target_half_yaw = 0.5 * config_.target_yaw;
+  candidate.planned_release_pose.orientation.x = 0.0;
+  candidate.planned_release_pose.orientation.y = 0.0;
+  candidate.planned_release_pose.orientation.z = std::sin(target_half_yaw);
+  candidate.planned_release_pose.orientation.w = std::cos(target_half_yaw);
 
   // 所有阶段均记录在同一条完整轨迹的时间轴上。Task09-B 据此只在
   // LIFT 完成、进入公共工作区前插入局部等待，不改变 Task04 抓放时序。
@@ -973,7 +989,8 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
     };
 
   auto pre_pick = makeTopDownPose(
-    pick_pose.position.x, pick_pose.position.y, pre_pick_tcp_z);
+    pick_pose.position.x, pick_pose.position.y, pre_pick_tcp_z,
+    yawFromQuaternion(pick_pose.orientation));
   trajectory_msgs::msg::JointTrajectory pre_pick_traj;
   if (!planPoseStage(
         move_group, joint_model_group, config_.eef_link,
@@ -1010,7 +1027,8 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   removeWorldObject(config_.object_id);
 
   auto contact = makeTopDownPose(
-    pick_pose.position.x, pick_pose.position.y, pick_contact_tcp_z);
+    pick_pose.position.x, pick_pose.position.y, pick_contact_tcp_z,
+    yawFromQuaternion(pick_pose.orientation));
   trajectory_msgs::msg::JointTrajectory contact_traj;
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(pre_pick_traj),
@@ -1044,7 +1062,8 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   });
 
   auto lift = makeTopDownPose(
-    pick_pose.position.x, pick_pose.position.y, lift_tcp_z);
+    pick_pose.position.x, pick_pose.position.y, lift_tcp_z,
+    yawFromQuaternion(pick_pose.orientation));
   trajectory_msgs::msg::JointTrajectory lift_traj;
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(contact_traj),
@@ -1056,7 +1075,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   }
 
   auto pre_place = makeTopDownPose(
-    config_.target_x, config_.target_y, pre_place_tcp_z);
+    config_.target_x, config_.target_y, pre_place_tcp_z, config_.target_yaw);
   trajectory_msgs::msg::JointTrajectory pre_place_traj;
   if (!planPoseStage(
         move_group, joint_model_group, config_.eef_link,
@@ -1069,7 +1088,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
   }
 
   auto place = makeTopDownPose(
-    config_.target_x, config_.target_y, place_tcp_z);
+    config_.target_x, config_.target_y, place_tcp_z, config_.target_yaw);
   trajectory_msgs::msg::JointTrajectory place_traj;
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(pre_place_traj),
@@ -1082,7 +1101,7 @@ bool PalletizePrimitive::planTaskTrajectoryCandidateImpl(
 
   // 保持 Attached + SUCTION ON 预先规划上退，与已验证 Task04 release/retreat 时序一致。
   auto retreat = makeTopDownPose(
-    config_.target_x, config_.target_y, pre_place_tcp_z);
+    config_.target_x, config_.target_y, pre_place_tcp_z, config_.target_yaw);
   trajectory_msgs::msg::JointTrajectory retreat_traj;
   if (!planCartesianStage(
         move_group, joint_model_group, currentFrom(place_traj),
