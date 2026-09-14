@@ -80,6 +80,28 @@ struct TransferCandidate
   bool carrying_object{false};
 };
 
+// Task20-C：单个 runtime loose task 的真实 Isaac 执行结果。它与
+// TaskTrajectoryCandidate 使用同一事件契约；执行器不会重新规划、不会绕过已经
+// 完成的 Task16 / Task08-FCL preflight。
+struct TaskTrajectoryExecutionConfig
+{
+  double command_period_sec{0.010};
+  double execution_time_scale{2.0};
+  double grasp_timeout_sec{3.0};
+  double release_timeout_sec{3.0};
+  double final_hold_sec{0.50};
+};
+
+struct TaskTrajectoryExecutionResult
+{
+  bool completed{false};
+  std::size_t events_executed{0};
+  double candidate_duration_sec{0.0};
+  double physical_pause_sec{0.0};
+  double wall_duration_sec{0.0};
+  std::string error;
+};
+
 // 通用同步闸门。
 // Task07 用于 PRE_PICK 同时放行；Task08 额外在 LIFT 后建立 coordination point。
 class StartGate
@@ -134,6 +156,14 @@ public:
     double grasp_timeout_sec,
     double release_timeout_sec);
   void emergencySuctionOff();
+
+  // 执行一条已经通过 Task16 / Task08-FCL 的完整单臂候选。SUCTION、ATTACH、
+  // SUCTION_OFF、DETACH 均在离散事件点停表确认；DETACH 会使用 pose_provider
+  // 的 Isaac Ground Truth 回写 MoveIt World，再继续候选中已经预先验证的退出段。
+  bool executeTaskTrajectoryCandidate(
+    const TaskTrajectoryCandidate& candidate,
+    const TaskTrajectoryExecutionConfig& config,
+    TaskTrajectoryExecutionResult& result);
 
   // Task08 新接口：
   // 1) 执行 PRE_PICK -> CONTACT -> SUCTION ON -> ATTACH -> LIFT；

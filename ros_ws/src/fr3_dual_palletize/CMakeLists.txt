@@ -111,6 +111,31 @@ ament_target_dependencies(shared_object_planner
   moveit_ros_planning_interface
 )
 
+# Task20-C tight：只执行已经通过 SharedObjectPlanner private FCL/TCP 门禁的
+# 共同物体候选；不在执行期重新规划或扩大 MoveIt ACM。
+add_library(shared_object_executor
+  src/shared_object_executor.cpp
+)
+target_include_directories(shared_object_executor
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(shared_object_executor
+  runtime_box_state
+  palletizing_job
+  shared_object_planner
+)
+ament_target_dependencies(shared_object_executor
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_ros_planning_interface
+)
+
 add_library(palletize_primitive
   src/palletize_primitive.cpp
   src/robust_planner.cpp
@@ -365,6 +390,35 @@ rosidl_target_interfaces(task20_motion_preflight
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
 
+# Task20-C：真实 Isaac 单 runtime task 验收。默认强制一次只执行一个对象；
+# 连续多物体物理调度必须在每次落稳后重新预检，不能借用 Task20-B 的只读结论。
+add_executable(task20_runtime_execute
+  src/task20_runtime_execute.cpp
+)
+target_link_libraries(task20_runtime_execute
+  palletize_primitive
+  runtime_box_state
+  placement_planner
+  coordination_router
+  shared_object_planner
+  shared_object_executor
+  palletizing_job
+)
+ament_target_dependencies(task20_runtime_execute
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task20_runtime_execute
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
+
 add_executable(task21_coordination_router_demo
   src/task21_coordination_router_demo.cpp
 )
@@ -402,6 +456,7 @@ install(
     placement_planner
     coordination_router
     shared_object_planner
+    shared_object_executor
     task07_parallel_demo
     task08_candidate_demo
     task10_continuous_demo
@@ -417,6 +472,7 @@ install(
     task19_placement_planner_demo
     task20_multi_size_episode
     task20_motion_preflight
+    task20_runtime_execute
     task21_coordination_router_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib

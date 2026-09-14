@@ -41,6 +41,7 @@
 - [Task 18 — 随机场景与 Ground Truth 运行时输入](docs/tasks/TASK18_RANDOMIZED_SCENE.md)
 - [Task 19 — 自动码垛点规划](docs/tasks/TASK19_PLACEMENT_PLANNER.md)
 - [Task 20 — 多尺寸连续码垛](docs/tasks/TASK20_MULTI_SIZE_PALLETIZING.md)
+- [Task 20-C — Runtime Isaac 单任务物理执行验收](docs/tasks/TASK20_RUNTIME_ISAAC_EXECUTION.md)
 - [Task 21 — 松/紧协调自动路由](docs/tasks/TASK21_COORDINATION_ROUTER.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
@@ -69,8 +70,8 @@
 | 17 | Box / Placement 参数化 | ✅ YAML BoxSpec / PlacementSpec、任意数量和尺寸的 CollisionObject 已验证 |
 | 18 | 随机场景 + Ground Truth 输入 | ✅ 固定 seed `20260912` Isaac Ground Truth → BoxStateArray → runtime pick pose 端到端通过 |
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
-| 20 | 多尺寸连续码垛 | 🟡 Task20-A 完成；Task20-B 已完成 loose（5 类 fixture 5/5）与 generic tight（大件 3/3）运行时 Motion/FCL preflight，并完成 tight+loose 混合回归；均为零执行 |
-| 21 | 松/紧协调自动路由 | 🟡 可解释 Router 已接入 Task20-B 的真实 loose Task16/FCL 与 generic tight shared-object 结果；混合 runtime route 回归通过，物理执行待完成 |
+| 20 | 多尺寸连续码垛 | 🟡 Task20-A/B 的 runtime preflight 已完成；Task20-C 已具备真实 Isaac 单任务执行器、自包含 seed 回归场景与双吸盘 Ground Truth bridge，等待物理验收 |
+| 21 | 松/紧协调自动路由 | 🟡 可解释 Router 已接入 Task20-C：只有 Task16/FCL 或 generic shared-object private-FCL/TCP 通过才允许发命令；首个物理执行验收待完成 |
 
 ## 当前核心工程结论
 

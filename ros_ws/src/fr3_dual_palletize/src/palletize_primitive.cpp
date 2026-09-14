@@ -39,6 +39,7 @@ constexpr double SETTLED_PLACEMENT_Z_TOLERANCE_M = 0.010;
 // 轨迹候选不接入 Isaac，因此 SUCTION state 的实际异步等待不在此处估计。
 constexpr double NOMINAL_SUCTION_COMMAND_SEC = 0.20;
 constexpr double NOMINAL_RELEASE_SETTLE_SEC = 0.30;
+constexpr double TASK_EVENT_TIME_EPSILON = 1.0e-6;
 
 
 double pointTime(const trajectory_msgs::msg::JointTrajectoryPoint& point)
@@ -101,6 +102,55 @@ moveit_msgs::msg::CollisionObject makeBoxObject(
 double boxHalfHeight(const PrimitiveConfig& config)
 {
   return 0.5 * config.object_dimensions[2];
+}
+
+bool validateExecutableTaskCandidate(
+  const TaskTrajectoryCandidate& candidate,
+  const PrimitiveConfig& config,
+  std::string& error)
+{
+  if (candidate.object_id != config.object_id ||
+      candidate.planning_group != config.planning_group ||
+      candidate.eef_link != config.eef_link ||
+      candidate.trajectory.joint_names.empty() || candidate.trajectory.points.empty())
+  {
+    error = "TaskTrajectoryCandidate 元数据或轨迹与当前 primitive 不匹配。";
+    return false;
+  }
+
+  const double duration = pointTime(candidate.trajectory.points.back());
+  if (duration <= 0.0)
+  {
+    error = "TaskTrajectoryCandidate 的 duration 无效。";
+    return false;
+  }
+
+  double previous_time = -TASK_EVENT_TIME_EPSILON;
+  bool suction_on = false;
+  bool attach = false;
+  bool suction_off = false;
+  bool detach = false;
+  for (const auto& event : candidate.events)
+  {
+    if (event.object_name != config.object_id || event.link_name != config.eef_link ||
+        event.time_sec + TASK_EVENT_TIME_EPSILON < previous_time ||
+        event.time_sec > duration + TASK_EVENT_TIME_EPSILON)
+    {
+      error = "TaskTrajectoryCandidate 的事件时间轴或 object/link 无效。";
+      return false;
+    }
+    previous_time = event.time_sec;
+    suction_on = suction_on || event.type == TaskEventType::SUCTION_ON;
+    attach = attach || event.type == TaskEventType::ATTACH;
+    suction_off = suction_off || event.type == TaskEventType::SUCTION_OFF;
+    detach = detach || event.type == TaskEventType::DETACH;
+  }
+  if (!suction_on || !attach || !suction_off || !detach)
+  {
+    error = "TaskTrajectoryCandidate 缺少完整 SUCTION/ATTACH/DETACH 事件。";
+    return false;
+  }
+  return true;
 }
 
 }  // namespace
@@ -813,6 +863,132 @@ bool PalletizePrimitive::applyTaskEvent(
 void PalletizePrimitive::emergencySuctionOff()
 {
   commandSuction(false);
+}
+
+bool PalletizePrimitive::executeTaskTrajectoryCandidate(
+  const TaskTrajectoryCandidate& candidate,
+  const TaskTrajectoryExecutionConfig& config,
+  TaskTrajectoryExecutionResult& result)
+{
+  result = TaskTrajectoryExecutionResult();
+  if (config.command_period_sec <= 0.0 || config.execution_time_scale < 1.0 ||
+      config.grasp_timeout_sec <= 0.0 || config.release_timeout_sec <= 0.0 ||
+      config.final_hold_sec < 0.0 ||
+      !validateExecutableTaskCandidate(candidate, config_, result.error))
+  {
+    return false;
+  }
+  if (!waitForTaskExecutionBridge())
+  {
+    result.error = "Isaac joint command 或 Surface Gripper bridge 未就绪。";
+    return false;
+  }
+
+  result.candidate_duration_sec = trajectoryDuration(candidate.trajectory);
+  const auto execution_start = std::chrono::steady_clock::now();
+  auto active_start = execution_start;
+  std::size_t next_event = 0;
+
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] Task20-C loose EXECUTE: duration=%.3f s, events=%zu, physical_time_scale=%.2f",
+    config_.label.c_str(), result.candidate_duration_sec, candidate.events.size(),
+    config.execution_time_scale);
+
+  while (true)
+  {
+    const double active_time = std::chrono::duration<double>(
+      std::chrono::steady_clock::now() - active_start).count() /
+      config.execution_time_scale;
+    const double next_time = next_event < candidate.events.size() ?
+      candidate.events[next_event].time_sec : result.candidate_duration_sec;
+    const double command_time = std::min(active_time, next_time);
+    if (!publishTaskTrajectorySample(candidate.trajectory, command_time))
+    {
+      result.error = "无法发布 Isaac 关节命令。";
+      break;
+    }
+
+    if (next_event < candidate.events.size() &&
+        active_time + TASK_EVENT_TIME_EPSILON >= candidate.events[next_event].time_sec)
+    {
+      const double hold_time = candidate.events[next_event].time_sec;
+      const auto pause_start = std::chrono::steady_clock::now();
+      RCLCPP_INFO(
+        node_->get_logger(), "[%s] Task20-C GLOBAL HOLD at t=%.3f s",
+        config_.label.c_str(), hold_time);
+      while (next_event < candidate.events.size() &&
+             std::abs(candidate.events[next_event].time_sec - hold_time) <=
+             TASK_EVENT_TIME_EPSILON)
+      {
+        const auto& event = candidate.events[next_event];
+        RCLCPP_INFO(
+          node_->get_logger(), "[%s] Task20-C event=%s at t=%.3f s",
+          config_.label.c_str(), taskEventTypeName(event.type), event.time_sec);
+        if (!applyTaskEvent(event, config.grasp_timeout_sec, config.release_timeout_sec))
+        {
+          result.error = std::string("TaskEvent ") + taskEventTypeName(event.type) + " 失败。";
+          break;
+        }
+        ++result.events_executed;
+        ++next_event;
+      }
+      if (!result.error.empty())
+      {
+        break;
+      }
+      const double pause_sec = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - pause_start).count();
+      result.physical_pause_sec += pause_sec;
+      active_start += std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+        std::chrono::duration<double>(pause_sec));
+      continue;
+    }
+
+    if (active_time >= result.candidate_duration_sec)
+    {
+      break;
+    }
+    const double remaining_wall_sec = std::max(
+      0.0, (next_time - active_time) * config.execution_time_scale);
+    std::this_thread::sleep_for(std::chrono::duration<double>(
+      std::min(config.command_period_sec, remaining_wall_sec)));
+  }
+
+  if (!result.error.empty())
+  {
+    emergencySuctionOff();
+    result.wall_duration_sec = std::chrono::duration<double>(
+      std::chrono::steady_clock::now() - execution_start).count();
+    RCLCPP_ERROR(
+      node_->get_logger(), "[%s] Task20-C loose EXECUTION FAIL: %s",
+      config_.label.c_str(), result.error.c_str());
+    return false;
+  }
+
+  const auto final_hold_start = std::chrono::steady_clock::now();
+  while (std::chrono::duration<double>(
+           std::chrono::steady_clock::now() - final_hold_start).count() <
+         config.final_hold_sec)
+  {
+    if (!publishTaskTrajectorySample(candidate.trajectory, result.candidate_duration_sec))
+    {
+      result.error = "最终保持阶段发布关节命令失败。";
+      emergencySuctionOff();
+      return false;
+    }
+    std::this_thread::sleep_for(std::chrono::duration<double>(config.command_period_sec));
+  }
+
+  result.completed = true;
+  result.wall_duration_sec = std::chrono::duration<double>(
+    std::chrono::steady_clock::now() - execution_start).count();
+  RCLCPP_INFO(
+    node_->get_logger(),
+    "[%s] Task20-C loose EXECUTION PASS: events=%zu, candidate=%.3f s, pause=%.3f s, wall=%.3f s",
+    config_.label.c_str(), result.events_executed, result.candidate_duration_sec,
+    result.physical_pause_sec, result.wall_duration_sec);
+  return true;
 }
 
 std::vector<double> PalletizePrimitive::currentFrom(
