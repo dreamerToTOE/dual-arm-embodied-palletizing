@@ -1,4 +1,4 @@
-# Task20-C：可重复的 Isaac 物理执行验收场景。
+# Task20-C/D：可重复的 Isaac 物理执行验收场景。
 #
 # 在新开的 Isaac Sim 4.5 Script Editor 中、Timeline Stop 时运行：
 #
@@ -61,11 +61,13 @@ _run_task18_scene_with_acceptance_seed()
 
 print("")
 print("====================================================")
-print("Task20-C Isaac runtime acceptance scene ready")
+print("Task20-C/D Isaac runtime acceptance scene ready")
 print(f"fixed replay seed = {ACCEPTANCE_SEED}")
-print("Runtime execution policy: largest Box only (Task20-C max_tasks=1)")
+print("Runtime execution policy: Task20-C executes largest Box only (max_tasks=1)")
+print("                          Task20-D executes 3 Boxes with settle/replan (max_tasks=3)")
 print("TIGHT target window: x=[0.535, 0.765], y=[-0.165, 0.165]")
 print("Next: Timeline Play -> task18_ground_truth_bridge.py")
 print("      -> task20_runtime_suction_bridge.py")
 print("      -> ros2 launch fr3_dual_palletize task20_runtime_acceptance.launch.py")
+print("         or task20_continuous_runtime_acceptance.launch.py")
 print("====================================================")
