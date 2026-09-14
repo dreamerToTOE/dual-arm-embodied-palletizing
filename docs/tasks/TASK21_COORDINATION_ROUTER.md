@@ -1,7 +1,7 @@
 # Task21：Automatic Loose / Tight Coordination Router
 
-状态：🟡 可解释 Router 已接入 loose 与 generic tight runtime preflight；物理执行
-验收仍待后续阶段（2026-09-14）。
+状态：🟡 可解释 Router 已接入 loose 与 generic tight runtime preflight；其中一个
+runtime tight route 已完成真实 Isaac 执行，loose runtime 物理执行仍待验收（2026-09-14）。
 
 ## 目标
 
@@ -151,6 +151,13 @@ Task20-B PASS
 吸盘执行命令。`task20_small` 的一次独立复跑选择 `LOOSE_RIGHT`（19.292 s、1931 个
 FCL samples），说明 Router 按完整 candidate 的实际代价和门禁选择可行臂，不绑定左臂。
 
+随后在 Task18 `seed=20260922` 的真实 Isaac episode 中，Router 对最大 runtime Box
+`task18_box_01` 输出 `TIGHT_SHARED_OBJECT`。该选择经过 SharedObjectPlanner 的六阶段
+private-FCL/TCP 门禁后实际执行完成：最终放置误差 `0.337 mm`、最大阶段 Box 误差
+`0.501 mm`、最大相对 TCP 误差 `0.160 mm`，并打印 `Task20-C EXECUTION PASS`。
+这证明 Router 的 tight 路由可以接到真实执行器；不代表 loose 路由或多对象调度已经
+完成物理验收。
+
 ## 验收标准
 
 ```text
@@ -170,5 +177,6 @@ T21-06  最终候选仍分别走现有 loose / tight 安全门禁
 - ✅ T21-04：每个 mode 保留 score 与具体拒绝理由。
 - ✅ T21-05（preflight）：混合 runtime episode 自动选择 tight 大件与 loose 小件，
   并已通过组合回归。
-- ✅ T21-06（preflight）：loose 最终候选经过 Task08/FCL；tight 最终候选经过
-  Shared Box private FCL、双 TCP grasp 与 Box-path 门禁。物理执行验收仍待后续阶段。
+- ✅ T21-06（tight 物理验收）：loose 最终候选经过 Task08/FCL；tight 最终候选经过
+  Shared Box private FCL、双 TCP grasp 与 Box-path 门禁后，已完成一次真实 Isaac
+  `TIGHT_SHARED_OBJECT` 执行。loose runtime 物理验收仍待后续阶段。

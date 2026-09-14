@@ -70,8 +70,8 @@
 | 17 | Box / Placement 参数化 | ✅ YAML BoxSpec / PlacementSpec、任意数量和尺寸的 CollisionObject 已验证 |
 | 18 | 随机场景 + Ground Truth 输入 | ✅ 固定 seed `20260912` Isaac Ground Truth → BoxStateArray → runtime pick pose 端到端通过 |
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
-| 20 | 多尺寸连续码垛 | 🟡 Task20-A/B 的 runtime preflight 已完成；Task20-C 已具备真实 Isaac 单任务执行器、自包含 seed 回归场景与双吸盘 Ground Truth bridge，等待物理验收 |
-| 21 | 松/紧协调自动路由 | 🟡 可解释 Router 已接入 Task20-C：只有 Task16/FCL 或 generic shared-object private-FCL/TCP 通过才允许发命令；首个物理执行验收待完成 |
+| 20 | 多尺寸连续码垛 | 🟡 Task20-C 已实际完成一个 runtime 大件紧协调闭环：放置误差 0.337 mm、最大阶段误差 0.501 mm；多箱连续物理调度仍待验收 |
+| 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
 
 ## 当前核心工程结论
 

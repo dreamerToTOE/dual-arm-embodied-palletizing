@@ -1,7 +1,7 @@
 # Task20-C：Runtime 松/紧协调的 Isaac 单任务物理执行验收
 
-状态：🟡 已完成编译、真实 Task18 episode 的 MoveIt / private-FCL 预检和无 Bridge
-安全拒绝回归；等待 Isaac 实际运动验收（2026-09-14）。
+状态：✅ 首次真实 Isaac 紧协调 runtime 单任务执行已通过（2026-09-14）。
+多箱连续物理调度仍不在本 Task20-C 的验收范围内。
 
 ## 目标与边界
 
@@ -76,6 +76,37 @@ PREPLANNED_COMMON_RETREAT           Cartesian=1.0000 + private FCL PASS
 
 此外，在没有 Task20 Isaac Bridge 的隔离 ROS 回归中，该候选在所有规划门禁通过后
 以 `Task20 Isaac dual-suction bridge 未就绪` 退出；没有进入发布关节命令阶段。
+
+## Isaac 实际验收结果
+
+用户按本文场景入口、两个 bridge 和执行 launch 运行固定 replay `seed=20260922`。
+Router 选择最大运行时物体 `task18_box_01`，输出 `TIGHT_SHARED_OBJECT`；六个实际阶段
+全部完成，进程以 exit code 0 正常退出。
+
+```text
+DUAL_CONTACT       box_error = 0.034 mm
+COMMON_LIFT        box_error = 0.501 mm
+COMMON_TRANSPORT   box_error = 0.329 mm
+COMMON_DESCENT     box_error = 0.332 mm
+
+placement error       = 0.337 mm
+placement orientation = 0.000 deg
+max stage error       = 0.501 mm
+max relative TCP      = 0.160 mm
+wall duration         = 48.060 s
+```
+
+最终日志：
+
+```text
+Task20-C tight EXECUTION PASS: stages=6 ...
+Task20-C PASS route=TIGHT_SHARED_OBJECT object=task18_box_01 ...
+Task20-C EXECUTION PASS: runtime route completed in Isaac
+```
+
+上述数值均低于本 Task 的 `10 mm / 5 mm / 0.052 rad` 物理门禁。场景画面也确认了
+双 FR3 共同搬运、同步释放以及双臂退出；这不是仅由 MoveIt 轨迹或 private-FCL 推断的
+成功结果。
 
 ## Isaac 验收步骤
 

@@ -1,7 +1,7 @@
 # Task20：Multi-size Palletizing / 多尺寸连续码垛
 
-状态：🟡 Task20-A 已完成；Task20-B 已完成 loose 与 generic tight 的运行时
-Motion / FCL preflight。物理执行层仍待后续阶段（2026-09-14）。
+状态：🟡 Task20-A/B 已完成；Task20-C 已在 Isaac 完成一个 runtime 大件的紧协调
+物理闭环。多尺寸连续物理调度仍待后续阶段（2026-09-14）。
 
 ## 目标
 
@@ -179,8 +179,12 @@ Task20-B PASS
 同时 `loose_safe=1 / tight_safe=1 / executed=0`。因此左右臂不是由坐标或尺寸硬编码，
 只要最终 route 的完整轨迹与 FCL 均通过即为正确结果。
 
-上述是稳定的规划/碰撞预检结论，不等价于已经完成通用双吸盘 PhysX 执行验收；固定几何
-的实际共同吸附、抬升、运输和放置仍以 Task11--13 的已验收结果为基线。
+上述 preflight 结论此前不等价于通用双吸盘 PhysX 执行验收。随后 Task20-C 已使用
+Task18 的运行时 `seed=20260922` 输入实际执行最大大件 `task18_box_01`：Router 选择
+`TIGHT_SHARED_OBJECT`，共同接触、抬升、运输、下降、同步释放和预规划退出均通过。
+最终放置误差为 `0.337 mm`、最大阶段 Box 误差为 `0.501 mm`、最大相对 TCP 误差为
+`0.160 mm`。详见 `TASK20_RUNTIME_ISAAC_EXECUTION.md`。这只验证单任务大件执行，
+不把它扩展解释为多箱连续物理码垛已经完成。
 
 ### 运行命令
 
@@ -236,7 +240,7 @@ T20-07  失败可按 seed 复现
 - ✅ T20-04：每个目标由 Task19 自动生成。
 - ✅ T20-06（规划统计层）：每个 episode 输出 seed 与规划统计。
 - ✅ T20-07：输入 seed 随 BoxStateArray 记录，随机布局可重放。
-- 🟡 T20-05：所有 loose runtime task 已通过 Task16 / Task08-FCL preflight；
-  loose 与 `tight_shared_object` 均已走运行时全链路的几何门禁；tight 额外通过
-  Shared Box 私有 FCL、双 TCP grasp 和 Box-path 约束。物理执行验收仍待后续阶段。
-- 🟡 物理执行：仍待后续执行层；不能以 Task20-A/B 的只读 PASS 代替。
+- ✅ T20-05（tight 单任务物理验收）：`task18_box_01` 已实际完成运行时
+  `TIGHT_SHARED_OBJECT`；物理误差满足全部门禁。loose 的运行时物理执行仍待独立验收。
+- 🟡 连续物理执行：每个对象均需在前一对象落稳、Ground Truth 回写后重新执行
+  Task19 / Task21 / FCL；不能以本次单任务 PASS 代替多箱连续结果。
