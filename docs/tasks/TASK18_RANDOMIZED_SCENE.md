@@ -1,6 +1,6 @@
 # Task18：Randomized Scene + Ground Truth Task Input
 
-状态：🟡 代码与离线接口验证完成；待 Isaac Sim 端到端验收（2026-09-12）。
+状态：🟢 已完成（2026-09-14）。
 
 ## 目标
 
@@ -210,7 +210,8 @@ T18-06  Task16 benchmark 可批量运行随机场景
 - ✅ T18-04：运行时 pose 与局部 grasp candidate 组合生成 pick pose。
 - ✅ T18-05：每条 adapter 日志记录 `seed + BoxSpec + pose`，可按 seed 重放。
 - 🟡 T18-06：待 Task19 把随机 `BoxStateArray` 接入批量 MoveIt benchmark 后完成。
-- 🟡 Isaac 端到端：待按上述步骤在 Isaac Sim 4.5 实机运行 bridge 后完成。
+- ✅ Isaac 端到端：2026-09-14 使用固定 `seed=20260912` 实机运行 bridge，
+  收到 3 个 BoxState，并成功生成对应 CollisionObject 与 runtime pick pose。
 
 ## 边界
 

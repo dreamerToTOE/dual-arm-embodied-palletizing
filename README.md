@@ -35,6 +35,13 @@
 - [Task 13 — 双吸盘共同放置、释放与安全退出](docs/tasks/TASK13_SHARED_BOX_PLACE.md)
 - [Task 14-A — 双吸盘共同搬运连续几何观测](docs/tasks/TASK14_CONTINUOUS_GEOMETRY.md)
 - [Task 15 — 紧/松协调混合码垛场景与复用策略](docs/tasks/TASK15_HYBRID_PALLETIZING.md)
+- [Task 16 — Planning Robustness / 鲁棒规划基准](docs/tasks/TASK16_PLANNING_ROBUSTNESS.md)
+- [Task 16+ — 通用化主线与路线图](docs/tasks/TASK16_PLUS_ROADMAP.md)
+- [Task 17 — Box 参数化作业模型](docs/tasks/TASK17_BOX_ABSTRACTION.md)
+- [Task 18 — 随机场景与 Ground Truth 运行时输入](docs/tasks/TASK18_RANDOMIZED_SCENE.md)
+- [Task 19 — 自动码垛点规划](docs/tasks/TASK19_PLACEMENT_PLANNER.md)
+- [Task 20 — 多尺寸连续码垛（下一阶段）](docs/tasks/TASK20_MULTI_SIZE_PALLETIZING.md)
+- [Task 21 — 松/紧协调自动路由（后续）](docs/tasks/TASK21_COORDINATION_ROUTER.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
 
@@ -57,8 +64,13 @@
 | 12 | 双吸盘共同抬升与运输 | ✅ +50 mm 抬升与 +100 mm X 向共同运输均通过；运输误差 0.311 mm、相对 `link8` 误差 0.123 mm |
 | 13 | 双吸盘共同放置、释放与安全退出 | ✅ 完整闭环通过；最终放置误差 0.947 mm、姿态误差 0.026° |
 | 14 | 紧协调连续几何观测 | 🟡 已实现双 TCP / SharedBox 连续 max-RMS 误差观测，待 Isaac 验收 |
-| 15 | 紧/松协调混合码垛 | 🟡 场景与项目级复用 skill 已就绪；待 Task15 专用 Bridge / 控制器与 Isaac 验收 |
-| 16+ | 紧协调改进控制与后续混合任务 | 计划中 |
+| 15 | 紧/松协调混合码垛 | 🟡 已形成紧/松复用契约与自包含场景；保留为后续通用执行器的回归基线 |
+| 16 | 规划鲁棒性 | ✅ RobustPlanner 多候选生成、评分与 benchmark 已完成 |
+| 17 | Box / Placement 参数化 | ✅ YAML BoxSpec / PlacementSpec、任意数量和尺寸的 CollisionObject 已验证 |
+| 18 | 随机场景 + Ground Truth 输入 | ✅ 固定 seed `20260912` Isaac Ground Truth → BoxStateArray → runtime pick pose 端到端通过 |
+| 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
+| 20 | 多尺寸连续码垛 | 🟡 下一阶段：接入 Task18 随机输入与 Task19 自动目标 |
+| 21 | 松/紧协调自动路由 | ⚪ 后续：根据运行时任务属性自动选择复用 skill |
 
 ## 当前核心工程结论
 
@@ -128,7 +140,7 @@ PRE_PICK
 - `libfranka` 0.20.4
 - MoveIt 2 / OMPL
 
-## 当前阶段：Task15 场景与复用策略
+## 当前阶段：Task16–Task19 通用化主线
 
 Task06 已完成双臂基础设施，Task07 已完成两条独立 Task04 primitive 的并行执行。
 
@@ -143,4 +155,30 @@ HOME -> PRE_PICK -> CONTACT -> ATTACH -> LIFT
 
 Task09-A 保留为 Full-task Start Delay baseline。Task09-B 已将 MoveIt 规划的 `RETREAT -> HOME SAFE_EGRESS` 与冲突窗口局部等待结合：若安全退出路径已经分离，则保持并行；否则只在 LIFT 后插入最小 HOLD。Task09-C 只消费 Task08-B/FCL 复检为 SAFE 的联合候选，以共享时钟同步驱动 Isaac 双臂，并在吸附、释放事件处全局 HOLD。2026-09-09 已在 Task08 交叉场景实际完成双臂抓取、放置与安全退出；详见 [Task09-C 记录](docs/tasks/TASK09_COORDINATED_EXECUTION.md)。
 
-Task11--Task13 随后完成了同一 `SharedBox` 的双吸盘共同吸附、共同抬升、共同运输、共同放置、同步释放和安全退出。Task15 不再重新实现这些闭环，而是将它们封装为仓库内的紧协调复用契约；四个独立小件则复用松协调契约。当前已建立 Task15 混合场景：先紧协调搬运大件，再让左右臂按“下层并行、落稳回写、上层并行”搬运小件。
+Task11--Task13 已完成同一 `SharedBox` 的双吸盘共同吸附、共同抬升、共同运输、共同放置、同步释放和安全退出。Task15 将其封装为仓库内的紧协调复用契约；独立小件则复用松协调契约。它们不再是继续复制状态机的目标，而是后续通用任务的执行基础。
+
+Task16--Task19 已将固定 Demo 升级为配置与运行时输入驱动的链路：
+
+```text
+Task17 YAML BoxSpec / PlacementSpec
+        +
+Task18 Isaac Ground Truth BoxStateArray（seed 可复现）
+        ↓
+Task19 Placement Planner
+  几何候选 + 支撑/边界/碰撞门禁
+  + 可替换 PlacementSelectionModel
+        ↓
+Task20 多尺寸连续码垛
+        ↓
+Task21 松/紧协调自动路由
+```
+
+Task18 的 `seed=20260912` 已实际通过 Isaac 端到端输入验收：3 个随机物体的
+`id / pose / size / mass / grasp candidate` 从 `/task18/box_states` 进入 ROS，成功
+构造对应 CollisionObject 与 runtime pick pose。Task19 随后在 Task15 兼容作业上
+自动重现大件 `(0.650, 0.000, 0.090)` 的放置点，并为四个小件生成多个大件顶面
+候选；可达性预检拒绝 28 个候选后，成功回退到下一个完整支撑候选。
+
+当前默认的 `geometric_v1` 只负责候选选择。后续可以通过
+`PlacementSelectionModel` 注入自定义启发式、优化器或学习模型；模型只能为已通过
+几何门禁的候选打分，不能绕过支撑、边界、碰撞、MoveIt 可达性或 Task08/FCL 安全链。
