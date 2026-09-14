@@ -45,6 +45,7 @@
 - [Task 20-D — Runtime 多对象连续调度物理验收](docs/tasks/TASK20_CONTINUOUS_SCHEDULING.md)
 - [Task 20-E — Runtime 反馈闭环与效率基准](docs/tasks/TASK20E_RUNTIME_FEEDBACK_EFFICIENCY.md)
 - [Task 21 — 松/紧协调自动路由](docs/tasks/TASK21_COORDINATION_ROUTER.md)
+- [Task 22 — Ground Truth 在线任务分派与预规划](docs/tasks/TASK22_GT_RUNTIME_DISPATCH.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
 
@@ -74,6 +75,7 @@
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
 | 20 | 多尺寸连续码垛 | 🟠 Task20-C 单大件紧协调闭环已通过；Task20-D 三件连续运行在第 3 件出现 92.411 mm 横向放置误差，未通过。Task20-E 已加入真实 TCP release gate、非规则中等共享箱体和效率 profile，待 Isaac 验收 |
 | 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
+| 22 | Ground Truth 在线任务分派与预规划 | 🟡 不接相机；先建立 Python selector → MoveIt primary-arm-first 的 typed dispatch 契约，复用 Task08/09 冲突协调 |
 
 ## 当前核心工程结论
 
