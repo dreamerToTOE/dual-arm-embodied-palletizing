@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <thread>
 #include <utility>
 
@@ -102,6 +103,16 @@ moveit_msgs::msg::CollisionObject makeBoxObject(
 double boxHalfHeight(const PrimitiveConfig& config)
 {
   return 0.5 * config.object_dimensions[2];
+}
+
+double positionDistance(
+  const geometry_msgs::msg::Point& first,
+  const geometry_msgs::msg::Point& second)
+{
+  const double dx = first.x - second.x;
+  const double dy = first.y - second.y;
+  const double dz = first.z - second.z;
+  return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 bool validateExecutableTaskCandidate(
@@ -218,12 +229,27 @@ PalletizePrimitive::PalletizePrimitive(
       suction_closed_.store(msg->data);
       have_suction_state_.store(true);
     });
+
+  if (!config_.suction_tcp_pose_topic.empty())
+  {
+    suction_tcp_pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
+      config_.suction_tcp_pose_topic,
+      10,
+      [this](const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+      {
+        std::lock_guard<std::mutex> lock(suction_tcp_pose_mutex_);
+        suction_tcp_pose_ = msg->pose;
+        have_suction_tcp_pose_.store(true);
+      });
+  }
 }
 
 bool PalletizePrimitive::waitForIsaacBridge()
 {
   const std::string lock_suffix = config_.freeze_after_settle ?
     " / " + config_.stable_support_lock_topic : "";
+  const std::string tcp_suffix = config_.suction_tcp_pose_topic.empty() ?
+    "" : " / " + config_.suction_tcp_pose_topic;
   RCLCPP_INFO(
     node_->get_logger(),
     "[%s] 等待 Isaac 控制链与吸盘 bridge...",
@@ -235,7 +261,8 @@ bool PalletizePrimitive::waitForIsaacBridge()
         suction_pub_->get_subscription_count() > 0 &&
         (!config_.freeze_after_settle ||
          (lock_object_pub_ && lock_object_pub_->get_subscription_count() > 0)) &&
-        have_suction_state_.load())
+        have_suction_state_.load() &&
+        (config_.suction_tcp_pose_topic.empty() || have_suction_tcp_pose_.load()))
     {
       RCLCPP_INFO(node_->get_logger(), "[%s] bridge READY", config_.label.c_str());
       return true;
@@ -245,12 +272,13 @@ bool PalletizePrimitive::waitForIsaacBridge()
 
   RCLCPP_ERROR(
     node_->get_logger(),
-    "[%s] bridge 超时：检查 %s / %s / %s%s",
+    "[%s] bridge 超时：检查 %s / %s / %s%s%s",
     config_.label.c_str(),
     config_.joint_command_topic.c_str(),
     config_.suction_command_topic.c_str(),
     config_.suction_state_topic.c_str(),
-    lock_suffix.c_str());
+    lock_suffix.c_str(),
+    tcp_suffix.c_str());
   return false;
 }
 
@@ -656,6 +684,76 @@ bool PalletizePrimitive::waitForSuctionClosed(bool expected, double timeout_sec)
   return false;
 }
 
+bool PalletizePrimitive::waitForSuctionTcpAtPosition(
+  const geometry_msgs::msg::Pose& expected,
+  double position_tolerance_m,
+  double timeout_sec)
+{
+  if (config_.suction_tcp_pose_topic.empty())
+  {
+    // 历史 primitive 没有配置 TCP Ground Truth 时保持原有语义；Task20-E 明确
+    // 配置该 topic，因此不会绕过释放前的实际到位确认。
+    return true;
+  }
+  if (position_tolerance_m <= 0.0 || timeout_sec <= 0.0)
+  {
+    return false;
+  }
+
+  const auto start = std::chrono::steady_clock::now();
+  geometry_msgs::msg::Pose actual;
+  bool received = false;
+  double latest_error = std::numeric_limits<double>::infinity();
+  while (std::chrono::duration<double>(
+           std::chrono::steady_clock::now() - start).count() < timeout_sec)
+  {
+    {
+      std::lock_guard<std::mutex> lock(suction_tcp_pose_mutex_);
+      received = have_suction_tcp_pose_.load();
+      if (received)
+      {
+        actual = suction_tcp_pose_;
+      }
+    }
+    if (received)
+    {
+      latest_error = positionDistance(actual.position, expected.position);
+      if (latest_error <= position_tolerance_m)
+      {
+        RCLCPP_INFO(
+          node_->get_logger(),
+          "[%s] RELEASE TCP READY: expected=(%.4f, %.4f, %.4f), actual=(%.4f, %.4f, %.4f), "
+          "error=%.3f mm",
+          config_.label.c_str(),
+          expected.position.x, expected.position.y, expected.position.z,
+          actual.position.x, actual.position.y, actual.position.z,
+          latest_error * 1000.0);
+        return true;
+      }
+    }
+    std::this_thread::sleep_for(20ms);
+  }
+
+  if (received)
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(),
+      "[%s] RELEASE TCP NOT READY: expected=(%.4f, %.4f, %.4f), actual=(%.4f, %.4f, %.4f), "
+      "error=%.3f mm > %.3f mm, timeout=%.2f s。保持本次失败可诊断，拒绝按名义时间释放。",
+      config_.label.c_str(),
+      expected.position.x, expected.position.y, expected.position.z,
+      actual.position.x, actual.position.y, actual.position.z,
+      latest_error * 1000.0, position_tolerance_m * 1000.0, timeout_sec);
+  }
+  else
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(), "[%s] RELEASE TCP NOT READY: 未收到 %s。",
+      config_.label.c_str(), config_.suction_tcp_pose_topic.c_str());
+  }
+  return false;
+}
+
 void PalletizePrimitive::removeWorldObject(const std::string& object_id)
 {
   {
@@ -877,6 +975,8 @@ bool PalletizePrimitive::executeTaskTrajectoryCandidate(
   result = TaskTrajectoryExecutionResult();
   if (config.command_period_sec <= 0.0 || config.execution_time_scale < 1.0 ||
       config.grasp_timeout_sec <= 0.0 || config.release_timeout_sec <= 0.0 ||
+      config.release_tcp_timeout_sec <= 0.0 ||
+      config.release_tcp_position_tolerance_m <= 0.0 ||
       config.final_hold_sec < 0.0 ||
       !validateExecutableTaskCandidate(candidate, config_, result.error))
   {
@@ -892,6 +992,9 @@ bool PalletizePrimitive::executeTaskTrajectoryCandidate(
   const auto execution_start = std::chrono::steady_clock::now();
   auto active_start = execution_start;
   std::size_t next_event = 0;
+  // 当释放前 TCP 实测位置不合格时，不能再走通用的 emergencySuctionOff()。
+  // 否则会在未知位置把仍被吸住的物体丢下，反而破坏失败现场并制造新的风险。
+  bool hold_suction_after_release_gate_failure = false;
 
   RCLCPP_INFO(
     node_->get_logger(),
@@ -929,6 +1032,24 @@ bool PalletizePrimitive::executeTaskTrajectoryCandidate(
         RCLCPP_INFO(
           node_->get_logger(), "[%s] Task20-C event=%s at t=%.3f s",
           config_.label.c_str(), taskEventTypeName(event.type), event.time_sec);
+        if (event.type == TaskEventType::SUCTION_OFF)
+        {
+          // 规划时间到达 PLACE 不等于 Isaac articulation 已实际跟踪到 PLACE。
+          // Task20-D 第三件的 92 mm 横向偏差正是缺少这道闭环确认时暴露出来的。
+          // 只有真实 suction TCP 到达本件 planned release pose 上方的接触高度，
+          // 才允许向物理吸盘发送 OFF。
+          auto expected_tcp = candidate.planned_release_pose;
+          expected_tcp.position.z += boxHalfHeight(config_) + CONTACT_TCP_CLEARANCE;
+          if (!waitForSuctionTcpAtPosition(
+                expected_tcp,
+                config.release_tcp_position_tolerance_m,
+                config.release_tcp_timeout_sec))
+          {
+            result.error = "SUCTION_OFF 前真实 suction TCP 未到达 PLACE。";
+            hold_suction_after_release_gate_failure = true;
+            break;
+          }
+        }
         if (!applyTaskEvent(event, config.grasp_timeout_sec, config.release_timeout_sec))
         {
           result.error = std::string("TaskEvent ") + taskEventTypeName(event.type) + " 失败。";
@@ -961,7 +1082,17 @@ bool PalletizePrimitive::executeTaskTrajectoryCandidate(
 
   if (!result.error.empty())
   {
-    emergencySuctionOff();
+    if (hold_suction_after_release_gate_failure)
+    {
+      RCLCPP_ERROR(
+        node_->get_logger(),
+        "[%s] 安全保持：释放前 TCP Gate 未通过，保持 SUCTION ON；请人工重置场景后再重试。",
+        config_.label.c_str());
+    }
+    else
+    {
+      emergencySuctionOff();
+    }
     result.wall_duration_sec = std::chrono::duration<double>(
       std::chrono::steady_clock::now() - execution_start).count();
     RCLCPP_ERROR(

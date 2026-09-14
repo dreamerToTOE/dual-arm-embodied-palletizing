@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <geometry_msgs/msg/pose.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/robot_state/robot_state.h>
 #include <rclcpp/rclcpp.hpp>
@@ -35,6 +36,9 @@ struct PrimitiveConfig
   std::string joint_command_topic;
   std::string suction_command_topic;
   std::string suction_state_topic;
+  // 非空时，真实执行会订阅 Isaac suction TCP Ground Truth；Task20-E 在释放前
+  // 必须确认 TCP 已到达规划放置点，避免只按名义轨迹时间提前断吸。
+  std::string suction_tcp_pose_topic;
   std::string object_id;
   // Task17：物体几何属于任务输入，不能假设所有任务都是 30 mm cube。
   // 顺序为 x/y/z，m；默认仅用于兼容 Task04--Task16 的历史小 Cube。
@@ -92,6 +96,8 @@ struct TaskTrajectoryExecutionConfig
   double execution_time_scale{2.0};
   double grasp_timeout_sec{3.0};
   double release_timeout_sec{3.0};
+  double release_tcp_timeout_sec{3.0};
+  double release_tcp_position_tolerance_m{0.006};
   double final_hold_sec{0.50};
 };
 
@@ -245,6 +251,10 @@ private:
 
   void commandSuction(bool on);
   bool waitForSuctionClosed(bool expected, double timeout_sec);
+  bool waitForSuctionTcpAtPosition(
+    const geometry_msgs::msg::Pose& expected,
+    double position_tolerance_m,
+    double timeout_sec);
 
   void removeWorldObject(const std::string& object_id);
   bool addWorldObject(
@@ -275,9 +285,13 @@ private:
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr suction_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr lock_object_pub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr suction_state_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr suction_tcp_pose_sub_;
 
   std::atomic_bool suction_closed_{false};
   std::atomic_bool have_suction_state_{false};
+  std::atomic_bool have_suction_tcp_pose_{false};
+  mutable std::mutex suction_tcp_pose_mutex_;
+  geometry_msgs::msg::Pose suction_tcp_pose_;
 };
 
 }  // namespace fr3_dual_palletize

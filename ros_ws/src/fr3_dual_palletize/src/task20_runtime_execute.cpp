@@ -196,6 +196,8 @@ fr3_dual_palletize::PrimitiveConfig makeConfig(
     "/task20/right/suction_command";
   config.suction_state_topic = left ? "/task20/left/suction_state" :
     "/task20/right/suction_state";
+  config.suction_tcp_pose_topic = left ? "/task20/left/suction_tcp_pose" :
+    "/task20/right/suction_tcp_pose";
   config.object_id = box.id;
   config.object_dimensions = box.dimensions;
   config.target_x = placement.target_pose.position.x;
@@ -469,6 +471,8 @@ int main(int argc, char** argv)
 
   const double timeout_sec = coordinator->declare_parameter<double>("timeout_sec", 60.0);
   const auto expected_seed = coordinator->declare_parameter<std::int64_t>("expected_seed", -1);
+  const std::string execution_label = coordinator->declare_parameter<std::string>(
+    "execution_label", "");
   const int max_tasks = coordinator->declare_parameter<int>("max_tasks", 1);
   const int task_plan_attempts = coordinator->declare_parameter<int>("task_plan_attempts", 3);
   const int max_placement_candidates_to_try = coordinator->declare_parameter<int>(
@@ -514,7 +518,8 @@ int main(int argc, char** argv)
   bool success = false;
   do
   {
-    const std::string task_label = max_tasks == 1 ? "Task20-C" : "Task20-D";
+    const std::string task_label = !execution_label.empty() ? execution_label :
+      (max_tasks == 1 ? "Task20-C" : "Task20-D");
     RCLCPP_INFO(
       coordinator->get_logger(),
       "%s runtime execution waiting /task18/box_states; real Isaac /joint_states required.",
@@ -577,6 +582,7 @@ int main(int argc, char** argv)
     int completed_tight = 0;
     int completed_loose = 0;
     bool episode_ok = true;
+    const auto episode_wall_start = std::chrono::steady_clock::now();
 
     RCLCPP_INFO(
       coordinator->get_logger(),
@@ -587,6 +593,7 @@ int main(int argc, char** argv)
 
     for (int task_index = 0; task_index < requested_tasks; ++task_index)
     {
+      const auto task_wall_start = std::chrono::steady_clock::now();
       auto& box = pending.front();
       geometry_msgs::msg::Pose live_source_pose;
       if (!input_buffer.poseFor(box.id, live_source_pose))
@@ -599,7 +606,10 @@ int main(int argc, char** argv)
       // 每一轮都以 Isaac 最新 source pose 创建本件的碰撞物和顶部抓取参考，不能沿用
       // episode 初始 snapshot；之前已经放稳的物体只通过 placed / MoveIt World 表达。
       box.initial_pose = live_source_pose;
+      const auto placement_wall_start = std::chrono::steady_clock::now();
       const auto planned = placement_planner.plan(box, region, placed);
+      const double placement_wall_sec = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - placement_wall_start).count();
       if (!planned.has_solution)
       {
         RCLCPP_ERROR(coordinator->get_logger(), "%s PlacementPlanner FAIL task=%d object=%s: %s",
@@ -613,6 +623,8 @@ int main(int argc, char** argv)
       fr3_dual_palletize::CoordinationRouteDecision selected_route;
       fr3_dual_palletize::PlacementSpec selected_placement;
       bool route_ready = false;
+      double route_wall_sec = 0.0;
+      std::size_t route_calls = 0;
       const auto candidate_limit = std::min(
         planned.candidates.size(), static_cast<std::size_t>(max_placement_candidates_to_try));
       for (std::size_t candidate_index = 0; candidate_index < candidate_limit && !route_ready;
@@ -624,9 +636,14 @@ int main(int argc, char** argv)
           ArmCandidate loose;
           fr3_dual_palletize::SharedObjectPlan tight;
           fr3_dual_palletize::CoordinationRouteDecision route;
-          if (planRuntimeRoute(
+          const auto route_wall_start = std::chrono::steady_clock::now();
+          const bool route_ok = planRuntimeRoute(
                 box, candidate.placement, left_node, right_node, scene_mutex,
-                loose_payload_limit_kg, tight_payload_limit_kg, loose, tight, route, task_label))
+                loose_payload_limit_kg, tight_payload_limit_kg, loose, tight, route, task_label);
+          route_wall_sec += std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - route_wall_start).count();
+          ++route_calls;
+          if (route_ok)
           {
             selected_loose = std::move(loose);
             selected_tight = std::move(tight);
@@ -682,6 +699,7 @@ int main(int argc, char** argv)
         return input_buffer.poseFor(id, pose) ? pose : fallback;
       };
       bool task_ok = false;
+      const auto execution_wall_start = std::chrono::steady_clock::now();
       if (selected_route.mode == fr3_dual_palletize::CoordinationMode::TIGHT_SHARED_OBJECT)
       {
         fr3_dual_palletize::SharedObjectExecutionConfig config;
@@ -754,6 +772,9 @@ int main(int argc, char** argv)
         break;
       }
 
+      const double execution_wall_sec = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - execution_wall_start).count();
+
       geometry_msgs::msg::Pose settled_pose;
       if (!input_buffer.poseFor(box.id, settled_pose))
       {
@@ -771,6 +792,14 @@ int main(int argc, char** argv)
         "next task will replan from updated support map and MoveIt World.",
         task_label.c_str(), completed_tasks, requested_tasks, placed.back().box.id.c_str(),
         settled_pose.position.x, settled_pose.position.y, settled_pose.position.z);
+      RCLCPP_INFO(
+        coordinator->get_logger(),
+        "%s PROFILE task=%d object=%s placement=%.3f s candidates=%zu route_calls=%zu "
+        "route=%.3f s execution=%.3f s task_wall=%.3f s",
+        task_label.c_str(), completed_tasks, placed.back().box.id.c_str(),
+        placement_wall_sec, planned.candidates.size(), route_calls, route_wall_sec,
+        execution_wall_sec,
+        std::chrono::duration<double>(std::chrono::steady_clock::now() - task_wall_start).count());
     }
 
     success = episode_ok && completed_tasks == requested_tasks;
@@ -780,6 +809,10 @@ int main(int argc, char** argv)
         coordinator->get_logger(),
         "========== %s CONTINUOUS EXECUTION PASS: completed=%d/%d tight=%d loose=%d ==========" ,
         task_label.c_str(), completed_tasks, requested_tasks, completed_tight, completed_loose);
+      RCLCPP_INFO(
+        coordinator->get_logger(), "%s PROFILE episode_wall=%.3f s",
+        task_label.c_str(), std::chrono::duration<double>(
+          std::chrono::steady_clock::now() - episode_wall_start).count());
     }
     else
     {

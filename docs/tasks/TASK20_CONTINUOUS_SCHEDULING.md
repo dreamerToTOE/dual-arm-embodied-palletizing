@@ -1,6 +1,9 @@
 # Task20-D：运行时多对象连续调度物理验收
 
-状态：🟡 已实现并通过编译；等待 Isaac 实际验收。
+状态：🟠 已完成首次物理运行，但 Task20-D 在第 3 件真实放置误差超限而未通过；
+后续 Task20-E 以真实 TCP release feedback 修复并重新验收。
+
+> 未通过记录与修复路线见 [Task20-E：运行时反馈闭环与效率基准](TASK20E_RUNTIME_FEEDBACK_EFFICIENCY.md)。
 
 ## 目标
 
