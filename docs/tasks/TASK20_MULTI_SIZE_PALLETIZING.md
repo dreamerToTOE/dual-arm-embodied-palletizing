@@ -169,10 +169,15 @@ fraction=1.0000 且通过私有 FCL/TCP 约束。另用混合 fixture 验证自�
 ```text
 seed=20260922
 task20_large  -> TIGHT_SHARED_OBJECT  duration=22.228 s  fcl_samples=765
-task20_small  -> LOOSE_LEFT           duration=19.821 s
+task20_small  -> LOOSE_LEFT / LOOSE_RIGHT（由本次完整 candidate cost 决定）
 tasks=2  loose_safe=1  tight_safe=1  tight_deferred=0  executed=0
 Task20-B PASS
 ```
+
+同一 seed 的独立复跑可因 RRTConnect 采样选择另一条同样通过门禁的单臂候选。例如一次
+实际复跑得到 `task20_small -> LOOSE_RIGHT`、duration=`19.292 s`、FCL samples=`1931`，
+同时 `loose_safe=1 / tight_safe=1 / executed=0`。因此左右臂不是由坐标或尺寸硬编码，
+只要最终 route 的完整轨迹与 FCL 均通过即为正确结果。
 
 上述是稳定的规划/碰撞预检结论，不等价于已经完成通用双吸盘 PhysX 执行验收；固定几何
 的实际共同吸附、抬升、运输和放置仍以 Task11--13 的已验收结果为基线。

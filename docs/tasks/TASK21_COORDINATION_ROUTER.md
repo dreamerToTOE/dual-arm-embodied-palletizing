@@ -141,14 +141,15 @@ tight-only 且 generic shared planner 不可用时选择 NO_FEASIBLE_MODE
 
 ```text
 object=task20_large route=TIGHT_SHARED_OBJECT ... shared-object FCL + dual TCP constraint PASS
-object=task20_small route=LOOSE_LEFT ... Task16 robust + Task08/FCL PASS
+object=task20_small route=LOOSE_LEFT 或 LOOSE_RIGHT ... Task16 robust + Task08/FCL PASS
 seed=20260922 tasks=2 loose_safe=1 tight_safe=1 tight_deferred=0 executed=0
 Task20-B PASS
 ```
 
 另外在 3 次同一 runtime `large_shared_box` 采样回归中，tight route 均通过；时长范围
 19.816--21.720 s，private-scene FCL 样本范围 615--814。未向 Isaac 发布任何机器人或
-吸盘执行命令。
+吸盘执行命令。`task20_small` 的一次独立复跑选择 `LOOSE_RIGHT`（19.292 s、1931 个
+FCL samples），说明 Router 按完整 candidate 的实际代价和门禁选择可行臂，不绑定左臂。
 
 ## 验收标准
 
