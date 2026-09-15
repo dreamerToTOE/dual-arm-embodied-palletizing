@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3_gripper">
+  <!--
+    Task23：两台 FR3 均保留官方 franka_hand，而不是复用已冻结的紧凑吸盘。
+    基座坐标保持 Task06 已验收布局，便于复用现有 Isaac 双臂 ROS 通信链。
+  -->
+  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="left_"
+      no_prefix="false"
+      hand="true"
+      ee_id="franka_hand"
+      connected_to=""
+      with_sc="false"/>
+
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="right_"
+      no_prefix="false"
+      hand="true"
+      ee_id="franka_hand"
+      connected_to=""
+      with_sc="false"/>
+
+  <joint name="world_to_left_fr3" type="fixed">
+    <parent link="world"/>
+    <child link="left_fr3_link0"/>
+    <origin xyz="0.55 -0.50 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="world_to_right_fr3" type="fixed">
+    <parent link="world"/>
+    <child link="right_fr3_link0"/>
+    <origin xyz="0.55 0.50 0.0" rpy="0 0 0"/>
+  </joint>
+</robot>

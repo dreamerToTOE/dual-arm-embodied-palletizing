@@ -48,6 +48,7 @@
 - [Task 20-E — Runtime 反馈闭环与效率基准](docs/tasks/TASK20E_RUNTIME_FEEDBACK_EFFICIENCY.md)
 - [Task 21 — 松/紧协调自动路由](docs/tasks/TASK21_COORDINATION_ROUTER.md)
 - [Task 22 — Ground Truth 在线任务分派与预规划](docs/tasks/TASK22_GT_RUNTIME_DISPATCH.md)
+- [Task 23 — 二指夹爪暂存后平推二层验证](docs/tasks/TASK23_GRIPPER_STAGE_PUSH.md)
 - [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
@@ -79,6 +80,7 @@
 | 20 | 多尺寸连续码垛 | 🟠 Task20-C 单大件紧协调闭环已通过；Task20-D 三件连续运行在第 3 件出现 92.411 mm 横向放置误差，未通过。Task20-E 已加入真实 TCP release gate、非规则中等共享箱体和效率 profile，待 Isaac 验收 |
 | 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
 | 22 | Ground Truth 在线任务分派与预规划 | 🧊 吸盘实现冻结：已完成 `GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件` 串行闭环与三件 Isaac 连续验收；不再扩展吸盘路线，后续以夹爪重新建立执行基线 |
+| 23 | 二指夹爪暂存后平推二层验证 | 🟡 已建立独立双 FR3 + 官方手指场景、16 件 Ground Truth 选择器及 `抓取 → 暂存 → 单臂 +X 推送` 执行器；待 Isaac 物理验收 |
 
 ## 已冻结的吸盘基线结论
 

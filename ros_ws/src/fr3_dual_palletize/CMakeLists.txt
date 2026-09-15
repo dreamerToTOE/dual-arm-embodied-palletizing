@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TaskDispatchCandidateArray.msg"
   "msg/TaskDispatch.msg"
   "msg/TaskWorldCommit.msg"
+  "msg/PushStackTask.msg"
   DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
 )
 
@@ -587,6 +588,25 @@ ament_target_dependencies(task14_shared_box_geometry_monitor
   geometry_msgs
 )
 
+# Task23：二指夹爪供料 + 二层暂存 + 单臂受控平推。该原型独立于已冻结吸盘链路。
+add_executable(task23_gripper_stage_push
+  src/task23_gripper_stage_push.cpp
+)
+ament_target_dependencies(task23_gripper_stage_push
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task23_gripper_stage_push
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
+
 install(
   TARGETS
     palletize_primitive
@@ -621,6 +641,7 @@ install(
     task22_predictive_sandbox_probe
     task22_predictive_sandbox_candidate_demo
     task14_shared_box_geometry_monitor
+    task23_gripper_stage_push
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -654,6 +675,12 @@ install(
   PROGRAMS scripts/task22_gt_dispatch_selector.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME task22_gt_dispatch_selector
+)
+
+install(
+  PROGRAMS scripts/task23_gripper_push_selector.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME task23_gripper_push_selector
 )
 
 ament_export_include_directories(include)
