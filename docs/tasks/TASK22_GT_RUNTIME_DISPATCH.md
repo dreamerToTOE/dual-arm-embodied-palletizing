@@ -6,7 +6,8 @@ MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight sha
 独立 planning sandbox 的场景隔离、实时状态接入和一件 loose object 的完整候选生成已通过。
 当前先以**稳定串行执行**为主线：每件真实 release/settle/GT World Commit 后才为下一件
 调用 MoveIt/FCL。运行中 tight attachment 的预测状态复制与 sandbox lookahead 暂缓，作为
-后续性能优化；Task22-D 的连续多对象物理执行仍未完成验收。
+后续性能优化；Task22-D 的串行执行闭环已经实现并通过 typed ROS 回归，待真实 Isaac
+多对象物理验收。
 
 ## 背景与目标
 
@@ -172,10 +173,79 @@ Task22-C2 Isolated Predictive Pipeline  🟡
   - settle后轻量复核或失效重规划；不得改写执行 `/move_group` 的 shared scene
 
 Task22-D  Runtime dual-arm execution
-  - 当前主线：真实 GT 串行 dispatch -> MoveIt/FCL -> execution -> release/settle/World Commit
-  - 复用 Task08/09 FCL、local wait、time scaling；不复用预测轨迹
-  - 稳定通过连续多对象物理验收后，才回到 C2/C3 做性能优化
+  - ✅ 稳定串行闭环：真实 GT -> Python dispatch -> MoveIt/FCL -> execution
+    -> release/settle -> World Commit -> next dispatch
+  - loose：先只规划 Python 指定的 primary arm；MoveIt/FCL 失败才尝试 fallback arm
+  - tight：复用 Task11--13 / Task21 shared-object planner + executor，不降级为单臂
+  - 每个 stage 最多 3 次规划重试；任何一件失败即停止，绝不发送后续对象命令
+  - 复用 Task08 FCL 与 Task20-E TCP release feedback；不复用预测轨迹
+  - 待稳定通过连续多对象 Isaac 验收后，才回到 C2/C3 做性能优化
 ```
+
+## Task22-D：稳定串行执行闭环（实现完成，待物理验收）
+
+新增的 `TaskWorldCommit` 是真实世界状态的唯一推进信号：它只在该物体通过最终
+MoveIt/FCL、真实吸盘释放、Isaac settle pose 误差门禁，并已写回执行 MoveIt World 后才会
+发布。Candidate provider 在任务执行期缓存最新 Ground Truth，但不会随正在运动的物体逐帧
+重发 candidate；只有首次输入、新 episode seed 或成功 commit 才递增 `scene_version`。
+
+```text
+scene_version N
+  candidate provider -> Python selector -> selected TaskDispatch
+       -> Task22-D final MoveIt/OMPL + Task08 FCL -> physical execution
+       -> Task20-E real TCP release gate / settle / MoveIt World writeback
+       -> TaskWorldCommit(object_id, settled_pose)
+scene_version N+1
+  candidate provider excludes committed object from pending set
+  and exposes it only as the real placement/support geometry for the next task
+```
+
+这解决了旧 Task20-D 的两个稳定性问题：不会在紧协调结束后并行枚举两只手臂的完整轨迹，
+也不会因为 PhysX 在搬运时的暂态 pose 使 Python selector 重复选择当前物体。失败路径保守：
+source pose 超过 3 mm、MoveIt/Cartesian/FCL 三次均失败、release TCP 未到位、settle pose
+超限或 World Commit 失败时，执行器停止并且不规划/命令下一件。
+
+实现文件：
+
+```text
+msg/TaskWorldCommit.msg
+src/task22_gt_candidate_provider.cpp
+src/task22_sequential_runtime_execute.cpp
+launch/task22_sequential_runtime.launch.py
+```
+
+已完成的无物理命令回归（2026-09-15）：
+
+```text
+fixture: 1 tight large object + 1 loose small object
+scene_version=1: Python selected task22_large / TIGHT_SHARED_OBJECT
+simulated successful TaskWorldCommit(task22_large)
+scene_version=2: candidate set contains task22_small only
+                 Python selected task22_small / LOOSE, primary=right, fallback=left
+```
+
+该回归没有启动 MoveIt、没有发布关节或吸盘命令。它验证的仅是 typed contract：commit 后不会
+再次选择已完成物体。真实 Isaac 验收尚未声称通过。
+
+真实验收时，先按 Task20-E 场景准备真实 `/joint_states`、`/task18/box_states`、
+`/task20/{left,right}/suction_*` 与 `/move_group`，再运行：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+ros2 launch fr3_dual_palletize task22_sequential_runtime.launch.py \
+  expected_seed:=20260924 \
+  max_tasks:=3 \
+  execution_time_scale:=2.0
+```
+
+期望每件依次出现 `SERIAL TASK`、`FCL PASS`、物理执行通过、`WORLD COMMIT published`；
+只允许最后一件后出现 `SERIAL EXECUTION PASS`。运行本 launch 时不要同时启动
+`task22_moveit_dispatch_gateway` 或旧 `task20_runtime_execute`，以免多个节点改写同一个
+执行 `/move_group` World 或向同一 Isaac bridge 发布命令。
 
 ## Task22-B 已实现边界
 

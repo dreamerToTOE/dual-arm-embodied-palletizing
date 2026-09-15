@@ -27,6 +27,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TaskDispatchCandidate.msg"
   "msg/TaskDispatchCandidateArray.msg"
   "msg/TaskDispatch.msg"
+  "msg/TaskWorldCommit.msg"
   DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
 )
 
@@ -486,6 +487,34 @@ rosidl_target_interfaces(task22_moveit_dispatch_gateway
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
 
+# Task22-D：稳定优先的串行 runtime executor。它只在上一件的真实 release/settle/
+# World Commit 成功后消费下一版 Python TaskDispatch；不启动 Task22-C sandbox，也不
+# 在物理执行期间做 lookahead planning。
+add_executable(task22_sequential_runtime_execute
+  src/task22_sequential_runtime_execute.cpp
+)
+target_link_libraries(task22_sequential_runtime_execute
+  palletize_primitive
+  runtime_box_state
+  shared_object_planner
+  shared_object_executor
+  palletizing_job
+)
+ament_target_dependencies(task22_sequential_runtime_execute
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task22_sequential_runtime_execute
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
+
 # Task22-C1：只读 deterministic cache contract 回归；没有 MoveIt、Isaac 控制或
 # background planning side effect。通过后才能将独立 planning sandbox 接入 cache。
 add_executable(task22_predictive_cache_demo
@@ -587,6 +616,7 @@ install(
     task21_coordination_router_demo
     task22_gt_candidate_provider
     task22_moveit_dispatch_gateway
+    task22_sequential_runtime_execute
     task22_predictive_cache_demo
     task22_predictive_sandbox_probe
     task22_predictive_sandbox_candidate_demo

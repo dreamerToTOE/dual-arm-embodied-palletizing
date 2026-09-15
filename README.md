@@ -75,7 +75,7 @@
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
 | 20 | 多尺寸连续码垛 | 🟠 Task20-C 单大件紧协调闭环已通过；Task20-D 三件连续运行在第 3 件出现 92.411 mm 横向放置误差，未通过。Task20-E 已加入真实 TCP release gate、非规则中等共享箱体和效率 profile，待 Isaac 验收 |
 | 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
-| 22 | Ground Truth 在线任务分派与预规划 | 🟡 Task22-A typed dispatch 与 Task22-B 真实 MoveIt/FCL tight 预检已通过（856 FCL samples，未执行）；C1/C2 sandbox 预规划基础已完成但暂不接入执行。当前优先完成“GT settle 后逐件选择、规划、FCL、执行”的稳定串行多对象验收，再做 lookahead 优化 |
+| 22 | Ground Truth 在线任务分派与预规划 | 🟡 Task22-A/B 已通过 typed dispatch 与真实 MoveIt/FCL tight 预检；稳定串行执行闭环已实现：`GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件`，并通过无命令的 commit 状态机回归。C1/C2 sandbox 已冻结，待真实 Isaac 多对象连续验收后再做 lookahead 优化 |
 
 ## 当前核心工程结论
 
