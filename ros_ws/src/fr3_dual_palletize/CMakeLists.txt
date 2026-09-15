@@ -24,6 +24,9 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BoxState.msg"
   "msg/BoxStateArray.msg"
+  "msg/TaskDispatchCandidate.msg"
+  "msg/TaskDispatchCandidateArray.msg"
+  "msg/TaskDispatch.msg"
   DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
 )
 
@@ -424,6 +427,48 @@ add_executable(task21_coordination_router_demo
 )
 target_link_libraries(task21_coordination_router_demo coordination_router)
 ament_target_dependencies(task21_coordination_router_demo rclcpp)
+
+# Task22-A：把 Task18 Ground Truth 转为 Task19 placement candidates；它只发布
+# typed candidate topic，不创建 MoveIt，供 Python selector 做快速任务分派。
+add_executable(task22_gt_candidate_provider
+  src/task22_gt_candidate_provider.cpp
+)
+target_link_libraries(task22_gt_candidate_provider
+  runtime_box_state
+  placement_planner
+  palletizing_job
+)
+ament_target_dependencies(task22_gt_candidate_provider
+  rclcpp
+  geometry_msgs
+)
+rosidl_target_interfaces(task22_gt_candidate_provider
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
+
+# Task22-B：只对 Python 已选的 primary arm 做一次完整 MoveIt + Task08 FCL；失败
+# 才尝试 fallback arm。该 gateway 是严格 NOT_EXECUTED preflight，不发布控制命令。
+add_executable(task22_moveit_dispatch_gateway
+  src/task22_moveit_dispatch_gateway.cpp
+)
+target_link_libraries(task22_moveit_dispatch_gateway
+  palletize_primitive
+  runtime_box_state
+  shared_object_planner
+  palletizing_job
+)
+ament_target_dependencies(task22_moveit_dispatch_gateway
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task22_moveit_dispatch_gateway
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -474,6 +519,8 @@ install(
     task20_motion_preflight
     task20_runtime_execute
     task21_coordination_router_demo
+    task22_gt_candidate_provider
+    task22_moveit_dispatch_gateway
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -500,6 +547,14 @@ install(
 install(
   DIRECTORY launch/
   DESTINATION share/${PROJECT_NAME}/launch
+)
+
+# Task22-A 的 Python selector 仅消费 typed candidate / TCP Ground Truth，并发布
+# TaskDispatch；安装为 ros2 run 可执行项而不是在 C++ 里嵌入 Python。
+install(
+  PROGRAMS scripts/task22_gt_dispatch_selector.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME task22_gt_dispatch_selector
 )
 
 ament_export_include_directories(include)

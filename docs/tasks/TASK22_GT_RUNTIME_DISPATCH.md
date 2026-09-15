@@ -1,6 +1,8 @@
 # Task22：Ground-Truth 在线任务分派与预规划框架
 
-状态：🟡 架构已冻结；Task22-A 将先搭建只读的 ROS2 分派接口，不接入相机、不会执行机器人。
+状态：🟡 Task22-A 已实现并通过隔离 ROS2 回归；Task22-B 的 primary-arm-first
+MoveIt/FCL 预检已实现、编译并完成隔离启动检查。两者均不执行机器人；Task22-B 尚未进行
+真实 MoveIt/Isaac 规划验收。
 
 ## 背景与目标
 
@@ -163,11 +165,152 @@ Task22-D  Runtime dual-arm execution
   - 运行时连续多对象物理验收
 ```
 
+## Task22-B 已实现边界
+
+`task22_moveit_dispatch_gateway` 仅在 launch 参数
+`enable_moveit_preflight:=true` 时启动。它订阅 transient-local candidate/dispatch
+snapshot，并且：
+
+1. 必须先匹配同一个 `scene_version`、`candidate_id`、物体 ID 与支撑面 ID；
+2. 将 snapshot 中每个唯一 runtime box 回写为 MoveIt collision object；
+3. loose 物体仅对 Python 指定的 primary arm 生成一次完整候选（快速配置为
+   `candidate_count=1`、2 s RRTConnect 预算）；只有 primary 被 MoveIt 或 10 ms
+   full-task FCL 拒绝时，才调用 fallback arm；
+4. tight 物体不走最近手臂规则，直接复用 `SharedObjectPlanner` 的双臂共同物体规划与 FCL；
+5. 输出 `ACCEPT` 或 `REJECT`，**不发布关节轨迹、吸盘命令或执行请求**。
+
+这个 Gateway 会调用 `PlanningSceneInterface::applyCollisionObjects()` 建立预检 collision
+world；因此它不能与 Task20 物理执行器并行运行。当前只允许在一个空闲、已启动的 MoveIt
+实例上做预检。真正执行、World Commit 和 release feedback 仍属于 Task22-D。
+
+已完成的静态验证：
+
+```text
+colcon build --packages-select fr3_dual_palletize --symlink-install   PASS
+ros2 launch ... enable_moveit_preflight:=true（隔离域、无输入）      PASS
+```
+
+这只证明节点、消息和启动依赖正确；在获得真实 MoveIt planning/FCL 日志之前，Task22-B
+不能标记为规划通过。
+
+## Task22-A 已实现组件
+
+```text
+/task18/box_states
+    -> task22_gt_candidate_provider（C++）
+    -> /task22/dispatch_candidates
+    -> task22_gt_dispatch_selector（Python）
+    -> /task22/dispatch
+```
+
+- `TaskDispatchCandidate.msg`、`TaskDispatchCandidateArray.msg`、`TaskDispatch.msg`：
+  typed ROS2 合同；candidate 与 decision 都带 `scene_version`。
+- `task22_gt_candidate_provider`：复用 `boxStateToBoxSpec()`、`composePose()` 与
+  Task19 `PlacementPlanner`，输出每件最多三个经过几何 placement 门禁的 preview
+  candidate。它不链接 MoveIt 库。
+- `task22_gt_dispatch_selector`：Python 节点订阅 candidate 与双 suction TCP Ground
+  Truth，按距离/名义时间/placement cost/workspace penalty 评分。对 loose 输出
+  `preferred_arm` 和 `fallback_arm`；对 tight 输出 `TIGHT_SHARED_OBJECT` 和两个
+  `none`。它不导入 MoveIt，且没有 joint/suction publisher。
+- candidate 与 decision 使用 transient-local QoS；Task22-B Gateway 即使晚启动也能读取
+  最后一个 snapshot，并根据 `scene_version` 决定接受或拒绝。
+
+provider 为生成完整 batch preview 会以 Task19 的当前最优 candidate 暂时构建后续物体的
+height-map；这不是物理 World Commit。Task22-B 收到 Python 选中的 candidate 后仍必须以
+真实已放置物、真实关节状态和当前 scene version 重算/验证，不可直接执行 preview。
+
+## Task22-A 隔离回归结果
+
+在独立 `ROS_DOMAIN_ID` 中发布手工 `BoxStateArray` 和 TCP Ground Truth，不存在 MoveIt、
+FCL、Isaac joint 或 suction publisher：
+
+```text
+loose box（最近一次复测）:
+  provider placement_wall = 0.207 ms
+  selector_wall           = 157.2 us
+  result                  = LOOSE, primary=left, fallback=right
+
+tight shared box:
+  provider placement_wall = 0.148 ms
+  selector_wall           = 95.7 us
+  result                  = TIGHT_SHARED_OBJECT, primary=none, fallback=none
+```
+
+这些数字仅说明高层候选生成与 Python 评分不是效率瓶颈；它们不是 MoveIt 规划时间，
+更不是物理执行通过结论。
+
+## Task22-A Isaac 预览步骤
+
+本阶段不需要启动 MoveIt。Isaac 已加载任意 Task18 Ground Truth 场景后，保持 Timeline
+**Play**，依次运行已有 bridge：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task18_ground_truth_bridge.py").read())
+
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task20_runtime_suction_bridge.py").read())
+```
+
+另开终端：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+ros2 launch fr3_dual_palletize task22_gt_dispatch_preview.launch.py
+```
+
+检查输出：
+
+```bash
+ros2 topic echo /task22/dispatch --once
+ros2 topic echo /task22/dispatch_candidates --once
+```
+
+预期看到 `Task22-A CANDIDATES READY` 和 `Task22-A DISPATCH READY`。本 launch 不会
+发送 `/left/joint_command`、`/right/joint_command`、`/task20/*/suction_command`，所以可
+在 Isaac 正常运行时安全地做只读验证。
+
+## Task22-B MoveIt 预检步骤（暂不执行机器人）
+
+只在 Task22-A 输出正确、且没有运行 Task20 执行器时进行。先按上节启动 Isaac 的两个
+Ground Truth bridge，并保持 Timeline **Play**。另开 MoveIt 终端：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+ros2 launch fr3_dual_compact_suction_description \
+  moveit_dual_compact_suction.launch.py
+```
+
+再开分派预检终端：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+ros2 launch fr3_dual_palletize task22_gt_dispatch_preview.launch.py \
+  enable_moveit_preflight:=true
+```
+
+预期日志为 `Task22-B LOOSE ACCEPT`、`Task22-B TIGHT ACCEPT` 或明确的 `REJECT` 原因，且
+整个过程中 Isaac 中的关节和吸盘都不应运动。此步骤是后续 Task22-C 缓存规划的安全基线，
+不是物理执行验收。
+
 ## 非目标
 
 - 本 Task 不加入 RGB、深度相机、检测网络或相机标定；
 - 本 Task 不使用 DRL；
 - Python selector 不替代 MoveIt、FCL、Task20-E TCP release gate；
+- Task22-B 尚未取得真实 MoveIt/Isaac preflight PASS，不把隔离启动成功误记为规划通过；
 - 不修改 Task20-D 的失败结论，也不把 Task22-A 的只读输出当作物理执行通过。
 
 ## Task22-A 验收
