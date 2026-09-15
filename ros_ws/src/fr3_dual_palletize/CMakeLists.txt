@@ -78,6 +78,22 @@ target_include_directories(placement_planner
 target_link_libraries(placement_planner palletizing_job)
 ament_target_dependencies(placement_planner geometry_msgs)
 
+# Task22-C：预测缓存只保存独立 planning sandbox 生成的 lookahead candidate，并按
+# release/source Ground Truth、双臂终端关节与 scene version 判断可否进入最终 FCL。
+# 它不依赖 MoveIt action，也不改写执行中的共享 planning scene。
+add_library(predictive_plan_cache
+  src/predictive_plan_cache.cpp
+)
+target_include_directories(predictive_plan_cache
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+ament_target_dependencies(predictive_plan_cache
+  geometry_msgs
+  trajectory_msgs
+)
+
 # Task21：只消费上游提供的负载、完整路径可达性和安全事实，输出可解释的
 # loose/tight 路由决定；不在这里以尺寸阈值替代 Motion / FCL 检查。
 add_library(coordination_router
@@ -469,6 +485,18 @@ ament_target_dependencies(task22_moveit_dispatch_gateway
 rosidl_target_interfaces(task22_moveit_dispatch_gateway
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
+
+# Task22-C1：只读 deterministic cache contract 回归；没有 MoveIt、Isaac 控制或
+# background planning side effect。通过后才能将独立 planning sandbox 接入 cache。
+add_executable(task22_predictive_cache_demo
+  src/task22_predictive_cache_demo.cpp
+)
+target_link_libraries(task22_predictive_cache_demo predictive_plan_cache)
+ament_target_dependencies(task22_predictive_cache_demo
+  rclcpp
+  geometry_msgs
+  trajectory_msgs
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -499,6 +527,7 @@ install(
     palletizing_job
     runtime_box_state
     placement_planner
+    predictive_plan_cache
     coordination_router
     shared_object_planner
     shared_object_executor
@@ -521,6 +550,7 @@ install(
     task21_coordination_router_demo
     task22_gt_candidate_provider
     task22_moveit_dispatch_gateway
+    task22_predictive_cache_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

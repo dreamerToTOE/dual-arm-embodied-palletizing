@@ -2,7 +2,8 @@
 
 状态：🟡 Task22-A 已实现并通过隔离 ROS2 回归；Task22-B 的 primary-arm-first
 MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight shared-object
-预检通过。两者均不执行机器人；Task22-D 的连续多对象物理执行仍未开始。
+预检通过；Task22-C1 的预测缓存 Ground Truth/终端状态门禁已通过无执行回归。当前均不
+执行机器人；Task22-C2 的独立 planning sandbox 与 Task22-D 的连续多对象物理执行仍未开始。
 
 ## 背景与目标
 
@@ -133,15 +134,16 @@ Task08-B full-task 10 ms FCL
 
 ## 预规划与真实回写
 
-紧协调物体执行期间，Gateway 可以基于其 **预测的** release pose 与 terminal joint state
+紧协调物体执行期间，系统最终需要基于其 **预测的** release pose 与 terminal joint state
 为下一件 loose 物体后台预规划 primary-arm trajectory。共同物体落稳后：
 
 1. 用最新 Isaac Ground Truth 比较已放置物 pose 和预测 pose；
 2. 误差在阈值内时，只做 scene-version / FCL / current-joint 轻量复核，复用缓存轨迹；
 3. 误差超阈值时，废弃缓存并从真实状态局部重规划。
 
-因此“预规划”绝不跳过 Task20-E 真实 release gate、World Commit 或 FCL。Task22-A 先建立
-数据契约与只读选择器；后台线程和缓存复用属于 Task22-C，必须在接口验证后实施。
+因此“预规划”绝不跳过 Task20-E 真实 release gate、World Commit 或 FCL。Task22-C1 已先
+实现 cache 复用门禁；真正后台规划必须使用与执行器隔离的 MoveIt planning sandbox，不能
+将预测 object pose 写入正在执行的 `/move_group` shared planning scene。
 
 ## 实施阶段
 
@@ -156,9 +158,13 @@ Task22-B  MoveIt Dispatch Gateway
   - fallback arm only after primary failure
   - no physical command before preflight PASS
 
-Task22-C  Predictive Pipeline
-  - tight execution期间后台预规划下一 loose primary-arm candidate
-  - settle后轻量复核或失效重规划
+Task22-C1 Predictive Cache Contract  ✅
+  - cache entry 绑定 source scene_version、release/source pose 与双臂 terminal q
+  - settle后按最新 Ground Truth 判定 cache hit / invalidate；hit 仍需最终 FCL
+
+Task22-C2 Isolated Predictive Pipeline  🟡
+  - tight execution期间在独立 MoveIt planning sandbox 预规划下一 loose primary candidate
+  - settle后轻量复核或失效重规划；不得改写执行 `/move_group` 的 shared scene
 
 Task22-D  Runtime dual-arm execution
   - 复用 Task08/09 FCL、local wait、time scaling
@@ -218,6 +224,50 @@ colcon build --packages-select fr3_dual_palletize --symlink-install   PASS
 
 该结果证明 Task22-B 可以从 Ground Truth 经 Python 决策进入真实 MoveIt/FCL 预检，且不会
 发送机器人或吸盘命令；它不是 Task22-D 的连续多对象物理执行验收。
+
+## Task22-C1 预测缓存门禁
+
+`predictive_plan_cache` 是不依赖 MoveIt action 的线程安全库。它只保存已经由未来独立
+planning sandbox 生成的 `TaskTrajectoryCandidate`，并为该候选保存：
+
+```text
+source scene_version
+完成的 tight object 预测 release pose
+lookahead loose object 预测 source pose
+left/right 预测 terminal joint positions
+selected arm
+```
+
+release 后最新 runtime snapshot 必须全部满足以下条件才能得到 `HIT`：
+
+1. `scene_version > source_scene_version`，确认已收到 release 后的新 GT World；
+2. completed object 的实际 release pose 与预测 pose 在 5 mm / 0.05 rad 内；
+3. lookahead object 的 source pose 未漂移超过同一阈值；
+4. left/right 各七个关节都在预测 terminal state 的 0.01 rad 内。
+
+任一条件失败都会返回明确 `INVALIDATE` 原因；即使 `HIT`，缓存候选仍必须以最新 world
+objects 和 current joint state 通过最终 Task08-B FCL，才可提交给未来执行器。
+
+已完成无执行回归：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 run fr3_dual_palletize task22_predictive_cache_demo
+```
+
+结果：`CACHE_HIT`、`STALE_SCENE`、`RELEASE_DRIFT`、`SOURCE_DRIFT` 与
+`JOINT_DRIFT` 五种路径均得到预期 verdict，最终输出 `Task22-C1 PASS`。本回归不连接
+Isaac、MoveIt action、joint command 或 suction command。
+
+### Task22-C2 的安全前置条件
+
+当前 `PalletizePrimitive` / `SharedObjectPlanner` 通过 `PlanningSceneInterface` 更新
+`/move_group` 的 shared scene。若在紧协调物理执行期间把预测 release object pose 写入该
+scene，将污染执行器的碰撞世界；因此不能伪装成“后台加速”。Task22-C2 必须先建立独立的
+MoveIt planning sandbox（独立 robot state 与 private planning scene），再允许并发预规划。
+在此之前，Task22-C1 只负责安全地缓存与拒绝，不会发布或执行候选。
 
 ## Task22-A 已实现组件
 
