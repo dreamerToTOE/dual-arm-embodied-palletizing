@@ -87,15 +87,29 @@ bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
     RCLCPP_ERROR(node->get_logger(), "Task22-B 无法从 /move_group 读取 URDF/SRDF 参数。");
     return false;
   }
-  if (!node->has_parameter("robot_description"))
+  const auto set_or_declare = [&node](const std::string& name, const std::string& value)
   {
-    node->declare_parameter<std::string>("robot_description", parameters[0].as_string());
-  }
-  if (!node->has_parameter("robot_description_semantic"))
+    if (!node->has_parameter(name))
+    {
+      node->declare_parameter<std::string>(name, value);
+      return true;
+    }
+    // launch 可能预先声明了同名但为空的参数。只检查 has_parameter() 会让
+    // RobotModelLoader 读到空 SRDF；这里必须无条件用 /move_group 的有效值覆盖。
+    return node->set_parameter(rclcpp::Parameter(name, value)).successful;
+  };
+  const auto urdf = parameters[0].as_string();
+  const auto srdf = parameters[1].as_string();
+  if (urdf.empty() || srdf.empty() ||
+      !set_or_declare("robot_description", urdf) ||
+      !set_or_declare("robot_description_semantic", srdf))
   {
-    node->declare_parameter<std::string>(
-      "robot_description_semantic", parameters[1].as_string());
+    RCLCPP_ERROR(node->get_logger(), "Task22-B 未能将有效 URDF/SRDF 写入 Gateway 参数。");
+    return false;
   }
+  RCLCPP_INFO(
+    node->get_logger(), "Task22-B RobotModel copied from /move_group: URDF=%zu bytes SRDF=%zu bytes.",
+    urdf.size(), srdf.size());
   return true;
 }
 

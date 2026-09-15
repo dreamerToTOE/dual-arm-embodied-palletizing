@@ -182,6 +182,8 @@ snapshot，并且：
 Gateway 启动时会通过 `/move_group` 参数服务复制 `robot_description` 与
 `robot_description_semantic` 到自身节点（复用 Task20 已验证方式）。若 MoveIt 尚未启动，
 它会在 10 秒后清晰报错并安全退出，不再由 `MoveGroupInterface` 因缺失 SRDF 直接崩溃。
+即使 launch 已预声明同名空参数，Gateway 也会用 `/move_group` 的有效字符串覆盖；启动日志
+会输出 `RobotModel copied ... URDF=... bytes SRDF=... bytes` 作为验收证据。
 
 这个 Gateway 会调用 `PlanningSceneInterface::applyCollisionObjects()` 建立预检 collision
 world；因此它不能与 Task20 物理执行器并行运行。当前只允许在一个空闲、已启动的 MoveIt
