@@ -1,8 +1,8 @@
 # Task22：Ground-Truth 在线任务分派与预规划框架
 
 状态：🟡 Task22-A 已实现并通过隔离 ROS2 回归；Task22-B 的 primary-arm-first
-MoveIt/FCL 预检已实现、编译并完成隔离启动检查。两者均不执行机器人；Task22-B 尚未进行
-真实 MoveIt/Isaac 规划验收。
+MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight shared-object
+预检通过。两者均不执行机器人；Task22-D 的连续多对象物理执行仍未开始。
 
 ## 背景与目标
 
@@ -180,24 +180,44 @@ snapshot，并且：
 5. 输出 `ACCEPT` 或 `REJECT`，**不发布关节轨迹、吸盘命令或执行请求**。
 
 Gateway 启动时会通过 `/move_group` 参数服务复制 `robot_description` 与
-`robot_description_semantic` 到自身节点（复用 Task20 已验证方式）。若 MoveIt 尚未启动，
-它会在 10 秒后清晰报错并安全退出，不再由 `MoveGroupInterface` 因缺失 SRDF 直接崩溃。
-即使 launch 已预声明同名空参数，Gateway 也会用 `/move_group` 的有效字符串覆盖；启动日志
-会输出 `RobotModel copied ... URDF=... bytes SRDF=... bytes` 作为验收证据。
+`robot_description_semantic` 到专用的 MoveIt worker node（复用 Task20 已验证方式）。若
+MoveIt 尚未启动，它会在 10 秒后清晰报错并安全退出，不再由 `MoveGroupInterface` 因缺失
+SRDF 直接崩溃。即使 launch 已预声明同名空参数，Gateway 也会用 `/move_group` 的有效
+字符串覆盖；启动日志会输出 `RobotModel copied ... URDF=... bytes SRDF=... bytes` 作为验收
+证据。
+
+Task22-B 启动/并发问题修复记录：
+
+```text
+问题 1：transient-local 的 candidate/dispatch 可早于模型参数复制到达。
+风险   ：回调在空 SRDF 下构造 MoveGroupInterface，导致
+         robot_description_semantic 缺失并异常退出。
+修复   ：robot_model_ready gate 只缓存早到消息；完成有效 URDF/SRDF 写入后才开始预检。
+
+问题 2：在 Gateway 的单线程订阅回调内同步执行规划时，MoveIt 的
+         /joint_states listener 无法被调度，getCurrentState() 只看到时间戳 0。
+修复   ：Gateway 与持有 MoveGroupInterface 的 worker node 分离，使用三线程 executor；
+         dispatch callback 采用独立可重入 callback group，worker node 可并行接收
+         /joint_states。预检期间仍不发布任何执行命令。
+```
 
 这个 Gateway 会调用 `PlanningSceneInterface::applyCollisionObjects()` 建立预检 collision
 world；因此它不能与 Task20 物理执行器并行运行。当前只允许在一个空闲、已启动的 MoveIt
 实例上做预检。真正执行、World Commit 和 release feedback 仍属于 Task22-D。
 
-已完成的静态验证：
+已完成的验证：
 
 ```text
 colcon build --packages-select fr3_dual_palletize --symlink-install   PASS
-ros2 launch ... enable_moveit_preflight:=true（隔离域、无输入）      PASS
+真实 MoveIt + Isaac Ground Truth：
+  RobotModel copied from /move_group: URDF=35800 bytes, SRDF=6330 bytes
+  Task21 tight：6 个阶段全部 MoveIt/Cartesian/FCL PASS
+  Task22-B TIGHT ACCEPT: object=task18_box_01, stages=6,
+    duration=21.827 s, FCL_samples=856, wall=1.189 s, NOT_EXECUTED
 ```
 
-这只证明节点、消息和启动依赖正确；在获得真实 MoveIt planning/FCL 日志之前，Task22-B
-不能标记为规划通过。
+该结果证明 Task22-B 可以从 Ground Truth 经 Python 决策进入真实 MoveIt/FCL 预检，且不会
+发送机器人或吸盘命令；它不是 Task22-D 的连续多对象物理执行验收。
 
 ## Task22-A 已实现组件
 
@@ -324,7 +344,6 @@ ros2 launch fr3_dual_palletize task22_gt_dispatch_preview.launch.py \
 - 本 Task 不加入 RGB、深度相机、检测网络或相机标定；
 - 本 Task 不使用 DRL；
 - Python selector 不替代 MoveIt、FCL、Task20-E TCP release gate；
-- Task22-B 尚未取得真实 MoveIt/Isaac preflight PASS，不把隔离启动成功误记为规划通过；
 - 不修改 Task20-D 的失败结论，也不把 Task22-A 的只读输出当作物理执行通过。
 
 ## Task22-A 验收

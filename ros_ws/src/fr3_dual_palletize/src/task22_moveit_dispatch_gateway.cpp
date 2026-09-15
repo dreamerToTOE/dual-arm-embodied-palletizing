@@ -309,6 +309,10 @@ public:
   MoveItDispatchGateway()
   : Node("task22_moveit_dispatch_gateway")
   {
+    // 与 Task20 一样，协调/订阅节点和真正持有 MoveGroupInterface 的工作节点分离。
+    // 这样即便 Gateway 的 dispatch callback 正在执行，工作节点仍可由 executor 的
+    // 其他线程接收 /joint_states，供 MoveIt 读取当前起始状态。
+    planning_node_ = std::make_shared<rclcpp::Node>("task22_moveit_preflight_worker");
     candidate_topic_ = declare_parameter<std::string>(
       "candidate_topic", "/task22/dispatch_candidates");
     dispatch_topic_ = declare_parameter<std::string>("dispatch_topic", "/task22/dispatch");
@@ -318,13 +322,22 @@ public:
       throw std::runtime_error("fast_candidate_count 必须大于零。");
     }
     const auto snapshot_qos = rclcpp::QoS(1).reliable().transient_local();
+    // preflight 会同步等待 MoveIt current state、调用 OMPL/FCL，不能占住默认
+    // callback group；否则该节点内 MoveGroupInterface 的 /joint_states 监听无法被
+    // executor 调度，current state 会错误地停在时间戳 0。单独使用可重入组，并由
+    // MultiThreadedExecutor 驱动，保证状态监听可以并行更新。
+    preflight_callback_group_ = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+    rclcpp::SubscriptionOptions subscription_options;
+    subscription_options.callback_group = preflight_callback_group_;
     candidate_subscription_ = create_subscription<
       fr3_dual_palletize::msg::TaskDispatchCandidateArray>(
       candidate_topic_, snapshot_qos,
-      std::bind(&MoveItDispatchGateway::onCandidates, this, std::placeholders::_1));
+      std::bind(&MoveItDispatchGateway::onCandidates, this, std::placeholders::_1),
+      subscription_options);
     dispatch_subscription_ = create_subscription<fr3_dual_palletize::msg::TaskDispatch>(
       dispatch_topic_, snapshot_qos,
-      std::bind(&MoveItDispatchGateway::onDispatch, this, std::placeholders::_1));
+      std::bind(&MoveItDispatchGateway::onDispatch, this, std::placeholders::_1),
+      subscription_options);
     RCLCPP_INFO(
       get_logger(),
       "Task22-B MoveIt gateway ready: %s + %s; primary-arm-first, no joint/suction command.",
@@ -333,9 +346,23 @@ public:
 
   bool initializeRobotModelParameters()
   {
-    // 在 rclcpp::spin() 之前同步读取 /move_group 参数。这样与 Task20 一致，避免在
-    // 单线程 subscription callback 内等待参数 service 而阻塞自己的 executor。
-    return copyRobotModelParameters(shared_from_this());
+    // 在 executor spin 之前同步读取 /move_group 参数。参数属于真正创建
+    // MoveGroupInterface 的 worker node，而非仅做消息协调的 Gateway node。
+    // SyncParametersClient 在等待 service response 时会临时 spin 本节点；此时
+    // latched candidate/dispatch 可能提前到达。因此必须先缓存消息，等模型参数真正
+    // 写入完成才允许 tryPreflight() 创建 MoveGroupInterface。
+    if (!copyRobotModelParameters(planning_node_))
+    {
+      return false;
+    }
+    robot_model_ready_ = true;
+    tryPreflight();
+    return true;
+  }
+
+  const rclcpp::Node::SharedPtr& planningNode() const
+  {
+    return planning_node_;
   }
 
 private:
@@ -394,7 +421,7 @@ private:
     Arm arm,
     fr3_dual_palletize::TaskTrajectoryCandidate& output)
   {
-    auto node = shared_from_this();
+    auto node = planning_node_;
     auto scene_mutex = std::make_shared<std::mutex>();
     fr3_dual_palletize::PalletizePrimitive primitive(
       node, makeLooseConfig(arm, box, placement, fast_candidate_count_),
@@ -410,6 +437,13 @@ private:
 
   void tryPreflight()
   {
+    if (!robot_model_ready_)
+    {
+      return;
+    }
+    // candidate / dispatch 可能背靠背到达。只允许一个预检进入 MoveIt，避免重复
+    // 读取同一份场景或并发改写 planning scene。
+    std::lock_guard<std::mutex> lock(preflight_mutex_);
     const auto* candidate = selectedCandidate();
     if (!candidate || !dispatch_)
     {
@@ -445,7 +479,7 @@ private:
         RCLCPP_ERROR(get_logger(), "Task22-B REJECT: tight dispatch 的 arm/grasp 契约无效。");
         return;
       }
-      auto node = shared_from_this();
+      auto node = planning_node_;
       fr3_dual_palletize::SharedObjectPlanner planner(node, std::make_shared<std::mutex>());
       fr3_dual_palletize::SharedObjectPlan plan;
       if (!planner.plan(box, placement, plan))
@@ -507,9 +541,13 @@ private:
   std::string candidate_topic_;
   std::string dispatch_topic_;
   int fast_candidate_count_{1};
+  bool robot_model_ready_{false};
   std::string completed_key_;
+  std::mutex preflight_mutex_;
+  rclcpp::Node::SharedPtr planning_node_;
   fr3_dual_palletize::msg::TaskDispatchCandidateArray::SharedPtr candidates_;
   fr3_dual_palletize::msg::TaskDispatch::SharedPtr dispatch_;
+  rclcpp::CallbackGroup::SharedPtr preflight_callback_group_;
   rclcpp::Subscription<fr3_dual_palletize::msg::TaskDispatchCandidateArray>::SharedPtr
     candidate_subscription_;
   rclcpp::Subscription<fr3_dual_palletize::msg::TaskDispatch>::SharedPtr dispatch_subscription_;
@@ -528,7 +566,12 @@ int main(int argc, char** argv)
       rclcpp::shutdown();
       return 1;
     }
-    rclcpp::spin(node);
+    // 预检回调会等待 MoveIt state 并运行规划；必须保留其他线程接收
+    // /joint_states，不能使用 rclcpp::spin() 的单线程 executor。
+    rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 3);
+    executor.add_node(node);
+    executor.add_node(node->planningNode());
+    executor.spin();
   }
   catch (const std::exception& exception)
   {
