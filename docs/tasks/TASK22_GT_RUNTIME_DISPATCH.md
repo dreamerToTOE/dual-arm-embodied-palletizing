@@ -4,8 +4,9 @@
 MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight shared-object
 预检通过；Task22-C1 的预测缓存 Ground Truth/终端状态门禁已通过无执行回归；Task22-C2
 独立 planning sandbox 的场景隔离、实时状态接入和一件 loose object 的完整候选生成已通过。
-当前均不执行机器人；运行中 tight attachment 的预测状态复制与 Task22-D 的连续多对象物理
-执行仍未开始。
+当前先以**稳定串行执行**为主线：每件真实 release/settle/GT World Commit 后才为下一件
+调用 MoveIt/FCL。运行中 tight attachment 的预测状态复制与 sandbox lookahead 暂缓，作为
+后续性能优化；Task22-D 的连续多对象物理执行仍未完成验收。
 
 ## 背景与目标
 
@@ -167,12 +168,13 @@ Task22-C1 Predictive Cache Contract  ✅
 Task22-C2 Isolated Predictive Pipeline  🟡
   - 独立 MoveIt planning sandbox 的 scene isolation 与全局 joint-state 接入已通过
   - execution world snapshot -> sandbox 的一件 loose 完整候选生成已通过（非执行）
-  - 下一步：tight execution期间在其中复制预测 terminal/attachment 并预规划 next loose candidate
+  - 暂缓：tight execution期间复制预测 terminal/attachment 并预规划 next loose candidate
   - settle后轻量复核或失效重规划；不得改写执行 `/move_group` 的 shared scene
 
 Task22-D  Runtime dual-arm execution
-  - 复用 Task08/09 FCL、local wait、time scaling
-  - 运行时连续多对象物理验收
+  - 当前主线：真实 GT 串行 dispatch -> MoveIt/FCL -> execution -> release/settle/World Commit
+  - 复用 Task08/09 FCL、local wait、time scaling；不复用预测轨迹
+  - 稳定通过连续多对象物理验收后，才回到 C2/C3 做性能优化
 ```
 
 ## Task22-B 已实现边界
