@@ -2,6 +2,8 @@
 
 面向混合尺寸箱体码垛的双机械臂协调规划与控制项目。
 
+> 🧊 **路线冻结（2026-09-15）**：Task04–Task22-D 的顶部吸盘实现、场景和验收记录已作为可复现实验基线冻结并保留。根据教师要求，后续末端执行器主线切换为 FR3 二指夹爪；在新的夹爪抓取与规划策略确定前，不再扩展吸盘功能。
+
 当前工程采用 **Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 / OMPL + Franka FR3**，主线目标是完成：
 
 ```text
@@ -46,6 +48,7 @@
 - [Task 20-E — Runtime 反馈闭环与效率基准](docs/tasks/TASK20E_RUNTIME_FEEDBACK_EFFICIENCY.md)
 - [Task 21 — 松/紧协调自动路由](docs/tasks/TASK21_COORDINATION_ROUTER.md)
 - [Task 22 — Ground Truth 在线任务分派与预规划](docs/tasks/TASK22_GT_RUNTIME_DISPATCH.md)
+- [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
 
@@ -75,9 +78,9 @@
 | 19 | 自动 Placement Planner | ✅ 几何 height-map、支撑/碰撞门禁、候选排序与可达性 fallback 已通过离线回归；选择模型接口已开放 |
 | 20 | 多尺寸连续码垛 | 🟠 Task20-C 单大件紧协调闭环已通过；Task20-D 三件连续运行在第 3 件出现 92.411 mm 横向放置误差，未通过。Task20-E 已加入真实 TCP release gate、非规则中等共享箱体和效率 profile，待 Isaac 验收 |
 | 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
-| 22 | Ground Truth 在线任务分派与预规划 | 🟡 Task22-A/B 已通过 typed dispatch 与真实 MoveIt/FCL tight 预检；稳定串行执行闭环已实现：`GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件`，并通过无命令的 commit 状态机回归。C1/C2 sandbox 已冻结，待真实 Isaac 多对象连续验收后再做 lookahead 优化 |
+| 22 | Ground Truth 在线任务分派与预规划 | 🧊 吸盘实现冻结：已完成 `GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件` 串行闭环与三件 Isaac 连续验收；不再扩展吸盘路线，后续以夹爪重新建立执行基线 |
 
-## 当前核心工程结论
+## 已冻结的吸盘基线结论
 
 Task03 / Task05 形成直接对照：
 
@@ -92,7 +95,7 @@ C_insert = PASS
 完整放置 / 释放 / RETREAT = PASS
 ```
 
-因此项目固定采用顶部紧凑吸盘，不再围绕二指夹爪设计高密度放置补救策略。
+这项对照是顶部紧凑吸盘路线的已验证实验结论。该路线现已冻结；后续会以二指夹爪重新建立抓取、放置和协调规划策略，不能直接沿用吸盘的接触、附着或释放结论。
 
 另外，Franka 官方 `cobot_pump` MoveIt 环境碰撞包络与本项目实际紧凑吸盘不一致，会在 B-A-C 插入中产生假碰撞。项目已新增自定义：
 
@@ -110,7 +113,7 @@ cup length  = 6 mm
 TCP offset  = 105 mm
 ```
 
-## 基础码垛事件单元
+## 冻结的吸盘码垛事件单元
 
 Task04 的最终成功时序作为后续 Task 的项目级基线：
 
@@ -130,7 +133,7 @@ PRE_PICK
 → RETREAT
 ```
 
-后续 Task 默认不重新设计这套基础事件，只在其外部增加目标选择、双臂调度、碰撞协调或共物体约束。
+该事件单元仅作为吸盘路线的可复现实验参考。夹爪主线需建立独立的抓取、物体附着、释放、碰撞检查和验收定义。
 
 ## 当前稳定平台
 
