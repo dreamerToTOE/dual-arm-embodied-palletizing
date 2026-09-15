@@ -36,6 +36,10 @@ struct PrimitiveConfig
   std::string joint_command_topic;
   std::string suction_command_topic;
   std::string suction_state_topic;
+  // Task22-C2：默认空字符串保持既有执行 /move_group 行为。后台候选必须设置为
+  // /task22_sandbox，使 action 与 PlanningSceneInterface 永不改写执行规划场景。
+  std::string move_group_namespace;
+  std::string planning_scene_namespace;
   // 非空时，真实执行会订阅 Isaac suction TCP Ground Truth；Task20-E 在释放前
   // 必须确认 TCP 已到达规划放置点，避免只按名义轨迹时间提前断吸。
   std::string suction_tcp_pose_topic;

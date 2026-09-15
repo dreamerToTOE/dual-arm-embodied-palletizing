@@ -788,7 +788,8 @@ bool SharedObjectPlanner::plan(
   output.right_grasp = right_grasp;
 
   std::unique_lock<std::mutex> lock(*planning_scene_mutex_);
-  moveit::planning_interface::PlanningSceneInterface moveit_scene;
+  moveit::planning_interface::PlanningSceneInterface moveit_scene(
+    config_.planning_scene_namespace);
   bool object_removed = false;
   const auto restoreSourceObject = [&]()
   {
@@ -810,7 +811,8 @@ bool SharedObjectPlanner::plan(
     left.eef_link = "left_fr3_link8";
     left.suction_link = "left_fr3_compact_suction";
     left.group = std::make_unique<moveit::planning_interface::MoveGroupInterface>(
-      node_, left.group_name);
+      node_, moveit::planning_interface::MoveGroupInterface::Options(
+        left.group_name, "robot_description", config_.move_group_namespace));
     ArmContext right;
     right.side = Side::RIGHT;
     right.group_name = "right_arm";
@@ -818,7 +820,8 @@ bool SharedObjectPlanner::plan(
     right.eef_link = "right_fr3_link8";
     right.suction_link = "right_fr3_compact_suction";
     right.group = std::make_unique<moveit::planning_interface::MoveGroupInterface>(
-      node_, right.group_name);
+      node_, moveit::planning_interface::MoveGroupInterface::Options(
+        right.group_name, "robot_description", config_.move_group_namespace));
     if (!configureGroup(left) || !configureGroup(right) ||
         left.home_q.size() != right.home_q.size())
     {

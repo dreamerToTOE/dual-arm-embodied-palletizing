@@ -2,8 +2,9 @@
 
 状态：🟡 Task22-A 已实现并通过隔离 ROS2 回归；Task22-B 的 primary-arm-first
 MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight shared-object
-预检通过；Task22-C1 的预测缓存 Ground Truth/终端状态门禁已通过无执行回归。当前均不
-执行机器人；Task22-C2 的独立 planning sandbox 与 Task22-D 的连续多对象物理执行仍未开始。
+预检通过；Task22-C1 的预测缓存 Ground Truth/终端状态门禁已通过无执行回归；Task22-C2
+独立 planning sandbox 的场景隔离与实时状态接入已实际通过。当前均不执行机器人；sandbox
+候选生成与 Task22-D 的连续多对象物理执行仍未开始。
 
 ## 背景与目标
 
@@ -163,7 +164,8 @@ Task22-C1 Predictive Cache Contract  ✅
   - settle后按最新 Ground Truth 判定 cache hit / invalidate；hit 仍需最终 FCL
 
 Task22-C2 Isolated Predictive Pipeline  🟡
-  - tight execution期间在独立 MoveIt planning sandbox 预规划下一 loose primary candidate
+  - 独立 MoveIt planning sandbox 的 scene isolation 与全局 joint-state 接入已通过
+  - 下一步：tight execution期间在其中预规划下一 loose primary candidate
   - settle后轻量复核或失效重规划；不得改写执行 `/move_group` 的 shared scene
 
 Task22-D  Runtime dual-arm execution
@@ -261,13 +263,48 @@ ros2 run fr3_dual_palletize task22_predictive_cache_demo
 `JOINT_DRIFT` 五种路径均得到预期 verdict，最终输出 `Task22-C1 PASS`。本回归不连接
 Isaac、MoveIt action、joint command 或 suction command。
 
-### Task22-C2 的安全前置条件
+### Task22-C2：独立 predictive planning sandbox
 
 当前 `PalletizePrimitive` / `SharedObjectPlanner` 通过 `PlanningSceneInterface` 更新
 `/move_group` 的 shared scene。若在紧协调物理执行期间把预测 release object pose 写入该
-scene，将污染执行器的碰撞世界；因此不能伪装成“后台加速”。Task22-C2 必须先建立独立的
-MoveIt planning sandbox（独立 robot state 与 private planning scene），再允许并发预规划。
-在此之前，Task22-C1 只负责安全地缓存与拒绝，不会发布或执行候选。
+scene，将污染执行器的碰撞世界；因此不能伪装成“后台加速”。
+
+已新增 `task22_predictive_sandbox.launch.py`：它只启动 namespace 为
+`/task22_sandbox` 的第二个 `move_group`。sandbox 仅 remap 读取 Isaac 的全局
+`/joint_states`、`/tf`、`/tf_static`；其 action、service 和 planning scene 全在私有
+namespace，且 `allow_trajectory_execution=false`。它不启动 robot_state_publisher、RViz、
+环境发布器、joint bridge 或控制器。
+
+`PrimitiveConfig` 与 `SharedObjectPlanConfig` 新增 `move_group_namespace` 和
+`planning_scene_namespace`。默认空字符串保持所有既有 Task 使用执行 `/move_group` 的行为；
+未来后台候选必须显式设为 `/task22_sandbox`，从而令 `MoveGroupInterface` 与
+`PlanningSceneInterface` 都不改写执行规划场景。
+
+已完成实际隔离探针：只向 sandbox 写入并删除远离工作区的临时 `CollisionObject`，确认
+execution `/move_group` 完全不可见；随后 sandbox 的 `MoveGroupInterface` 成功读取全局
+`/joint_states` 的 7 个 `left_arm` 关节。探针不调用 `plan()` / `execute()`，也不发布
+joint/suction command。
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+# 需在既有执行 MoveIt 和 Isaac joint bridge 已启动时，另开一个终端运行：
+ros2 launch fr3_dual_palletize task22_predictive_sandbox.launch.py
+
+# 再开一个终端：
+ros2 run fr3_dual_palletize task22_predictive_sandbox_probe \
+  --ros-args -p sandbox_namespace:=/task22_sandbox
+```
+
+实际输出：`Task22-C2 PASS：sandbox scene 与 execution /move_group 隔离，且已读取 7 个
+left_arm joint states；未调用 plan/execute 或发布任何控制命令。`
+
+因此 C2 的**隔离安全前置条件**已经成立；下一步才可在该 sandbox 中创建 predicted world
+并生成 lookahead candidate。C1 仍负责在真实 settle 后按 Ground Truth/terminal state 决定
+缓存命中或失效，命中后仍必须通过最终 Task08-B FCL。
 
 ## Task22-A 已实现组件
 

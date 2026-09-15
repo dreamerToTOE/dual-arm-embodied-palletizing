@@ -35,6 +35,9 @@ struct SharedObjectPlanConfig
   // 线段的横向距离，而不要求与 joint-space 时间参数化具有相同瞬时进度。
   double box_path_tracking_tolerance_m{0.005};
   int max_planning_retries{3};
+  // Task22-C2：空字符串使用执行 /move_group；后台共同物体预测必须使用独立 sandbox。
+  std::string move_group_namespace;
+  std::string planning_scene_namespace;
 };
 
 struct SharedObjectStage

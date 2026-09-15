@@ -758,7 +758,7 @@ void PalletizePrimitive::removeWorldObject(const std::string& object_id)
 {
   {
     std::lock_guard<std::mutex> lock(*planning_scene_mutex_);
-    moveit::planning_interface::PlanningSceneInterface psi;
+    moveit::planning_interface::PlanningSceneInterface psi(config_.planning_scene_namespace);
     psi.removeCollisionObjects({object_id});
   }
   std::this_thread::sleep_for(250ms);
@@ -771,7 +771,7 @@ bool PalletizePrimitive::addWorldObject(
   bool ok = false;
   {
     std::lock_guard<std::mutex> lock(*planning_scene_mutex_);
-    moveit::planning_interface::PlanningSceneInterface psi;
+    moveit::planning_interface::PlanningSceneInterface psi(config_.planning_scene_namespace);
     ok = psi.applyCollisionObject(makeBoxObject(
       object_id, pose, config_.object_dimensions, moveit_msgs::msg::CollisionObject::ADD));
   }
@@ -810,7 +810,7 @@ bool PalletizePrimitive::attachObject(
   bool ok = false;
   {
     std::lock_guard<std::mutex> lock(*planning_scene_mutex_);
-    moveit::planning_interface::PlanningSceneInterface psi;
+    moveit::planning_interface::PlanningSceneInterface psi(config_.planning_scene_namespace);
     ok = psi.applyAttachedCollisionObject(attached);
   }
   std::this_thread::sleep_for(350ms);
@@ -829,7 +829,7 @@ bool PalletizePrimitive::detachObject(
   bool ok = false;
   {
     std::lock_guard<std::mutex> lock(*planning_scene_mutex_);
-    moveit::planning_interface::PlanningSceneInterface psi;
+    moveit::planning_interface::PlanningSceneInterface psi(config_.planning_scene_namespace);
     ok = psi.applyAttachedCollisionObject(attached);
   }
   std::this_thread::sleep_for(300ms);
@@ -1211,8 +1211,9 @@ bool PalletizePrimitive::planTaskTrajectoryCandidate(
     config_.label.c_str());
 
   // Task08-A 不能发布 command 或 suction；这里只依赖 MoveIt 与最新 Box Ground Truth。
-  moveit::planning_interface::MoveGroupInterface move_group(
-    node_, config_.planning_group);
+  const auto options = moveit::planning_interface::MoveGroupInterface::Options(
+    config_.planning_group, "robot_description", config_.move_group_namespace);
+  moveit::planning_interface::MoveGroupInterface move_group(node_, options);
   const moveit::core::JointModelGroup* joint_model_group = nullptr;
   if (!configureMoveGroup(move_group, joint_model_group))
   {
@@ -1522,8 +1523,9 @@ bool PalletizePrimitive::prepareTransferCandidate(
     return false;
   }
 
-  moveit::planning_interface::MoveGroupInterface move_group(
-    node_, config_.planning_group);
+  const auto options = moveit::planning_interface::MoveGroupInterface::Options(
+    config_.planning_group, "robot_description", config_.move_group_namespace);
+  moveit::planning_interface::MoveGroupInterface move_group(node_, options);
   const moveit::core::JointModelGroup* joint_model_group = nullptr;
   if (!configureMoveGroup(move_group, joint_model_group))
   {
@@ -1724,8 +1726,9 @@ bool PalletizePrimitive::executePreparedTransferAndFinish(
     return false;
   }
 
-  moveit::planning_interface::MoveGroupInterface move_group(
-    node_, config_.planning_group);
+  const auto options = moveit::planning_interface::MoveGroupInterface::Options(
+    config_.planning_group, "robot_description", config_.move_group_namespace);
+  moveit::planning_interface::MoveGroupInterface move_group(node_, options);
   const moveit::core::JointModelGroup* joint_model_group = nullptr;
   if (!configureMoveGroup(move_group, joint_model_group))
   {

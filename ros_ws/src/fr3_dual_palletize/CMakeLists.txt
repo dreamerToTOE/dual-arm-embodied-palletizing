@@ -497,6 +497,20 @@ ament_target_dependencies(task22_predictive_cache_demo
   geometry_msgs
   trajectory_msgs
 )
+
+# Task22-C2：确认独立 MoveIt planning sandbox 的 service/action/scene 与执行
+# /move_group 隔离。探针不调用 plan/execute，只读 joint state。
+add_executable(task22_predictive_sandbox_probe
+  src/task22_predictive_sandbox_probe.cpp
+)
+ament_target_dependencies(task22_predictive_sandbox_probe
+  rclcpp
+  geometry_msgs
+  shape_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -551,6 +565,7 @@ install(
     task22_gt_candidate_provider
     task22_moveit_dispatch_gateway
     task22_predictive_cache_demo
+    task22_predictive_sandbox_probe
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
