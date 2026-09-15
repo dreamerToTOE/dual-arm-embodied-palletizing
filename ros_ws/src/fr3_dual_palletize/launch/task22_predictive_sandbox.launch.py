@@ -75,7 +75,10 @@ def generate_launch_description():
     sandbox_move_group = Node(
         package="moveit_ros_move_group",
         executable="move_group",
-        name="move_group",
+        # 与执行器 /move_group 使用不同的 node name。action/service 仍位于
+        # /task22_sandbox namespace；参数服务路径因此明确，探针不会误从执行器
+        # 复制 URDF/SRDF。
+        name="sandbox_move_group",
         namespace=sandbox_namespace,
         output="screen",
         remappings=[

@@ -80,7 +80,9 @@ int main(int argc, char** argv)
   auto node = std::make_shared<rclcpp::Node>("task22_predictive_sandbox_probe");
   const auto sandbox_namespace = node->declare_parameter<std::string>(
     "sandbox_namespace", "/task22_sandbox");
-  const auto sandbox_move_group = sandbox_namespace + "/move_group";
+  const auto sandbox_move_group_node = node->declare_parameter<std::string>(
+    "sandbox_move_group_node", "sandbox_move_group");
+  const auto sandbox_move_group = sandbox_namespace + "/" + sandbox_move_group_node;
   bool success = false;
   std::thread spin_thread;
   std::unique_ptr<rclcpp::executors::MultiThreadedExecutor> executor;
@@ -88,6 +90,7 @@ int main(int argc, char** argv)
   do
   {
     if (sandbox_namespace.empty() || sandbox_namespace.front() != '/' ||
+        sandbox_move_group_node.empty() ||
         !copyRobotModelParameters(node, sandbox_move_group))
     {
       break;

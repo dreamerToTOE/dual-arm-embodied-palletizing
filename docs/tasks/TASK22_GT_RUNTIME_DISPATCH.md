@@ -3,8 +3,9 @@
 状态：🟡 Task22-A 已实现并通过隔离 ROS2 回归；Task22-B 的 primary-arm-first
 MoveIt/FCL 预检已在真实 MoveIt + Isaac Ground Truth 环境完成 tight shared-object
 预检通过；Task22-C1 的预测缓存 Ground Truth/终端状态门禁已通过无执行回归；Task22-C2
-独立 planning sandbox 的场景隔离与实时状态接入已实际通过。当前均不执行机器人；sandbox
-候选生成与 Task22-D 的连续多对象物理执行仍未开始。
+独立 planning sandbox 的场景隔离、实时状态接入和一件 loose object 的完整候选生成已通过。
+当前均不执行机器人；运行中 tight attachment 的预测状态复制与 Task22-D 的连续多对象物理
+执行仍未开始。
 
 ## 背景与目标
 
@@ -165,7 +166,8 @@ Task22-C1 Predictive Cache Contract  ✅
 
 Task22-C2 Isolated Predictive Pipeline  🟡
   - 独立 MoveIt planning sandbox 的 scene isolation 与全局 joint-state 接入已通过
-  - 下一步：tight execution期间在其中预规划下一 loose primary candidate
+  - execution world snapshot -> sandbox 的一件 loose 完整候选生成已通过（非执行）
+  - 下一步：tight execution期间在其中复制预测 terminal/attachment 并预规划 next loose candidate
   - settle后轻量复核或失效重规划；不得改写执行 `/move_group` 的 shared scene
 
 Task22-D  Runtime dual-arm execution
@@ -302,9 +304,75 @@ ros2 run fr3_dual_palletize task22_predictive_sandbox_probe \
 实际输出：`Task22-C2 PASS：sandbox scene 与 execution /move_group 隔离，且已读取 7 个
 left_arm joint states；未调用 plan/execute 或发布任何控制命令。`
 
-因此 C2 的**隔离安全前置条件**已经成立；下一步才可在该 sandbox 中创建 predicted world
-并生成 lookahead candidate。C1 仍负责在真实 settle 后按 Ground Truth/terminal state 决定
-缓存命中或失效，命中后仍必须通过最终 Task08-B FCL。
+### Task22-C2C：execution snapshot 到 sandbox candidate
+
+新增 `task22_predictive_sandbox_candidate_demo`，它订阅 Task22-A 的
+`/task22/dispatch_candidates`，按 `object_id` 和 `selected_arm` 选择一件具有
+`loose_left` / `loose_right` 权限的候选。它先只读获取执行 `/move_group` 的 world
+CollisionObject；清空并镜像到 `/task22_sandbox` 后，复用 `PalletizePrimitive` 生成完整
+`HOME -> PRE_PICK -> CONTACT -> LIFT -> PLACE -> RETREAT -> HOME` 候选。
+
+候选 primitive 的 `move_group_namespace`、`planning_scene_namespace` 都强制为
+`/task22_sandbox`，控制主题也指向没有 bridge 订阅者的 `/task22/sandbox_never_*` 名称。
+因此它可以调用 sandbox 的 `plan()` / Cartesian 服务，但无法执行，且不会发布 joint/suction
+command。完成后会把 sandbox object 恢复为镜像快照，并断言 execution world object ID 集合
+没有变化。
+
+安全边界：若 execution scene 已含 `AttachedCollisionObject`，C2C 会明确拒绝，而不是把
+真实紧协调抓持物漏掉后仍生成“安全”候选。下一阶段 C3 需要从 tight planner 输出的预测
+release pose、left/right terminal q 和 attachment 语义构建完整 predicted snapshot，才允许在
+紧协调物理执行期间运行。
+
+无执行集成回归中，Task18 Ground Truth bridge 当时未运行，因此通过 ROS2 发布了一个与
+`BoxStateArray` 合同一致的确定性 `task18_box_03` fixture，并持续发布带有效当前时间戳的
+双臂 joint-state fixture。真实 `/move_group` 与 sandbox MoveIt 均在运行；结果为：
+
+```text
+Task22-C2C SNAPSHOT READY: execution world objects=4 -> /task22_sandbox
+Task22-C2C PASS: task18_box_03
+  points   = 232
+  duration = 23.087 s
+  events   = 4
+  execution /move_group world 未被写入
+  未调用 execute，未发布 joint/suction command
+```
+
+这证明 snapshot、namespace 路由、真实 OMPL/Cartesian candidate 生成和清理链路成立，
+但**不是 Isaac 现场验收**，也不构成 tight 期间后台预测通过结论。现场回归必须由 Isaac
+Timeline Play 后的 `/task18/box_states` 与实时 `/joint_states` 驱动，绝不能使用 fixture。
+
+现场回归命令如下（已有执行 MoveIt、Isaac joint bridge 和 Task18 Ground Truth bridge 时）：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
+
+# 终端 1：独立、不可执行的 sandbox
+ros2 launch fr3_dual_palletize task22_predictive_sandbox.launch.py
+
+# 终端 2：由真实 GT 生成 Task19 placement candidate；不要开 MoveIt preflight
+ros2 launch fr3_dual_palletize task22_gt_dispatch_preview.launch.py
+
+# 终端 3：只在 sandbox 内生成候选
+ros2 run fr3_dual_palletize task22_predictive_sandbox_candidate_demo \
+  --ros-args \
+  -p sandbox_namespace:=/task22_sandbox \
+  -p object_id:=task18_box_03 \
+  -p selected_arm:=left
+```
+
+`task22_predictive_sandbox.launch.py` 的 sandbox node 使用独立名称
+`/task22_sandbox/sandbox_move_group`；服务/action 仍位于 `/task22_sandbox`。在本机
+MoveIt Humble 上，手工 SIGINT 停止第二个 `move_group` 曾出现一次第三方
+`class_loader` 析构警告并以 `-11` 退出，另一次为正常 SIGINT `-2` 退出；两次都发生在
+候选回归已完成后，执行 `/move_group` 不受影响。该非确定性 teardown 问题已记录，不能
+作为 C2C 运行时规划通过或失败的依据；后续需在隔离 ROS domain 中复测 MoveIt lifecycle。
+
+因此 C2 的**隔离安全前置条件**和空闲场景 candidate integration 已经成立；下一步才可在该
+sandbox 中创建 tight 的 predicted world。C1 仍负责在真实 settle 后按 Ground Truth/terminal
+state 决定缓存命中或失效，命中后仍必须通过最终 Task08-B FCL。
 
 ## Task22-A 已实现组件
 

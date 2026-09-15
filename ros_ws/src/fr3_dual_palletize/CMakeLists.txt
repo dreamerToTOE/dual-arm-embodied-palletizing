@@ -511,6 +511,29 @@ ament_target_dependencies(task22_predictive_sandbox_probe
   moveit_core
   moveit_ros_planning_interface
 )
+
+# Task22-C2C：将 execution scene 的只读 world snapshot 镜像到独立 sandbox，
+# 使用已有 primitive 实际生成一件 loose object 的完整候选；绝不 execute。
+add_executable(task22_predictive_sandbox_candidate_demo
+  src/task22_predictive_sandbox_candidate_demo.cpp
+)
+target_link_libraries(task22_predictive_sandbox_candidate_demo
+  palletize_primitive
+)
+ament_target_dependencies(task22_predictive_sandbox_candidate_demo
+  rclcpp
+  geometry_msgs
+  sensor_msgs
+  std_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+rosidl_target_interfaces(task22_predictive_sandbox_candidate_demo
+  ${PROJECT_NAME} "rosidl_typesupport_cpp"
+)
 target_link_libraries(task16_planning_benchmark
   palletize_primitive
   ompl::ompl
@@ -566,6 +589,7 @@ install(
     task22_moveit_dispatch_gateway
     task22_predictive_cache_demo
     task22_predictive_sandbox_probe
+    task22_predictive_sandbox_candidate_demo
     task14_shared_box_geometry_monitor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
