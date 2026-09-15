@@ -19,6 +19,7 @@
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit_msgs/msg/collision_object.hpp>
+#include <rclcpp/parameter_client.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "fr3_dual_palletize/msg/task_dispatch.hpp"
@@ -63,6 +64,39 @@ bool parseArm(const std::string& value, Arm& arm)
     return true;
   }
   return false;
+}
+
+bool copyRobotModelParameters(const rclcpp::Node::SharedPtr& node)
+{
+  // ROS 2 参数属于节点私有；/move_group 持有的 robot_description 不会自动成为
+  // Gateway 的参数。MoveGroupInterface 需要本节点有相同的 URDF/SRDF，故复用
+  // Task20 已验证的参数复制方式，而不是依赖启动先后或全局参数。
+  auto client = std::make_shared<rclcpp::SyncParametersClient>(node, "/move_group");
+  if (!client->wait_for_service(std::chrono::seconds(10)))
+  {
+    RCLCPP_ERROR(node->get_logger(), "Task22-B 无法连接 /move_group 参数服务。");
+    return false;
+  }
+  const auto parameters = client->get_parameters({
+    "robot_description", "robot_description_semantic",
+  });
+  if (parameters.size() != 2 ||
+      parameters[0].get_type() != rclcpp::ParameterType::PARAMETER_STRING ||
+      parameters[1].get_type() != rclcpp::ParameterType::PARAMETER_STRING)
+  {
+    RCLCPP_ERROR(node->get_logger(), "Task22-B 无法从 /move_group 读取 URDF/SRDF 参数。");
+    return false;
+  }
+  if (!node->has_parameter("robot_description"))
+  {
+    node->declare_parameter<std::string>("robot_description", parameters[0].as_string());
+  }
+  if (!node->has_parameter("robot_description_semantic"))
+  {
+    node->declare_parameter<std::string>(
+      "robot_description_semantic", parameters[1].as_string());
+  }
+  return true;
 }
 
 fr3_dual_palletize::BoxSpec boxFromCandidate(
@@ -283,6 +317,13 @@ public:
       candidate_topic_.c_str(), dispatch_topic_.c_str());
   }
 
+  bool initializeRobotModelParameters()
+  {
+    // 在 rclcpp::spin() 之前同步读取 /move_group 参数。这样与 Task20 一致，避免在
+    // 单线程 subscription callback 内等待参数 service 而阻塞自己的 executor。
+    return copyRobotModelParameters(shared_from_this());
+  }
+
 private:
   void onCandidates(const fr3_dual_palletize::msg::TaskDispatchCandidateArray::SharedPtr message)
   {
@@ -366,7 +407,6 @@ private:
     {
       return;
     }
-    completed_key_ = key;
     const auto began = std::chrono::steady_clock::now();
 
     if (dispatch_->object_id != candidate->object_id ||
@@ -375,6 +415,7 @@ private:
       RCLCPP_ERROR(get_logger(), "Task22-B REJECT: dispatch 与 candidate 内容不一致。");
       return;
     }
+    completed_key_ = key;
     if (!initializePlanningWorld())
     {
       RCLCPP_ERROR(get_logger(), "Task22-B REJECT: 无法初始化 MoveIt runtime collision world。");
@@ -467,7 +508,13 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   try
   {
-    rclcpp::spin(std::make_shared<MoveItDispatchGateway>());
+    auto node = std::make_shared<MoveItDispatchGateway>();
+    if (!node->initializeRobotModelParameters())
+    {
+      rclcpp::shutdown();
+      return 1;
+    }
+    rclcpp::spin(node);
   }
   catch (const std::exception& exception)
   {

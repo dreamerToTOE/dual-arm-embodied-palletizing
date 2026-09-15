@@ -179,6 +179,10 @@ snapshot，并且：
 4. tight 物体不走最近手臂规则，直接复用 `SharedObjectPlanner` 的双臂共同物体规划与 FCL；
 5. 输出 `ACCEPT` 或 `REJECT`，**不发布关节轨迹、吸盘命令或执行请求**。
 
+Gateway 启动时会通过 `/move_group` 参数服务复制 `robot_description` 与
+`robot_description_semantic` 到自身节点（复用 Task20 已验证方式）。若 MoveIt 尚未启动，
+它会在 10 秒后清晰报错并安全退出，不再由 `MoveGroupInterface` 因缺失 SRDF 直接崩溃。
+
 这个 Gateway 会调用 `PlanningSceneInterface::applyCollisionObjects()` 建立预检 collision
 world；因此它不能与 Task20 物理执行器并行运行。当前只允许在一个空闲、已启动的 MoveIt
 实例上做预检。真正执行、World Commit 和 release feedback 仍属于 Task22-D。
