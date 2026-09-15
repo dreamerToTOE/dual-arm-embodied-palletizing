@@ -88,7 +88,14 @@ class GroundTruthDispatchSelector(Node):
             TaskDispatchCandidateArray,
             self.candidate_topic,
             self._on_candidates,
-            10,
+            # provider 的 scene snapshot 是 transient-local。selector 若在 provider
+            # 首次发布之后才完成启动，也必须补收到当前版本；否则 Gateway 会永久等不到
+            # TaskDispatch，造成启动顺序相关的假死。
+            QoSProfile(
+                depth=1,
+                reliability=ReliabilityPolicy.RELIABLE,
+                durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            ),
         )
         self.left_tcp_subscription = self.create_subscription(
             PoseStamped,

@@ -214,6 +214,9 @@ ros2 launch ... enable_moveit_preflight:=true（隔离域、无输入）      PA
   `none`。它不导入 MoveIt，且没有 joint/suction publisher。
 - candidate 与 decision 使用 transient-local QoS；Task22-B Gateway 即使晚启动也能读取
   最后一个 snapshot，并根据 `scene_version` 决定接受或拒绝。
+- selector 对 candidate 的订阅同样是 transient-local：即使 `/task18/box_states` 在 launch
+  过程中先到达、provider 已先发布 snapshot，selector 仍会补收当前候选，随后等待 TCP
+  Ground Truth 再发布 dispatch。这个启动顺序回归已经单独验证。
 
 provider 为生成完整 batch preview 会以 Task19 的当前最优 candidate 暂时构建后续物体的
 height-map；这不是物理 World Commit。Task22-B 收到 Python 选中的 candidate 后仍必须以
@@ -238,6 +241,11 @@ tight shared box:
 
 这些数字仅说明高层候选生成与 Python 评分不是效率瓶颈；它们不是 MoveIt 规划时间，
 更不是物理执行通过结论。
+
+另做了“provider 先发布、selector 后启动”的 QoS 回归：provider 先生成
+`scene_version=1` 的 snapshot，selector 后启动时先输出等待 TCP 的提示；收到 TCP 后输出
+`Task22-A DISPATCH READY`。因此 Ground Truth bridge、provider、selector、Gateway 的启动
+先后不再影响分派。
 
 ## Task22-A Isaac 预览步骤
 
