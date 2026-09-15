@@ -306,7 +306,9 @@ public:
   : Node("task22_sequential_runtime_execute"),
     scene_mutex_(std::make_shared<std::mutex>()),
     left_node_(std::make_shared<rclcpp::Node>("task22_runtime_left")),
-    right_node_(std::make_shared<rclcpp::Node>("task22_runtime_right"))
+    right_node_(std::make_shared<rclcpp::Node>("task22_runtime_right")),
+    tight_execution_node_(std::make_shared<rclcpp::Node>("task22_runtime_tight_physical")),
+    box_state_node_(std::make_shared<rclcpp::Node>("task22_runtime_box_state"))
   {
     input_topic_ = declare_parameter<std::string>("input_topic", "/task18/box_states");
     candidate_topic_ = declare_parameter<std::string>("candidate_topic", "/task22/dispatch_candidates");
@@ -324,7 +326,10 @@ public:
       throw std::runtime_error("Task22-D invalid runtime parameter.");
     }
     const auto snapshot_qos = rclcpp::QoS(1).reliable().transient_local();
-    boxes_subscription_ = create_subscription<fr3_dual_palletize::msg::BoxStateArray>(
+    // 物理执行会在本节点的 timer callback 中同步等待每个阶段结束。Ground Truth
+    // 必须由独立 worker 接收，否则 timer 占用默认 mutually-exclusive callback
+    // group 时，COMMON_LIFT 等阶段会读取到 CONTACT 时刻的旧 Box pose。
+    boxes_subscription_ = box_state_node_->create_subscription<fr3_dual_palletize::msg::BoxStateArray>(
       input_topic_, rclcpp::QoS(10),
       [this](const fr3_dual_palletize::msg::BoxStateArray::SharedPtr message)
       {
@@ -362,6 +367,8 @@ public:
 
   const rclcpp::Node::SharedPtr& leftNode() const { return left_node_; }
   const rclcpp::Node::SharedPtr& rightNode() const { return right_node_; }
+  const rclcpp::Node::SharedPtr& tightExecutionNode() const { return tight_execution_node_; }
+  const rclcpp::Node::SharedPtr& boxStateNode() const { return box_state_node_; }
   bool succeeded() const { return success_.load(); }
   bool failed() const { return failed_.load(); }
 
@@ -548,7 +555,14 @@ private:
       }
       fr3_dual_palletize::SharedObjectExecutionConfig config;
       config.execution_time_scale = execution_time_scale_;
-      fr3_dual_palletize::SharedObjectExecutor executor(this->shared_from_this(), scene_mutex_, config);
+      // 不能将 Surface-Gripper bridge 的 state/TCP subscription 放在当前的 timer
+      // callback 所属 node。execute() 会同步等待 CLOSED/OPEN；若使用同一个默认
+      // mutually-exclusive callback group，即使 MultiThreadedExecutor 有空闲线程，
+      // state callback 也无法在等待期间运行，从而把健康 bridge 误判为未就绪。
+      // 独立 worker node 与 loose arm worker 一样持续被 executor spin；另一个
+      // box_state_node_ 持续接收物体 Ground Truth，保证紧协调各阶段读到实时数据。
+      fr3_dual_palletize::SharedObjectExecutor executor(
+        tight_execution_node_, scene_mutex_, config);
       fr3_dual_palletize::SharedObjectExecutionResult result;
       task_ok = executor.execute(box, placement, plan,
         [this, id = box.id, fallback = box.initial_pose]()
@@ -706,6 +720,8 @@ private:
   std::shared_ptr<std::mutex> scene_mutex_;
   rclcpp::Node::SharedPtr left_node_;
   rclcpp::Node::SharedPtr right_node_;
+  rclcpp::Node::SharedPtr tight_execution_node_;
+  rclcpp::Node::SharedPtr box_state_node_;
   mutable std::mutex data_mutex_;
   bool have_boxes_{false};
   bool have_candidates_{false};
@@ -744,6 +760,8 @@ int main(int argc, char** argv)
     executor.add_node(node);
     executor.add_node(node->leftNode());
     executor.add_node(node->rightNode());
+    executor.add_node(node->tightExecutionNode());
+    executor.add_node(node->boxStateNode());
     executor.spin();
     return node->failed() ? 1 : 0;
   }

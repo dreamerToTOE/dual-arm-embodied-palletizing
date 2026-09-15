@@ -22,10 +22,12 @@ def generate_launch_description():
         "output_topic": "/task22/dispatch_candidates",
         "world_commit_topic": "/task22/world_commit",
         "max_candidates_per_box": 3,
-        "pallet_min_x": 0.555,
-        "pallet_max_x": 0.785,
-        "pallet_min_y": -0.155,
-        "pallet_max_y": 0.145,
+        # 与 Task06 的 1.20 x 0.80 m /World/Table 对齐的保守中央子区。它在
+        # 共同大件落稳后仍为单臂小件保留 table-level 候选，而非强制继续堆叠。
+        "pallet_min_x": 0.455,
+        "pallet_max_x": 0.855,
+        "pallet_min_y": -0.245,
+        "pallet_max_y": 0.245,
         "pallet_support_height": 0.050,
     }
     selector_parameters = {

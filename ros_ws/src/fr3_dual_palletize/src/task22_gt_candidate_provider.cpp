@@ -49,10 +49,14 @@ public:
       "world_commit_topic", "/task22/world_commit");
     max_candidates_per_box_ = declare_parameter<int>("max_candidates_per_box", 3);
     region_.frame_id = "world";
-    region_.min_x = declare_parameter<double>("pallet_min_x", 0.555);
-    region_.max_x = declare_parameter<double>("pallet_max_x", 0.785);
-    region_.min_y = declare_parameter<double>("pallet_min_y", -0.155);
-    region_.max_y = declare_parameter<double>("pallet_max_y", 0.145);
+    // /World/Table 为 1.20 x 0.80 m。Task22-D 不能把 runtime pallet 人为缩成
+    // 与共同搬运箱近似同宽的窄区：首件落稳后，剩余小件只有“叠在大箱正上方”
+    // 这一种候选，既降低可达性又不利于连续码垛。使用中央的保守子区，同时给
+    // 单臂物体保留真实的 table-level 放置通道。
+    region_.min_x = declare_parameter<double>("pallet_min_x", 0.455);
+    region_.max_x = declare_parameter<double>("pallet_max_x", 0.855);
+    region_.min_y = declare_parameter<double>("pallet_min_y", -0.245);
+    region_.max_y = declare_parameter<double>("pallet_max_y", 0.245);
     region_.support_height = declare_parameter<double>("pallet_support_height", 0.050);
 
     if (max_candidates_per_box_ <= 0 || region_.min_x >= region_.max_x ||

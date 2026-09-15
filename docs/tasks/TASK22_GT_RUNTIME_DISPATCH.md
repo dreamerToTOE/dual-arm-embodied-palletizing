@@ -247,6 +247,19 @@ ros2 launch fr3_dual_palletize task22_sequential_runtime.launch.py \
 `task22_moveit_dispatch_gateway` 或旧 `task20_runtime_execute`，以免多个节点改写同一个
 执行 `/move_group` World 或向同一 Isaac bridge 发布命令。
 
+### 2026-09-15 紧协调 bridge 就绪误判修复
+
+首次真实运行的 six-stage tight MoveIt/Cartesian/FCL 均通过，但在物理执行入口报出
+`Task20 Isaac dual-suction bridge 未就绪`。ROS 图与 `ros2 topic echo --once` 已确认：
+左右 suction state、suction TCP、joint command subscriber 与 lock subscriber 均正常。
+根因不是 Isaac bridge，而是 Task22-D 将同步的 tight `execute()` timer 和它的
+`suction_state` / TCP subscription 放进同一个 node 的默认 mutually-exclusive callback
+group；等待 bridge 时订阅回调无法调度，造成假超时。
+
+修复：tight `SharedObjectExecutor` 现在使用独立的 `task22_runtime_tight_physical` worker
+node，由同一 MultiThreadedExecutor 持续 spin。该 node 不运行规划，只承载真实 joint/suction
+publisher 与 state/TCP subscription；因此没有放宽 bridge、FCL 或 release gate。
+
 ## Task22-B 已实现边界
 
 `task22_moveit_dispatch_gateway` 仅在 launch 参数
@@ -580,3 +593,45 @@ ros2 launch fr3_dual_palletize task22_gt_dispatch_preview.launch.py \
 3. loose 决策含主臂与 fallback 臂；tight 物体输出 `TIGHT_SHARED_OBJECT`；
 4. selector 全程不创建 MoveGroup、不调用 OMPL/FCL、不发布 joint/suction command；
 5. 输出候选数量、selector wall time 和最终 decision，证明高层筛选不成为性能瓶颈。
+### 2026-09-15：紧协调阶段读取到旧 Ground Truth 的修复
+
+在修复 dual-suction bridge 回调后，真实执行已能进入 `DUAL_CONTACT`，但
+`COMMON_LIFT` 报告刚好 `50 mm` 的 Box 误差。该数值并非放宽阈值后应忽略的
+物理误差：Task22-D 原先在协调节点的同步 timer 内调用共同执行器，导致同一节点的
+`/task18/box_states` subscription 无法在 timer 占用默认 mutually-exclusive callback
+group 时执行。因此阶段检查读到的是 CONTACT 前缓存的物体位姿。
+
+修复方式是在 `task22_sequential_runtime_execute` 中新增独立
+`task22_runtime_box_state` worker node，并将 `/task18/box_states` subscription 放入该
+node；它由 `MultiThreadedExecutor` 全程 spin。这样阶段验证、release settle 与 World
+Commit 均读取 Isaac 的实时 Ground Truth；没有增加 ACM 例外，也没有降低任一位置阈值。
+
+### 2026-09-15：首件共同物体后的单臂候选空间修正
+
+原 Task22-D runtime pallet 子区为 `x=[0.555, 0.785]`、`y=[-0.155, 0.145]`。共同箱
+落在中心后，叠加 5 mm 几何间隙，区域中不存在合法 table-level 小件候选；Placement
+Planner 只能为后续 tall box 生成共同箱顶面的中心候选。该候选在本机双 FR3 布局中被
+MoveIt 正确判为不可行，三次 primary 和三次 fallback 尝试均未发送物理命令。
+
+Task22-D 的默认保守子区现为 `x=[0.455, 0.855]`、`y=[-0.245, 0.245]`，仍完全位于
+`/World/Table` 的 1.20 x 0.80 m 支撑面内。共同物体继续优先落在区域中心；其余物体
+可优先获得不与已提交共同箱重叠的 table-level 候选。最终 MoveIt/OMPL + FCL 门禁与
+三次规划重试保持不变。
+
+### 2026-09-15：Task22-D 真实 Isaac 回归（seed 20260924）
+
+本次回归使用 `/task18/box_states` 的实际姿态，未关闭碰撞、未修改 ACM、未降低执行
+误差阈值。为在首件已完成的现有 Isaac Stage 上复核后续串行闭环，首件的已验证真实
+World Commit 作为已提交支持物恢复；后两件均由新的 provider/selector/MoveIt/FCL/物理
+执行链完成。
+
+| object | mode / arm | result |
+| --- | --- | --- |
+| `task18_box_01` | tight shared object | 6 stages passed; placement `0.274 mm`; max stage `0.471 mm`; max relative TCP `0.239 mm`; World Commit accepted. |
+| `task18_box_03` | loose / left | Task16 + FCL passed; real suction/attach/detach/settle passed; placement XY `1.932 mm`; World Commit accepted. |
+| `task18_box_05` | loose / right | first stochastic plan retry rejected, second passed Task16 + FCL; real suction/attach/detach/settle passed; placement XY `1.071 mm`; World Commit accepted. |
+
+最终 provider 报告 `pending=0 committed=3 candidates=0`。Python selector 将这一空候选
+版本识别为正常 idle 状态，不再针对每个 TCP 更新重复报警。该回归证明严格串行语义：
+只有一件的物理 release、settle 与 World Commit 成功后，下一件才被选择、最终规划并
+发送命令。

@@ -177,6 +177,17 @@ class GroundTruthDispatchSelector(Node):
             return
         began = time.perf_counter()
 
+        # Task22-D 的正常结束状态：provider 已收到所有真实 World Commit，因而
+        # 当前 scene_version 没有 pending candidate。把该版本标记为已消费，避免
+        # 后续每个 TCP Ground Truth 回调都重复输出“no loose decision”警告。
+        if not message.candidates:
+            self.last_scene_version = message.scene_version
+            self.get_logger().info(
+                "Task22-A dispatch idle: scene_version=%d has no pending candidate."
+                % message.scene_version
+            )
+            return
+
         # 共同物体保持既有 Task11--13 / Task21 紧协调，不用“最近手臂”错误分派。
         tight = [
             item for item in message.candidates
