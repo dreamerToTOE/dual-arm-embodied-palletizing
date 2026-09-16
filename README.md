@@ -53,6 +53,31 @@
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
 
+## Task24-E：教师评审用阵列吸盘外观对照
+
+以下三种固定夹具位于分支 `侧面吸盘紧协调码垛`。三者复用相同的双 FR3、桌面、
+8 个 120 mm Cube 与墙优先垛型；只改变 `fr3_link8` 后的固定工具结构。
+
+在 Isaac Sim 4.5 Script Editor 中，先停止 Timeline，再任选其一运行：
+
+```python
+# A. L 型侧吸阵列：80 mm 下探 + 130 mm 侧向支撑；2 x 2 Cup 面相向朝内。
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task24_side_suction_tight_scene.py").read())
+```
+
+```python
+# B. 长竖直顶吸阵列：145 mm 竖直杆；2 x 2 Cup 面朝下。
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task24_vertical_array_suction_scene.py").read())
+```
+
+```python
+# C. 紧凑竖直顶吸阵列：80 mm 竖直杆，link8 到 Cup TCP 总延伸约 97 mm。
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task24_vertical_array_suction_80mm_scene.py").read())
+```
+
+L 型侧吸版是后续侧面紧协调的候选结构。两种顶吸版当前仅用于外观、工作空间和
+MoveIt 可达性对照；不要运行现有侧吸 bridge 或 Task24 执行器。
+
 ## 当前进度
 
 | Task | 内容 | 状态 |
