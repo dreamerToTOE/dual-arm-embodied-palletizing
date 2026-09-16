@@ -58,6 +58,10 @@ OPEN -> 垂直抓取 -> CLOSE -> AttachedCollisionObject -> LIFT
 -> 暂存 -> OPEN -> Ground Truth 写回 -> RETREAT
 ```
 
+双臂 description 中的 `hand_tcp` 也显式采用官方 `0.1034 m` 指尖 TCP 偏置，
+与 Task01/Task03 的 Franka Hand 语义一致；不能把 TCP 错设在 hand 壳体原点，
+否则相同的抓取高度会让 finger 碰撞桌面。
+
 右臂的 TCP 高度遵循已验证的抓取关系：TCP 比 Cube 中心高 10 mm，避免 finger 下探到
 暂存台内。推送阶段中，只临时从 MoveIt World 删除**当前受控推送的一个 Cube**，以允许
 预期的 finger--Cube 接触；桌面、暂存台、固定第一层、已提交第二层 Cube 及另一只机械臂
