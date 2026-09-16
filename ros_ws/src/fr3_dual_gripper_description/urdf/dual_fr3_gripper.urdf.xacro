@@ -8,12 +8,15 @@
 
   <link name="world"/>
 
+  <!-- 与 Task01/Task03 官方 Franka Hand 基线一致：hand_tcp 位于 finger
+       接触端，而不是 hand 壳体原点。否则同一抓取高度会让 finger 穿入桌面。 -->
   <xacro:franka_robot
       robot_type="fr3"
       arm_prefix="left_"
       no_prefix="false"
       hand="true"
       ee_id="franka_hand"
+      tcp_xyz="0 0 0.1034"
       connected_to=""
       with_sc="false"/>
 
