@@ -69,6 +69,12 @@
     <disable_collisions link1="${p}link7" link2="${p}link8" reason="Adjacent"/>
   </xacro:macro>
   <xacro:macro name="fr3_hand_collision_matrix" params="p">
+    <!--
+      fr3_hand 与 link7 为官方末端固定安装的相邻部件，允许其安装接触。
+      这只豁免这一对机器人本体链路；finger、Cube、桌面和另一台机械臂仍
+      保持完整碰撞检测，不能用它来绕过 Task23 的抓取或推送碰撞。
+    -->
+    <disable_collisions link1="${p}link7" link2="${p}hand" reason="Adjacent"/>
     <disable_collisions link1="${p}hand" link2="${p}leftfinger" reason="Adjacent"/>
     <disable_collisions link1="${p}hand" link2="${p}rightfinger" reason="Adjacent"/>
     <disable_collisions link1="${p}leftfinger" link2="${p}rightfinger" reason="Default"/>
