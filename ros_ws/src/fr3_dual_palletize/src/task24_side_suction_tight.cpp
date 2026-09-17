@@ -1,9 +1,10 @@
 // Task24：短 L 型侧面吸盘的离线紧协调码垛执行器。
 //
-// 设计边界：不读取选择器，不做在线任务排序。8 件 Cube 的 source / entry / target
-// 均是固定离线任务；每件仍由 Isaac Ground Truth 门禁、MoveIt 规划、同步 FCL 与
-// 双 Surface Gripper 物理闭环共同验证。该文件复用 Task11--13 的共同 lift /
-// transport / descent / release 原则，但侧吸几何和“墙优先 + 短推”是独立 Task24。
+// 设计边界：不读取选择器，不做在线任务排序。完整离线任务表预留 8 件 Cube，但
+// 当前只允许执行一个真实 Cube；单件通过前不启动多件调度。每件仍由 Isaac Ground
+// Truth 门禁、MoveIt 规划、同步 FCL 与双 Surface Gripper 物理闭环共同验证。该文件
+// 复用 Task11--13 的共同 lift / transport / descent / release 原则，但侧吸几何和
+// “墙优先 + 短推”是独立 Task24。
 
 #include <algorithm>
 #include <array>
@@ -281,13 +282,14 @@ bool copyRobotDescriptions(const rclcpp::Node::SharedPtr& node)
 class CubeBuffer
 {
 public:
-  explicit CubeBuffer(const rclcpp::Node::SharedPtr& node)
+  CubeBuffer(const rclcpp::Node::SharedPtr& node, std::size_t expected_count)
+    : expected_count_(expected_count)
   {
     subscription_ = node->create_subscription<geometry_msgs::msg::PoseArray>(
       "/task24/cube_poses", 10,
       [this](const geometry_msgs::msg::PoseArray::SharedPtr message)
       {
-        if (message->poses.size() != kTasks.size())
+        if (message->poses.size() != expected_count_)
         {
           return;
         }
@@ -329,6 +331,7 @@ private:
   mutable std::condition_variable condition_;
   bool ready_{false};
   std::uint64_t revision_{0};
+  std::size_t expected_count_{0};
   std::vector<geometry_msgs::msg::Pose> poses_;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
 };
@@ -826,17 +829,20 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("task24_side_suction_tight");
   const int requested = node->declare_parameter<int>("max_cubes", 1);
+  // Task24-F 默认严格为单件；恢复多件时必须同时恢复 Isaac Scene、bridge 与
+  // MoveIt 中所有 Cube CollisionObject，不能仅提高这个参数。
+  const int active_cube_count = node->declare_parameter<int>("active_cube_count", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
-  const bool isolate_first_cube = node->declare_parameter<bool>("isolate_first_cube", true);
-  if (requested < 1 || requested > static_cast<int>(kTasks.size()) || time_scale < 1.0 ||
-      (isolate_first_cube && requested != 1) ||
+  if (requested < 1 || requested > active_cube_count ||
+      active_cube_count < 1 || active_cube_count > static_cast<int>(kTasks.size()) ||
+      time_scale < 1.0 ||
       !copyRobotDescriptions(node))
   {
     rclcpp::shutdown();
     return 1;
   }
 
-  CubeBuffer cubes(node);
+  CubeBuffer cubes(node, static_cast<std::size_t>(active_cube_count));
   TcpBuffer left_tcp(node, "/task24/left/side_suction_tcp_pose");
   TcpBuffer right_tcp(node, "/task24/right/side_suction_tcp_pose");
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 4);
@@ -846,8 +852,8 @@ int main(int argc, char** argv)
   do
   {
     RCLCPP_INFO(node->get_logger(),
-      "========== Task24 OFFLINE SIDE-SUCTION TIGHT: cubes=%d/8, isolation=%s, wall-first YZ->X, time_scale=%.2f ==========" ,
-      requested, isolate_first_cube ? "Cube_01 only" : "off", time_scale);
+      "========== Task24 OFFLINE SIDE-SUCTION TIGHT: requested=%d, active_scene_cubes=%d, wall-first YZ->X, time_scale=%.2f ==========" ,
+      requested, active_cube_count, time_scale);
     if (!cubes.wait(10.0))
     {
       RCLCPP_ERROR(node->get_logger(), "Task24 等待 /task24/cube_poses 超时。");
@@ -871,7 +877,7 @@ int main(int argc, char** argv)
     right_group.setEndEffectorLink(right.eefLink());
     moveit::planning_interface::PlanningSceneInterface scene;
     std::vector<moveit_msgs::msg::CollisionObject> initial{tableObject()};
-    const std::size_t scene_cube_count = isolate_first_cube ? 1 : kTasks.size();
+    const std::size_t scene_cube_count = static_cast<std::size_t>(active_cube_count);
     for (std::size_t index = 0; index < scene_cube_count; ++index)
     {
       const auto [pose, revision] = cubes.get(index);

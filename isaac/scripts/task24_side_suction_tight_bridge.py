@@ -1,6 +1,6 @@
 # Task24-B：短 L 型侧面双吸盘的 Isaac ROS 2 物理桥。
 #
-# 仅在 Task24 场景 Timeline Play 后运行。8 个 Cube 的顺序和离线执行器一致；
+# 仅在 Task24 场景 Timeline Play 后运行。当前单 Cube 基线只发布 Cube_01；
 # Bridge 不选择任务、不规划轨迹，只负责真实侧面 Surface Gripper 与 Ground Truth。
 
 import builtins
@@ -30,7 +30,9 @@ from std_msgs.msg import Bool
 
 SIDES = ("left", "right")
 BRANCH_SIGN = {"left": -1.0, "right": +1.0}
-CUBE_PATHS = tuple(f"/World/Task24/Supply/Cube_{index:02d}" for index in range(1, 9))
+# Task24-F：必须和 Scene 的 ACTIVE_CUBE_COUNT=1、执行器的 active_cube_count:=1
+# 一致。多 Cube 阶段恢复前不发布任何不存在或未同步的 Cube。
+CUBE_PATHS = ("/World/Task24/Supply/Cube_01",)
 
 
 class Task24SideSuctionBridge:
@@ -81,7 +83,7 @@ class Task24SideSuctionBridge:
         print("Task24 side-suction tight ROS bridge started")
         print("SUB: /task24/{left,right}/suction_command std_msgs/Bool")
         print("PUB: /task24/{left,right}/suction_state std_msgs/Bool")
-        print("PUB: /task24/cube_poses geometry_msgs/PoseArray (Cube_01..Cube_08)")
+        print("PUB: /task24/cube_poses geometry_msgs/PoseArray (Cube_01 only)")
         print("PUB: /task24/{left,right}/side_suction_tcp_pose geometry_msgs/PoseStamped")
         print("Surface Gripper normal: left +Y, right -Y; retry close only after command ON")
         print("====================================================")

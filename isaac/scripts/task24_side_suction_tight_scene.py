@@ -5,7 +5,7 @@
 #           "task24_side_suction_tight_scene.py").read())
 #
 # 该脚本不依赖 Task06 已打开的 USD：它重新建立两台官方 FR3、桌面、ROS 图、
-# 8 个固定已知供料 Cube 与墙优先的离线目标标记。它不运行 MoveIt 或执行吸附。
+# 一个固定已知的供料 Cube 与对应目标标记。它不运行 MoveIt 或执行吸附。
 
 import json
 
@@ -48,10 +48,10 @@ CUBE_MASS = 0.800
 BOTTOM_Z = TABLE_TOP_Z + CUBE_HALF
 UPPER_Z = BOTTOM_Z + CUBE_SIZE
 
-# Task24-C 单件隔离开关：首件已用于定位侧吸附接触误差。交付场景默认启用全部
-# 8 个真实 Dynamic Cube；如需复现首件隔离对照，可临时设为 True，并同时以
-# isolate_first_cube:=true 运行执行器。
-ISOLATE_FIRST_CUBE = False
+# Task24-F：先只验证一个真实 Cube 的完整紧协调闭环。未通过该基线前，禁止把
+# 其余七个 Cube 放回场景；否则它们会成为 Isaac 中真实、但 MoveIt 单件基线并未
+# 建模的障碍物。多 Cube 阶段会在单件验收后另行恢复并同步全部 CollisionObject。
+ACTIVE_CUBE_COUNT = 1
 
 # Task24-E：已确认的固定 L 型阵列式侧面吸盘。
 #
@@ -297,22 +297,22 @@ def _build_objects():
     _remove("/World/Task23")
     _remove(TASK_ROOT)
     UsdGeom.Xform.Define(stage, TASK_ROOT)
+    stage.GetPrimAtPath(TASK_ROOT).SetCustomDataByKey(
+        "task24_active_cube_count", ACTIVE_CUBE_COUNT
+    )
     UsdGeom.Xform.Define(stage, SUPPLY_ROOT)
     UsdGeom.Xform.Define(stage, MARKER_ROOT)
-    for index, pose in enumerate(SUPPLY_POSES, start=1):
+    # 当前 Scene 只创建 Cube_01；不创建 placeholder、visual 或 Collider，确保
+    # Isaac 物理场景和单件 MoveIt Planning Scene 完全一致。
+    for index, pose in enumerate(SUPPLY_POSES[:ACTIVE_CUBE_COUNT], start=1):
         path = f"{SUPPLY_ROOT}/Cube_{index:02d}"
-        if not ISOLATE_FIRST_CUBE or index == 1:
-            _box(
-                path, pose,
-                (CUBE_SIZE, CUBE_SIZE, CUBE_SIZE), (0.92, 0.42, 0.18), True,
-                {"id": f"task24_cube_{index:02d}", "role": "offline_supply", "mass": CUBE_MASS},
-            )
-        else:
-            # Bridge 仍需发布固定索引的 Ground Truth；空 Xform 不含 visual、
-            # Collider 或 RigidBody，因而物理上等同于从场景删除。
-            placeholder = UsdGeom.Xform.Define(stage, path)
-            UsdGeom.Xformable(placeholder.GetPrim()).AddTranslateOp().Set(Gf.Vec3d(*pose))
-    for index, pose in enumerate(TARGETS, start=1):
+        _box(
+            path, pose,
+            (CUBE_SIZE, CUBE_SIZE, CUBE_SIZE), (0.92, 0.42, 0.18), True,
+            {"id": f"task24_cube_{index:02d}", "role": "offline_supply", "mass": CUBE_MASS},
+        )
+    # 只显示首件的最终目标标记，避免产生“场景仍包含多个待执行 Cube”的误解。
+    for index, pose in enumerate(TARGETS[:ACTIVE_CUBE_COUNT], start=1):
         marker = UsdGeom.Cube.Define(stage, f"{MARKER_ROOT}/Target_{index:02d}")
         marker.CreateSizeAttr(1.0)
         marker.CreateDisplayColorAttr([Gf.Vec3f(0.15, 0.80, 0.25)])
@@ -421,10 +421,8 @@ print(
     "tools: fixed 2x2 side-suction array, short L support "
     "(80 mm down + 130 mm side), TCP offset=0.155 m"
 )
-print("supply layout: 8 fixed-known Cube slots, active Cube mass=%.3f kg" % CUBE_MASS)
-if ISOLATE_FIRST_CUBE:
-    print("ISOLATION: only Cube_01 is physical; Cube_02..Cube_08 have no visual/rigid/collision")
-print("wall schedule: YZ face x=0.820 (4 cubes) -> YZ face x=0.640 (4 cubes)")
+print("single-cube baseline: only Cube_01 is present and physical, mass=%.3f kg" % CUBE_MASS)
+print("target: YZ far-wall first cell at x=0.820, y=-0.075, z=%.3f" % BOTTOM_Z)
 print("cube: 0.120 m; Y/Z pitch: 0.150 m; pre-push offset: -X 0.020 m; short push: +X 0.020 m")
 print("PUB: /clock, /left/joint_states, /right/joint_states")
 print("SUB: /left/joint_command, /right/joint_command")
