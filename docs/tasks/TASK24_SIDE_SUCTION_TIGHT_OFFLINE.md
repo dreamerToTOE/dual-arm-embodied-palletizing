@@ -63,11 +63,16 @@ COMMON_Y_ALIGN -> COMMON_DESCENT_TO_ENTRY -> COMMON_SIDE_SHORT_PUSH` 全部通�
 
 先启动 Task24 场景和 bridge，再启动 Task24 专用 MoveIt：
 
+> Task24 的 Isaac 内嵌 `rclpy` bridge 当前以 `ROS_LOCALHOST_ONLY=0` 运行。
+> 因此 MoveIt 与执行器终端也必须统一设置为 `0`；不能和此前部分任务使用的
+> `ROS_LOCALHOST_ONLY=1` 混用，否则 MoveIt 与 Task24 bridge 会落在互不可见的
+> DDS 发现集合中。
+
 ```bash
 cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-export ROS_LOCALHOST_ONLY=1
+export ROS_LOCALHOST_ONLY=0
 
 ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py use_rviz:=true
 ```
@@ -78,7 +83,7 @@ ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py
 cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-export ROS_LOCALHOST_ONLY=1
+export ROS_LOCALHOST_ONLY=0
 
 ros2 run fr3_dual_palletize task24_side_suction_tight --ros-args \
   -p max_cubes:=1 \
