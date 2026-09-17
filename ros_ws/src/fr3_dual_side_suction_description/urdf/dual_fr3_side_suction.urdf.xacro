@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3_side_suction">
+  <!-- Task24 双 FR3：基座继续使用 Task06 已验收布局；末端固定为 L 型侧吸阵列。 -->
+  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
+  <xacro:include filename="$(find fr3_dual_side_suction_description)/urdf/dual_side_suction.xacro"/>
+
+  <link name="world"/>
+
+  <!-- 保持本机 franka_description 2.8.1 已验证的宏调用形式。 -->
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="left_"
+      no_prefix="false"
+      hand="false"
+      ee_id="none"
+      connected_to=""
+      with_sc="false"/>
+  <xacro:franka_robot
+      robot_type="fr3"
+      arm_prefix="right_"
+      no_prefix="false"
+      hand="false"
+      ee_id="none"
+      connected_to=""
+      with_sc="false"/>
+
+  <!-- Task24-D：独立侧吸场景中基座前移 100 mm，缩短共同搬运时的前伸力矩臂。 -->
+  <joint name="world_to_left_fr3" type="fixed">
+    <parent link="world"/><child link="left_fr3_link0"/>
+    <origin xyz="0.65 -0.50 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="world_to_right_fr3" type="fixed">
+    <parent link="world"/><child link="right_fr3_link0"/>
+    <origin xyz="0.65 0.50 0" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:dual_side_suction parent_link="left_fr3_link8" prefix="left_fr3_" side_sign="-1"/>
+  <xacro:dual_side_suction parent_link="right_fr3_link8" prefix="right_fr3_" side_sign="1"/>
+</robot>

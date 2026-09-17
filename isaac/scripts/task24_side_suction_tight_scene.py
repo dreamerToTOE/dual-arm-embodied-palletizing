@@ -8,7 +8,6 @@
 # 8 个固定已知供料 Cube 与墙优先的离线目标标记。它不运行 MoveIt 或执行吸附。
 
 import json
-import math
 
 import omni.client
 import omni.kit.app
@@ -54,16 +53,7 @@ UPPER_Z = BOTTOM_Z + CUBE_SIZE
 # isolate_first_cube:=true 运行执行器。
 ISOLATE_FIRST_CUBE = False
 
-# Task24-E 外观样机的工具变体。默认保持已确认的 L 型侧吸阵列；
-# task24_vertical_array_suction_scene.py 会注入 vertical_down_array，用于和
-# 老师并列评审纯竖直下探、阵列向下的顶吸结构。
-TASK24_TOOL_VARIANT = globals().get("TASK24_TOOL_VARIANT", "side_l_array")
-if TASK24_TOOL_VARIANT not in ("side_l_array", "vertical_down_array"):
-    raise RuntimeError(
-        "TASK24_TOOL_VARIANT 只能为 side_l_array 或 vertical_down_array。"
-    )
-
-# Task24-E-A：固定 L 型阵列式侧面吸盘。
+# Task24-E：已确认的固定 L 型阵列式侧面吸盘。
 #
 # 从 link8 先竖直向下，再水平向侧方伸出；这是固定支架，不含可动关节。
 # 横向偏置把 FR3 腕部留在 Cube 外侧，避免纯竖杆使腕部贴近箱体和垛墙。
@@ -87,20 +77,6 @@ CUP_RADIUS = 0.010
 CUP_LENGTH = 0.010
 CUP_CENTER_Y = 0.150
 TCP_Y = 0.155
-
-# Task24-E-B：纯竖直下探的顶吸阵列。阵列板位于 local X-Y 平面，四个 Cup
-# 沿 local +Z 指向下方；没有横向支臂，也不使用左右镜像的偏置。默认保留
-# 145 mm 视觉对照杆；80 mm 对照入口会覆写该值。
-VERTICAL_ARRAY_SUPPORT_LENGTH = float(
-    globals().get("TASK24_VERTICAL_ARRAY_SUPPORT_LENGTH", 0.145)
-)
-if VERTICAL_ARRAY_SUPPORT_LENGTH <= 0.0:
-    raise RuntimeError("TASK24_VERTICAL_ARRAY_SUPPORT_LENGTH 必须为正数。")
-VERTICAL_ARRAY_PANEL_Z = VERTICAL_ARRAY_SUPPORT_LENGTH
-# 14 mm 面板之后接 10 mm Cup；TCP 取 Cup 的接触端中心。
-VERTICAL_ARRAY_CUP_CENTER_Z = VERTICAL_ARRAY_PANEL_Z + 0.012
-VERTICAL_ARRAY_TCP_Z = VERTICAL_ARRAY_PANEL_Z + 0.017
-VERTICAL_ARRAY_XY_OFFSET = 0.024
 
 # 墙优先的离线固定垛型：先完整 YZ 墙 x=0.820，再完整 YZ 墙 x=0.640。
 # 每一面墙按 y/z 的 2x2 顺序完成；Y/Z 单元中心间距 150 mm，使 120 mm Cube
@@ -220,9 +196,8 @@ def _box(path, center, size, color, dynamic=False, metadata=None):
 
 def _build_tool(robot_root, branch_sign):
     hand_path = f"{robot_root}/fr3_hand"
-    # MoveIt 的 Task24 URDF 将当前 L 型工具固定在 fr3_link8；竖直顶吸版仅
-    # 用于本轮 Isaac 外观评审，尚未绑定 MoveIt/bridge。
-    # 必须在 Isaac 中使用同一个安装 frame：fr3_hand 在官方资产里带有
+    # MoveIt 的 Task24 URDF 将 L 型工具固定在 fr3_link8。必须在 Isaac 中使用
+    # 同一个安装 frame：fr3_hand 在官方资产里带有
     # 额外的固定旋转，若把工具挂在它下面，MoveIt TCP 与物理 Cup 会产生
     # 数厘米的 X 向偏差，导致侧面 Surface Gripper 无法接触 Cube。
     mount_path = f"{robot_root}/fr3_link8"
@@ -238,127 +213,80 @@ def _build_tool(robot_root, branch_sign):
     # 清理早期错误挂在 fr3_hand 下的工具，保证重复运行时不会留下旧 Prim。
     _remove(f"{hand_path}/side_suction_tool")
     _remove(f"{mount_path}/side_suction_tool")
-    _remove(f"{mount_path}/vertical_array_tool")
-    tool_leaf = (
-        "side_suction_tool"
-        if TASK24_TOOL_VARIANT == "side_l_array"
-        else "vertical_array_tool"
-    )
-    tool = f"{mount_path}/{tool_leaf}"
+    tool = f"{mount_path}/side_suction_tool"
     _remove(tool)
     UsdGeom.Xform.Define(stage, tool)
 
-    if TASK24_TOOL_VARIANT == "side_l_array":
-        # 固定短 L：先沿局部 +Z 竖直下探，再沿局部 +/-Y 横向伸出。
-        # 这使腕部相对 Cup 保持在箱体外侧，留下垛墙与法兰的碰撞余量。
-        vertical_support = UsdGeom.Cube.Define(stage, f"{tool}/vertical_support")
-        vertical_support.CreateSizeAttr(1.0)
-        vertical_xform = UsdGeom.Xformable(vertical_support.GetPrim())
-        vertical_xform.AddTranslateOp().Set(
-            Gf.Vec3d(0.0, 0.0, 0.5 * VERTICAL_DROP_Z)
+    # 固定短 L：先沿局部 +Z 竖直下探，再沿局部 +/-Y 横向伸出。
+    # 这使腕部相对 Cup 保持在箱体外侧，留下垛墙与法兰的碰撞余量。
+    vertical_support = UsdGeom.Cube.Define(stage, f"{tool}/vertical_support")
+    vertical_support.CreateSizeAttr(1.0)
+    vertical_xform = UsdGeom.Xformable(vertical_support.GetPrim())
+    vertical_xform.AddTranslateOp().Set(
+        Gf.Vec3d(0.0, 0.0, 0.5 * VERTICAL_DROP_Z)
+    )
+    vertical_xform.AddScaleOp().Set(
+        Gf.Vec3f(
+            VERTICAL_SUPPORT_WIDTH,
+            VERTICAL_SUPPORT_WIDTH,
+            VERTICAL_DROP_Z,
         )
-        vertical_xform.AddScaleOp().Set(
-            Gf.Vec3f(
-                VERTICAL_SUPPORT_WIDTH,
-                VERTICAL_SUPPORT_WIDTH,
-                VERTICAL_DROP_Z,
-            )
-        )
-        vertical_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
-        UsdPhysics.CollisionAPI.Apply(vertical_support.GetPrim())
+    )
+    vertical_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
+    UsdPhysics.CollisionAPI.Apply(vertical_support.GetPrim())
 
-        lateral_support = UsdGeom.Cube.Define(stage, f"{tool}/lateral_support")
-        lateral_support.CreateSizeAttr(1.0)
-        lateral_xform = UsdGeom.Xformable(lateral_support.GetPrim())
-        lateral_xform.AddTranslateOp().Set(
-            Gf.Vec3d(
-                0.0,
-                branch_sign * 0.5 * LATERAL_STANDOFF_Y,
-                VERTICAL_DROP_Z,
-            )
+    lateral_support = UsdGeom.Cube.Define(stage, f"{tool}/lateral_support")
+    lateral_support.CreateSizeAttr(1.0)
+    lateral_xform = UsdGeom.Xformable(lateral_support.GetPrim())
+    lateral_xform.AddTranslateOp().Set(
+        Gf.Vec3d(
+            0.0,
+            branch_sign * 0.5 * LATERAL_STANDOFF_Y,
+            VERTICAL_DROP_Z,
         )
-        lateral_xform.AddScaleOp().Set(
-            Gf.Vec3f(
-                LATERAL_SUPPORT_WIDTH,
-                LATERAL_STANDOFF_Y,
-                LATERAL_SUPPORT_WIDTH,
-            )
+    )
+    lateral_xform.AddScaleOp().Set(
+        Gf.Vec3f(
+            LATERAL_SUPPORT_WIDTH,
+            LATERAL_STANDOFF_Y,
+            LATERAL_SUPPORT_WIDTH,
         )
-        lateral_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
-        UsdPhysics.CollisionAPI.Apply(lateral_support.GetPrim())
+    )
+    lateral_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
+    UsdPhysics.CollisionAPI.Apply(lateral_support.GetPrim())
 
-        # 刚性吸盘面板：其 X-Z 面承载四个完全相同的吸盘。
-        _box(
-            f"{tool}/vacuum_manifold",
-            (0.0, branch_sign * MANIFOLD_Y, VERTICAL_DROP_Z),
-            (MANIFOLD_X_SIZE, MANIFOLD_Y_SIZE, MANIFOLD_Z_SIZE),
-            (0.18, 0.22, 0.28),
-        )
-        for row, z_offset in enumerate((-ARRAY_Z_OFFSET, ARRAY_Z_OFFSET), start=1):
-            for column, x_offset in enumerate((-ARRAY_X_OFFSET, ARRAY_X_OFFSET), start=1):
-                cup = UsdGeom.Cylinder.Define(stage, f"{tool}/cup_r{row}_c{column}")
-                cup.CreateAxisAttr(UsdGeom.Tokens.y)
-                cup.CreateRadiusAttr(CUP_RADIUS)
-                cup.CreateHeightAttr(CUP_LENGTH)
-                UsdGeom.Xformable(cup.GetPrim()).AddTranslateOp().Set(
-                    Gf.Vec3d(
-                        x_offset,
-                        branch_sign * CUP_CENTER_Y,
-                        VERTICAL_DROP_Z + z_offset,
-                    )
+    # 刚性吸盘面板：其 X-Z 面承载四个完全相同的吸盘。
+    _box(
+        f"{tool}/vacuum_manifold",
+        (0.0, branch_sign * MANIFOLD_Y, VERTICAL_DROP_Z),
+        (MANIFOLD_X_SIZE, MANIFOLD_Y_SIZE, MANIFOLD_Z_SIZE),
+        (0.18, 0.22, 0.28),
+    )
+    for row, z_offset in enumerate((-ARRAY_Z_OFFSET, ARRAY_Z_OFFSET), start=1):
+        for column, x_offset in enumerate((-ARRAY_X_OFFSET, ARRAY_X_OFFSET), start=1):
+            cup = UsdGeom.Cylinder.Define(stage, f"{tool}/cup_r{row}_c{column}")
+            cup.CreateAxisAttr(UsdGeom.Tokens.y)
+            cup.CreateRadiusAttr(CUP_RADIUS)
+            cup.CreateHeightAttr(CUP_LENGTH)
+            UsdGeom.Xformable(cup.GetPrim()).AddTranslateOp().Set(
+                Gf.Vec3d(
+                    x_offset,
+                    branch_sign * CUP_CENTER_Y,
+                    VERTICAL_DROP_Z + z_offset,
                 )
-                cup.CreateDisplayColorAttr([Gf.Vec3f(0.05, 0.05, 0.05)])
-                UsdPhysics.CollisionAPI.Apply(cup.GetPrim())
-
-        tcp = UsdGeom.Xform.Define(stage, f"{tool}/side_suction_tcp")
-        tcp_xform = UsdGeom.Xformable(tcp.GetPrim())
-        tcp_xform.AddTranslateOp().Set(
-            Gf.Vec3d(0.0, branch_sign * TCP_Y, VERTICAL_DROP_Z)
-        )
-        # 与 Task24 URDF 中 side_suction_tcp_joint 的 rpy 完全一致。位置和杯面
-        # 已经一致时，Ground Truth 的姿态也必须是同一个 TCP frame，不能只发布
-        # link8 的姿态。
-        tcp_xform.AddRotateZOp().Set(branch_sign * 90.0)
-    else:
-        # 顶吸对照版：仅一根竖直杆，面板平行桌面，2 x 2 Cup 垂直向下。
-        vertical_support = UsdGeom.Cube.Define(stage, f"{tool}/vertical_support")
-        vertical_support.CreateSizeAttr(1.0)
-        vertical_xform = UsdGeom.Xformable(vertical_support.GetPrim())
-        vertical_xform.AddTranslateOp().Set(
-            Gf.Vec3d(0.0, 0.0, 0.5 * VERTICAL_ARRAY_PANEL_Z)
-        )
-        vertical_xform.AddScaleOp().Set(
-            Gf.Vec3f(
-                VERTICAL_SUPPORT_WIDTH,
-                VERTICAL_SUPPORT_WIDTH,
-                VERTICAL_ARRAY_PANEL_Z,
             )
-        )
-        vertical_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
-        UsdPhysics.CollisionAPI.Apply(vertical_support.GetPrim())
+            cup.CreateDisplayColorAttr([Gf.Vec3f(0.05, 0.05, 0.05)])
+            UsdPhysics.CollisionAPI.Apply(cup.GetPrim())
 
-        _box(
-            f"{tool}/vacuum_manifold",
-            (0.0, 0.0, VERTICAL_ARRAY_PANEL_Z),
-            (MANIFOLD_X_SIZE, MANIFOLD_Z_SIZE, MANIFOLD_Y_SIZE),
-            (0.18, 0.22, 0.28),
-        )
-        for row, y_offset in enumerate((-VERTICAL_ARRAY_XY_OFFSET, VERTICAL_ARRAY_XY_OFFSET), start=1):
-            for column, x_offset in enumerate((-VERTICAL_ARRAY_XY_OFFSET, VERTICAL_ARRAY_XY_OFFSET), start=1):
-                cup = UsdGeom.Cylinder.Define(stage, f"{tool}/cup_r{row}_c{column}")
-                cup.CreateAxisAttr(UsdGeom.Tokens.z)
-                cup.CreateRadiusAttr(CUP_RADIUS)
-                cup.CreateHeightAttr(CUP_LENGTH)
-                UsdGeom.Xformable(cup.GetPrim()).AddTranslateOp().Set(
-                    Gf.Vec3d(x_offset, y_offset, VERTICAL_ARRAY_CUP_CENTER_Z)
-                )
-                cup.CreateDisplayColorAttr([Gf.Vec3f(0.05, 0.05, 0.05)])
-                UsdPhysics.CollisionAPI.Apply(cup.GetPrim())
-
-        tcp = UsdGeom.Xform.Define(stage, f"{tool}/vertical_array_tcp")
-        UsdGeom.Xformable(tcp.GetPrim()).AddTranslateOp().Set(
-            Gf.Vec3d(0.0, 0.0, VERTICAL_ARRAY_TCP_Z)
-        )
+    tcp = UsdGeom.Xform.Define(stage, f"{tool}/side_suction_tcp")
+    tcp_xform = UsdGeom.Xformable(tcp.GetPrim())
+    tcp_xform.AddTranslateOp().Set(
+        Gf.Vec3d(0.0, branch_sign * TCP_Y, VERTICAL_DROP_Z)
+    )
+    # 与 Task24 URDF 中 side_suction_tcp_joint 的 rpy 完全一致。位置和杯面
+    # 已经一致时，Ground Truth 的姿态也必须是同一个 TCP frame，不能只发布
+    # link8 的姿态。
+    tcp_xform.AddRotateZOp().Set(branch_sign * 90.0)
 
 
 def _build_objects():
@@ -488,19 +416,11 @@ _build_objects()
 _build_ros_graph()
 
 print("\n====================================================")
-if TASK24_TOOL_VARIANT == "side_l_array":
-    print("Task24 side-suction tight offline scene ready")
-    print(
-        "tools: fixed 2x2 side-suction array, short L support "
-        "(80 mm down + 130 mm side), TCP offset=0.155 m"
-    )
-else:
-    print("Task24 vertical-array top-suction visual comparison scene ready")
-    print(
-        "tools: fixed 2x2 top-suction array, vertical-only support "
-        "(%.0f mm down), TCP offset=%.3f m"
-        % (VERTICAL_ARRAY_SUPPORT_LENGTH * 1000.0, VERTICAL_ARRAY_TCP_Z)
-    )
+print("Task24 side-suction tight offline scene ready")
+print(
+    "tools: fixed 2x2 side-suction array, short L support "
+    "(80 mm down + 130 mm side), TCP offset=0.155 m"
+)
 print("supply layout: 8 fixed-known Cube slots, active Cube mass=%.3f kg" % CUBE_MASS)
 if ISOLATE_FIRST_CUBE:
     print("ISOLATION: only Cube_01 is physical; Cube_02..Cube_08 have no visual/rigid/collision")
@@ -508,8 +428,5 @@ print("wall schedule: YZ face x=0.820 (4 cubes) -> YZ face x=0.640 (4 cubes)")
 print("cube: 0.120 m; Y/Z pitch: 0.150 m; pre-push offset: -X 0.020 m; short push: +X 0.020 m")
 print("PUB: /clock, /left/joint_states, /right/joint_states")
 print("SUB: /left/joint_command, /right/joint_command")
-if TASK24_TOOL_VARIANT == "side_l_array":
-    print("Next: Play, then run task24_side_suction_tight_bridge.py")
-else:
-    print("Visual comparison only: do not run the side-suction bridge or Task24 executor.")
+print("Next: Play, then run task24_side_suction_tight_bridge.py")
 print("====================================================")

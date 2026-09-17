@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    Task24：已确认的固定 L 型阵列式侧面吸盘。
+
+    从 fr3_link8 沿局部 +Z 下探 80 mm，再沿左右镜像的局部 +/-Y 伸出
+    130 mm。90 x 90 mm 的 X-Z 阵列板携带四个 Cup，Cup 面沿 +/-Y 相向。
+    该固定工具是 Task24 唯一保留的末端结构；其 visual 与 collision
+    几何必须和 Isaac 场景及 bridge 的 TCP 偏置保持一致。
+  -->
+  <xacro:macro name="dual_side_suction" params="parent_link prefix side_sign">
+    <link name="${prefix}side_suction">
+      <!-- L 型侧吸：粗竖杆 + 紧凑横杆。 -->
+      <visual name="vertical_support_visual">
+        <origin xyz="0 0 0.040" rpy="0 0 0"/>
+        <geometry><box size="0.028 0.028 0.080"/></geometry>
+        <material name="${prefix}side_suction_gray"><color rgba="0.25 0.25 0.25 1.0"/></material>
+      </visual>
+      <collision name="vertical_support_collision">
+        <origin xyz="0 0 0.040" rpy="0 0 0"/>
+        <geometry><box size="0.028 0.028 0.080"/></geometry>
+      </collision>
+      <visual name="lateral_support_visual">
+        <origin xyz="0 ${side_sign * 0.065} 0.080" rpy="0 0 0"/>
+        <geometry><box size="0.018 0.130 0.018"/></geometry>
+        <material name="${prefix}side_suction_gray"/>
+      </visual>
+      <collision name="lateral_support_collision">
+        <origin xyz="0 ${side_sign * 0.065} 0.080" rpy="0 0 0"/>
+        <geometry><box size="0.018 0.130 0.018"/></geometry>
+      </collision>
+      <visual name="manifold_visual">
+        <origin xyz="0 ${side_sign * 0.138} 0.080" rpy="0 0 0"/>
+        <geometry><box size="0.090 0.014 0.090"/></geometry>
+        <material name="${prefix}side_suction_gray"/>
+      </visual>
+      <collision name="manifold_collision">
+        <origin xyz="0 ${side_sign * 0.138} 0.080" rpy="0 0 0"/>
+        <geometry><box size="0.090 0.014 0.090"/></geometry>
+      </collision>
+
+      <!-- 阵列面位于 X-Z 平面，Cup 沿 +/-Y。 -->
+      <xacro:property name="side_cup_y" value="${side_sign * 0.150}"/>
+      <xacro:property name="side_cup_roll" value="${side_sign * 1.57079632679}"/>
+      <xacro:macro name="side_cup" params="name x z">
+        <visual name="${name}_visual">
+          <origin xyz="${x} ${side_cup_y} ${z}" rpy="${side_cup_roll} 0 0"/>
+          <geometry><cylinder radius="0.010" length="0.010"/></geometry>
+          <material name="${prefix}side_suction_black"><color rgba="0.05 0.05 0.05 1.0"/></material>
+        </visual>
+        <collision name="${name}_collision">
+          <origin xyz="${x} ${side_cup_y} ${z}" rpy="${side_cup_roll} 0 0"/>
+          <geometry><cylinder radius="0.010" length="0.010"/></geometry>
+        </collision>
+      </xacro:macro>
+      <xacro:side_cup name="cup_r1_c1" x="-0.024" z="0.056"/>
+      <xacro:side_cup name="cup_r1_c2" x="0.024" z="0.056"/>
+      <xacro:side_cup name="cup_r2_c1" x="-0.024" z="0.104"/>
+      <xacro:side_cup name="cup_r2_c2" x="0.024" z="0.104"/>
+    </link>
+
+    <joint name="${prefix}side_suction_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${prefix}side_suction"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}side_suction_tcp"/>
+    <joint name="${prefix}side_suction_tcp_joint" type="fixed">
+      <parent link="${prefix}side_suction"/>
+      <child link="${prefix}side_suction_tcp"/>
+      <origin xyz="0 ${side_sign * 0.155} 0.080" rpy="0 0 ${side_sign * 1.57079632679}"/>
+    </joint>
+  </xacro:macro>
+</robot>
