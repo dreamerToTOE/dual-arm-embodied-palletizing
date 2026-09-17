@@ -116,9 +116,10 @@ class Task24SideSuctionBridge:
         offset.r.z = sign * 0.70710678
         offset.r.w = 0.70710678
         props.offset = offset
-        # 与执行器的 10 mm 侧向真空近接触间隙对应。阈值略大于间隙，避免
-        # 大 Cube 在两侧实体 Cup 挤压后才建立约束。
-        props.gripThreshold = 0.012
+        # 与执行器 1 mm 的 Cup 面近接触间隙对应。Surface Gripper close() 会
+        # 固定当前相对几何，不会自动消除大间隙；3 mm 阈值只保留捕获容差，
+        # 不允许 10 mm 浮空吸附。
+        props.gripThreshold = 0.003
         props.forceLimit = 1.0e6
         props.torqueLimit = 1.0e6
         props.bendAngle = math.radians(15.0)

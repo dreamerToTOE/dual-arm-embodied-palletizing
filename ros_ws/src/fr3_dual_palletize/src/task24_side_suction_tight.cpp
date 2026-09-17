@@ -50,13 +50,16 @@ constexpr double kCubeHalf = 0.060;
 constexpr double kTableTopZ = 0.050;
 constexpr double kBottomZ = kTableTopZ + kCubeHalf;
 constexpr double kUpperZ = kBottomZ + kCubeSize;
-// 120 mm / 0.8 kg Cube 的两侧实体 Cup 不应在 D6 吸附约束建立前发生挤压。
-// 保留 10 mm 真空近接触间隙，并由 Isaac 12 mm gripThreshold 建立吸附。
-// 因此两臂会先到达同一组无接触的对应吸附点，再同时创建物理约束；这不是
-// 放置/推送余量。
-constexpr double kSideContactGap = 0.010;
+// Cup 面与 Cube 侧面的静态间隙固定为 1 mm。Surface Gripper 在 close() 时
+// 固定当前相对位姿而不会主动把 Cube 拉过这段距离；10 mm 会形成明显浮空，
+// 因此不能再作为“真空近接触”使用。1 mm 保留 PhysX 数值余量，同时视觉和
+// 约束几何上均等价于贴合吸附，而不是挤压 Cube。
+constexpr double kSideContactGap = 0.001;
 constexpr double kPreContactOffsetY = 0.100;
-constexpr double kLiftHeight = 0.160;
+// L 型工具的竖直段在侧向姿态下会向桌面方向占据额外空间。160 mm 抬升在
+// COMMON_X_TRAVEL 的中间采样中仍会擦到桌面；提高到 280 mm 后，工具最低点
+// 仍保有明确净空。该值是载荷共同运输高度，不改变最终放置高度。
+constexpr double kLiftHeight = 0.280;
 // 只为释放/退出留出余量：20 mm 仅为 Cube 边长的 1/6，不是长距离推送。
 constexpr double kPrePushOffsetX = 0.020;
 constexpr double kReleaseGapZ = 0.001;
@@ -64,7 +67,9 @@ constexpr double kCartesianStep = 0.002;
 constexpr double kMinCartesianFraction = 0.999;
 constexpr double kFclSamplePeriod = 0.010;
 constexpr double kPlacementTolerance = 0.010;
-constexpr double kAttachmentAlignmentTolerance = 0.005;
+// 吸附接触的 x/z、左右跨距与间隙都必须在 2 mm 内；否则 CLOSED 也不能说明
+// 阵列 Cup 已对应贴合 Cube，禁止进入共同运输。
+constexpr double kAttachmentAlignmentTolerance = 0.002;
 constexpr double kAttachmentOrientationToleranceDeg = 3.0;
 constexpr double kPi = 3.14159265358979323846;
 constexpr int kRetries = 3;

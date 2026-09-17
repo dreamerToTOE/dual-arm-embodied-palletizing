@@ -48,6 +48,11 @@ Planning Scene 中的 CollisionObject 三者数量与顺序完全一致。单件
 
 Isaac 工具、MoveIt URDF 与 bridge 的吸盘约束偏置使用同一尺寸。闭合前读取 Isaac Ground Truth，检查两个 TCP 到 Cube 的 X/Z、跨距、间隙与姿态；不满足阈值时不允许吸附。
 
+单件基线固定使用 Cup 面到 Cube 侧面 `1 mm` 的近接触间隙；bridge 的
+`gripThreshold` 为 `3 mm`，几何门限为 `2 mm`。这避免 Surface Gripper 在较大
+间隙处创建约束并留下明显浮空。共同载荷运输高度为 `280 mm`，以保证 L 型支架
+在 `COMMON_X_TRAVEL` 全程避开桌面；最终放置高度不随之改变。
+
 ## 当前验收边界
 
 此前的单 Cube 记录不作为当前验收结论：当时 Isaac 场景仍有其它真实 Cube，执行器
