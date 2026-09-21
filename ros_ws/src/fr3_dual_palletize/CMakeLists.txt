@@ -651,6 +651,22 @@ ament_target_dependencies(task25_batched_side_suction
   moveit_ros_planning_interface
 )
 
+# Task26：货车车厢三面围墙 + 预推入位（第一层 4 件）。
+add_executable(task26_truck_box_push_in
+  src/task26_truck_box_push_in.cpp
+)
+ament_target_dependencies(task26_truck_box_push_in
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -693,6 +709,7 @@ install(
     task24_side_suction_tight
     task24_side_contact_demo
     task25_batched_side_suction
+    task26_truck_box_push_in
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
