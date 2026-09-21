@@ -49,9 +49,25 @@
 - [Task 21 — 松/紧协调自动路由](docs/tasks/TASK21_COORDINATION_ROUTER.md)
 - [Task 22 — Ground Truth 在线任务分派与预规划](docs/tasks/TASK22_GT_RUNTIME_DISPATCH.md)
 - [Task 23 — 二指夹爪暂存后平推二层验证](docs/tasks/TASK23_GRIPPER_STAGE_PUSH.md)
+- [Task 24 — 侧面吸盘紧协调离线码垛](docs/tasks/TASK24_SIDE_SUCTION_TIGHT_OFFLINE.md)
+- [Task 25 — 分批到料的侧面吸盘紧协调码垛](docs/tasks/TASK25_BATCHED_FEED_PALLETIZING.md)
 - [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
+
+## Task24：已确认的 L 型阵列侧吸工具
+
+教师已确认采用 L 型阵列侧吸工具。它固定安装在两个 `fr3_link8` 上：先竖直下探
+80 mm，再沿左右镜像方向侧向伸出 130 mm；90 x 90 mm 的阵列板配置 2 x 2 Cup，
+用于从 Cube 的左右侧面相向吸附并执行紧协调搬运。未采用的竖直顶吸外观对照版已
+从该分支源码移除，避免与 Task24 的 MoveIt、bridge 或执行器混用。
+
+在 Isaac Sim 4.5 Script Editor 中，先停止 Timeline，再运行：
+
+```python
+# L 型侧吸阵列：80 mm 下探 + 130 mm 侧向支撑；2 x 2 Cup 面相向朝内。
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task24_side_suction_tight_scene.py").read())
+```
 
 ## 当前进度
 
@@ -81,6 +97,8 @@
 | 21 | 松/紧协调自动路由 | 🟡 Router 已实际选择并执行一次 `TIGHT_SHARED_OBJECT` runtime route；loose runtime 与多对象调度的物理验收仍待完成 |
 | 22 | Ground Truth 在线任务分派与预规划 | 🧊 吸盘实现冻结：已完成 `GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件` 串行闭环与三件 Isaac 连续验收；不再扩展吸盘路线，后续以夹爪重新建立执行基线 |
 | 23 | 二指夹爪暂存后平推二层验证 | 🟡 已建立独立双 FR3 + 官方手指场景、16 件 Ground Truth 选择器及 `抓取 → 暂存 → 单臂 +X 推送` 执行器；待 Isaac 物理验收 |
+| 24 | 侧面吸盘紧协调离线码垛（L 型阵列侧吸） | 🟡 单 Cube 闭环已通过两次独立 Isaac 物理验收（最终放置误差 0.184 mm / 0.115 mm）；八件静态供料全量预检第一件失败（未处理 Cube 占据另一臂进入侧面中心吸附位的通道），决定改为分批到料（Task25） |
+| 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 设计已确认（休眠区瞬移 + 同排 X 分隔供料槽）：场景、bridge 与执行器待实现，尚未开始物理验收 |
 
 ## 已冻结的吸盘基线结论
 
