@@ -603,6 +603,38 @@ ament_target_dependencies(task23_gripper_stage_push
   moveit_core
   moveit_ros_planning_interface
 )
+
+# Task24：离线固定点的短 L 型侧面双吸盘紧协调物理基线。
+add_executable(task24_side_suction_tight
+  src/task24_side_suction_tight.cpp
+)
+ament_target_dependencies(task24_side_suction_tight
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
+# Task24-E：只演示 L 型阵列到单个 Cube 侧面预接触；不吸附、不搬运。
+add_executable(task24_side_contact_demo
+  src/task24_side_contact_demo.cpp
+)
+ament_target_dependencies(task24_side_contact_demo
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -642,6 +674,8 @@ install(
     task22_predictive_sandbox_candidate_demo
     task14_shared_box_geometry_monitor
     task23_gripper_stage_push
+    task24_side_suction_tight
+    task24_side_contact_demo
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
