@@ -1,7 +1,6 @@
 # Task25：分批到料的侧面吸盘紧协调多 Cube 码垛
 
-状态：🟡 设计已确认；Isaac 场景与 Ground Truth bridge 已实现（含休眠区瞬移与到料判定），
-执行器待实现，尚未开始任何物理验收。
+状态：🟡 场景、bridge 与执行器均已实现并通过编译与冒烟检查；Isaac 物理验收待执行。
 
 ## 目标与范围
 
@@ -104,6 +103,42 @@ ROS 接口（Task25 独立命名空间，不复用 Task24 的 topic 名称）：
 `[0, -pi/4, 0, -3pi/4, 0, pi/2, pi/4]`。该姿态在 Task24 八件全在场的初始状态下已被
 实际使用，因此是“有碰撞物时仍然安全”的退出位；每批结束时两臂同步回该位并确认到位。
 
+## 执行器实现要点
+
+```text
+node:  task25_batched_side_suction
+参数:  max_batches（默认 4 = 完整 4 批 8 件；单批验收用 1）
+       planning_only（默认 false；零命令预检用 true）
+       execution_time_scale（正式物理验收固定 3.0）
+订阅:  /task25/cube_poses、/task25/feed_state、/task25/{left,right}/suction_state、/{left,right}/joint_states
+发布:  /task25/feed_command、/{left,right}/joint_command、/task25/{left,right}/suction_command
+```
+
+批循环：
+
+```text
+批 b：请求到料（b > 1）
+   -> 等到该批两件都“到位且静止”
+   -> 读到新一帧 Ground Truth 并校验槽位偏差
+   -> 只把当前批两件加入 Planning Scene
+   -> 槽 A 那件走完整紧协调链路
+   -> 槽 B 那件走完整紧协调链路
+   -> 双臂同步回共同 HOME
+   -> 才允许下一批到料
+```
+
+- 槽位是设计常量（槽 A `x=0.520`、槽 B `x=0.300`，同 `y=-0.070`）。启动时用批 1 的真实
+  Ground Truth 校验“场景 - bridge - 执行器”三方对同一槽位的理解；任何批次的实际落点偏差
+  超过 3 mm 即停止，不再用错误几何规划。
+- 到料是瞬移 + 落稳，因此每次都必须在 bridge 判定“到位且静止”之后再读**新一帧** Ground
+  Truth，绝不使用瞬移前的缓存 pose。
+- `planning_only` 不发布 joint、suction，也**不发布 feed_command**（它会改变物理世界）；
+  它按设计槽位虚拟推进全部批次，最后一段还包含共同 HOME 退出轨迹的 FCL 校验。
+- 共同命令使用 `frame_id = task25_dual_sync`，bridge 只在收齐同一 stamp 的左右消息后，
+  于同一 physics callback 内成对下发，不存在独立 Action Graph 的帧级先后差。
+- 批内先取槽 A 是硬要求：负载段 `COMMON_X_TRAVEL` 在“与供料相同的 y”高度沿 X 飞行，
+  先取槽 A 后取槽 B 时这条通道上不再有任何未取供料件。
+
 ## 与 Task24 的复用边界
 
 - **不修改** Task24 的任何文件：`isaac/scripts/task24_side_suction_tight_scene.py`、
@@ -133,13 +168,25 @@ ROS 接口（Task25 独立命名空间，不复用 Task24 的 topic 名称）：
 
 ## 启动与实际验收
 
-以下路径是本设计约定的 Task25 文件。Isaac 场景与 bridge 已实现，可以单独验证
-“分批到料 + 到料判定”本身；执行器尚未实现，下面的 `ros2 run` 命令在它提交前不生效。
+以下三个文件均已实现：Isaac 场景与 bridge 可以单独验证“分批到料 + 到料判定”本身；
+执行器已完成编译与参数/接线冒烟检查，但尚未进入任何 Isaac 物理验收。
 
 ```text
-isaac/scripts/task25_batched_feed_scene.py        已实现
-isaac/scripts/task25_batched_feed_bridge.py       已实现
-ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp   待实现
+isaac/scripts/task25_batched_feed_scene.py                          已实现
+isaac/scripts/task25_batched_feed_bridge.py                         已实现
+ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp   已实现（已编译、已冒烟）
+```
+
+编译（注意：本机 `/tmp` 是 10 MB 的 tmpfs，直接编译大文件会报
+`error writing to /tmp/ccXXXX.s: 设备上没有空间`；必须把 TMPDIR 指到大盘）：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export TMPDIR=/home/ubuntu2004/.tmp_build
+
+colcon build --packages-select fr3_dual_palletize --symlink-install
 ```
 
 场景与 bridge 的独立验证方法：加载场景、Play、运行 bridge，bridge 会自动释放批 1；
@@ -149,6 +196,16 @@ ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp   待实现
 
 ```bash
 ros2 topic pub --once /task25/feed_command std_msgs/msg/Int32 "{data: 2}"
+```
+
+执行器的静态检查（不需要 MoveIt，只验证二进制、参数与接线）：
+
+```bash
+# 参数越界：立即以非零码退出，不进入任何等待
+ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args -p max_batches:=9
+
+# 缺少 /move_group：必须明确报 “Task25 无法连接 /move_group。” 后退出，而不是静默卡住
+ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args -p max_batches:=1 -p planning_only:=true
 ```
 
 Isaac Sim 中先停止 Timeline 再加载场景；点击 Play 后单独运行 bridge：
@@ -177,7 +234,7 @@ ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py
 
 ```bash
 ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
-  -p batches:=4 \
+  -p max_batches:=4 \
   -p planning_only:=true \
   -p execution_time_scale:=3.0
 ```
@@ -186,7 +243,7 @@ ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
 
 ```bash
 ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
-  -p batches:=4 \
+  -p max_batches:=4 \
   -p execution_time_scale:=3.0
 ```
 

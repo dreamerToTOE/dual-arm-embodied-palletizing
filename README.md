@@ -98,7 +98,7 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 | 22 | Ground Truth 在线任务分派与预规划 | 🧊 吸盘实现冻结：已完成 `GT → Python selector → MoveIt/FCL → 物理执行 → settle/World Commit → 下一件` 串行闭环与三件 Isaac 连续验收；不再扩展吸盘路线，后续以夹爪重新建立执行基线 |
 | 23 | 二指夹爪暂存后平推二层验证 | 🟡 已建立独立双 FR3 + 官方手指场景、16 件 Ground Truth 选择器及 `抓取 → 暂存 → 单臂 +X 推送` 执行器；待 Isaac 物理验收 |
 | 24 | 侧面吸盘紧协调离线码垛（L 型阵列侧吸） | 🟡 单 Cube 闭环已通过两次独立 Isaac 物理验收（最终放置误差 0.184 mm / 0.115 mm）；八件静态供料全量预检第一件失败（未处理 Cube 占据另一臂进入侧面中心吸附位的通道），决定改为分批到料（Task25） |
-| 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 设计已确认；Isaac 场景与 Ground Truth bridge 已实现（休眠区瞬移、批 1 自动到料、到料判定 `feed_state`），执行器待实现，未开始物理验收 |
+| 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 场景、bridge 与执行器均已实现并通过编译与冒烟检查（休眠区瞬移、批 1 自动到料、到料判定 `feed_state`、批间共同 HOME 退出）；Isaac 物理验收待执行 |
 
 ## 已冻结的吸盘基线结论
 
