@@ -635,6 +635,22 @@ ament_target_dependencies(task24_side_contact_demo
   moveit_ros_planning_interface
 )
 
+# Task25：分批到料的侧面吸盘紧协调码垛执行器（休眠区瞬移 + 批间共同 HOME 退出）。
+add_executable(task25_batched_side_suction
+  src/task25_batched_side_suction.cpp
+)
+ament_target_dependencies(task25_batched_side_suction
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -676,6 +692,7 @@ install(
     task23_gripper_stage_push
     task24_side_suction_tight
     task24_side_contact_demo
+    task25_batched_side_suction
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
