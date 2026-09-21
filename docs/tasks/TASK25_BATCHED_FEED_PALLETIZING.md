@@ -177,17 +177,9 @@ isaac/scripts/task25_batched_feed_bridge.py                         已实现
 ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp   已实现（已编译、已冒烟）
 ```
 
-编译（注意：本机 `/tmp` 是 10 MB 的 tmpfs，直接编译大文件会报
-`error writing to /tmp/ccXXXX.s: 设备上没有空间`；必须把 TMPDIR 指到大盘）：
-
-```bash
-cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
-source /opt/ros/humble/setup.bash
-source install/setup.bash
-export TMPDIR=/home/ubuntu2004/.tmp_build
-
-colcon build --packages-select fr3_dual_palletize --symlink-install
-```
+编译注意：本机 `/tmp` 是 **10 MB 的 tmpfs**，直接编译千行级源文件会报
+`error writing to /tmp/ccXXXX.s: 设备上没有空间`；必须先把 `TMPDIR` 指到大盘。
+完整命令见下面运行手册的“终端 1”。
 
 场景与 bridge 的独立验证方法：加载场景、Play、运行 bridge，bridge 会自动释放批 1；
 终端核对 `/task25/feed_state` 从 `[0,0,...]` 变成前两位为 `1`，并且 `/task25/cube_poses`
@@ -208,44 +200,147 @@ ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args -p max_batche
 ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args -p max_batches:=1 -p planning_only:=true
 ```
 
-Isaac Sim 中先停止 Timeline 再加载场景；点击 Play 后单独运行 bridge：
+### 完整验收运行手册（逐终端复制即用）
 
-```python
-scene_path = "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_scene.py"
-exec(compile(open(scene_path, "rb").read(), scene_path, "exec"))
+全部 ROS 终端保持 `ROS_LOCALHOST_ONLY` **一致**：本手册统一 `unset ROS_LOCALHOST_ONLY`
+（等价于 `0`）。绝不能在部分终端用 `1`，否则 MoveIt 与 Isaac bridge 会落在互不可见的
+DDS 发现集合里。
 
-bridge_path = "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_bridge.py"
-exec(compile(open(bridge_path, "rb").read(), bridge_path, "exec"))
-```
-
-MoveIt 复用 Task24 的侧吸 launch；Isaac 与全部 ROS 终端的 `ROS_LOCALHOST_ONLY`
-必须一致（Task24 基线为 `0` / 不设置，两者不可混用）：
+**终端 1 —— 编译（只有改过代码才需要）**
 
 ```bash
 cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-export ROS_LOCALHOST_ONLY=0
+export TMPDIR=/home/ubuntu2004/.tmp_build
+colcon build --packages-select fr3_dual_palletize --symlink-install
+```
+
+**终端 2 —— 启动 Isaac Sim（必须先有 ROS 2 环境）**
+
+```bash
+source /opt/ros/humble/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.ros2.bridge/humble/lib"
+unset ROS_LOCALHOST_ONLY
+/home/ubuntu2004/isaacsim-4.5.0/isaac-sim.sh
+```
+
+**Isaac Script Editor 第 1 步 —— 恢复本机控制执行器（每次重启 Isaac 后一次）**
+
+```python
+import carb
+import omni.kit.app
+
+HOST = "127.0.0.1"
+PORT = 8226
+EXTENSION = "isaacsim.code_editor.vscode"
+
+settings = carb.settings.get_settings()
+settings.set("/exts/isaacsim.code_editor.vscode/host", HOST)
+settings.set("/exts/isaacsim.code_editor.vscode/port", PORT)
+
+manager = omni.kit.app.get_app().get_extension_manager()
+manager.set_extension_enabled_immediate(EXTENSION, True)
+print(f"[Project] Isaac local executor ready at {HOST}:{PORT}")
+```
+
+**Isaac Script Editor 第 2 步 —— 停止 Timeline，重建 Task25 场景**
+
+```python
+scene_path = "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_scene.py"
+exec(compile(open(scene_path, "rb").read(), scene_path, "exec"))
+```
+
+**第 3 步 —— 点击 Timeline 的 Play**
+
+**Isaac Script Editor 第 4 步 —— 运行 bridge（它会自动释放批 1）**
+
+```python
+bridge_path = "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_bridge.py"
+exec(compile(open(bridge_path, "rb").read(), bridge_path, "exec"))
+```
+
+**终端 3 —— 启动 MoveIt（全局只能有一个 `/move_group`）**
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+unset ROS_LOCALHOST_ONLY
 
 ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py use_rviz:=false
 ```
 
-先做四批零命令预检：
+**终端 4 —— 先单独确认“分批到料 + 到料判定”（建议先做）**
 
 ```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+unset ROS_LOCALHOST_ONLY
+
+ros2 topic echo /task25/feed_state
+```
+
+批 1 到料后应看到前两位为 `1`：
+
+```text
+data: [1, 1, 0, 0, 0, 0, 0, 0]
+```
+
+手动放下一批，验证瞬移与落稳：
+
+```bash
+ros2 topic pub --once /task25/feed_command std_msgs/msg/Int32 "{data: 2}"
+```
+
+```text
+data: [1, 1, 1, 1, 0, 0, 0, 0]
+```
+
+**终端 5 —— 零命令预检（不发布 joint / suction / feed_command）**
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+unset ROS_LOCALHOST_ONLY
+
 ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
   -p max_batches:=4 \
   -p planning_only:=true \
   -p execution_time_scale:=3.0
 ```
 
-单批通过后再做完整四批物理验收：
+**终端 5 —— 单批物理验收（只做批 1 两件）**
+
+```bash
+ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
+  -p max_batches:=1 \
+  -p execution_time_scale:=3.0
+```
+
+**单批与完整验收之间必须重置场景**：停止 Timeline → 重新执行第 2 步的场景脚本 →
+点击 Play → 重新执行第 4 步的 bridge → 再做完整验收。
+
+**终端 5 —— 完整四批物理验收（8 件）**
 
 ```bash
 ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
   -p max_batches:=4 \
   -p execution_time_scale:=3.0
 ```
+
+**终端 4（可选）—— 观察每批到料与落稳**
+
+```bash
+ros2 topic echo /task25/feed_state
+```
+
 
 ## 待确认事项
 
