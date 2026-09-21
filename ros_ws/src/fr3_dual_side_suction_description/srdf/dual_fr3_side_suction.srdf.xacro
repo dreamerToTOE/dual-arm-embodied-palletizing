@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3_side_suction">
+  <!--
+    Task24：planning tip 明确使用实际的 side_suction_tcp，不能再沿用 link8
+    加常量偏置；L 型工具的空间占用必须参与 MoveIt 碰撞检测。
+  -->
+  <group name="left_arm">
+    <chain base_link="left_fr3_link0" tip_link="left_fr3_side_suction_tcp"/>
+  </group>
+  <group name="right_arm">
+    <chain base_link="right_fr3_link0" tip_link="right_fr3_side_suction_tcp"/>
+  </group>
+  <group name="dual_arm">
+    <group name="left_arm"/>
+    <group name="right_arm"/>
+  </group>
+
+  <group_state name="home" group="left_arm">
+    <joint name="left_fr3_joint1" value="0"/>
+    <!-- Franka 官方 FR3 move_to_start 示例构型：舒适空载准备姿态。 -->
+    <joint name="left_fr3_joint2" value="-0.7853981634"/>
+    <joint name="left_fr3_joint3" value="0"/>
+    <joint name="left_fr3_joint4" value="-2.3561944902"/>
+    <joint name="left_fr3_joint5" value="0"/>
+    <joint name="left_fr3_joint6" value="1.5707963268"/>
+    <joint name="left_fr3_joint7" value="0.7853981634"/>
+  </group_state>
+  <group_state name="home" group="right_arm">
+    <joint name="right_fr3_joint1" value="0"/>
+    <!-- Franka 官方 FR3 move_to_start 示例构型：舒适空载准备姿态。 -->
+    <joint name="right_fr3_joint2" value="-0.7853981634"/>
+    <joint name="right_fr3_joint3" value="0"/>
+    <joint name="right_fr3_joint4" value="-2.3561944902"/>
+    <joint name="right_fr3_joint5" value="0"/>
+    <joint name="right_fr3_joint6" value="1.5707963268"/>
+    <joint name="right_fr3_joint7" value="0.7853981634"/>
+  </group_state>
+
+  <xacro:macro name="fr3_internal_collision_matrix" params="p">
+    <disable_collisions link1="${p}link0" link2="${p}link1" reason="Adjacent"/>
+    <disable_collisions link1="${p}link0" link2="${p}link2" reason="Never"/>
+    <disable_collisions link1="${p}link0" link2="${p}link3" reason="Never"/>
+    <disable_collisions link1="${p}link0" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link1" link2="${p}link2" reason="Adjacent"/>
+    <disable_collisions link1="${p}link1" link2="${p}link3" reason="Never"/>
+    <disable_collisions link1="${p}link1" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link2" link2="${p}link3" reason="Adjacent"/>
+    <disable_collisions link1="${p}link2" link2="${p}link4" reason="Never"/>
+    <disable_collisions link1="${p}link2" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link4" reason="Adjacent"/>
+    <disable_collisions link1="${p}link3" link2="${p}link5" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link3" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link5" reason="Adjacent"/>
+    <disable_collisions link1="${p}link4" link2="${p}link6" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link4" link2="${p}link8" reason="Never"/>
+    <disable_collisions link1="${p}link5" link2="${p}link6" reason="Adjacent"/>
+    <disable_collisions link1="${p}link5" link2="${p}link7" reason="Never"/>
+    <disable_collisions link1="${p}link6" link2="${p}link7" reason="Adjacent"/>
+    <disable_collisions link1="${p}link6" link2="${p}link8" reason="Default"/>
+    <disable_collisions link1="${p}link7" link2="${p}link8" reason="Adjacent"/>
+    <!-- L 型工具与 link8 是固定安装相邻部件，允许其安装接触。 -->
+    <disable_collisions link1="${p}link8" link2="${p}side_suction" reason="Adjacent"/>
+  </xacro:macro>
+
+  <xacro:fr3_internal_collision_matrix p="left_fr3_"/>
+  <xacro:fr3_internal_collision_matrix p="right_fr3_"/>
+  <!-- 不放宽任何左右臂间或工具与 Cube 的碰撞。 -->
+</robot>
