@@ -1,6 +1,7 @@
 # Task25：分批到料的侧面吸盘紧协调多 Cube 码垛
 
-状态：🟡 设计已确认；场景、bridge 与执行器待实现，尚未开始任何物理验收。
+状态：🟡 设计已确认；Isaac 场景与 Ground Truth bridge 已实现（含休眠区瞬移与到料判定），
+执行器待实现，尚未开始任何物理验收。
 
 ## 目标与范围
 
@@ -132,12 +133,22 @@ ROS 接口（Task25 独立命名空间，不复用 Task24 的 topic 名称）：
 
 ## 启动与实际验收
 
-以下路径是本设计约定的 Task25 文件；实现完成后命令才生效。
+以下路径是本设计约定的 Task25 文件。Isaac 场景与 bridge 已实现，可以单独验证
+“分批到料 + 到料判定”本身；执行器尚未实现，下面的 `ros2 run` 命令在它提交前不生效。
 
 ```text
-isaac/scripts/task25_batched_feed_scene.py
-isaac/scripts/task25_batched_feed_bridge.py
-ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp
+isaac/scripts/task25_batched_feed_scene.py        已实现
+isaac/scripts/task25_batched_feed_bridge.py       已实现
+ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp   待实现
+```
+
+场景与 bridge 的独立验证方法：加载场景、Play、运行 bridge，bridge 会自动释放批 1；
+终端核对 `/task25/feed_state` 从 `[0,0,...]` 变成前两位为 `1`，并且 `/task25/cube_poses`
+的 `Cube_01`、`Cube_02` 稳定在槽 A `(0.520, -0.070, 0.260)` 与槽 B `(0.300, -0.070, 0.260)`
+的 1 mm 以内。随后手动发一批命令可验证下一批到料：
+
+```bash
+ros2 topic pub --once /task25/feed_command std_msgs/msg/Int32 "{data: 2}"
 ```
 
 Isaac Sim 中先停止 Timeline 再加载场景；点击 Play 后单独运行 bridge：
