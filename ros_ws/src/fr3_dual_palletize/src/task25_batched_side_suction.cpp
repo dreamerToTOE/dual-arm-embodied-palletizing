@@ -90,6 +90,15 @@ constexpr double kPrePushOffsetX = 0.020;
 constexpr double kReleaseGapZ = 0.020;
 constexpr double kCartesianStep = 0.002;
 constexpr double kMinCartesianFraction = 0.999;
+// 笛卡尔轨迹的中间状态允许偏离命令直线的最大值。MoveIt 的 computeCartesianPath 在
+// 个别路径点 IK 失败时仍可能报 1.0000 的 fraction，但中间状态离线极远（实测左臂
+// COMMON_Y_ALIGN 的 TCP 从 y=0.02 甩到 y=-1.2 m 再绕回，途中扫过桌面）。5 mm 对
+// 正常轨迹有上百倍余量（实测贴线轨迹的偏差在 0.1 mm 量级），只用来拦掉这种绕行。
+constexpr double kMaxCartesianLineDeviation = 0.005;
+// jump_threshold 仍按 Task24 的做法关闭：MoveIt 的 jump 判据把「手腕快速转动」和
+// 「解支跳变」混在一起，实测把阈值设成 1.0 会让正常下降段的 fraction 掉到 0.9789。
+// 真正拦绕行的是上面的贴线校验。
+constexpr double kCartesianJumpThreshold = 0.0;
 constexpr double kFclSamplePeriod = 0.010;
 constexpr double kPlacementTolerance = 0.010;
 // Isaac 与 MoveIt 的固定 L 型工具 frame 存在约 2.1 mm 的已实测静态标定差；
@@ -119,7 +128,16 @@ constexpr auto kDualCommandPeriod = 10ms;
 // 只把 2 deg 作为“停止继续跟随”的门槛，不能当成几何验收。真正的吸附前和每段
 // 搬运后仍必须通过 validateDualSideAttachment() 的 2 mm TCP/Cube 实测门限。
 constexpr double kJointSettleToleranceRad = 0.035;
-constexpr double kJointSettleTimeoutSec = 12.0;
+// 到位判定的补充路径。关节在负载下可能收敛到一个很小的稳态偏差（本任务 149 次到位
+// 判定里绝大多数是 0.02--0.3 deg，偶发 1.0--2.4 deg），此时再等也不会变小：那是
+// 伺服在负载下的静态偏差，不是还在运动。因此除了「残余 <= 2.0 deg」之外，再接受
+// 「残余 <= kJointSettleResidualToleranceRad 且连续多次读数几乎不变」——后者证明的
+// 是机械臂已经停住，而放置精度由释放后的 Ground Truth 门限（<= 10 mm）单独保证，
+// 这条路径不放宽任何几何精度要求。
+constexpr double kJointSettleResidualToleranceRad = 0.06;
+constexpr double kJointSettleStableDeltaRad = 0.002;
+constexpr int kJointSettleStableSamples = 5;
+constexpr double kJointSettleTimeoutSec = 25.0;
 
 struct OfflineTask
 {
@@ -169,15 +187,21 @@ geometry_msgs::msg::Pose sidePose(double x, double y, double z, bool left)
 // task_index 就是 cube_index，不再像 Task24 那样按“供料列由远到近”重排。
 //
 // 目标顺序仍是墙优先：先完整远墙 x=0.820（先底层后上层），再完整近墙 x=0.640。
+//
+// Task25-B：YZ 墙的 Y 向中心距采用 300 mm（不是旧的 240 mm）。L 型阵列 TCP 相对
+// 法兰的侧向偏置为 155 mm，把 Cube 放到 y=+pitch/2 一格时支架尾端会伸到
+// y = pitch/2 - 216，而邻件朝向落点的那一面在 y = -pitch/2 + 60；要在邻件旁边下降
+// 就必须 pitch >= 276 mm。240 mm 会侵入 36 mm，并在 COMMON_DESCENT_TO_ENTRY 处以
+// left_fr3_side_suction <-> 邻件 的真实碰撞被 FCL 拒绝（实测）。300 mm 留 24 mm 余量。
 const std::array<OfflineTask, 8> kTasks{{
-  {"task25_batch1_slot_a", 0, worldPose(0.820, -0.120, kBottomZ)},
-  {"task25_batch1_slot_b", 1, worldPose(0.820, +0.120, kBottomZ)},
-  {"task25_batch2_slot_a", 2, worldPose(0.820, -0.120, kUpperZ)},
-  {"task25_batch2_slot_b", 3, worldPose(0.820, +0.120, kUpperZ)},
-  {"task25_batch3_slot_a", 4, worldPose(0.640, -0.120, kBottomZ)},
-  {"task25_batch3_slot_b", 5, worldPose(0.640, +0.120, kBottomZ)},
-  {"task25_batch4_slot_a", 6, worldPose(0.640, -0.120, kUpperZ)},
-  {"task25_batch4_slot_b", 7, worldPose(0.640, +0.120, kUpperZ)},
+  {"task25_batch1_slot_a", 0, worldPose(0.820, -0.150, kBottomZ)},
+  {"task25_batch1_slot_b", 1, worldPose(0.820, +0.150, kBottomZ)},
+  {"task25_batch2_slot_a", 2, worldPose(0.820, -0.150, kUpperZ)},
+  {"task25_batch2_slot_b", 3, worldPose(0.820, +0.150, kUpperZ)},
+  {"task25_batch3_slot_a", 4, worldPose(0.640, -0.150, kBottomZ)},
+  {"task25_batch3_slot_b", 5, worldPose(0.640, +0.150, kBottomZ)},
+  {"task25_batch4_slot_a", 6, worldPose(0.640, -0.150, kUpperZ)},
+  {"task25_batch4_slot_b", 7, worldPose(0.640, +0.150, kUpperZ)},
 }};
 
 // 分批到料：固定 4 批 x 2 件。每批两件放在同一 y 行、沿 X 分隔的两个槽位，两件
@@ -434,9 +458,9 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
 };
 
-// Isaac Bridge 每帧发布长度 8 的就位掩码：1 表示该件已到供料槽且线/角速度都接近零。
-// 执行器只在本标志为 1 时才允许读取该件 Ground Truth 并规划；未到货的 Cube 停在
-// 桌下休眠位，既不是障碍物也不是抓取对象。
+// Isaac Bridge 每帧发布长度 8 的就位掩码：0 = 未到货（桌下休眠），1 = 已瞬移到槽位
+// 正在落稳，2 = 已到位且静止。执行器只在本标志非 0 时才允许读取该件 Ground Truth 并
+// 规划；未到货的 Cube 停在桌下休眠位，既不是障碍物也不是抓取对象。
 class FeedStateBuffer
 {
 public:
@@ -857,6 +881,8 @@ public:
     const auto& target = trajectory.points.back().positions;
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::duration<double>(timeout_sec);
     double last_max_error = std::numeric_limits<double>::infinity();
+    double previous_max_error = std::numeric_limits<double>::infinity();
+    int stable_samples = 0;
     while (std::chrono::steady_clock::now() < deadline)
     {
       {
@@ -881,6 +907,26 @@ public:
         {
           RCLCPP_INFO(node_->get_logger(), "%s final joint-state settled: max_error=%.3f deg.",
             side_.c_str(), last_max_error * 180.0 / kPi);
+          return true;
+        }
+        // 稳态残余：连续若干次读数几乎不变且残余有界，说明已经停住，可以继续推进。
+        if (complete && std::isfinite(last_max_error) &&
+            last_max_error <= kJointSettleResidualToleranceRad &&
+            std::abs(last_max_error - previous_max_error) <= kJointSettleStableDeltaRad)
+        {
+          ++stable_samples;
+        }
+        else
+        {
+          stable_samples = 0;
+        }
+        previous_max_error = last_max_error;
+        if (stable_samples >= kJointSettleStableSamples)
+        {
+          RCLCPP_WARN(node_->get_logger(),
+            "%s final joint-state at rest with bounded residual: max_error=%.3f deg (<= %.3f deg).",
+            side_.c_str(), last_max_error * 180.0 / kPi,
+            kJointSettleResidualToleranceRad * 180.0 / kPi);
           return true;
         }
         joint_condition_.wait_for(lock, 50ms);
@@ -1114,13 +1160,55 @@ bool validateSync(
   return true;
 }
 
+// 用 FK 检查一条笛卡尔轨迹的中间状态是否真的贴着命令直线。
+// MoveIt 的 computeCartesianPath 在个别路径点 IK 失败时仍会报出 1.0000 的 fraction，
+// 但中间状态可能离直线极远（实测左臂 COMMON_Y_ALIGN 的 TCP 从 y=0.02 甩到 y=-1.2 m
+// 再绕回来，且中途扫过桌面）。这类轨迹既不是真实碰撞也不是可用构型，必须整体拒绝并
+// 换一个采样步长重规划，而不是等同步 FCL 在最后一段才发现。
+double cartesianLineDeviation(
+  const moveit::core::RobotModelConstPtr& model, const std::string& eef_link,
+  const trajectory_msgs::msg::JointTrajectory& trajectory,
+  const geometry_msgs::msg::Pose& target)
+{
+  if (trajectory.points.empty() || trajectory.joint_names.empty())
+  {
+    return std::numeric_limits<double>::infinity();
+  }
+  const auto poseAt = [&](const std::vector<double>& positions) {
+    moveit::core::RobotState state(model);
+    state.setToDefaultValues();
+    state.setVariablePositions(trajectory.joint_names, positions);
+    state.update();
+    return state.getGlobalLinkTransform(eef_link).translation();
+  };
+  const Eigen::Vector3d start = poseAt(trajectory.points.front().positions);
+  const Eigen::Vector3d goal(
+    target.position.x, target.position.y, target.position.z);
+  const Eigen::Vector3d delta = goal - start;
+  const double span = delta.norm();
+  if (span <= 1e-9)
+  {
+    return 0.0;
+  }
+  const Eigen::Vector3d direction = delta / span;
+  double worst = 0.0;
+  for (const auto& point : trajectory.points)
+  {
+    const Eigen::Vector3d actual = poseAt(point.positions);
+    const double alpha = std::clamp(
+      (actual - start).dot(direction) / span, 0.0, 1.0);
+    worst = std::max(worst, (actual - (start + alpha * delta)).norm());
+  }
+  return worst;
+}
+
 bool planCommonCartesian(
   const rclcpp::Node::SharedPtr& node, moveit::planning_interface::MoveGroupInterface& group,
   const std::string& own_group, const std::string& partner_group,
   const std::vector<double>& own_start, const std::vector<double>& partner_start,
   const geometry_msgs::msg::Pose& target, const std::string& label,
   trajectory_msgs::msg::JointTrajectory* output,
-  bool avoid_collisions = false)
+  const std::string& eef_link, bool avoid_collisions = false)
 {
   const auto model = group.getRobotModel();
   const auto* own = model->getJointModelGroup(own_group);
@@ -1129,27 +1217,46 @@ bool planCommonCartesian(
   {
     return false;
   }
-  for (int attempt = 1; attempt <= kRetries; ++attempt)
+  // 同一个起点可能因为 IK 采样序列不同而产生贴线或离线的轨迹。先按默认步长试，
+  // 只有在轨迹离线时才换步长重试；不接受任何不贴线的轨迹。
+  const std::array<double, 4> steps{kCartesianStep, 0.0015, 0.003, 0.001};
+  for (const double step : steps)
   {
-    auto state = group.getCurrentState(2.0);
-    if (!state)
+    for (int attempt = 1; attempt <= kRetries; ++attempt)
     {
-      return false;
-    }
-    state->setJointGroupPositions(own, own_start);
-    state->setJointGroupPositions(partner, partner_start);
-    state->update();
-    group.setStartState(*state);
-    moveit_msgs::msg::RobotTrajectory candidate;
-    moveit_msgs::msg::MoveItErrorCodes error;
-    // 共同搬运阶段的完整双臂 FCL 在候选同步后进行；不能把搭档臂冻结在阶段
-    // 起点而误判。但空载接触阶段必须同时避开桌面，故由调用点显式开启。
-    const double fraction = group.computeCartesianPath(
-      {target}, kCartesianStep, 0.0, candidate, avoid_collisions, &error);
-    RCLCPP_INFO(node->get_logger(), "%s Cartesian fraction=%.4f error=%d attempt=%d/%d.",
-      label.c_str(), fraction, error.val, attempt, kRetries);
-    if (fraction >= kMinCartesianFraction && !candidate.joint_trajectory.points.empty())
-    {
+      auto state = group.getCurrentState(2.0);
+      if (!state)
+      {
+        return false;
+      }
+      state->setJointGroupPositions(own, own_start);
+      state->setJointGroupPositions(partner, partner_start);
+      state->update();
+      group.setStartState(*state);
+      moveit_msgs::msg::RobotTrajectory candidate;
+      moveit_msgs::msg::MoveItErrorCodes error;
+      // 共同搬运阶段的完整双臂 FCL 在候选同步后进行；不能把搭档臂冻结在阶段
+      // 起点而误判。但空载接触阶段必须同时避开桌面，故由调用点显式开启。
+      const double fraction = group.computeCartesianPath(
+        {target}, step, kCartesianJumpThreshold, candidate, avoid_collisions, &error);
+      if (fraction < kMinCartesianFraction || candidate.joint_trajectory.points.empty())
+      {
+        RCLCPP_INFO(node->get_logger(), "%s Cartesian fraction=%.4f error=%d step=%.4f attempt=%d/%d.",
+          label.c_str(), fraction, error.val, step, attempt, kRetries);
+        continue;
+      }
+      const double deviation = cartesianLineDeviation(
+        model, eef_link, candidate.joint_trajectory, target);
+      RCLCPP_INFO(node->get_logger(),
+        "%s Cartesian fraction=%.4f error=%d step=%.4f attempt=%d/%d line_deviation=%.3f mm.",
+        label.c_str(), fraction, error.val, step, attempt, kRetries, deviation * 1000.0);
+      if (deviation > kMaxCartesianLineDeviation)
+      {
+        RCLCPP_WARN(node->get_logger(),
+          "%s rejected: 中间状态离线 %.1f mm（超过 %.1f mm）；换步长重规划。",
+          label.c_str(), deviation * 1000.0, kMaxCartesianLineDeviation * 1000.0);
+        break;
+      }
       *output = candidate.joint_trajectory;
       ensureTiming(*output);
       return true;
@@ -1178,10 +1285,21 @@ bool planAndCheckCommon(
   const std::vector<moveit_msgs::msg::CollisionObject>& world, const std::string& stage,
   trajectory_msgs::msg::JointTrajectory* left_output, trajectory_msgs::msg::JointTrajectory* right_output)
 {
+  // 共同负载段：两臂在同一 phase 下同步运动，但 computeCartesianPath 只能一次
+  // 规划一条单臂路径，并且会把搭档臂冻结在该段起点。Task25 的 COMMON_Y_ALIGN 需要
+  // 把 Cube 从 y=-0.070 搬到目标行的 y=±0.120，两臂要一起走 +190 mm；此时“冻结的
+  // 搭档臂”会被真实运动的另一臂扫到，MoveIt 会把 Cartesian 路径截断在约 63.5%
+  // （实测截断点接触对为 left_fr3_side_suction <-> right_fr3_side_suction）。
+  // 那是冻结假设造成的假阳性，不是真实碰撞。
+  //
+  // 因此共同段的两条单臂路径不做“对冻结搭档”的碰撞判断，真正的门禁是紧随其后的
+  // validateSync：它按同一时间参数采样左右两条轨迹，对完整双臂 RobotState 做
+  // robot--robot 与 robot--world 的 FCL 检查。ACM 没有扩大，世界障碍物也没有移除，
+  // 任何真实碰撞仍会在 validateSync 处以具体碰撞对和接触点被拒绝。
   if (!planCommonCartesian(node, left_group, left.groupName(), right.groupName(), left_start, right_start,
-                           left_target, stage + " left", left_output, true) ||
+                           left_target, stage + " left", left_output, left.eefLink(), false) ||
       !planCommonCartesian(node, right_group, right.groupName(), left.groupName(), right_start, left_start,
-                           right_target, stage + " right", right_output, true) ||
+                           right_target, stage + " right", right_output, right.eefLink(), false) ||
       !synchronize(left_output, right_output) ||
       !validateSync(node, left_group.getRobotModel(), world, *left_output, *right_output, stage))
   {
@@ -1270,7 +1388,9 @@ int main(int argc, char** argv)
       std::thread right_off([&]() { right.suction(false); });
       left_off.join();
       right_off.join();
-      if (!left.waitSuction(false, 3.0) || !right.waitSuction(false, 3.0))
+      // 释放确认给 6 s：桥的吸盘状态是按仿真时间 20 Hz 发布的，仿真偶尔掉帧时
+      // 3 s 会误判成「没确认」。这里只是等待时长，不放宽任何门限。
+      if (!left.waitSuction(false, 6.0) || !right.waitSuction(false, 6.0))
       {
         RCLCPP_ERROR(node->get_logger(), "Task25 emergency SUCTION OFF was not confirmed on both arms.");
         return false;
@@ -1322,6 +1442,17 @@ int main(int argc, char** argv)
         live.position.x, live.position.y, live.position.z, error * 1000.0);
       if (error > kSlotTolerance)
       {
+        // 物理执行时批 1 两件必须真的停在设计槽位，否则场景已被前一次运行消耗，
+        // 绝不能带着错误几何继续。零命令预检不改变世界，允许在“上批已搬走”的
+        // 现场上重跑，只报警告。
+        if (planning_only)
+        {
+          RCLCPP_WARN(node->get_logger(),
+            "Task25 槽 %c 当前偏差 %.1f mm（超过 %.1f mm）：planning-only 仍按设计槽位预演，"
+            "物理执行前必须重建场景。",
+            slot == 0 ? 'A' : 'B', error * 1000.0, kSlotTolerance * 1000.0);
+          continue;
+        }
         RCLCPP_ERROR(node->get_logger(),
           "Task25 槽 %c 偏差超过 %.1f mm；场景或 bridge 已漂移，停止。",
           slot == 0 ? 'A' : 'B', kSlotTolerance * 1000.0);
@@ -1443,7 +1574,14 @@ int main(int argc, char** argv)
       const int task_index = static_cast<int>(batch_indices.at(static_cast<std::size_t>(slot)));
       const auto& task = kTasks.at(static_cast<std::size_t>(task_index));
       const std::string object_id = "task25_cube_" + std::to_string(task.cube_index + 1);
-      const auto [source, source_revision] = cubes.get(task.cube_index);
+      const auto [live_source, source_revision] = cubes.get(task.cube_index);
+      (void)live_source;
+      // 物理执行时 source 就是该批到料落稳后读到的真实 Ground Truth；零命令预检
+      // 不请求到料，后续批次仍停在桌下休眠位（z=-5 m），因此必须使用该批的设计槽位
+      // 作为预演起点，绝不能把休眠位当成抓取位姿。
+      const geometry_msgs::msg::Pose source = planning_only
+        ? batch_sources.at(static_cast<std::size_t>(slot))
+        : live_source;
       RCLCPP_INFO(node->get_logger(), "---------- %s: source=(%.3f, %.3f, %.3f), target=(%.3f, %.3f, %.3f) ----------",
         task.id, source.position.x, source.position.y, source.position.z,
         task.target.position.x, task.target.position.y, task.target.position.z);
@@ -1517,7 +1655,7 @@ int main(int argc, char** argv)
         trajectory_msgs::msg::JointTrajectory candidate_outer;
         if (!planCommonCartesian(node, left_group, left.groupName(), right.groupName(),
               finalPositions(candidate_pre), finalPositions(right_pre), left_low_pre,
-              candidate_prefix + " OUTER_DESCENT", &candidate_outer, true))
+              candidate_prefix + " OUTER_DESCENT", &candidate_outer, left.eefLink(), true))
         {
           continue;
         }
@@ -1534,7 +1672,7 @@ int main(int argc, char** argv)
               finalPositions(candidate_outer), finalPositions(right_pre),
               sidePose(source.position.x, initial_left_contact_y,
                 source.position.z + kSideContactCommandZOffset, true),
-              candidate_prefix + " CONTACT", &candidate_contact, true))
+              candidate_prefix + " CONTACT", &candidate_contact, left.eefLink(), true))
         {
           continue;
         }
@@ -1653,7 +1791,7 @@ int main(int argc, char** argv)
               sidePose(cube_after_left_contact.position.x, right_live_contact_y,
                 cube_after_left_contact.position.z + kSideContactCommandZOffset, false),
               std::string(task.id) + " RIGHT_CONTACT_CANDIDATE_" + std::to_string(candidate_index + 1),
-              &candidate_contact, true))
+              &candidate_contact, right.eefLink(), true))
         {
           continue;
         }

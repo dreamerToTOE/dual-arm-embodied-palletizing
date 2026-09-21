@@ -50,11 +50,18 @@ RRTConnect 空载接近
 目标垛仍为 Task24 的两面墙，顺序不变（远墙先于近墙、底层先于上层）：
 
 ```text
-批 1 -> x=0.820 的 YZ 墙底层：y=-0.120 / y=+0.120，z=0.260
-批 2 -> x=0.820 的 YZ 墙上层：y=-0.120 / y=+0.120，z=0.380
-批 3 -> x=0.640 的 YZ 墙底层：y=-0.120 / y=+0.120，z=0.260
-批 4 -> x=0.640 的 YZ 墙上层：y=-0.120 / y=+0.120，z=0.380
+批 1 -> x=0.820 的 YZ 墙底层：y=-0.150 / y=+0.150，z=0.260
+批 2 -> x=0.820 的 YZ 墙上层：y=-0.150 / y=+0.150，z=0.380
+批 3 -> x=0.640 的 YZ 墙底层：y=-0.150 / y=+0.150，z=0.260
+批 4 -> x=0.640 的 YZ 墙上层：y=-0.150 / y=+0.150，z=0.380
 ```
+
+> Task25-B：YZ 墙的 Y 向中心距由 240 mm 改为 **300 mm**。这不是审美调整，而是
+> L 型阵列的几何下限：TCP 相对法兰侧向偏置 155 mm，把 Cube 放到 `y=+pitch/2`
+> 一格时支架尾端在 `pitch/2 - 216`，邻件朝向落点的那一面在 `-pitch/2 + 60`；
+> 要在邻件旁边下降就必须 `pitch >= 276 mm`。240 mm 会侵入 36 mm，并已在
+> `COMMON_DESCENT_TO_ENTRY` 处以真实 FCL 碰撞被拒（见下面的 Task25-B 实测修正）。
+> 取 300 mm 后余量为 24 mm。
 
 该顺序同时保证：运往 `x=0.820` 的飞行通道上，`x=0.640` 的近墙尚未建立；运往
 `x=0.640` 的飞行通道（止于 `entry_x=0.620`）也不会越过远墙。
@@ -78,7 +85,7 @@ ROS 接口（Task25 独立命名空间，不复用 Task24 的 topic 名称）：
 
 ```text
 /task25/cube_poses      geometry_msgs/PoseArray   固定 8 件、顺序与任务表一致
-/task25/feed_state      std_msgs/Int32MultiArray   长度 8；1 = 已到位且静止，0 = 未到货
+/task25/feed_state      std_msgs/Int32MultiArray   长度 8；0 = 未到货（桌下休眠），1 = 正在落稳，2 = 已到位且静止
 /task25/feed_command    std_msgs/Int32             执行器 -> Isaac，请求释放第 N 批（1..4）
 /task25/{left,right}/suction_command  std_msgs/Bool
 /task25/{left,right}/suction_state    std_msgs/Bool
@@ -138,6 +145,92 @@ node:  task25_batched_side_suction
   于同一 physics callback 内成对下发，不存在独立 Action Graph 的帧级先后差。
 - 批内先取槽 A 是硬要求：负载段 `COMMON_X_TRAVEL` 在“与供料相同的 y”高度沿 X 飞行，
   先取槽 A 后取槽 B 时这条通道上不再有任何未取供料件。
+
+## Task25-B 实测修正（零命令预检定位）
+
+首轮四批零命令预检暴露了三个问题，全部以 FCL 日志和 MoveIt 服务实测定位，未用任何
+放宽碰撞规则的方式绕过。
+
+### 1. 共同负载段的“冻结搭档臂”假碰撞
+
+现象：每个右臂候选的 `COMMON_Y_ALIGN left Cartesian fraction` 恒为 `0.6354`。
+
+定位：`computeCartesianPath` 只能规划单臂路径，并把搭档臂冻结在该段起点。task25 需要
+把 Cube 从 `y=-0.070` 搬到 `y=+0.150`，两臂要一起走 +220 mm；冻结的搭档臂会被真实
+运动的另一臂扫到，MoveIt 在 63.5% 处把路径截断。用 `/check_state_validity` 实测该处
+碰撞对为 `left_fr3_side_suction <-> right_fr3_side_suction`，接触点 `(0.824,-0.007,0.509)`
+正好是左臂杯面追上右臂杯面的位置（120/190 = 63.2%）。
+
+修正：共同负载段的两条单臂路径不做“对冻结搭档”的碰撞判断，真正的门禁交给紧随其后的
+`validateSync` —— 它按同一时间参数采样左右两条轨迹，对完整双臂 RobotState 做
+robot--robot 与 robot--world 的 FCL 检查。ACM 未扩大，世界障碍物未移除。
+
+### 2. YZ 墙 Y 向中心距：240 mm 不可行，改为 300 mm
+
+现象：修正 1 之后，全部候选改在 `COMMON_DESCENT_TO_ENTRY` 失败，碰撞对恒为
+`left_fr3_side_suction <-> task25_cube_1`，接触点 `(0.809,-0.060,0.319)`，正是已落稳
+邻件的顶棱。
+
+定位：L 型阵列的支架尾端（法兰侧）在 TCP 后方 155 mm。判据：
+支架尾端 `y = pitch/2 - 216`，邻件面 `y = -pitch/2 + 60`，要求前者仍在后者之外
+=> `pitch >= 276 mm`。240 mm 时支架尾端落在 `-0.096 m`、邻件面在 `-0.060 m`，
+侵入 36 mm；实测 FCL 深度 1.383 mm 只是第一次采样到的浅接触，继续下降会插进 50 mm。
+
+修正：Y 向中心距取 300 mm（`y=±0.150`），支架尾端 `-0.066 m` 对邻件面 `-0.090 m`，
+余量 24 mm。该值同时满足上层垛（上层 Cube 的支架 z 区间 0.391–0.409 m 与邻件
+y 向不重叠）。
+
+### 3. 零命令预检下后续批次误用休眠位
+
+现象：批 2 的左臂 HIGH_PRE_CONTACT 连续 8 个 RRTConnect 候选全部 `plan() failed`。
+
+定位：日志显示 `source=(-0.200, -0.300, -5.000)` —— 零命令预检不请求到料，后续批次的
+Cube 仍停在桌下休眠位，而 per-cube 起点仍在读实时 Ground Truth，于是左臂去规划一个
+5 m 深的目标位姿。
+
+修正：预检分支必须使用该批的设计槽位作为预演起点；物理分支才使用到料后读到的真实
+Ground Truth。
+
+### 4. `computeCartesianPath` 会报出「离线」轨迹
+
+现象：批 3 的 slot_b 在**执行阶段**通过同步 FCL 时发现左臂支架撞桌面，
+接触点 `(0.118,-0.296,0.198)`，而同一阶段在候选预检里是通过的。
+
+定位：用 `/compute_cartesian_path` 复现同参数规划，再用 `/compute_fk` 逐点复算工具 TCP，
+发现轨迹的中间状态完全脱离命令直线 —— TCP 从 `y=+0.02` 一路甩到 `y=-1.2 m` 再绕回来，
+而 MoveIt 仍然报 `fraction=1.0000`。原因是冗余臂在个别路径点的 IK 解跳到了别的解支，
+MoveIt 随后把这个绕行写进了关节插值轨迹。Task24 一直把 `jump_threshold` 传 `0.0`
+（等于关闭跳变检查），所以这个隐患一直存在，只是此前 Y 向位移只有 50 mm 没有触发。
+
+修正：新增**贴线校验**。每条笛卡尔轨迹都用 FK 逐点复算末端位置，要求它到命令直线的
+垂距不超过 5 mm（正常轨迹实测在 0.1 mm 量级）；不贴线就换采样步长
+（0.002 / 0.0015 / 0.003 / 0.001）重规划，仍不贴线则拒绝该候选。
+
+`jump_threshold` 保持 `0.0`：实测把它设成 `1.0` 会让正常下降段的 fraction 掉到
+`0.9789`，因为 MoveIt 的 jump 判据把「手腕快速转动」和「解支跳变」混在一起，
+无法用来区分两者。
+
+效果：零命令预检里可以看到它实际拦下了 74.3 / 119.2 / 696.9 mm 级的离线轨迹，
+并在换步长后找到贴线解。
+
+### 修正后的实测结果
+
+```bash
+ros2 run fr3_dual_palletize task25_batched_side_suction --ros-args \
+  -p max_batches:=4 -p planning_only:=true -p execution_time_scale:=3.0
+```
+
+```text
+########## Task25 batch 1/4: Cube_01 (slot A, picked first) then Cube_02 (slot B) ##########
+Task25 planning-only batch 1 PASS: ...
+########## Task25 batch 2/4: Cube_03 ... Cube_04 ##########
+Task25 planning-only batch 2 PASS: ...
+########## Task25 batch 3/4: Cube_05 ... Cube_06 ##########
+Task25 planning-only batch 3 PASS: ...
+########## Task25 batch 4/4: Cube_07 ... Cube_08 ##########
+Task25 planning-only batch 4 PASS: ...
+（进程退出码 0；全程未发布任何 joint / suction / feed_command）
+```
 
 ## 与 Task24 的复用边界
 

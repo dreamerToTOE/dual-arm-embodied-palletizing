@@ -217,7 +217,7 @@ class Task25BatchedFeedBridge:
         print("SUB: /task25/feed_command std_msgs/Int32 (batch index 1..%d)" % self.batch_count)
         print("SUB: /task25/{left,right}/suction_command std_msgs/Bool")
         print("SUB: /{left,right}/joint_command sensor_msgs/JointState")
-        print("PUB: /task25/feed_state std_msgs/Int32MultiArray (1 = arrived and settled)")
+        print("PUB: /task25/feed_state std_msgs/Int32MultiArray (0=parked, 1=arriving, 2=arrived and settled)")
         print(
             "PUB: /task25/cube_poses geometry_msgs/PoseArray "
             f"(Cube_01 ... Cube_{len(self.cube_paths):02d})"
