@@ -128,11 +128,19 @@ PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
 #
 # 滑台顶面正好在 z=0（机械臂基座底面），所以导轨**不改变基座高度**，
 # Task24/Task25 的位姿基线不受影响。
+#
+# 行程是**不对称**的，而且必须不对称，原因在几何（Isaac 直接量 bbox）：
+#   桌面占 y ∈ [-0.40, 0.40]，两臂基座在 y = ±0.60；两臂的 FR3 是**同一个资产、
+#   同向放置（没有镜像）**，所以 link1 肩部外壳（z=0.141 起，低于桌面顶 0.200）
+#   都朝 -Y 突 0.129 m、朝 +Y 突 0.055 m。
+#   * 左臂在 -Y 侧：向桌面（+Y）侧只突 0.055 m -> 向内可走 0.14 m，取 0.12 m（净空 25 mm）。
+#   * 右臂在 +Y 侧：向桌面（-Y）侧突 0.129 m -> 向内只能走约 0.06 m，取 0.05 m（净空 20 mm）。
+#     右臂若向内走 0.12 m 会把肩部外壳压进桌面（实测 -49 mm），所以右臂行程上限收窄。
 RAIL_ROOT = {side: f"/World/{side}_rail" for side in ("left", "right")}
 RAIL_BASE_X = LEFT_BASE[0]
 RAIL_BASE_Y = {"left": LEFT_BASE[1], "right": RIGHT_BASE[1]}
-RAIL_TRAVEL = {"left": (-0.800, -0.400), "right": (0.400, 0.800)}
-RAIL_TRACK_LENGTH = 0.700         # 导轨条总长 = 行程 0.40 + 滑台 0.26 + 余量
+RAIL_TRAVEL = {"left": (-0.720, -0.480), "right": (0.550, 0.720)}
+RAIL_TRACK_LENGTH = 0.540         # 导轨条总长 = 行程 + 滑台 0.26 + 余量
 RAIL_TRACK_WIDTH = 0.028
 RAIL_TRACK_X_OFFSET = 0.145       # 两条导轨条相对基座中心的 ±X 偏移
 RAIL_TRACK_HEIGHT = 0.030
