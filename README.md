@@ -51,6 +51,7 @@
 - [Task 23 — 二指夹爪暂存后平推二层验证](docs/tasks/TASK23_GRIPPER_STAGE_PUSH.md)
 - [Task 24 — 侧面吸盘紧协调离线码垛](docs/tasks/TASK24_SIDE_SUCTION_TIGHT_OFFLINE.md)
 - [Task 25 — 分批到料的侧面吸盘紧协调码垛](docs/tasks/TASK25_BATCHED_FEED_PALLETIZING.md)
+- [Task 26 — 车厢三面围墙 + 预推入位](docs/tasks/TASK26_TRUCK_BOX_PUSH_IN.md)
 - [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
@@ -99,6 +100,7 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 | 23 | 二指夹爪暂存后平推二层验证 | 🟡 已建立独立双 FR3 + 官方手指场景、16 件 Ground Truth 选择器及 `抓取 → 暂存 → 单臂 +X 推送` 执行器；待 Isaac 物理验收 |
 | 24 | 侧面吸盘紧协调离线码垛（L 型阵列侧吸） | 🟡 单 Cube 闭环已通过两次独立 Isaac 物理验收（最终放置误差 0.184 mm / 0.115 mm）；八件静态供料全量预检第一件失败（未处理 Cube 占据另一臂进入侧面中心吸附位的通道），决定改为分批到料（Task25） |
 | 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 场景、bridge 与执行器均已实现并通过编译与冒烟检查（休眠区瞬移、批 1 自动到料、到料判定 `feed_state`、批间共同 HOME 退出）；Isaac 物理验收待执行 |
+| 26 | 车厢三面围墙 + 预推入位（第一层 4 件） | 🟡 几何设计完成（车厢 0.240 x 0.240 内部、预推位装料口外 180 mm、单臂 +Y 推入）；已用 MoveIt 实测双臂与单臂可达性，场景与执行器待实现 |
 
 ## 已冻结的吸盘基线结论
 
