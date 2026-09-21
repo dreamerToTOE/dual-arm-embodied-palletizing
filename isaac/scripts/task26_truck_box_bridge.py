@@ -14,13 +14,14 @@ import builtins
 import json
 import math
 import threading
+import time
 
 import numpy as np
 import omni.kit.app
 import omni.physx
 import omni.physics.tensors
 import omni.usd
-from pxr import PhysxSchema, Usd, UsdGeom
+from pxr import Gf, PhysxSchema, Usd, UsdGeom
 
 manager = omni.kit.app.get_app().get_extension_manager()
 manager.set_extension_enabled_immediate("isaacsim.robot.surface_gripper", True)
@@ -37,7 +38,7 @@ from geometry_msgs.msg import Pose, PoseArray, PoseStamped
 from rclpy.context import Context
 from rclpy.executors import SingleThreadedExecutor
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Bool, Int32, Int32MultiArray
+from std_msgs.msg import Bool, Float64, Float64MultiArray, Int32, Int32MultiArray
 
 
 SIDES = ("left", "right")
@@ -68,6 +69,14 @@ ARRIVAL_MAX_LINEAR_SPEED = 0.002
 ARRIVAL_MAX_ANGULAR_SPEED = 0.05
 ARRIVAL_HOLD_SEC = 0.20
 # 到料下落高度由场景标记 task26_feed_settle_offset_z 提供，不在这里重复硬编码。
+
+# 导轨（第七轴）：每个 FR3 一条 Y 向导轨。命令 -> 移动 -> 到位判定，与分批到料同一套语义。
+RAIL_TOLERANCE = 0.001
+# 到位判定要求"连续 RAIL_HOLD_SEC 秒都落在容差内"，与到料的 ARRIVAL_HOLD_SEC 同一语义。
+RAIL_HOLD_SEC = 0.20
+# 导轨会整体搬动一条机械臂，属于"只在静止相位之间发生"的动作。最近这么久内
+# 还有关节命令、或任一吸盘处于夹紧状态时，一律拒绝移动（撕开吸附是不可恢复的）。
+RAIL_COMMAND_QUIET_SEC = 1.0
 
 STATE_PARKED = 0
 STATE_ARRIVING = 1
@@ -168,6 +177,16 @@ class Task26BatchedFeedBridge:
             rigid = SingleRigidPrim(path, name=f"task26_cube_{index:02d}")
             rigid.initialize()
             self.rigids.append(rigid)
+        # 导轨：几何全部由场景标记提供，bridge 不重复硬编码任何坐标。
+        self.rail_base_x = float(_task_custom("task26_rail_base_x"))
+        self.rail_carriage_z = float(_task_custom("task26_rail_carriage_z"))
+        self.rail_base_y = json.loads(_task_custom("task26_rail_base_y"))
+        self.rail_travel = json.loads(_task_custom("task26_rail_travel"))
+        self.rail_target = dict(self.rail_base_y)
+        self.rail_measured = dict(self.rail_base_y)
+        self.rail_arrived = {side: True for side in SIDES}
+        self.rail_stable = {side: 0.0 for side in SIDES}
+        self._last_joint_command_time = 0.0
         self.cube_state = [STATE_PARKED] * len(self.cube_paths)
         self.stable_accum = [0.0] * len(self.cube_paths)
         self.released_batches = set()
@@ -208,11 +227,24 @@ class Task26BatchedFeedBridge:
         self.feed_command_sub = self.node.create_subscription(
             Int32, "/task26/feed_command", self._feed_command, 10
         )
+        self.rail_command_subs = {}
+        self.rail_state_pubs = {}
+        for side in SIDES:
+            self.rail_command_subs[side] = self.node.create_subscription(
+                Float64, f"/task26/{side}/rail_command",
+                lambda message, current_side=side: self._rail_command(current_side, message), 10,
+            )
+            self.rail_state_pubs[side] = self.node.create_publisher(
+                Float64MultiArray, f"/task26/{side}/rail_state", 10
+            )
 
         self.spin_thread = threading.Thread(target=self.executor.spin, daemon=True)
         self.spin_thread.start()
         self._pending_batch = None
         self._ever_commanded = False
+        self._pending_rail = {side: None for side in SIDES}
+        self._pending_rail_rejected = {side: None for side in SIDES}
+        self._physics_error_counts = {}
         self.physics_sub = omni.physx.get_physx_interface().subscribe_physics_step_events(
             self._physics_step
         )
@@ -230,6 +262,16 @@ class Task26BatchedFeedBridge:
         print("PUB: /task26/{left,right}/suction_state std_msgs/Bool")
         print("PUB: /task26/{left,right}/side_suction_tcp_pose geometry_msgs/PoseStamped")
         print("PUB: /task26/{left,right}/measured_joint_forces sensor_msgs/JointState (effort)")
+        print("SUB: /task26/{left,right}/rail_command std_msgs/Float64 (target rail y)")
+        print(
+            "PUB: /task26/{left,right}/rail_state std_msgs/Float64MultiArray "
+            "[target, arrived, measured, y_min, y_max]"
+        )
+        print(
+            "RAIL: 右臂基座可以沿 Y 平移（各臂行程 %.2f m）；"
+            "吸盘夹紧或最近 %.1f s 内有关节命令时拒绝移动" %
+            (self.rail_travel["left"][1] - self.rail_travel["left"][0], RAIL_COMMAND_QUIET_SEC)
+        )
         print(
             "Surface Gripper normal: left +Y, right -Y; rigid bilateral grasp; "
             "feed batches are teleported from the below-table park pose"
@@ -352,6 +394,100 @@ class Task26BatchedFeedBridge:
             self._pending_batch = int(message.data)
             self._ever_commanded = True
 
+    def _rail_command(self, side, message):
+        target = float(message.data)
+        low, high = self.rail_travel[side]
+        if not low - 1e-9 <= target <= high + 1e-9:
+            print(f"[Task26 Isaac][{side}] rail_command 越界: {target:.3f} (允许 {low}..{high})")
+            with self._lock:
+                self._pending_rail_rejected[side] = (target, "out_of_travel")
+            return
+        # 门槛一：还在下发关节命令时不动轨。
+        quiet_for = time.time() - self._last_joint_command_time
+        if self._last_joint_command_time > 0.0 and quiet_for < RAIL_COMMAND_QUIET_SEC:
+            print(
+                f"[Task26 Isaac][{side}] 拒绝 rail_command y={target:.3f}："
+                f"{quiet_for:.2f} s 前还在下发关节命令（需静默 {RAIL_COMMAND_QUIET_SEC:.1f} s）。"
+            )
+            with self._lock:
+                self._pending_rail_rejected[side] = (target, "joint_command_active")
+            return
+        # 门槛二：任一吸盘处于夹紧状态时不动轨（会直接撕开吸附）。
+        with self._lock:
+            suction_on = [name for name in SIDES if bool(self._last_commanded[name])]
+        if suction_on:
+            print(
+                f"[Task26 Isaac][{side}] 拒绝 rail_command y={target:.3f}："
+                f"{suction_on} 的吸盘仍处于夹紧状态。"
+            )
+            with self._lock:
+                self._pending_rail_rejected[side] = (target, "suction_closed")
+            return
+        with self._lock:
+            self._pending_rail[side] = target
+
+    def _author_translate(self, path, y, z):
+        """把 prim 的平移写成 (rail_base_x, y, z)。
+
+        /World 是恒等变换，因此世界平移就是本地平移，不存在父子换算的歧义。
+        """
+        prim = self.stage.GetPrimAtPath(path)
+        if not prim.IsValid():
+            return False
+        for op in UsdGeom.Xformable(prim).GetOrderedXformOps():
+            if op.GetOpName().startswith("xformOp:translate"):
+                op.Set(Gf.Vec3d(float(self.rail_base_x), float(y), float(z)))
+        return True
+
+    def _apply_rail(self, side, target):
+        """把整条机械臂沿 Y 平移。
+
+        Isaac 4.5 里渲染读 USD、物理读 Fabric（usdrt），同一件事有两套表示：
+        只写 USD 时物理位姿不变；只调 set_world_pose 时 USD 位姿不变、两者读数
+        互相矛盾（已实测）。因此这里**同时**写两处，值完全相同。
+        """
+        y = float(target)
+        moved_usd = [self._author_translate(f"/World/{side}_fr3", y, 0.0)]
+        moved_usd.append(
+            self._author_translate(f"/World/{side}_rail/carriage", y, self.rail_carriage_z))
+        articulation = self.articulations[side]
+        try:
+            articulation.set_world_pose(
+                position=np.asarray([self.rail_base_x, y, 0.0], dtype=np.float64))
+        except Exception as exc:
+            print(f"[Task26 Isaac][{side}] set_world_pose(position=...) 失败: {exc}")
+            try:
+                articulation.set_world_pose(
+                    np.asarray([self.rail_base_x, y, 0.0], dtype=np.float64))
+            except Exception as exc2:
+                print(f"[Task26 Isaac][{side}] 导轨移动失败（USD 已写）: {exc2}")
+        self.rail_target[side] = y
+        self.rail_measured[side] = y
+        self.rail_arrived[side] = False
+        self.rail_stable[side] = 0.0
+        print(
+            f"[Task26 Isaac][{side}] rail -> y={y:.3f} m "
+            f"(USD x{sum(1 for item in moved_usd if item)} + Fabric 同步写入)"
+        )
+
+    def _check_rail(self, side, dt):
+        articulation = self.articulations[side]
+        if self.rail_arrived[side]:
+            return
+        try:
+            position, _ = articulation.get_world_pose()
+            current = float(position[1])
+        except Exception:
+            return
+        self.rail_measured[side] = current
+        if abs(current - self.rail_target[side]) <= RAIL_TOLERANCE:
+            self.rail_stable[side] += float(dt)
+            if self.rail_stable[side] >= RAIL_HOLD_SEC:
+                self.rail_arrived[side] = True
+                print(f"[Task26 Isaac][{side}] rail 到位: y={current:.3f} m")
+        else:
+            self.rail_stable[side] = 0.0
+
     def _check_arrival(self, index, dt):
         if self.cube_state[index] != STATE_ARRIVING:
             return
@@ -403,6 +539,7 @@ class Task26BatchedFeedBridge:
             np.asarray(message.position, dtype=np.float64),
         )
         with self._lock:
+            self._last_joint_command_time = time.time()
             if message.header.frame_id == DUAL_SYNC_FRAME_ID:
                 self._dual_commands[side] = command
             else:
@@ -450,6 +587,20 @@ class Task26BatchedFeedBridge:
     # ------------------------------------------------------------- physics
 
     def _physics_step(self, dt):
+        """Isaac 的 physics callback 会**静默吞掉**异常：一个笔误就会表现成
+        "命令被凭空丢弃"。这里显式上报，同一类错误最多刷 3 次，避免刷屏。"""
+        try:
+            self._physics_step_inner(dt)
+        except Exception:
+            import traceback as _tb
+            message = _tb.format_exc()
+            key = message.strip().splitlines()[-1]
+            count = self._physics_error_counts.get(key, 0) + 1
+            self._physics_error_counts[key] = count
+            if count <= 3:
+                print(f"[Task26 Isaac] physics callback 异常（第 {count} 次）：\n{message}")
+
+    def _physics_step_inner(self, dt):
         self._apply_pending_joint_commands()
         with self._lock:
             desired = dict(self._desired)
@@ -458,6 +609,18 @@ class Task26BatchedFeedBridge:
             ever_commanded = self._ever_commanded
         if pending_batch is not None:
             self._activate_batch(pending_batch, automatic=not ever_commanded)
+        with self._lock:
+            pending_rail = dict(self._pending_rail)
+            for side in SIDES:
+                self._pending_rail[side] = None
+        with self._lock:
+            rejected = dict(self._pending_rail_rejected)
+            for side in SIDES:
+                self._pending_rail_rejected[side] = None
+        for side in SIDES:
+            if pending_rail.get(side) is not None:
+                self._apply_rail(side, pending_rail[side])
+            self._check_rail(side, dt)
         for side in SIDES:
             gripper = self.grippers[side]
             if desired[side] != self._last_commanded[side]:
@@ -533,6 +696,16 @@ class Task26BatchedFeedBridge:
             for state in self.cube_state
         ]
         self.feed_state_pub.publish(feed_state)
+        for side in SIDES:
+            rail_state = Float64MultiArray()
+            rail_state.data = [
+                float(self.rail_target[side]),
+                1.0 if self.rail_arrived[side] else 0.0,
+                float(self.rail_measured[side]),
+                float(self.rail_travel[side][0]),
+                float(self.rail_travel[side][1]),
+            ]
+            self.rail_state_pubs[side].publish(rail_state)
         for side in SIDES:
             state = Bool()
             state.data = bool(self.grippers[side].is_closed())

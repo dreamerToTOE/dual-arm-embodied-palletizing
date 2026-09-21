@@ -1,13 +1,16 @@
-# Task24-A：分批到料的侧面吸盘紧协调码垛场景（休眠区瞬移版）。
+# Task26：车厢三面围墙 + 预推入位（第一层 4 件）的侧面吸盘场景。
 #
 # Isaac Sim 4.5 Script Editor 中，Timeline 停止时运行：
 # exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
-#           "task26_batched_feed_scene.py").read())
+#           "task26_truck_box_scene.py").read())
 #
-# 与 Task24 的区别只有供料方式：8 件 Cube 在场景中一次性创建为真实 Dynamic
-# Rigid Body，但初始全部停放在工作区外的休眠位并关闭重力；哪一批出现、什么
-# 时候出现由 task26_batched_feed_bridge.py 按 ROS 命令决定。吸附几何、工具、
-# 桌面、基座与目标垛型与 Task24 完全一致，不重新标定。
+# 与 Task24/Task25 的区别有两处：
+#   1. 车厢（TruckBox）：三面围墙 + 顶上无墙，装料口按用户指认开在 **-X** 面；
+#   2. 导轨（rail）：两个 FR3 各自一条 **Y 向**导轨，由 bridge 通过
+#      /task26/{side}/rail_command 平移基座（本脚本只建导轨的视觉件与静止位）。
+# 供料方式沿用 Task25：4 件 Cube 一次性创建为真实 Dynamic Rigid Body，初始停在
+# 工作区外的休眠位并关闭重力，由 task26_truck_box_bridge.py 按 ROS 命令唤醒。
+# 吸附几何、工具、桌面与已验收的基座高度基线都不改动。
 
 import json
 import math
@@ -76,46 +79,70 @@ PARK_Y = (-0.300, +0.300)
 
 # ------------------------------------------------------------------ 车厢
 #
-# Task26 车厢：三面围墙 + 顶上无墙。装料口开在 -Y，机械臂从上方进出。
-# 底板直接沿用桌面顶面（Cube 中心保持已验收的 z=0.260，不引入新的高度变量）。
+# Task26 车厢：三面围墙 + 顶上无墙。装料口按用户 2026-09-21 的指认开在 **-X** 面，
+# 机械臂从 -X 侧推入、从上方进出。底板直接沿用桌面顶面（Cube 中心保持已验收的
+# z=0.260，不引入新的高度变量）。
 #
-# 墙高 0.250 m 是按“至少两层”定的：两层 Cube 共 0.240 m，墙必须高过它才能约束第二层。
-# 尺寸依据（L 型支架 TCP 相对法兰侧向偏置 155 mm）：
-#   * 双臂紧协调放置要求 Cube 中心两侧各留 60+1+155 = 216 mm 通道，所以预推位
-#     (y=-0.150) 到最近一格中心至少要 216+60 = 276 mm；
-#   * 单臂在 Cube 中心高度推进不要求运输高度净空，因此格位可以比放置位更靠里。
-# 车厢内净空按「机械臂前臂要能越过车厢口」定，而不是仅按货物外廓定。
-# 实测：右臂在预推位做低位姿态时，前臂 link5/link6 扫到
-# x≈0.61-0.73、y≈0.13-0.32、z≈0.45；因此侧墙内表面必须离它 50 mm 以上，
-# 后墙也必须比它北 50 mm 以上。真实货车车厢本来就比货物宽。
-BOX_INTERIOR_X = (0.560, 0.960)   # 2 列，列心 x = 0.700 / 0.820（货物 x∈[0.640,0.880]）
-BOX_INTERIOR_Y = (0.090, 0.380)   # 2 排，排心 y = +0.150 / +0.270（货物 y∈[0.090,0.330]）
+# 开口放在 -X 的直接好处：推入方向变成 **+X**，预推位落在车厢**西侧空地**上，
+# 不再出现「预推位紧贴车厢口、另一臂前臂从车厢上方扫过」的冲突，因此墙高可以
+# 恢复到 0.250 m（两层 Cube 共 0.240 m，墙必须高过它才能约束第二层）。
+#
+# 内净空取 0.250 = 2 x 0.120 货物外廓 + 两侧各 5 mm。零净空（内腔正好 0.240）会
+# 让 Cube 与墙、Cube 与 Cube 直接贴合，落位时必然擦碰：
+#   * +X 墙内表面 0.910，深格 Cube 外表面 0.905 -> 5 mm；
+#   * -Y 墙内表面 -0.245、+Y 墙内表面 0.005，两排外表面各留 5 mm。
+BOX_INTERIOR_X = (0.660, 0.910)   # 深 0.250：2 格，格心 x = 0.725（浅）/ 0.845（深）
+BOX_INTERIOR_Y = (-0.245, 0.005)  # 宽 0.250：2 排，排心 y = -0.065 / -0.185
 BOX_WALL_THICKNESS = 0.020
-# 第一层墙高 0.150（顶面 z=0.350）。这不是随意取值：右臂在预推位做低位姿态时，
-# 前臂 link5/link6 的 z 在 0.42-0.50 之间扫过车厢口，实测 0.250 高（顶面 0.450）
-# 的任何宽度都会挡住它（纯 Z 下降的笛卡尔 fraction 掉到 0.61）。
-# 0.150 高给出 70 mm 以上净空；第二层的推入同样净空（推入臂前臂在 z≈0.57）。
-BOX_WALL_HEIGHT = 0.150
-COLUMN_X = (0.700, 0.820)
-ROW_Y_NEAR = +0.150               # 近排（后做）
-ROW_Y_FAR = +0.270                # 远排（先做，见下方顺序说明）
-PRE_PUSH_Y = -0.120               # 装料口外 210 mm
-# 预推位的 y 由右臂可达性定：右臂要跨过桌面中线去够 Cube 的 +Y 面，
-# 在运输高度 z=0.540 上，它的腕部位置 = cube_y + 216 mm。取 -0.150 时腕部落在
-# -0.034，肩距 0.72 m 已贴到 0.70 m 的臂链边界，实测四种步长的笛卡尔抬升轨迹
-# 全部失真（偏差 1.2 m 量级）而被拒绝；取 -0.120 后腕部回到 +0.096、肩距 0.58 m。
-# 同时满足通道约束：预推位 + 216 mm 通道不得压到车厢最近一排。
+BOX_WALL_HEIGHT = 0.250
+CELL_SHALLOW_X = 0.725
+CELL_DEEP_X = 0.845
+ROW_Y = (-0.065, -0.185)
+PRE_PUSH_X = 0.545                # 装料口外 115 mm 的预推位（纯 +X 推入）
 
-# 每件 Cube：先到预推位，再被左臂沿 +Y 推入自己的格位。
-# 顺序由几何强制：同一列内必须先远排后近排——左臂支架在 TCP 后方 155 mm，
-# 推远排时会扫过 y ∈ [cube_y-0.216, cube_y-0.061]，若近排已落稳就会真实碰撞。
+# 装填顺序：每排**先推深格、再推浅格**——浅格先落会挡住通往深格的直推通道。
 TASKS = (
-    {"cube": 1, "column": 0, "row": "far",  "cell": (COLUMN_X[0], ROW_Y_FAR, BOTTOM_Z)},
-    {"cube": 2, "column": 0, "row": "near", "cell": (COLUMN_X[0], ROW_Y_NEAR, BOTTOM_Z)},
-    {"cube": 3, "column": 1, "row": "far",  "cell": (COLUMN_X[1], ROW_Y_FAR, BOTTOM_Z)},
-    {"cube": 4, "column": 1, "row": "near", "cell": (COLUMN_X[1], ROW_Y_NEAR, BOTTOM_Z)},
+    {"cube": 1, "row": 0, "depth": "deep", "cell": (CELL_DEEP_X, ROW_Y[0], BOTTOM_Z)},
+    {"cube": 2, "row": 0, "depth": "shallow", "cell": (CELL_SHALLOW_X, ROW_Y[0], BOTTOM_Z)},
+    {"cube": 3, "row": 1, "depth": "deep", "cell": (CELL_DEEP_X, ROW_Y[1], BOTTOM_Z)},
+    {"cube": 4, "row": 1, "depth": "shallow", "cell": (CELL_SHALLOW_X, ROW_Y[1], BOTTOM_Z)},
 )
-PRE_PUSH = tuple((COLUMN_X[item["column"]], PRE_PUSH_Y, BOTTOM_Z) for item in TASKS)
+PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
+
+# ---------------------------------------------------------------- 导轨（第七轴）
+#
+# 两个机械臂**各自**一条 Y 向导轨（存量需求已经确定）。为什么是 Y 向：预推位与
+# 格位都排在 y ∈ [-0.185, -0.065]，而两臂基座固定在 y = -0.60 / +0.60 时，右臂要
+# 跨过桌面中线去够 Cube 的 +Y 面（肩距约 0.61 m，已贴到 0.70 m 臂链的边界），
+# 第二层只会更远；基座能沿 Y 平移就能把这个距离收回到舒适区。
+#
+# 实现方式（不改 FR3 资产、不动任何已验收的关节序）：
+#   * 每条导轨由一组**纯视觉**件组成（两条导轨条 + 两端挡块 + 一块滑台），不加
+#     CollisionAPI、不参与物理，与格位/预推位标记同级；
+#   * 机械臂仍是 /World 的直接子节点（路径不变），由 bridge 通过
+#     /task26/{side}/rail_command 整体平移：必须**同时**写 /World/{side}_fr3 的
+#     USD 平移和 articulation 的世界位姿——Isaac 4.5 里这两者分别是渲染/物理两套
+#     表示，只写一套会出现「物理动了但渲染不动 / 读数互相矛盾」（已实测）；
+#   * 移动门槛：两臂吸盘都松开、且最近 1 s 内没有关节命令才接受移动；
+#     到位判定与「分批到料」同一套语义（连续 RAIL_HOLD_SEC 落在容差内才算到位）。
+#
+# 滑台顶面正好在 z=0（机械臂基座底面），所以导轨**不改变基座高度**，
+# Task24/Task25 的位姿基线不受影响。
+RAIL_ROOT = {side: f"/World/{side}_rail" for side in ("left", "right")}
+RAIL_BASE_X = LEFT_BASE[0]
+RAIL_BASE_Y = {"left": LEFT_BASE[1], "right": RIGHT_BASE[1]}
+RAIL_TRAVEL = {"left": (-0.800, -0.400), "right": (0.400, 0.800)}
+RAIL_TRACK_LENGTH = 0.700         # 导轨条总长 = 行程 0.40 + 滑台 0.26 + 余量
+RAIL_TRACK_WIDTH = 0.028
+RAIL_TRACK_X_OFFSET = 0.145       # 两条导轨条相对基座中心的 ±X 偏移
+RAIL_TRACK_HEIGHT = 0.030
+RAIL_CARRIAGE_SIZE = (0.260, 0.260, 0.036)
+RAIL_STOP_SIZE = (0.318, 0.030, 0.030)
+RAIL_CARRIAGE_Z = -0.5 * RAIL_CARRIAGE_SIZE[2]   # 滑台中心：顶面 = 0.000
+RAIL_TRACK_Z = -0.5 * RAIL_TRACK_HEIGHT
+RAIL_COLOR_TRACK = (0.30, 0.32, 0.36)
+RAIL_COLOR_CARRIAGE = (0.62, 0.66, 0.72)
+
 
 # 已确认的固定 L 型阵列式侧面吸盘（与 Task24-E/H 同尺寸，不改动）。
 VERTICAL_DROP_Z = 0.080
@@ -253,6 +280,17 @@ def _box(path, center, size, color, dynamic=False, metadata=None, gravity=True):
     return box
 
 
+def _visual_box(path, center, size, color):
+    """纯视觉方块：不加 CollisionAPI、不参与物理（与格位/预推位标记同级）。"""
+    box = UsdGeom.Cube.Define(stage, path)
+    box.CreateSizeAttr(1.0)
+    box.CreateDisplayColorAttr([Gf.Vec3f(*color)])
+    transform = UsdGeom.Xformable(box.GetPrim())
+    transform.AddTranslateOp(opSuffix="task26_pose").Set(Gf.Vec3d(*center))
+    transform.AddScaleOp(opSuffix="task26_size").Set(Gf.Vec3f(*size))
+    return box
+
+
 def _build_tool(robot_root, branch_sign):
     hand_path = f"{robot_root}/fr3_hand"
     # 与 Task24 相同的安装 frame：工具固定在 fr3_link8，而不是带额外固定旋转的
@@ -373,6 +411,12 @@ def _build_objects():
     task_root.SetCustomDataByKey("task26_box_interior_y", json.dumps(list(BOX_INTERIOR_Y)))
     task_root.SetCustomDataByKey("task26_box_wall_thickness", BOX_WALL_THICKNESS)
     task_root.SetCustomDataByKey("task26_box_wall_height", BOX_WALL_HEIGHT)
+    task_root.SetCustomDataByKey("task26_box_opening", "-X")
+    task_root.SetCustomDataByKey("task26_push_axis", "+X")
+    task_root.SetCustomDataByKey("task26_rail_base_x", RAIL_BASE_X)
+    task_root.SetCustomDataByKey("task26_rail_base_y", json.dumps(RAIL_BASE_Y))
+    task_root.SetCustomDataByKey("task26_rail_travel", json.dumps(RAIL_TRAVEL))
+    task_root.SetCustomDataByKey("task26_rail_carriage_z", RAIL_CARRIAGE_Z)
     task_root.SetCustomDataByKey(
         "task26_cells", json.dumps([list(item["cell"]) for item in TASKS]))
     task_root.SetCustomDataByKey(
@@ -380,7 +424,7 @@ def _build_objects():
     UsdGeom.Xform.Define(stage, SUPPLY_ROOT)
     UsdGeom.Xform.Define(stage, MARKER_ROOT)
 
-    # 车厢：三面静态围墙（左/右/后），装料口开在 -Y，顶部无墙；底板就是桌面。
+    # 车厢：三面静态围墙（+X、+Y、-Y），装料口开在 -X，顶部无墙；底板就是桌面。
     x0, x1 = BOX_INTERIOR_X
     y0, y1 = BOX_INTERIOR_Y
     thickness = BOX_WALL_THICKNESS
@@ -388,15 +432,18 @@ def _build_objects():
     wall_z = TABLE_TOP_Z + height * 0.5
     box_root = f"{TASK_ROOT}/TruckBox"
     UsdGeom.Xform.Define(stage, box_root)
-    _box(f"{box_root}/WallLeft",
-         (x0 - thickness * 0.5, (y0 + y1 + thickness) * 0.5, wall_z),
-         (thickness, (y1 - y0) + thickness, height), (0.32, 0.40, 0.55), False,
+    # +X 墙（深端）
+    _box(f"{box_root}/WallDeep",
+         (x1 + thickness * 0.5, (y0 + y1) * 0.5, wall_z),
+         (thickness, (y1 - y0) + 2.0 * thickness, height), (0.32, 0.40, 0.55), False,
          {"role": "truck_box_wall"})
-    _box(f"{box_root}/WallRight",
-         (x1 + thickness * 0.5, (y0 + y1 + thickness) * 0.5, wall_z),
-         (thickness, (y1 - y0) + thickness, height), (0.32, 0.40, 0.55), False,
+    # -Y 墙
+    _box(f"{box_root}/WallMinusY",
+         ((x0 + x1) * 0.5, y0 - thickness * 0.5, wall_z),
+         ((x1 - x0) + 2.0 * thickness, thickness, height), (0.32, 0.40, 0.55), False,
          {"role": "truck_box_wall"})
-    _box(f"{box_root}/WallBack",
+    # +Y 墙
+    _box(f"{box_root}/WallPlusY",
          ((x0 + x1) * 0.5, y1 + thickness * 0.5, wall_z),
          ((x1 - x0) + 2.0 * thickness, thickness, height), (0.32, 0.40, 0.55), False,
          {"role": "truck_box_wall"})
@@ -415,8 +462,9 @@ def _build_objects():
                 "slot": "A" if index % 2 == 1 else "B",
                 "slot_pose": list(_slot_pose(index)),
                 "park_pose": list(_park_pose(index)),
-                "column": TASKS[index - 1]["column"],
                 "row": TASKS[index - 1]["row"],
+                "depth": TASKS[index - 1]["depth"],
+                "push_axis": "+X",
                 "pre_push_pose": list(PRE_PUSH[index - 1]),
                 "cell_pose": list(TASKS[index - 1]["cell"]),
                 "mass": CUBE_MASS,
@@ -493,6 +541,34 @@ for root in (LEFT_ROOT, RIGHT_ROOT):
     _remove(root)
 _remove(TABLE_PATH)
 _box(TABLE_PATH, TABLE_CENTER, TABLE_SIZE, (0.0, 0.65, 0.85), False, {"role": "table"})
+# 导轨：每个机械臂一条 Y 向导轨。导轨件是纯视觉的；机械臂本身仍是 /World 的
+# 直接子节点（/World/{left,right}_fr3，路径不变），由 bridge 平移它的基座变换
+# 来"走轨"，滑台（carriage）随之同步移动。
+for side, root in RAIL_ROOT.items():
+    _remove(root)
+    rail = UsdGeom.Xform.Define(stage, root)
+    UsdGeom.Xformable(rail.GetPrim()).ClearXformOpOrder()
+    rest_y = RAIL_BASE_Y[side]
+    for index, sign in enumerate((-1.0, +1.0), start=1):
+        _visual_box(
+            f"{root}/track_{index}",
+            (RAIL_BASE_X + sign * RAIL_TRACK_X_OFFSET, rest_y, RAIL_TRACK_Z),
+            (RAIL_TRACK_WIDTH, RAIL_TRACK_LENGTH, RAIL_TRACK_HEIGHT),
+            RAIL_COLOR_TRACK,
+        )
+    for index, sign in enumerate((-1.0, +1.0), start=1):
+        _visual_box(
+            f"{root}/stop_{index}",
+            (RAIL_BASE_X, rest_y + sign * (0.5 * RAIL_TRACK_LENGTH + 0.015), RAIL_TRACK_Z),
+            RAIL_STOP_SIZE,
+            RAIL_COLOR_TRACK,
+        )
+    _visual_box(
+        f"{root}/carriage",
+        (RAIL_BASE_X, rest_y, RAIL_CARRIAGE_Z),
+        RAIL_CARRIAGE_SIZE,
+        RAIL_COLOR_CARRIAGE,
+    )
 _add_fr3(LEFT_ROOT, LEFT_BASE)
 _add_fr3(RIGHT_ROOT, RIGHT_BASE)
 _set_fr3_official_start_target(LEFT_ROOT)
@@ -508,15 +584,19 @@ print(
     "tools: fixed 2x2 side-suction array, short L support "
     "(80 mm down + 130 mm side), TCP offset=0.155 m"
 )
-print("truck box: interior x=%s y=%s, walls %.3f m thick x %.3f m high, open at -Y and top" %
+print("truck box: interior x=%s y=%s, walls %.3f m thick x %.3f m high" %
       (BOX_INTERIOR_X, BOX_INTERIOR_Y, BOX_WALL_THICKNESS, BOX_WALL_HEIGHT))
+print("opening: -X side + top; push direction: +X")
+print("table top z=%.3f m; FR3 official move_to_start targets are configured" % TABLE_TOP_Z)
 print("first layer cells: %s" % (tuple(item["cell"] for item in TASKS),))
 print("pre-push positions: %s" % (PRE_PUSH,))
+print("rails (Y axis, visual only): left rest y=%.3f travel=%s; right rest y=%.3f travel=%s" %
+      (RAIL_BASE_Y["left"], RAIL_TRAVEL["left"], RAIL_BASE_Y["right"], RAIL_TRAVEL["right"]))
+print("rails are moved by the bridge via /task26/{left,right}/rail_command")
 print(
     "feed: %d batches x %d cubes; slot A=%s (picked first), slot B=%s; all cubes start parked at z=%.3f" %
     (BATCH_COUNT, BATCH_SIZE, SLOT_A, SLOT_B, PARK_Z)
 )
-print("table top z=%.3f m; FR3 official move_to_start targets are configured" % TABLE_TOP_Z)
 print("PUB: /clock, /left/joint_states, /right/joint_states")
 print("Next: Play, then run task26_truck_box_bridge.py")
 print("====================================================")
