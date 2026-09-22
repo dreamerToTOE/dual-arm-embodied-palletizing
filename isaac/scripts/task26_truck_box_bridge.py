@@ -72,6 +72,10 @@ ARRIVAL_HOLD_SEC = 0.20
 
 # 导轨（第七轴）：每个 FR3 一条 Y 向导轨。命令 -> 移动 -> 到位判定，与分批到料同一套语义。
 RAIL_TOLERANCE = 0.001
+# 滑轨平移速度上限 [m/s]。原先 _apply_rail 是**一次性瞬移**（实测 +100 mm 在一帧内完成），
+# 视觉上整条臂瞬跳，且会在贴近自由 Cube 时造成瞬间穿插/推挤。改为在 _check_rail 里
+# 逐帧插值，整个过程连续，到达判定语义不变（连续 RAIL_HOLD_SEC 落在容差内才算到位）。
+RAIL_MAX_SPEED = 0.20
 # 到位判定要求"连续 RAIL_HOLD_SEC 秒都落在容差内"，与到料的 ARRIVAL_HOLD_SEC 同一语义。
 RAIL_HOLD_SEC = 0.20
 # 导轨会整体搬动一条机械臂，属于"只在静止相位之间发生"的动作。最近这么久内
@@ -441,55 +445,75 @@ class Task26BatchedFeedBridge:
                 op.Set(Gf.Vec3d(float(x), float(y), float(z)))
         return True
 
-    def _apply_rail(self, side, target):
-        """把整条机械臂沿 X 平移（导轨轴 = X，基座 Y 固定）。
+    def _rail_read_x(self, side):
+        try:
+            position, _ = self.articulations[side].get_world_pose()
+            return float(position[0])
+        except Exception:
+            return None
+
+    def _write_rail_x(self, side, x):
+        """把整条机械臂沿 X 平移到位（x 为基座世界 X）。USD 与 Fabric 必须同时写。
 
         Isaac 4.5 里渲染读 USD、物理读 Fabric（usdrt），同一件事有两套表示：
         只写 USD 时物理位姿不变；只调 set_world_pose 时 USD 位姿不变、两者读数
         互相矛盾（已实测）。因此这里**同时**写两处，值完全相同。
         """
-        x = float(target)
         base_y = self.rail_base_y[side]
-        moved_usd = [self._author_translate(f"/World/{side}_fr3", x, base_y, 0.0)]
-        moved_usd.append(
-            self._author_translate(f"/World/{side}_rail/carriage", x, base_y, self.rail_carriage_z))
-        articulation = self.articulations[side]
+        self._author_translate(f"/World/{side}_fr3", x, base_y, 0.0)
+        self._author_translate(
+            f"/World/{side}_rail/carriage", x, base_y, self.rail_carriage_z)
         try:
-            articulation.set_world_pose(
+            self.articulations[side].set_world_pose(
                 position=np.asarray([x, base_y, 0.0], dtype=np.float64))
         except Exception as exc:
             print(f"[Task26 Isaac][{side}] set_world_pose(position=...) 失败: {exc}")
             try:
-                articulation.set_world_pose(
+                self.articulations[side].set_world_pose(
                     np.asarray([x, base_y, 0.0], dtype=np.float64))
             except Exception as exc2:
                 print(f"[Task26 Isaac][{side}] 导轨移动失败（USD 已写）: {exc2}")
+
+    def _apply_rail(self, side, target):
+        """设定滑轨目标位置——**只记目标，不动手**。
+
+        实际平移交给 _check_rail 按 RAIL_MAX_SPEED 逐帧插值，保证过程连续。
+        实测（诊断探针）：一次性 set_world_pose 会让整条臂在一帧内平移 100 mm，
+        关节与姿态不错，但视觉上就是"瞬移"，而且当吸盘正贴着自由站立的 Cube
+        （Y 向仅约 1 mm 余量）时会瞬间穿插、把 Cube 顶走。
+        """
+        x = float(target)
         self.rail_target[side] = x
-        self.rail_measured[side] = x
+        current = self._rail_read_x(side)
+        if current is not None:
+            self.rail_measured[side] = current
         self.rail_arrived[side] = False
         self.rail_stable[side] = 0.0
-        print(
-            f"[Task26 Isaac][{side}] rail -> x={x:.3f} m "
-            f"(USD x{sum(1 for item in moved_usd if item)} + Fabric 同步写入)"
-        )
+        print(f"[Task26 Isaac][{side}] rail -> 目标 x={x:.3f} m"
+              f"（当前 {self.rail_measured[side]:.3f}，逐帧插值 <= {RAIL_MAX_SPEED} m/s）")
 
     def _check_rail(self, side, dt):
-        articulation = self.articulations[side]
         if self.rail_arrived[side]:
             return
-        try:
-            position, _ = articulation.get_world_pose()
-            current = float(position[0])
-        except Exception:
+        target = self.rail_target[side]
+        current = self._rail_read_x(side)
+        if current is None:
             return
         self.rail_measured[side] = current
-        if abs(current - self.rail_target[side]) <= RAIL_TOLERANCE:
+        error = target - current
+        if abs(error) <= RAIL_TOLERANCE:
+            self._write_rail_x(side, target)
+            self.rail_measured[side] = target
             self.rail_stable[side] += float(dt)
             if self.rail_stable[side] >= RAIL_HOLD_SEC:
                 self.rail_arrived[side] = True
                 print(f"[Task26 Isaac][{side}] rail 到位: x={current:.3f} m")
-        else:
-            self.rail_stable[side] = 0.0
+            return
+        self.rail_stable[side] = 0.0
+        step_m = math.copysign(min(abs(error), RAIL_MAX_SPEED * float(dt)), error)
+        next_x = current + step_m
+        self._write_rail_x(side, next_x)
+        self.rail_measured[side] = next_x
 
     def _check_arrival(self, index, dt):
         if self.cube_state[index] != STATE_ARRIVING:
