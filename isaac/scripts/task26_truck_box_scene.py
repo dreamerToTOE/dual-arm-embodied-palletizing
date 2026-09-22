@@ -259,6 +259,46 @@ def _add_fr3(root_path, base):
     xform.AddTranslateOp(opSuffix="task26_base").Set(Gf.Vec3d(*base))
 
 
+# 本仓库声明的机器人是 franka_description 的 FR3（effort 87/12 N·m 与 FR3 规格一致），
+# 但 _add_fr3() 引用的是 **Isaac 自带的 NVIDIA 转换资产** fr3.usd，它的关节量程比官方
+# 每侧窄 0~9°。规划器按官方 URDF 规划，仿真却在更窄的位置硬挡——实测直接造成
+# J6 追不上（残差 5.21°、速度 0.000，同时 J7 距上限仅 0.08°）。
+# 这里把 7 个关节量程对齐本仓库 franka_description/robots/fr3/joint_limits.yaml，
+# 让"规划的世界"和"物理的世界"用同一套量程。数值就是该文件里的 rad 值。
+FR3_OFFICIAL_JOINT_LIMITS_RAD = {
+    1: (-2.9007, 2.9007),
+    2: (-1.8361, 1.8361),
+    3: (-2.9007, 2.9007),
+    4: (-3.0770, -0.1169),
+    5: (-2.8763, 2.8763),
+    6: (0.4398, 4.6216),
+    7: (-3.0508, 3.0508),
+}
+
+
+def _apply_official_joint_limits():
+    """把仿真侧关节量程对齐本仓库 franka_description 的官方 FR3 值。
+
+    NVIDIA 的 fr3.usd 量程更窄（J1 每侧少 9.0°、J6 少 6.0°、J2/J4/J5/J7 少 2~4°），
+    会造成"规划器能规划、物理到不了"的假失败。planning_only 查不出这一类问题
+    （规划器用的是更宽的那套），必须读仿真侧属性来核对。
+    """
+    for root in (LEFT_ROOT, RIGHT_ROOT):
+        for joint_index, (lower, upper) in FR3_OFFICIAL_JOINT_LIMITS_RAD.items():
+            prim = stage.GetPrimAtPath(
+                f"{root}/fr3_link{joint_index - 1}/fr3_joint{joint_index}")
+            if not prim.IsValid():
+                continue
+            low_attr = prim.GetAttribute("physics:lowerLimit")
+            high_attr = prim.GetAttribute("physics:upperLimit")
+            if low_attr.IsValid():
+                low_attr.Set(math.degrees(lower))
+            if high_attr.IsValid():
+                high_attr.Set(math.degrees(upper))
+    print("[Task26] 关节量程已对齐本仓库官方 FR3（joint_limits.yaml）；"
+          "NVIDIA fr3.usd 的窄量程是规划/物理不一致的来源，见 _apply_official_joint_limits 注释")
+
+
 def _apply_diag_overrides():
     """诊断用：从 task26_diag.json 读取临时覆盖项（默认不存在=完全按官方参数）。
 
@@ -641,6 +681,7 @@ for side, root in RAIL_ROOT.items():
     )
 _add_fr3(LEFT_ROOT, LEFT_BASE)
 _add_fr3(RIGHT_ROOT, RIGHT_BASE)
+_apply_official_joint_limits()
 _set_fr3_official_start_target(LEFT_ROOT)
 _set_fr3_official_start_target(RIGHT_ROOT)
 _apply_diag_overrides()
