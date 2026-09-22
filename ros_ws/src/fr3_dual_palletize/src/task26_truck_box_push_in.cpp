@@ -2637,6 +2637,21 @@ int main(int argc, char** argv)
         // 第二段：从抬起位 RRT 摆到 -X 面姿态。显式设置起始状态而不是用 current
         // state：预检不执行任何动作、current state 仍是 HOME，那样预演的就不是真正
         // 要走的换位段。
+        // 换位摆臂必须在**看得见那颗 Cube** 的世界里规划。上面为了接触/负载段把目标
+        // Cube 从规划场景摘掉了；若换位段沿用这个"无 Cube 世界"，RRT 会把 L 型工具从
+        // 这颗**已经自由站在预推位**（两侧吸盘都已送掉）的 Cube 顶上抹过去，物理上直接
+        // 把它顶走——实测 drift 57.07 mm，触发 "Cube drifted while the pusher
+        // re-grasped" 中止。这与外侧接近是同一类病因，用同一套修法：规划前按预推位
+        // 把 Cube 放回，规划完立刻摘走。目标位（杯面离 Cube 面 1 mm）本身无碰撞，带
+        // Cube 必然可解。
+        if (!scene.applyCollisionObject(cubeObject(object_id, task.pre_push)))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s cannot re-apply the cube CollisionObject %s for the regrasp.",
+            task.id, object_id.c_str());
+          return false;
+        }
+        std::this_thread::sleep_for(250ms);
         std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
         for (int attempt = 1; attempt <= kRrtCandidateCount; ++attempt)
         {
@@ -2666,6 +2681,10 @@ int main(int argc, char** argv)
             candidates.push_back(plan.trajectory_.joint_trajectory);
           }
         }
+        // 换位规划完毕：把 Cube 摘回"无 Cube 世界"，推入/校验世界保持与
+        // world_after_remove 一致。
+        scene.removeCollisionObjects({object_id});
+        std::this_thread::sleep_for(250ms);
         if (candidates.empty())
         {
           RCLCPP_ERROR(node->get_logger(),
