@@ -177,13 +177,15 @@ class Task26BatchedFeedBridge:
             rigid = SingleRigidPrim(path, name=f"task26_cube_{index:02d}")
             rigid.initialize()
             self.rigids.append(rigid)
-        # 导轨：几何全部由场景标记提供，bridge 不重复硬编码任何坐标。
-        self.rail_base_x = float(_task_custom("task26_rail_base_x"))
+        # 导轨：几何全部由场景标记提供，bridge 不重复硬编码任何坐标。导轨沿 X，
+        # 基座 Y 固定（±0.60），target/measured 都是基座的 X 坐标。
+        self.rail_axis = str(_task_custom("task26_rail_axis"))
         self.rail_carriage_z = float(_task_custom("task26_rail_carriage_z"))
         self.rail_base_y = json.loads(_task_custom("task26_rail_base_y"))
+        self.rail_rest_x = float(_task_custom("task26_rail_rest_x"))
         self.rail_travel = json.loads(_task_custom("task26_rail_travel"))
-        self.rail_target = dict(self.rail_base_y)
-        self.rail_measured = dict(self.rail_base_y)
+        self.rail_target = {side: self.rail_rest_x for side in SIDES}
+        self.rail_measured = {side: self.rail_rest_x for side in SIDES}
         self.rail_arrived = {side: True for side in SIDES}
         self.rail_stable = {side: 0.0 for side in SIDES}
         self._last_joint_command_time = 0.0
@@ -262,13 +264,13 @@ class Task26BatchedFeedBridge:
         print("PUB: /task26/{left,right}/suction_state std_msgs/Bool")
         print("PUB: /task26/{left,right}/side_suction_tcp_pose geometry_msgs/PoseStamped")
         print("PUB: /task26/{left,right}/measured_joint_forces sensor_msgs/JointState (effort)")
-        print("SUB: /task26/{left,right}/rail_command std_msgs/Float64 (target rail y)")
+        print("SUB: /task26/{left,right}/rail_command std_msgs/Float64 (target rail x)")
         print(
             "PUB: /task26/{left,right}/rail_state std_msgs/Float64MultiArray "
-            "[target, arrived, measured, y_min, y_max]"
+            "[target, arrived, measured, x_min, x_max]"
         )
         print(
-            "RAIL: 右臂基座可以沿 Y 平移（各臂行程 %.2f m）；"
+            "RAIL: 两臂基座可以沿 X 平移（各臂行程 %.2f m）；"
             "吸盘夹紧或最近 %.1f s 内有关节命令时拒绝移动" %
             (self.rail_travel["left"][1] - self.rail_travel["left"][0], RAIL_COMMAND_QUIET_SEC)
         )
@@ -426,8 +428,8 @@ class Task26BatchedFeedBridge:
         with self._lock:
             self._pending_rail[side] = target
 
-    def _author_translate(self, path, y, z):
-        """把 prim 的平移写成 (rail_base_x, y, z)。
+    def _author_translate(self, path, x, y, z):
+        """把 prim 的平移写成 (x, y, z)。
 
         /World 是恒等变换，因此世界平移就是本地平移，不存在父子换算的歧义。
         """
@@ -436,37 +438,38 @@ class Task26BatchedFeedBridge:
             return False
         for op in UsdGeom.Xformable(prim).GetOrderedXformOps():
             if op.GetOpName().startswith("xformOp:translate"):
-                op.Set(Gf.Vec3d(float(self.rail_base_x), float(y), float(z)))
+                op.Set(Gf.Vec3d(float(x), float(y), float(z)))
         return True
 
     def _apply_rail(self, side, target):
-        """把整条机械臂沿 Y 平移。
+        """把整条机械臂沿 X 平移（导轨轴 = X，基座 Y 固定）。
 
         Isaac 4.5 里渲染读 USD、物理读 Fabric（usdrt），同一件事有两套表示：
         只写 USD 时物理位姿不变；只调 set_world_pose 时 USD 位姿不变、两者读数
         互相矛盾（已实测）。因此这里**同时**写两处，值完全相同。
         """
-        y = float(target)
-        moved_usd = [self._author_translate(f"/World/{side}_fr3", y, 0.0)]
+        x = float(target)
+        base_y = self.rail_base_y[side]
+        moved_usd = [self._author_translate(f"/World/{side}_fr3", x, base_y, 0.0)]
         moved_usd.append(
-            self._author_translate(f"/World/{side}_rail/carriage", y, self.rail_carriage_z))
+            self._author_translate(f"/World/{side}_rail/carriage", x, base_y, self.rail_carriage_z))
         articulation = self.articulations[side]
         try:
             articulation.set_world_pose(
-                position=np.asarray([self.rail_base_x, y, 0.0], dtype=np.float64))
+                position=np.asarray([x, base_y, 0.0], dtype=np.float64))
         except Exception as exc:
             print(f"[Task26 Isaac][{side}] set_world_pose(position=...) 失败: {exc}")
             try:
                 articulation.set_world_pose(
-                    np.asarray([self.rail_base_x, y, 0.0], dtype=np.float64))
+                    np.asarray([x, base_y, 0.0], dtype=np.float64))
             except Exception as exc2:
                 print(f"[Task26 Isaac][{side}] 导轨移动失败（USD 已写）: {exc2}")
-        self.rail_target[side] = y
-        self.rail_measured[side] = y
+        self.rail_target[side] = x
+        self.rail_measured[side] = x
         self.rail_arrived[side] = False
         self.rail_stable[side] = 0.0
         print(
-            f"[Task26 Isaac][{side}] rail -> y={y:.3f} m "
+            f"[Task26 Isaac][{side}] rail -> x={x:.3f} m "
             f"(USD x{sum(1 for item in moved_usd if item)} + Fabric 同步写入)"
         )
 
@@ -476,7 +479,7 @@ class Task26BatchedFeedBridge:
             return
         try:
             position, _ = articulation.get_world_pose()
-            current = float(position[1])
+            current = float(position[0])
         except Exception:
             return
         self.rail_measured[side] = current
@@ -484,7 +487,7 @@ class Task26BatchedFeedBridge:
             self.rail_stable[side] += float(dt)
             if self.rail_stable[side] >= RAIL_HOLD_SEC:
                 self.rail_arrived[side] = True
-                print(f"[Task26 Isaac][{side}] rail 到位: y={current:.3f} m")
+                print(f"[Task26 Isaac][{side}] rail 到位: x={current:.3f} m")
         else:
             self.rail_stable[side] = 0.0
 
