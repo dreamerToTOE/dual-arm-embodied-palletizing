@@ -45,6 +45,8 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <shape_msgs/msg/solid_primitive.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/float64.hpp>
+#include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
@@ -63,6 +65,10 @@ constexpr double kCubeHalf = 0.060;
 // Franka 官方 FR3 move_to_start 姿态及 Duo 手册的高可操作性工作半径确定，
 // 不是通过反复试高度得到的经验值。
 constexpr double kTableTopZ = 0.200;
+// 滑轨静止位：必须与 isaac/scripts/task26_truck_box_scene.py 的
+// RAIL_REST_X = LEFT_BASE[0] = 0.650 保持一致（bridge 的 rail_state 只发布
+// [target, arrived, measured, x_min, x_max]，不含静止位）。
+constexpr double kRailRestX = 0.650;
 constexpr double kBottomZ = kTableTopZ + kCubeHalf;
 constexpr double kUpperZ = kBottomZ + kCubeSize;
 // 在尚未建立 Surface Gripper D6 约束的 CONTACT 阶段，Cup Collider 不能以
@@ -161,6 +167,17 @@ struct OfflineTask
   geometry_msgs::msg::Pose cell;       // 单臂持 -X 面沿 +X 推入后的格位
 };
 
+// 推入段"滑轨搬站位"引入的世界系偏移。
+//
+// MoveIt 模型里两个基座固定在 0.650，只有一个世界系。要让推臂基座沿轨 +X 前进
+// Δ 之后仍能正确规划，就必须把**整个规划世界**平移 -Δ（等价于基座前进 Δ）。
+// 因为 FCL/IK 只有一个世界系，这个偏移只能对**双臂同时**成立——所以动轨时两条
+// 轨道一起走（辅助臂此时已停放在停放位，同步平移无副作用）。
+//
+// 偏移集中在这三个构造函数里：模型侧的目标一律减去它，而 worldPose() 保持不动
+// （task.pre_push / task.cell 仍按仿真世界坐标用于 Ground Truth 复核）。
+double g_world_shift_x = 0.0;
+
 geometry_msgs::msg::Pose worldPose(double x, double y, double z)
 {
   geometry_msgs::msg::Pose pose;
@@ -175,7 +192,7 @@ geometry_msgs::msg::Pose worldPose(double x, double y, double z)
 // 左臂位于 -Y，从 -Y 侧吸附且 +X 指向世界 +Y；右臂相反。
 geometry_msgs::msg::Pose sidePose(double x, double y, double z, bool left)
 {
-  auto pose = worldPose(x, y, z);
+  auto pose = worldPose(x - g_world_shift_x, y, z);
   constexpr double half_root = 0.7071067811865476;
   if (left)
   {
@@ -207,7 +224,7 @@ geometry_msgs::msg::Pose sidePose(double x, double y, double z, bool left)
 // +Z 变 -Z。即杯面法向为 +X（穿进 Cube），+Z 仍指向下，与 sidePose 的下压约定一致。
 geometry_msgs::msg::Pose pushPose(double x, double y, double z)
 {
-  auto pose = worldPose(x, y, z);
+  auto pose = worldPose(x - g_world_shift_x, y, z);
   pose.orientation.x = 1.0;
   pose.orientation.y = 0.0;
   pose.orientation.z = 0.0;
@@ -401,11 +418,14 @@ moveit_msgs::msg::CollisionObject cubeObject(
   moveit_msgs::msg::CollisionObject object;
   object.header.frame_id = "world";
   object.id = id;
+  // 碰撞体跟随同一个世界偏移（车主车厢三面墙、桌面、Cube 都走 cubeObject）。
+  geometry_msgs::msg::Pose shifted = pose;
+  shifted.position.x -= g_world_shift_x;
   shape_msgs::msg::SolidPrimitive shape;
   shape.type = shape_msgs::msg::SolidPrimitive::BOX;
   shape.dimensions = {kCubeSize, kCubeSize, kCubeSize};
   object.primitives.push_back(shape);
-  object.primitive_poses.push_back(pose);
+  object.primitive_poses.push_back(shifted);
   object.operation = moveit_msgs::msg::CollisionObject::ADD;
   return object;
 }
@@ -1431,6 +1451,7 @@ bool planAndCheckCommon(
 // config/task26_push_control.yaml，不允许散落硬编码。
 struct PushControlConfig
 {
+  double push_base_advance_m{0.200};   // 推入前推臂基座沿轨 +X 前进量
   double force_bias_seconds{0.5};
   double force_lpf_cutoff_hz{15.0};
   std::string wrench_log_path;
@@ -1487,6 +1508,7 @@ PushControlConfig loadPushControlConfig(const rclcpp::Node::SharedPtr& node)
   {
     if (values[key]) { target = values[key].as<int>(); }
   };
+  readDouble("push_base_advance_m", config.push_base_advance_m);
   readDouble("force_bias_seconds", config.force_bias_seconds);
   readDouble("force_lpf_cutoff_hz", config.force_lpf_cutoff_hz);
   readDouble("contact_force_n", config.contact_force_n);
@@ -1756,6 +1778,94 @@ private:
   rclcpp::Time first_stamp_;
 };
 
+// 滑轨客户端：把"整条机械臂沿 X 平移"这件事封起来。
+//
+// bridge 侧的 _apply_rail 是**瞬移**（同时写 USD 与 Fabric 的 world pose），不是
+// 连续滑动；因此工具在离 Cube 1 mm 处被平移不会"贴着面刮过去"，不会重现最初那个
+// 拖件问题。互锁两道：距上次关节命令需静默 RAIL_COMMAND_QUIET_SEC=1.0 s，且
+// **任一吸盘夹紧即拒绝移动**——所以动轨必须在两侧吸盘都送掉之后。
+class RailClient
+{
+public:
+  RailClient(const rclcpp::Node::SharedPtr& node, const std::string& side)
+    : node_(node), side_(side)
+  {
+    publisher_ = node_->create_publisher<std_msgs::msg::Float64>(
+      "/task26/" + side_ + "/rail_command", 10);
+    subscription_ = node_->create_subscription<std_msgs::msg::Float64MultiArray>(
+      "/task26/" + side_ + "/rail_state", 10,
+      [this](const std_msgs::msg::Float64MultiArray::SharedPtr message)
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (message->data.size() >= 2)
+        {
+          target_ = message->data[0];
+          arrived_ = message->data[1] > 0.5;
+          have_state_ = true;
+        }
+      });
+  }
+
+  bool moveTo(double target, double timeout_sec)
+  {
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      arrived_ = false;
+    }
+    std_msgs::msg::Float64 command;
+    command.data = target;
+    publisher_->publish(command);
+    const auto deadline = std::chrono::steady_clock::now() +
+      std::chrono::duration<double>(timeout_sec);
+    while (std::chrono::steady_clock::now() < deadline && rclcpp::ok())
+    {
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (have_state_ && arrived_ && std::abs(target_ - target) <= 1e-3)
+        {
+          RCLCPP_INFO(node_->get_logger(), "%s rail 已到位 x=%.3f（目标 %.3f）。",
+            side_.c_str(), target_, target);
+          return true;
+        }
+      }
+      std::this_thread::sleep_for(50ms);
+    }
+    RCLCPP_ERROR(node_->get_logger(),
+      "%s rail 未在 %.1f s 内到位（目标 %.3f）——很可能被互锁拒绝："
+      "需两侧吸盘都松开，且距上次关节命令静默 >= 1.0 s。",
+      side_.c_str(), timeout_sec, target);
+    return false;
+  }
+
+private:
+  rclcpp::Node::SharedPtr node_;
+  std::string side_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr publisher_;
+  rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr subscription_;
+  mutable std::mutex mutex_;
+  double target_{0.0};
+  bool arrived_{false};
+  bool have_state_{false};
+};
+
+// 世界偏移变化后必须重建静态规划世界（桌面 + 车厢三面墙），否则规划器眼里
+// 车厢还停在旧位置。Cube 由各自的 apply/remove 流程管理，这里不碰。
+bool refreshStaticWorld(moveit::planning_interface::PlanningSceneInterface& scene, bool include_box_walls)
+{
+  scene.removeCollisionObjects({
+    "task26_table", "task26_box_wall_deep", "task26_box_wall_minus_y", "task26_box_wall_plus_y"});
+  std::this_thread::sleep_for(300ms);
+  std::vector<moveit_msgs::msg::CollisionObject> objects{tableObject()};
+  if (include_box_walls)
+  {
+    const auto walls = boxWallObjects();
+    objects.insert(objects.end(), walls.begin(), walls.end());
+  }
+  const bool ok = scene.applyCollisionObjects(objects);
+  std::this_thread::sleep_for(300ms);
+  return ok;
+}
+
 // 把一条已规划的笛卡尔轨迹切成 [t0, t1] 子段，用于「分段推进 + 逐段监督」。
 // 首尾用插值点补齐，段内时间从 0 开始。
 bool sliceTrajectory(const trajectory_msgs::msg::JointTrajectory& input,
@@ -1971,6 +2081,10 @@ int main(int argc, char** argv)
     moveit::planning_interface::MoveGroupInterface right_group(node, right.groupName());
     left_group.setEndEffectorLink(left.eefLink());
     right_group.setEndEffectorLink(right.eefLink());
+    RailClient left_rail(node, "left");
+    RailClient right_rail(node, "right");
+    const PushControlConfig push_control = loadPushControlConfig(node);
+    const double push_base_advance = push_control.push_base_advance_m;
 
     // 力觉探针（开发顺序 Step 2）：**只读**，不发布任何 joint / suction / rail 命令。
     // 用途是在不改动控制器的前提下验证：力的方向、坐标定义、量级、以及滤波效果。
@@ -3085,19 +3199,13 @@ int main(int argc, char** argv)
       // 真实执行路径：用**实际执行后**的 short-push 末端与右臂退出位姿作为推入起点
       // （预检路径用的是候选预演末端）。两段共用同一个 preplanPush，保证「预检覆盖
       // 的就是真正执行的那一段」，不会各写一份而悄悄分叉。
+      // 换位/推入的规划必须放在**滑轨搬站位之后**：搬站位会把整个规划世界平移 -Δ，
+      // 换位与推入的目标都必须在那个世界系里生成，否则双臂会整体偏 Δ。
       trajectory_msgs::msg::JointTrajectory left_regrasp;
       trajectory_msgs::msg::JointTrajectory left_push_in, right_during_push;
       trajectory_msgs::msg::JointTrajectory left_cell_retreat, right_during_cell_retreat;
       const auto& ex_start = push_left ? left_push : right_push;
       const auto& ex_hold = push_left ? right_retreat : left_retreat;
-      if (!preplanPush(ex_start, ex_hold, std::string(task.id),
-            &left_regrasp, &left_push_in, &right_during_push,
-            &left_cell_retreat, &right_during_cell_retreat))
-      {
-        openBothAndConfirm("safe abort after push preplanning failure");
-        all_complete = false;
-        break;
-      }
 
       // 辅助臂先释放并竖直退出；推入臂仍保持 ±Y 面吸附（桥会持续保持上一次关节目标）。
       const auto& helper_retreat_traj = push_left ? right_retreat : left_retreat;
@@ -3116,6 +3224,68 @@ int main(int argc, char** argv)
       if (!pusher.waitSuction(false, 6.0))
       {
         openBothAndConfirm("safe abort after pusher release before regrasp");
+        all_complete = false;
+        break;
+      }
+
+      // ------------------------------------------------ 滑轨搬站位（推入前）
+      // 实测（t26_baseline2.log）：基座停在 0.650 时推入最后两片的推力需求达
+      // 87.0 N*m —— 恰好等于 maxForce，驱动器顶在 J1-J4 硬件上限，Cube 落后
+      // 6.53 mm；而前 14 片只要 26~28 N*m。基座先沿轨 +X 前进 Δ 直接缩短力臂。
+      //
+      // 时序约束（两条都成立才合法）：
+      //   1) bridge 互锁：**任一吸盘夹紧即拒绝动轨** —— 此处两侧吸盘刚都松开；
+      //   2) 距上次关节命令静默 >= RAIL_COMMAND_QUIET_SEC = 1.0 s。
+      // 轨道是**瞬移**（USD + Fabric 同步写 world pose），不是连续滑动，所以推臂
+      // 杯面此刻虽只离 Cube 1 mm，也不会"贴着面刮过去"（那是最初 446 mm 拖件的成因）。
+      // 辅助臂同步前进：MoveIt 只有一个世界系，双臂必须共用同一个偏移；它此刻已
+      // 停放在停放位，同步平移无副作用。
+      if (push_base_advance > 0.0)
+      {
+        if (g_world_shift_x != 0.0)
+        {
+          // 上一件遗留的站位：先回静止位再重新搬，保证每件都从确定起点开始。
+          RCLCPP_INFO(node->get_logger(), "%s 复位滑轨到静止位 %.3f（清掉上件偏移 %.3f）。",
+            task.id, kRailRestX, g_world_shift_x);
+          if (!left_rail.moveTo(kRailRestX, 15.0) || !right_rail.moveTo(kRailRestX, 15.0))
+          {
+            openBothAndConfirm("safe abort after rail reset failure");
+            all_complete = false;
+            break;
+          }
+          g_world_shift_x = 0.0;
+          if (!refreshStaticWorld(scene, include_box_walls))
+          {
+            openBothAndConfirm("safe abort after world refresh on reset failure");
+            all_complete = false;
+            break;
+          }
+        }
+        std::this_thread::sleep_for(1200ms);   // 满足互锁的 1.0 s 关节命令静默
+        const double rail_target = kRailRestX + push_base_advance;
+        if (!left_rail.moveTo(rail_target, 15.0) || !right_rail.moveTo(rail_target, 15.0))
+        {
+          openBothAndConfirm("safe abort after rail positioning failure");
+          all_complete = false;
+          break;
+        }
+        g_world_shift_x = push_base_advance;
+        if (!refreshStaticWorld(scene, include_box_walls))
+        {
+          openBothAndConfirm("safe abort after shifted world refresh failure");
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(),
+          "%s 滑轨站位完成：基座 %.3f -> %.3f（世界偏移 %.3f m，规划世界已按偏移重建）。",
+          task.id, kRailRestX, rail_target, g_world_shift_x);
+      }
+
+      if (!preplanPush(ex_start, ex_hold, std::string(task.id),
+            &left_regrasp, &left_push_in, &right_during_push,
+            &left_cell_retreat, &right_during_cell_retreat))
+      {
+        openBothAndConfirm("safe abort after push preplanning failure");
         all_complete = false;
         break;
       }
