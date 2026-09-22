@@ -76,6 +76,13 @@ RAIL_TOLERANCE = 0.001
 # 视觉上整条臂瞬跳，且会在贴近自由 Cube 时造成瞬间穿插/推挤。改为在 _check_rail 里
 # 逐帧插值，整个过程连续，到达判定语义不变（连续 RAIL_HOLD_SEC 落在容差内才算到位）。
 RAIL_MAX_SPEED = 0.20
+# 诊断（文件开关）：采样**双臂碰撞体**与车厢三面墙之间的最小 AABB 距离，用来回答
+# "推入时某个关节贴着侧墙顶端走，到底还剩多少净空"。预检 FCL 只能证明**规划路径**
+# 有净空，执行侧偏差没人验证过；这里量的是**实际执行**出来的几何。
+# flag 文件存在才采样，正式运行不开。
+CLEARANCE_FLAG = '/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/t26_clearance_probe.flag'
+CLEARANCE_LOG = '/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/t26_clearance.jsonl'
+TRUCK_BOX_PATH = '/World/Task26/TruckBox'
 # 到位判定要求"连续 RAIL_HOLD_SEC 秒都落在容差内"，与到料的 ARRIVAL_HOLD_SEC 同一语义。
 RAIL_HOLD_SEC = 0.20
 # 导轨会整体搬动一条机械臂，属于"只在静止相位之间发生"的动作。最近这么久内
@@ -515,6 +522,57 @@ class Task26BatchedFeedBridge:
         self._write_rail_x(side, next_x)
         self.rail_measured[side] = next_x
 
+    def _clearance_probe(self, dt):
+        # 诊断（文件开关）：量双臂碰撞体到车厢三面墙的最小 AABB 距离。
+        # AABB 会放大碰撞体，所以读数是**保守下界**（真实净空 >= 读数），适合做安全判据。
+        import os
+        if not os.path.exists(CLEARANCE_FLAG):
+            return
+        self._clearance_accum = getattr(self, "_clearance_accum", 0.0) + float(dt)
+        if self._clearance_accum < 0.05:
+            return
+        self._clearance_accum = 0.0
+        try:
+            from pxr import UsdPhysics
+            cache = UsdGeom.BBoxCache(Usd.TimeCode.Default(), [UsdGeom.Tokens.default_])
+
+            def boxes(prefix):
+                found = []
+                root = self.stage.GetPrimAtPath(prefix)
+                if not root.IsValid():
+                    return found
+                for prim in Usd.PrimRange(root):
+                    if not prim.HasAPI(UsdPhysics.CollisionAPI):
+                        continue
+                    rng = cache.ComputeWorldBound(prim).ComputeAlignedRange()
+                    if rng.IsEmpty():
+                        continue
+                    found.append((str(prim.GetPath()),
+                                  np.array(list(rng.GetMin()), dtype=float),
+                                  np.array(list(rng.GetMax()), dtype=float)))
+                return found
+
+            walls = boxes(TRUCK_BOX_PATH)
+            arms = boxes("/World/right_fr3") + boxes("/World/left_fr3")
+            best = None
+            for apath, alo, ahi in arms:
+                for wpath, wlo, whi in walls:
+                    gap = max(0.0, max(wlo[0] - ahi[0], alo[0] - whi[0],
+                                       wlo[1] - ahi[1], alo[1] - whi[1],
+                                       wlo[2] - ahi[2], alo[2] - whi[2]))
+                    if best is None or gap < best[0]:
+                        best = (gap, apath, wpath)
+            if best is None:
+                return
+            with open(CLEARANCE_LOG, "a") as handle:
+                handle.write(json.dumps({
+                    "t": round(float(self.node.get_clock().now().nanoseconds) * 1e-9, 4),
+                    "min_mm": round(best[0] * 1000.0, 2),
+                    "arm": best[1].replace("/World/", ""),
+                    "wall": best[2].replace("/World/", "")}) + "\n")
+        except Exception:
+            pass
+
     def _check_arrival(self, index, dt):
         if self.cube_state[index] != STATE_ARRIVING:
             return
@@ -648,6 +706,7 @@ class Task26BatchedFeedBridge:
             if pending_rail.get(side) is not None:
                 self._apply_rail(side, pending_rail[side])
             self._check_rail(side, dt)
+        self._clearance_probe(dt)
         for side in SIDES:
             gripper = self.grippers[side]
             if desired[side] != self._last_commanded[side]:
