@@ -116,9 +116,16 @@ BOX_INTERIOR_X = (0.810 + TRUCK_SHIFT_X, 1.060 + TRUCK_SHIFT_X)   # 深 0.250：
 BOX_INTERIOR_Y = (-0.125, 0.125)  # 宽 0.250：2 排，排心 y = +0.065 / -0.065（居中）
 BOX_WALL_THICKNESS = 0.020
 BOX_WALL_HEIGHT = 0.150
-CELL_SHALLOW_X = 0.870 + TRUCK_SHIFT_X
-CELL_DEEP_X = 0.990 + TRUCK_SHIFT_X
-ROW_Y = (+0.065, -0.065)
+# 格位再 +10 mm 让 Cube **真正靠到深墙**：原先深格 1.140 时 Cube 远端面在 1.200，
+# 而 WallDeep 内表面在 1.210 ⇒ 设计上就留了 10 mm 缝。推到 1.150 后远端面正好 1.210。
+CELL_FLUSH_SHIFT_X = 0.010
+CELL_SHALLOW_X = 0.870 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
+CELL_DEEP_X = 0.990 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
+# 排心内移 5 mm（0.065 -> 0.060）：0.065 时 Cube 的 +Y 面正好落在 WallPlusY 内表面
+# （0.125）上，实测再偏 0.3 mm 就**压进墙里**，推入一进装料口就蹭墙、摩擦骤增，
+# 推臂跟不上（实测 PUSH slice 3/4 lag 从 0.33 涨到 2.92 mm 后 25 s 超时）。
+# 内移后每侧留 5 mm 净空，两排在中线贴合。
+ROW_Y = (+0.060, -0.060)
 PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X 推入）
 
 # 装填顺序：每排**先推深格、再推浅格**——浅格先落会挡住通往深格的直推通道。

@@ -259,10 +259,17 @@ constexpr double kWallThickness = 0.020;
 // 届时改用「X 导轨跟随推入」等方案再设计。
 constexpr double kWallHeight = 0.150;
 constexpr double kPrePushX = 0.690 + kTruckShiftX;
-constexpr double kCellShallowX = 0.870 + kTruckShiftX;
-constexpr double kCellDeepX = 0.990 + kTruckShiftX;
-constexpr double kRowYPlus = 0.065;
-constexpr double kRowYMinus = -0.065;
+// 格位再 +10 mm 让 Cube 真正靠到深墙（深格 1.150 时 Cube 远端面正好落在 WallDeep
+// 内表面 1.210）。与场景的 CELL_FLUSH_SHIFT_X 必须一致。
+constexpr double kCellFlushShiftX = 0.010;
+constexpr double kCellShallowX = 0.870 + kTruckShiftX + kCellFlushShiftX;
+constexpr double kCellDeepX = 0.990 + kTruckShiftX + kCellFlushShiftX;
+// 排心内移 5 mm（0.065 -> 0.060）。0.065 时 Cube 的 +Y 面正好压住 WallPlusY 内表面
+// （0.125），实测再偏 0.3 mm 就压进墙里，推入进装料口时蹭墙导致推臂跟不上
+// （PUSH slice 3/4 lag 0.33 -> 2.92 mm 后 25 s 超时）。内移后每侧 5 mm 净空。
+// 与场景的 ROW_Y 必须一致。
+constexpr double kRowYPlus = 0.060;
+constexpr double kRowYMinus = -0.060;
 // 推入臂持 **-X 面** 时，杯面到 Cube 中心的名义偏移：TCP_x = cube_x - (kCubeHalf + 间隙)。
 constexpr double kPushCupOffsetX = kCubeHalf + kSideContactCommandGap;
 // 推入监督：Cube Ground Truth 落后命令位置超过该值即判为卡死。
