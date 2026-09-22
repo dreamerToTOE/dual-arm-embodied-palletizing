@@ -3029,8 +3029,18 @@ int main(int argc, char** argv)
           task.id, alignment_attempt, kRetries);
         trajectory_msgs::msg::JointTrajectory left_reacquire;
         trajectory_msgs::msg::JointTrajectory right_reacquire;
-        const double live_left_y = live_cube.position.y - kCubeHalf - kSideContactCommandGap;
-        const double live_right_y = live_cube.position.y + kCubeHalf + kSideContactCommandGap;
+        // 闭环纠偏：用**实测间隙差**修正两侧指令，而不是重复同一个标称。
+        // left_gap - right_gap > 0 表示 Cube 偏左（左间隙大），两侧 y 目标需一起
+        // 平移 -gap_delta/2 把它移回两杯中线。实测 gap_delta 三次恒为 ~1.2 mm
+        // （系统性、重规划无效），修正一次即可收敛到 <0.5 mm。
+        const double left_gap = live_cube.position.y - left_tcp.get().position.y - kCubeHalf;
+        const double right_gap = right_tcp.get().position.y - live_cube.position.y - kCubeHalf;
+        const double correction_y = -0.5 * (left_gap - right_gap);
+        const double live_left_y = live_cube.position.y - kCubeHalf - kSideContactCommandGap + correction_y;
+        const double live_right_y = live_cube.position.y + kCubeHalf + kSideContactCommandGap + correction_y;
+        RCLCPP_WARN(node->get_logger(),
+          "%s PRE_CLOSE_GEOMETRY 纠偏：left_gap=%.3f mm right_gap=%.3f mm ⇒ 两侧 y 指令平移 %+.3f mm。",
+          task.id, left_gap * 1000.0, right_gap * 1000.0, correction_y * 1000.0);
         if (!planAndCheckCommon(node, left_group, right_group, left, right,
               finalPositions(left_contact), finalPositions(right_contact),
               sidePose(live_cube.position.x, live_left_y,
