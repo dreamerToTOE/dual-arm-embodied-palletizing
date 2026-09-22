@@ -1966,6 +1966,7 @@ int main(int argc, char** argv)
         "%s e_push（预推位->格位）= [%.4f %.4f %.4f]；探针时长 %.1f s。",
         wrench_probe.c_str(), push_axis.x(), push_axis.y(), push_axis.z(), probe_seconds);
 
+      {
       WrenchEstimator estimator(node, wrench_probe, probe_group.getRobotModel(),
         probe_arm.eefLink(), push_axis, probe_config);
       if (!estimator.collectBias())
@@ -2015,8 +2016,12 @@ int main(int argc, char** argv)
       {
         RCLCPP_ERROR(node->get_logger(), "%s 力觉探针没有取到有效样本。", wrench_probe.c_str());
       }
-      rclcpp::shutdown();
-      return 0;
+      }
+      // 这里**不能**调 rclcpp::shutdown() 提前收尾：外层作用域里还有 Arm /
+      // MoveGroupInterface / PlanningSceneInterface，它们会晚于上下文销毁而
+      // terminate（实测 Aborted）。用 break 走正常退出路径；代价是外层任务循环
+      // 判定为"未完成"，`ros2 run` 会以 exit 1 结束——这是探针的预期行为。
+      break;
     }
     moveit::planning_interface::PlanningSceneInterface scene;
     // 启动时 Planning Scene 只有桌面：未到货件停在桌下休眠位，既不在工作区也不是
