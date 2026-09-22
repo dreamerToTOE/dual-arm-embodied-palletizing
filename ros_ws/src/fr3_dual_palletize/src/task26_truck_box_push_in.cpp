@@ -219,7 +219,11 @@ constexpr double kBoxInteriorX1 = 1.060;
 constexpr double kBoxInteriorY0 = -0.125;
 constexpr double kBoxInteriorY1 = 0.125;
 constexpr double kWallThickness = 0.020;
-constexpr double kWallHeight = 0.250;
+// 墙高必须让开推入臂的前臂（硬约束）：前臂 link5 下沿扫到 z≈0.40，所以墙顶要低于它。
+//   0.250 -> 顶到墙顶 0.420 mm（拒）；0.200 -> 仍擦 0.014 mm（拒）；0.150 -> 净空约 50 mm。
+// 代价：只比第一层 Cube 顶面（0.32）高 30 mm。第二层需要更高的墙，与本条冲突，
+// 届时改用「X 导轨跟随推入」等方案再设计。
+constexpr double kWallHeight = 0.150;
 constexpr double kPrePushX = 0.690;
 constexpr double kCellShallowX = 0.870;
 constexpr double kCellDeepX = 0.990;
@@ -2202,6 +2206,14 @@ int main(int argc, char** argv)
             task.id, push_left ? "left" : "right");
           return false;
         }
+        // 退出段用「沿 -X 原路退出装料口」，而不是在格内纯 +Z 抬升：实测「格内垂直
+        // 抬升 0.28 m」会让 IK 跳解支（离线 195 mm），而原路返回就是把已经验证笔直的
+        // 推入路径倒着走。退出后工具停在装料口外侧的桌面高度，由后续阶段/批次 HOME 抬走。
+        //
+        // 候选必须让**整条「换位 → +X 推入 → 原路退出」**都通过才算选中。只通过换位段的
+        // 候选可能恰好把腕部停在一个后续推入会跳解支（笛卡尔离线）的构型上——实测
+        // 就出现过「换位 FCL 通过、但 PUSH_INTO_BOX 离线 157/331 mm」的候选。
+        // 这与右臂空载接近的做法一致：先预演完整链路，再定候选。
         for (std::size_t index = 0; index < candidates.size(); ++index)
         {
           auto hold = holdTrajectory(
@@ -2217,39 +2229,50 @@ int main(int argc, char** argv)
           {
             continue;
           }
+          trajectory_msgs::msg::JointTrajectory push_l, push_r, ret_l, ret_r;
+          const bool chain_ok = push_left
+            ? (planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(candidates[index]), finalPositions(hold_right),
+                 pushPose(push_cell_x, push_cube_y, push_cube_z), helper_hold,
+                 world_after_remove, stage_prefix + " PUSH_INTO_BOX",
+                 &push_l, &push_r) &&
+               planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(push_l), finalPositions(push_r),
+                 pushPose(push_entry_x, push_cube_y, push_cube_z), helper_hold,
+                 world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
+                 &ret_l, &ret_r))
+            : (planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(hold_right), finalPositions(candidates[index]),
+                 helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z),
+                 world_after_remove, stage_prefix + " PUSH_INTO_BOX",
+                 &push_l, &push_r) &&
+               planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(push_l), finalPositions(push_r),
+                 helper_hold, pushPose(push_entry_x, push_cube_y, push_cube_z),
+                 world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
+                 &ret_l, &ret_r));
+          if (!chain_ok)
+          {
+            RCLCPP_WARN(node->get_logger(),
+              "%s REGRASP_CANDIDATE_%zu/%zu passed FCL but its PUSH_INTO_BOX / "
+              "CELL_RETREAT preflight failed; trying the next candidate.",
+              task.id, index + 1, candidates.size());
+            continue;
+          }
           *left_regrasp_out = std::move(candidates[index]);
-          RCLCPP_INFO(node->get_logger(), "%s selected REGRASP_CANDIDATE_%zu/%zu (pusher=%s).",
+          *left_push_out = std::move(push_l);
+          *right_hold_push_out = std::move(push_r);
+          *left_retreat_out = std::move(ret_l);
+          *right_hold_retreat_out = std::move(ret_r);
+          RCLCPP_INFO(node->get_logger(),
+            "%s selected REGRASP_CANDIDATE_%zu/%zu with a full PUSH/RETREAT preflight (pusher=%s).",
             task.id, index + 1, candidates.size(), push_left ? "left" : "right");
-          break;
+          return true;
         }
-        if (left_regrasp_out->points.empty())
-        {
-          RCLCPP_ERROR(node->get_logger(), "%s no FCL-safe regrasp candidate.", task.id);
-          return false;
-        }
-        if (push_left)
-        {
-          return planAndCheckCommon(node, left_group, right_group, left, right,
-            finalPositions(*left_regrasp_out), finalPositions(hold_right),
-            pushPose(push_cell_x, push_cube_y, push_cube_z), helper_hold,
-            world_after_remove, stage_prefix + " PUSH_INTO_BOX",
-            left_push_out, right_hold_push_out) &&
-            planAndCheckCommon(node, left_group, right_group, left, right,
-              finalPositions(*left_push_out), finalPositions(*right_hold_push_out),
-              pushPose(push_cell_x, push_cube_y, push_cube_z + kLiftHeight), helper_hold,
-              world_after_remove, stage_prefix + " PREPLANNED_CELL_RETREAT",
-              left_retreat_out, right_hold_retreat_out);
-        }
-        return planAndCheckCommon(node, left_group, right_group, left, right,
-          finalPositions(hold_right), finalPositions(*left_regrasp_out),
-          helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z),
-          world_after_remove, stage_prefix + " PUSH_INTO_BOX",
-          left_push_out, right_hold_push_out) &&
-          planAndCheckCommon(node, left_group, right_group, left, right,
-            finalPositions(*left_push_out), finalPositions(*right_hold_push_out),
-            helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z + kLiftHeight),
-            world_after_remove, stage_prefix + " PREPLANNED_CELL_RETREAT",
-            left_retreat_out, right_hold_retreat_out);
+        RCLCPP_ERROR(node->get_logger(),
+          "%s no regrasp candidate passed the full regrasp -> push -> retreat preflight (pusher=%s).",
+          task.id, push_left ? "left" : "right");
+        return false;
       };
 
       if (planning_only)
