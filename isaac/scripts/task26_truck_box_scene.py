@@ -14,6 +14,7 @@
 
 import json
 import math
+import os
 
 import omni.client
 import omni.kit.app
@@ -107,14 +108,18 @@ PARK_Y = (-0.300, +0.300)
 # 代价：墙顶只比第一层 Cube 顶面（0.32）高 30 mm，是个"矮挡边"。第二层需要更高的
 # 墙，与本条前臂净空直接冲突——做第二层时必须换推入方式（例如让 X 导轨跟随推入，
 # 使前臂不再扫过侧墙上方），届时单独设计。
-BOX_INTERIOR_X = (0.810, 1.060)   # 深 0.250：2 格，格心 x = 0.870（浅）/ 0.990（深）
+# 车厢整体 +X 让位：为"推入臂改走滑轨 +X"腾出净空。滑轨静止位 0.650、行程上限已
+# 提到 1.050，推入时基座要走到 0.950，原先车厢 -X 装料口 (0.790) 会挡住前臂。
+# 车厢、格位、预推位**同步**平移，推入行程保持 0.300 m 不变。
+TRUCK_SHIFT_X = 0.150
+BOX_INTERIOR_X = (0.810 + TRUCK_SHIFT_X, 1.060 + TRUCK_SHIFT_X)   # 深 0.250：2 格
 BOX_INTERIOR_Y = (-0.125, 0.125)  # 宽 0.250：2 排，排心 y = +0.065 / -0.065（居中）
 BOX_WALL_THICKNESS = 0.020
 BOX_WALL_HEIGHT = 0.150
-CELL_SHALLOW_X = 0.870
-CELL_DEEP_X = 0.990
+CELL_SHALLOW_X = 0.870 + TRUCK_SHIFT_X
+CELL_DEEP_X = 0.990 + TRUCK_SHIFT_X
 ROW_Y = (+0.065, -0.065)
-PRE_PUSH_X = 0.690                # 装料口外 120 mm 的预推位（纯 +X 推入）
+PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X 推入）
 
 # 装填顺序：每排**先推深格、再推浅格**——浅格先落会挡住通往深格的直推通道。
 TASKS = (
@@ -149,8 +154,12 @@ PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
 RAIL_ROOT = {side: f"/World/{side}_rail" for side in ("left", "right")}
 RAIL_BASE_Y = {"left": LEFT_BASE[1], "right": RIGHT_BASE[1]}   # 固定 ±0.60
 RAIL_REST_X = LEFT_BASE[0]                                     # 静止位 x = 0.45
-RAIL_TRAVEL = {"left": (0.450, 0.850), "right": (0.450, 0.850)}  # X 行程 0.40 m（±0.20）
-RAIL_TRACK_LENGTH = 0.700      # 导轨条总长 = 行程 0.40 + 滑台 0.26 + 余量
+RAIL_TRAVEL = {"left": (0.450, 1.050), "right": (0.450, 1.050)}  # X 行程 0.60 m
+# 行程上限 0.850 -> 1.050：推入 0.300 m 改由滑轨承担（静止位 0.650 -> 0.950），
+# 关节在推入段几乎不动，避免长臂姿态把推力需求顶到力矩上限。
+RAIL_TRACK_LENGTH = 0.900      # 导轨条总长 = 行程 0.60 + 滑台 0.26 + 余量
+# 导轨条以**行程中点**居中（原先借用静止位，行程放长后不再重合）。
+RAIL_TRACK_CENTER_X = 0.5 * (RAIL_TRAVEL["left"][0] + RAIL_TRAVEL["left"][1])
 RAIL_TRACK_WIDTH = 0.028
 RAIL_TRACK_Y_OFFSET = 0.145    # 两条导轨条相对基座中心的 ±Y 偏移（沿 X 走轨）
 RAIL_TRACK_HEIGHT = 0.030
@@ -248,6 +257,32 @@ def _add_fr3(root_path, base):
     xform = UsdGeom.Xformable(robot)
     xform.ClearXformOpOrder()
     xform.AddTranslateOp(opSuffix="task26_base").Set(Gf.Vec3d(*base))
+
+
+def _apply_diag_overrides():
+    """诊断用：从 task26_diag.json 读取临时覆盖项（默认不存在=完全按官方参数）。
+
+    目前只支持 {"wrist_max_force": <N·m>}：把 J5/J6/J7 的驱动力矩上限从官方 12 N·m
+    临时抬高，用来验证"腕关节力矩上限是不是瓶颈"。**这不是验收配置，正式运行不得启用。**
+    """
+    path = "/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/task26_diag.json"
+    if not os.path.exists(path):
+        return None
+    with open(path) as handle:
+        data = json.load(handle)
+    value = float(data.get("wrist_max_force", 0.0))
+    if value <= 0.0:
+        return None
+    for root in (LEFT_ROOT, RIGHT_ROOT):
+        for joint_index in (5, 6, 7):
+            prim = stage.GetPrimAtPath(
+                f"{root}/fr3_link{joint_index - 1}/fr3_joint{joint_index}")
+            if prim.IsValid():
+                attr = prim.GetAttribute("drive:angular:physics:maxForce")
+                if attr.IsValid():
+                    attr.Set(value)
+    print(f"[诊断] 腕关节 J5/J6/J7 力矩上限临时改为 {value} N·m（正式运行不得启用）")
+    return value
 
 
 def _set_fr3_official_start_target(root_path):
@@ -571,14 +606,14 @@ for side, root in RAIL_ROOT.items():
     for index, sign in enumerate((-1.0, +1.0), start=1):
         _visual_box(
             f"{root}/track_{index}",
-            (RAIL_REST_X, base_y + sign * RAIL_TRACK_Y_OFFSET, RAIL_TRACK_Z),
+            (RAIL_TRACK_CENTER_X, base_y + sign * RAIL_TRACK_Y_OFFSET, RAIL_TRACK_Z),
             (RAIL_TRACK_LENGTH, RAIL_TRACK_WIDTH, RAIL_TRACK_HEIGHT),
             RAIL_COLOR_TRACK,
         )
     for index, sign in enumerate((-1.0, +1.0), start=1):
         _visual_box(
             f"{root}/stop_{index}",
-            (RAIL_REST_X + sign * (0.5 * RAIL_TRACK_LENGTH + 0.015), base_y, RAIL_TRACK_Z),
+            (RAIL_TRACK_CENTER_X + sign * (0.5 * RAIL_TRACK_LENGTH + 0.015), base_y, RAIL_TRACK_Z),
             RAIL_STOP_SIZE,
             RAIL_COLOR_TRACK,
         )
@@ -592,6 +627,7 @@ _add_fr3(LEFT_ROOT, LEFT_BASE)
 _add_fr3(RIGHT_ROOT, RIGHT_BASE)
 _set_fr3_official_start_target(LEFT_ROOT)
 _set_fr3_official_start_target(RIGHT_ROOT)
+_apply_diag_overrides()
 _build_tool(LEFT_ROOT, -1.0)
 _build_tool(RIGHT_ROOT, +1.0)
 _build_objects()
@@ -611,6 +647,8 @@ print("first layer cells: %s" % (tuple(item["cell"] for item in TASKS),))
 print("pre-push positions: %s" % (PRE_PUSH,))
 print("rails (X axis, visual only): rest x=%.3f travel=%s; base y fixed %s" %
       (RAIL_REST_X, RAIL_TRAVEL["left"], (RAIL_BASE_Y["left"], RAIL_BASE_Y["right"])))
+print("TRUCK SHIFT: 车厢/格位/预推位 X 平移 %+.3f m；滑轨行程 %s；静止位 %.3f"
+      % (TRUCK_SHIFT_X, RAIL_TRAVEL["left"], RAIL_REST_X))
 print("rails are moved by the bridge via /task26/{left,right}/rail_command")
 print(
     "feed: %d batches x %d cubes; slot A=%s (picked first), slot B=%s; all cubes start parked at z=%.3f" %

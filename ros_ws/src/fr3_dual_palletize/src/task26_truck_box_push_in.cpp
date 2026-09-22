@@ -217,8 +217,11 @@ geometry_msgs::msg::Pose pushPose(double x, double y, double z)
 // y ∈ [cube_y-0.216, cube_y-0.061]；若同列近排已经落稳就会真实碰撞。
 // 车厢：三面围墙（+X 深端、±Y 两侧）+ 顶上无墙，**装料口开在 -X**，底板就是桌面顶面。
 // 车厢在 Y 上居中（对称轴 y=0）、位于 +X 侧。
-constexpr double kBoxInteriorX0 = 0.810;
-constexpr double kBoxInteriorX1 = 1.060;
+// 车厢整体 +X 让位（与 isaac/scripts/task26_truck_box_scene.py 的 TRUCK_SHIFT_X 必须一致）。
+// 推入改由滑轨 +X 承担，基座要走到 0.950，原先装料口 (0.790) 会挡住前臂。
+constexpr double kTruckShiftX = 0.150;
+constexpr double kBoxInteriorX0 = 0.810 + kTruckShiftX;
+constexpr double kBoxInteriorX1 = 1.060 + kTruckShiftX;
 constexpr double kBoxInteriorY0 = -0.125;
 constexpr double kBoxInteriorY1 = 0.125;
 constexpr double kWallThickness = 0.020;
@@ -227,9 +230,9 @@ constexpr double kWallThickness = 0.020;
 // 代价：只比第一层 Cube 顶面（0.32）高 30 mm。第二层需要更高的墙，与本条冲突，
 // 届时改用「X 导轨跟随推入」等方案再设计。
 constexpr double kWallHeight = 0.150;
-constexpr double kPrePushX = 0.690;
-constexpr double kCellShallowX = 0.870;
-constexpr double kCellDeepX = 0.990;
+constexpr double kPrePushX = 0.690 + kTruckShiftX;
+constexpr double kCellShallowX = 0.870 + kTruckShiftX;
+constexpr double kCellDeepX = 0.990 + kTruckShiftX;
 constexpr double kRowYPlus = 0.065;
 constexpr double kRowYMinus = -0.065;
 // 推入臂持 **-X 面** 时，杯面到 Cube 中心的名义偏移：TCP_x = cube_x - (kCubeHalf + 间隙)。
