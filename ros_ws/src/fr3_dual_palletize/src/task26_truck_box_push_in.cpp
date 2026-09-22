@@ -2730,10 +2730,12 @@ int main(int argc, char** argv)
       }
 
       // 推入臂（左臂）持 -X 面时杯面位置：TCP_x = cube_x - (半件 + 间隙)。
-      const double push_entry_x = task.pre_push.position.x - kPushCupOffsetX;
+      // 这三项在**执行路径**里会被实测 Cube 位姿覆盖（见下面「推入段几何改用实测」）；
+      // 预检路径（planning_only）保持标称值——那时 Cube 还在供料槽，实测不适用。
       const double push_cell_x = task.cell.position.x - kPushCupOffsetX;
-      const double push_cube_y = task.pre_push.position.y;
-      const double push_cube_z = task.cell.position.z;
+      double push_entry_x = task.pre_push.position.x - kPushCupOffsetX;
+      double push_cube_y = task.pre_push.position.y;
+      double push_cube_z = task.cell.position.z;
 
       // 预推位放置链路的公共几何（只依赖 task，不依赖执行后的 grasp_pose），提前到
       // 这里以便推入预演段与真实执行段共用。
@@ -2751,10 +2753,17 @@ int main(int argc, char** argv)
       // 「换位到 -X 面 → 沿 +X 推入 → 原路退出」的完整预演。零命令预检与真实执行共用
       // 这一段：推入是本任务几何风险最高的一段（新持件面 + 新推进轴），绝不能只
       // 预演到预推位放置就结束。
+      // lift_only：只规划"笛卡尔竖直抬起"段（它必须在**滑轨平移之前**执行，
+      //            让杯面离开 Cube 所在高度——实测平移时吸盘离 Cube 面仅约 1.2 mm，
+      //            稍偏就会把那颗自由站立的 Cube 顶走）。
+      // lift_already_done：抬起段已执行过，本次只规划摆动/推入/退出，不再重规划抬起
+      //            （否则会用同一个位姿规划出一条零长轨迹）。
       const auto preplanPush =
         [&](const trajectory_msgs::msg::JointTrajectory& start_left,
             const trajectory_msgs::msg::JointTrajectory& hold_right,
             const std::string& stage_prefix,
+            bool lift_only,
+            bool lift_already_done,
             trajectory_msgs::msg::JointTrajectory* left_regrasp_out,
             trajectory_msgs::msg::JointTrajectory* left_push_out,
             trajectory_msgs::msg::JointTrajectory* right_hold_push_out,
@@ -2787,9 +2796,18 @@ int main(int argc, char** argv)
             return false;
           }
         }
-        const trajectory_msgs::msg::JointTrajectory& lift_end =
-          push_left ? grasp_lift_l : grasp_lift_r;
-        regrasp_lift = lift_end;
+        // 抬起段已执行时，它的末端就是本次摆动段的起点（start_left 是推入臂轨迹）。
+        const trajectory_msgs::msg::JointTrajectory& lift_end = lift_already_done
+          ? start_left
+          : (push_left ? grasp_lift_l : grasp_lift_r);
+        if (!lift_already_done)
+        {
+          regrasp_lift = lift_end;
+        }
+        if (lift_only)
+        {
+          return true;
+        }
 
         // 第二段：从抬起位 RRT 摆到 -X 面姿态。显式设置起始状态而不是用 current
         // state：预检不执行任何动作、current state 仍是 HOME，那样预演的就不是真正
@@ -2931,7 +2949,7 @@ int main(int argc, char** argv)
         trajectory_msgs::msg::JointTrajectory po_retreat, po_right_retreat;
         const auto& po_start = push_left ? selected_left_push : selected_right_push;
         const auto& po_hold = push_left ? selected_right_retreat : selected_left_retreat;
-        if (!preplanPush(po_start, po_hold, std::string(task.id),
+        if (!preplanPush(po_start, po_hold, std::string(task.id), false, false,
               &po_regrasp, &po_push, &po_right_push, &po_retreat, &po_right_retreat))
         {
           RCLCPP_ERROR(node->get_logger(),
@@ -3259,6 +3277,61 @@ int main(int argc, char** argv)
         break;
       }
 
+      // ---------------------------------------- 换位第一段：竖直抬起（滑轨平移之前）
+      // 顺序很关键：**抬起必须在滑轨平移之前执行**。平移时工具已在 Cube 上方
+      // kRegraspLiftHeight = 0.2 m，彻底不会蹭到那颗自由站立的 Cube（此前平移时吸盘
+      // 离 Cube 面只有约 1.2 mm，任何偏差都会顶件，实测 Y 向漂 25.4 mm）。
+      // 这一段在**未偏移**的世界系里规划，此刻完全正确；摆动/推入稍后在偏移后的
+      // 世界系里再规划（见下面的 preplanPush 调用）。
+      // 执行路径改用**实测** Cube 位姿定义推入段几何（X/Y/Z）。短推靠杯面摩擦推件，
+      // 落点会偏离标称预推位（实测 x=0.821 vs 标称 0.840，差 19 mm）。换位摆臂的碰撞体
+      // 已按实测放置，若目标仍按标称算，目标位就会落进碰撞体内部 19 mm ⇒ RRT 无解
+      // （实测 REGRASP_NEG_X produced no RRT candidate）。两者必须同源。
+      // 推入**终点**仍用标称格位（push_cell_x），让 Cube 最终落在设计格位。
+      // 换位前后比较 Cube 位置时的基准：用**换位前实测**位姿，而不是标称预推位。
+      // 短推靠杯面摩擦推件，落点本来就偏离标称（实测 x=0.821 vs 标称 0.840）；若拿标称
+      // 当基准，会把"没被扰动"误判成 19.1 mm 漂移并中止（实测踩过）。
+      geometry_msgs::msg::Pose regrasp_reference_pose;
+      bool regrasp_reference_valid = false;
+      {
+        const auto [live_cube, live_revision] = cubes.get(task.cube_index);
+        (void)live_revision;
+        regrasp_reference_pose = live_cube;
+        regrasp_reference_valid = true;
+        push_entry_x = live_cube.position.x - kPushCupOffsetX;
+        push_cube_y = live_cube.position.y;
+        push_cube_z = live_cube.position.z;
+        RCLCPP_INFO(node->get_logger(),
+          "%s 推入段几何改用实测 Cube：entry_x=%.4f cube_y=%.4f cube_z=%.4f"
+          "（标称 entry_x=%.4f，差 %.1f mm）。",
+          task.id, push_entry_x, push_cube_y, push_cube_z,
+          task.pre_push.position.x - kPushCupOffsetX,
+          1000.0 * (live_cube.position.x - task.pre_push.position.x));
+      }
+      {
+        trajectory_msgs::msg::JointTrajectory dummy_regrasp, dummy_push, dummy_hold_push;
+        trajectory_msgs::msg::JointTrajectory dummy_retreat, dummy_hold_retreat;
+        if (!preplanPush(ex_start, ex_hold, std::string(task.id), true, false,
+              &dummy_regrasp, &dummy_push, &dummy_hold_push,
+              &dummy_retreat, &dummy_hold_retreat))
+        {
+          openBothAndConfirm("safe abort after REGRASP_LIFT preplanning failure");
+          all_complete = false;
+          break;
+        }
+      }
+      std::this_thread::sleep_for(250ms);
+      if (regrasp_lift.points.empty() ||
+          !pusher.executeAt(regrasp_lift, std::chrono::steady_clock::now()) ||
+          !pusher.waitAtTarget(regrasp_lift, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+      {
+        RCLCPP_ERROR(node->get_logger(), "%s REGRASP_LIFT execution failed.", task.id);
+        all_complete = false;
+        break;
+      }
+      RCLCPP_INFO(node->get_logger(), "%s REGRASP_LIFT 已在滑轨平移之前完成（工具已抬离 Cube）。",
+        task.id);
+
       // ------------------------------------------------ 滑轨搬站位（推入前）
       // 实测（t26_baseline2.log）：基座停在 0.650 时推入最后两片的推力需求达
       // 87.0 N*m —— 恰好等于 maxForce，驱动器顶在 J1-J4 硬件上限，Cube 落后
@@ -3315,7 +3388,8 @@ int main(int argc, char** argv)
           task.id, kRailRestX, rail_target, g_world_shift_x);
       }
 
-      if (!preplanPush(ex_start, ex_hold, std::string(task.id),
+      // 抬起段已在滑轨平移之前执行：这里以它为起点，只规划摆动/推入/退出。
+      if (!preplanPush(regrasp_lift, ex_hold, std::string(task.id), false, true,
             &left_regrasp, &left_push_in, &right_during_push,
             &left_cell_retreat, &right_during_cell_retreat))
       {
@@ -3323,17 +3397,7 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
-      // 换位第一段：**笛卡尔竖直抬起**（让杯面离开 Cube 所在高度）。
-      std::this_thread::sleep_for(250ms);
-      if (regrasp_lift.points.empty() ||
-          !pusher.executeAt(regrasp_lift, std::chrono::steady_clock::now()) ||
-          !pusher.waitAtTarget(regrasp_lift, kJointSettleToleranceRad, kJointSettleTimeoutSec))
-      {
-        RCLCPP_ERROR(node->get_logger(), "%s REGRASP_LIFT execution failed.", task.id);
-        all_complete = false;
-        break;
-      }
-      // 换位第二段：从抬起位摆到 -X 面姿态。
+      // 换位第二段：从抬起位摆到 -X 面姿态（抬起段已在滑轨平移之前完成）。
       RCLCPP_INFO(node->get_logger(), "%s REGRASP_SWING 时长=%.2f s，点数=%zu。",
         task.id, pointTime(left_regrasp.points.back()), left_regrasp.points.size());
       std::this_thread::sleep_for(250ms);
@@ -3343,14 +3407,16 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
-      // 换位不搬动 Cube：按最新 Ground Truth 复核它仍停在预推位、没有被带偏。
+      // 换位不搬动 Cube：按最新 Ground Truth 复核它相对**换位前实测位姿**没有被扰动。
       std::this_thread::sleep_for(250ms);
       {
         const auto [after_regrasp, after_regrasp_revision] = cubes.get(task.cube_index);
         (void)after_regrasp_revision;
-        const double drift = distance3d(task.pre_push.position, after_regrasp.position);
+        const auto& reference = regrasp_reference_valid
+          ? regrasp_reference_pose.position : task.pre_push.position;
+        const double drift = distance3d(reference, after_regrasp.position);
         RCLCPP_INFO(node->get_logger(),
-          "%s after REGRASP: cube=(%.3f, %.3f, %.3f), drift from pre-push=%.2f mm.",
+          "%s after REGRASP: cube=(%.3f, %.3f, %.3f), drift since regrasp start=%.2f mm.",
           task.id, after_regrasp.position.x, after_regrasp.position.y,
           after_regrasp.position.z, drift * 1000.0);
         if (drift > kPlacementTolerance)
