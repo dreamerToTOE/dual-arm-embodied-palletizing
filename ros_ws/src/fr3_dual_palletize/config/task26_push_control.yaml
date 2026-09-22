@@ -15,7 +15,7 @@ task26_push_control:
     # 推入前把推臂基座沿轨 +X 前进这么多，缩短推入段的力臂。实测基座停 0.650 时
     # 末端两片推力需求 87 N*m 顶到 J1-J4 硬件上限、Cube 落后 6.5 mm。
     # 注意：MoveIt 只有一个世界系，动轨时**双臂同步**前进同一量（辅助臂已停放）。
-    push_base_advance_m: 0.200
+    push_base_advance_m: 0.100
 
     # --- 力觉（Step 2）---
     force_bias_seconds: 0.5      # 静止采集力偏置的时长

@@ -1959,7 +1959,10 @@ bool executePushWithSupervision(
     const Eigen::Vector3d tcp = linkPosition(
       model, eef_link, left_slice.joint_names, finalPositions(left_slice));
     // 推入臂持 -X 面：Cube 中心 = TCP_x + (半件 + 间隙)。
-    const double commanded_cube_x = tcp.x() + kPushCupOffsetX;
+    // tcp 来自 FK，是**模型系**坐标（滑轨搬站位后已整体偏移 -g_world_shift_x）；
+    // 而下面的 pose 是 Isaac Ground Truth，属**仿真系**。不把偏移加回去，lag 会凭空
+    // 多出 Δ —— 实测 Δ=0.100 时第一片就报 "lag=100.65 mm" 并误判卡死。
+    const double commanded_cube_x = tcp.x() + kPushCupOffsetX + g_world_shift_x;
     const auto [pose, revision] = cubes.get(task.cube_index);
     (void)revision;
     const double lag = std::abs(commanded_cube_x - pose.position.x);
