@@ -88,6 +88,9 @@ constexpr double kRightPreContactOffsetY = 0.020;
 // COMMON_X_TRAVEL 的中间采样中仍会擦到桌面；提高到 280 mm 后，工具最低点
 // 仍保有明确净空。该值是载荷共同运输高度，不改变最终放置高度。
 constexpr double kLiftHeight = 0.280;
+// 换位第一段的竖直抬起高度：换位前推入臂的杯面离 Cube 只有约 1.5 mm，若直接走 RRT
+// 绕行会擦到 Cube 把它拖走（实测被拖 446 mm）。先纯 Z 抬起让开 Cube 所在高度。
+constexpr double kRegraspLiftHeight = 0.200;
 // 只为短推的 entry 留出 20 mm X 向余量；不是长距离推送。
 constexpr double kPrePushOffsetX = 0.020;
 // L 型阵列在侧面接触姿态下的最低实体比 Cup 接触面更低。Cube 以 1 mm
@@ -1550,6 +1553,9 @@ int main(int argc, char** argv)
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
   // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
+  // 诊断开关：把车厢三面墙从 MoveIt 规划场景里去掉。用于分辨"失败是不是车厢碰撞体
+  // 参与判定造成的"——它不是验收配置，正式运行必须保持 true。
+  const bool include_box_walls = node->declare_parameter<bool>("include_box_walls", true);
   if (max_batches < 1 || max_batches > kBatchCount ||
       time_scale < 1.0 ||
       !copyRobotDescriptions(node))
@@ -1631,8 +1637,16 @@ int main(int argc, char** argv)
       "task26_cube_1", "task26_cube_2", "task26_cube_3", "task26_cube_4"});
     std::this_thread::sleep_for(300ms);
     std::vector<moveit_msgs::msg::CollisionObject> initial{tableObject()};
-    const auto walls = boxWallObjects();
-    initial.insert(initial.end(), walls.begin(), walls.end());
+    if (include_box_walls)
+    {
+      const auto walls = boxWallObjects();
+      initial.insert(initial.end(), walls.begin(), walls.end());
+    }
+    else
+    {
+      RCLCPP_WARN(node->get_logger(),
+        "Task26 诊断模式：车厢墙体未加入 Planning Scene（include_box_walls=false）。");
+    }
     if (!scene.applyCollisionObjects(initial))
     {
       RCLCPP_ERROR(node->get_logger(), "Task26 无法初始化 MoveIt Planning Scene。");
@@ -2157,6 +2171,11 @@ int main(int argc, char** argv)
       const double entry_left_y = task.pre_push.position.y - kCubeHalf - kSideContactCommandGap;
       const double entry_right_y = task.pre_push.position.y + kCubeHalf + kSideContactCommandGap;
 
+      // 换位第一段（笛卡尔竖直抬起）由 preplanPush 规划后写到这里：真实执行时**必须先
+      // 走这一段**，否则后续从抬起位出发的 RRT 起点与实际位置不符（踩过一次：
+      // 只规划不执行 → 右臂 11.8° 追不上）。
+      trajectory_msgs::msg::JointTrajectory regrasp_lift;
+
       // 「换位到 -X 面 → 沿 +X 推入 → 原路退出」的完整预演。零命令预检与真实执行共用
       // 这一段：推入是本任务几何风险最高的一段（新持件面 + 新推进轴），绝不能只
       // 预演到预推位放置就结束。
@@ -2170,9 +2189,39 @@ int main(int argc, char** argv)
             trajectory_msgs::msg::JointTrajectory* left_retreat_out,
             trajectory_msgs::msg::JointTrajectory* right_hold_retreat_out)
       {
-        // 显式设置起始状态而不是用 current state：planPoseCandidates 内部会重置为
-        // current state，而零命令预检不执行任何动作、current state 仍是 HOME，那样
-        // 预演的就不是真正要走的换位段。
+        // 换位分两段。第一段：**笛卡尔竖直抬起**，让杯面离开 Cube 所在的高度。
+        // 单段 RRT 从 ±Y 持件位直接摆到 -X 面位时，松手后杯面离 Cube 只有约 1.5 mm，
+        // 绕行路径会擦到 Cube 并把它拖走（实测被拖 446 mm，见 TASK26 文档「待修清单」#1）。
+        // 抬起是沿 Cube 侧面滑升，1.5 mm 间隙保持不变，不会拖件。
+        trajectory_msgs::msg::JointTrajectory grasp_lift_l, grasp_lift_r;
+        {
+          const geometry_msgs::msg::Pose lift_left_target = push_left
+            ? sidePose(push_entry_x, push_cube_y - kPushCupOffsetX,
+                push_cube_z + kRegraspLiftHeight, true)
+            : helper_park;
+          const geometry_msgs::msg::Pose lift_right_target = push_left
+            ? helper_park
+            : sidePose(push_entry_x, push_cube_y + kPushCupOffsetX,
+                push_cube_z + kRegraspLiftHeight, false);
+          const auto& lift_left_start = push_left ? start_left : hold_right;
+          const auto& lift_right_start = push_left ? hold_right : start_left;
+          if (!planAndCheckCommon(node, left_group, right_group, left, right,
+                finalPositions(lift_left_start), finalPositions(lift_right_start),
+                lift_left_target, lift_right_target, world_after_remove,
+                stage_prefix + " REGRASP_LIFT", &grasp_lift_l, &grasp_lift_r))
+          {
+            RCLCPP_ERROR(node->get_logger(),
+              "%s REGRASP_LIFT (笛卡尔竖直抬起) failed.", task.id);
+            return false;
+          }
+        }
+        const trajectory_msgs::msg::JointTrajectory& lift_end =
+          push_left ? grasp_lift_l : grasp_lift_r;
+        regrasp_lift = lift_end;
+
+        // 第二段：从抬起位 RRT 摆到 -X 面姿态。显式设置起始状态而不是用 current
+        // state：预检不执行任何动作、current state 仍是 HOME，那样预演的就不是真正
+        // 要走的换位段。
         std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
         for (int attempt = 1; attempt <= kRrtCandidateCount; ++attempt)
         {
@@ -2185,7 +2234,7 @@ int main(int argc, char** argv)
             pusher_group.getRobotModel()->getJointModelGroup(pusher.groupName());
           if (jmg)
           {
-            state->setJointGroupPositions(jmg, finalPositions(start_left));
+            state->setJointGroupPositions(jmg, finalPositions(lift_end));
             state->update();
           }
           pusher_group.setStartState(*state);
@@ -2603,6 +2652,17 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+      // 换位第一段：**笛卡尔竖直抬起**（让杯面离开 Cube 所在高度）。
+      std::this_thread::sleep_for(250ms);
+      if (regrasp_lift.points.empty() ||
+          !pusher.executeAt(regrasp_lift, std::chrono::steady_clock::now()) ||
+          !pusher.waitAtTarget(regrasp_lift, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+      {
+        RCLCPP_ERROR(node->get_logger(), "%s REGRASP_LIFT execution failed.", task.id);
+        all_complete = false;
+        break;
+      }
+      // 换位第二段：从抬起位摆到 -X 面姿态。
       std::this_thread::sleep_for(250ms);
       if (!pusher.executeAt(left_regrasp, std::chrono::steady_clock::now()) ||
           !pusher.waitAtTarget(left_regrasp, kJointSettleToleranceRad, kJointSettleTimeoutSec))
