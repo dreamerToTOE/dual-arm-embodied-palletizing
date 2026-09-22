@@ -1999,6 +1999,22 @@ int main(int argc, char** argv)
       }
       RCLCPP_INFO(node->get_logger(), "%s RIGHT_OUTER_APPROACH evaluating %zu candidates from %d batches.",
         task.id, right_outer_candidates.size(), kRrtCandidateBatches);
+      // 推入臂**按排选取**：每臂只推自己那一侧的一排。反排去推要跨到对面，实测约
+      // 0.69 m 斜向长臂，RRT 全部超时；同侧则是约 0.57 m。
+      const bool push_left = task.cell.position.y < 0.0;
+      Arm& pusher = push_left ? left : right;
+      Arm& helper = push_left ? right : left;
+      moveit::planning_interface::MoveGroupInterface& pusher_group =
+        push_left ? left_group : right_group;
+      // 辅助臂在推入阶段的停放位：**必须挪出推入臂的工作区**。实测停在"预推位正
+      // 上方"时，它的侧面吸盘会撞到推入臂的 link6/link7——推入过程中前臂会扫到
+      // y≈0.10、z≈0.56，而那个停放位恰好落在同一个区域。因此让辅助臂退到**自己那
+      // 一侧**（y=∓0.32）并略微后退，彻底离开推入通道。
+      const geometry_msgs::msg::Pose helper_park = sidePose(
+        task.pre_push.position.x - 0.10, push_left ? +0.32 : -0.32,
+        task.pre_push.position.z + kSideContactCommandZOffset + kReleaseGapZ + kLiftHeight,
+        !push_left);
+
       // 记下选中候选预演出的末端轨迹。零命令预检要用它们作为推入段/退出的起点：
       // 真实执行路径用实际执行后的 left_push / right_retreat，而预检不执行，只能
       // 用这里预演出的结果。
@@ -2098,9 +2114,9 @@ int main(int argc, char** argv)
               &candidate_left_push, &candidate_right_push) ||
             !planAndCheckCommon(node, left_group, right_group, left, right,
               finalPositions(candidate_left_push), finalPositions(candidate_right_push),
-              sidePose(task.pre_push.position.x, candidate_entry_left_y,
-                candidate_release_z + kLiftHeight, true),
-              sidePose(task.pre_push.position.x, candidate_entry_right_y,
+              push_left ? sidePose(task.pre_push.position.x, candidate_entry_left_y,
+                candidate_release_z + kLiftHeight, true) : helper_park,
+              push_left ? helper_park : sidePose(task.pre_push.position.x, candidate_entry_right_y,
                 candidate_release_z + kLiftHeight, false),
               world_after_remove, candidate_prefix + " PREPLANNED_COMMON_RETREAT",
               &candidate_left_retreat, &candidate_right_retreat))
@@ -2141,20 +2157,7 @@ int main(int argc, char** argv)
       const double entry_left_y = task.pre_push.position.y - kCubeHalf - kSideContactCommandGap;
       const double entry_right_y = task.pre_push.position.y + kCubeHalf + kSideContactCommandGap;
 
-      // 推入臂必须**按排选取**：每臂只推自己那一侧的一排。反排去推要跨到对面，
-      // 实测约 0.69 m 斜向长臂，RRT 全部超时；同侧则是约 0.57 m 的舒适伸展。
-      // （车厢居中后两排到对面臂的横向距离就是 0.665 m，这是布局的固有代价。）
-      const bool push_left = task.cell.position.y < 0.0;
-      Arm& pusher = push_left ? left : right;
-      Arm& helper = push_left ? right : left;
-      moveit::planning_interface::MoveGroupInterface& pusher_group =
-        push_left ? left_group : right_group;
-      // 辅助臂在推入全程保持在退出位姿不动。
-      const geometry_msgs::msg::Pose helper_hold = push_left
-        ? sidePose(task.pre_push.position.x, entry_right_y, release_z + kLiftHeight, false)
-        : sidePose(task.pre_push.position.x, entry_left_y, release_z + kLiftHeight, true);
-
-      // 「换位到 -X 面 → 沿 +X 推入 → 推出」的完整预演。零命令预检与真实执行共用
+      // 「换位到 -X 面 → 沿 +X 推入 → 原路退出」的完整预演。零命令预检与真实执行共用
       // 这一段：推入是本任务几何风险最高的一段（新持件面 + 新推进轴），绝不能只
       // 预演到预推位放置就结束。
       const auto preplanPush =
@@ -2233,22 +2236,22 @@ int main(int argc, char** argv)
           const bool chain_ok = push_left
             ? (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(candidates[index]), finalPositions(hold_right),
-                 pushPose(push_cell_x, push_cube_y, push_cube_z), helper_hold,
+                 pushPose(push_cell_x, push_cube_y, push_cube_z), helper_park,
                  world_after_remove, stage_prefix + " PUSH_INTO_BOX",
                  &push_l, &push_r) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(push_l), finalPositions(push_r),
-                 pushPose(push_entry_x, push_cube_y, push_cube_z), helper_hold,
+                 pushPose(push_entry_x, push_cube_y, push_cube_z), helper_park,
                  world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
                  &ret_l, &ret_r))
             : (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(hold_right), finalPositions(candidates[index]),
-                 helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z),
+                 helper_park, pushPose(push_cell_x, push_cube_y, push_cube_z),
                  world_after_remove, stage_prefix + " PUSH_INTO_BOX",
                  &push_l, &push_r) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(push_l), finalPositions(push_r),
-                 helper_hold, pushPose(push_entry_x, push_cube_y, push_cube_z),
+                 helper_park, pushPose(push_entry_x, push_cube_y, push_cube_z),
                  world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
                  &ret_l, &ret_r));
           if (!chain_ok)
@@ -2550,8 +2553,10 @@ int main(int argc, char** argv)
       // 推入全程贴桌面滑动、不做抬升：单臂吸盘不承重，重量必须由桌面承担。
       trajectory_msgs::msg::JointTrajectory left_retreat, right_retreat;
       if (!stage("PREPLANNED_COMMON_RETREAT",
-            sidePose(task.pre_push.position.x, entry_left_y, release_z + kLiftHeight, true),
-            sidePose(task.pre_push.position.x, entry_right_y, release_z + kLiftHeight, false),
+            push_left ? sidePose(task.pre_push.position.x, entry_left_y,
+              release_z + kLiftHeight, true) : helper_park,
+            push_left ? helper_park : sidePose(task.pre_push.position.x, entry_right_y,
+              release_z + kLiftHeight, false),
             left_push, right_push, &left_retreat, &right_retreat))
       {
         openBothAndConfirm("safe abort after retreat preplanning failure");
