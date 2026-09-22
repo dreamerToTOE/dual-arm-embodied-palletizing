@@ -723,6 +723,13 @@ public:
         {
           joint_positions_[state->name[index]] = state->position[index];
         }
+        // 速度只服务于超时诊断：用来区分"被挡住"（速度≈0）与"还在追"（速度非零）。
+        joint_velocities_.clear();
+        const std::size_t velocity_count = std::min(state->name.size(), state->velocity.size());
+        for (std::size_t index = 0; index < velocity_count; ++index)
+        {
+          joint_velocities_[state->name[index]] = state->velocity[index];
+        }
         seen_joint_state_.store(true);
         joint_condition_.notify_all();
       });
@@ -1019,6 +1026,31 @@ public:
       : "missing joint state";
     RCLCPP_ERROR(node_->get_logger(), "%s final joint-state did not settle within %.1f s: max_error=%s.",
       side_.c_str(), timeout_sec, max_error_text.c_str());
+    // 超时诊断：逐关节残差 + 实测速度。速度≈0 = 被挡住；速度非零 = 还在追（给时间即可）。
+    {
+      std::unique_lock<std::mutex> lock(joint_mutex_);
+      std::ostringstream detail;
+      for (std::size_t index = 0; index < trajectory.joint_names.size(); ++index)
+      {
+        const auto& full_name = trajectory.joint_names[index];
+        const std::string name = full_name.rfind(prefix_, 0) == 0
+          ? full_name.substr(prefix_.size()) : full_name;
+        const auto position = joint_positions_.find(name);
+        if (position == joint_positions_.end())
+        {
+          continue;
+        }
+        detail << " " << name << " " << std::fixed << std::setprecision(2)
+               << (position->second - target[index]) * 180.0 / kPi << "deg";
+        const auto velocity = joint_velocities_.find(name);
+        if (velocity != joint_velocities_.end())
+        {
+          detail << "/" << std::setprecision(3) << velocity->second << "rad_s";
+        }
+      }
+      RCLCPP_ERROR(node_->get_logger(), "%s 超时细节（残差deg / 速度rad_s）：%s",
+        side_.c_str(), detail.str().c_str());
+    }
     return false;
   }
 
@@ -1078,6 +1110,7 @@ private:
   mutable std::mutex joint_mutex_;
   mutable std::condition_variable joint_condition_;
   std::unordered_map<std::string, double> joint_positions_;
+  std::unordered_map<std::string, double> joint_velocities_;
 };
 
 bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& left_trajectory,
@@ -3097,6 +3130,8 @@ int main(int argc, char** argv)
         break;
       }
       // 换位第二段：从抬起位摆到 -X 面姿态。
+      RCLCPP_INFO(node->get_logger(), "%s REGRASP_SWING 时长=%.2f s，点数=%zu。",
+        task.id, pointTime(left_regrasp.points.back()), left_regrasp.points.size());
       std::this_thread::sleep_for(250ms);
       if (!pusher.executeAt(left_regrasp, std::chrono::steady_clock::now()) ||
           !pusher.waitAtTarget(left_regrasp, kJointSettleToleranceRad, kJointSettleTimeoutSec))
