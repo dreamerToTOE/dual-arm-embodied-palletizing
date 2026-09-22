@@ -3252,6 +3252,10 @@ int main(int argc, char** argv)
       // 停放在停放位，同步平移无副作用。
       if (push_base_advance > 0.0)
       {
+        // 互锁要求"距上次关节命令静默 >= 1.0 s"，而**复位和前进都落在这个静默窗内**，
+        // 所以必须先睡够再动轨。实测把这个 sleep 放在复位之后，复位会被互锁拒绝：
+        // "left rail 未在 15.0 s 内到位 —— 很可能被互锁拒绝"。
+        std::this_thread::sleep_for(1200ms);
         if (g_world_shift_x != 0.0)
         {
           // 上一件遗留的站位：先回静止位再重新搬，保证每件都从确定起点开始。
@@ -3271,7 +3275,6 @@ int main(int argc, char** argv)
             break;
           }
         }
-        std::this_thread::sleep_for(1200ms);   // 满足互锁的 1.0 s 关节命令静默
         const double rail_target = kRailRestX + push_base_advance;
         if (!left_rail.moveTo(rail_target, 15.0) || !right_rail.moveTo(rail_target, 15.0))
         {
