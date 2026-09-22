@@ -2801,7 +2801,12 @@ int main(int argc, char** argv)
         // re-grasped" 中止。这与外侧接近是同一类病因，用同一套修法：规划前按预推位
         // 把 Cube 放回，规划完立刻摘走。目标位（杯面离 Cube 面 1 mm）本身无碰撞，带
         // Cube 必然可解。
-        if (!scene.applyCollisionObject(cubeObject(object_id, task.pre_push)))
+        // 用**实测**位姿，而不是标称 task.pre_push：短推是靠杯面摩擦推件，落点随接触
+        // 浮动——实测落桌后 Cube 停在 x=0.821（标称 0.840，差 19 mm）。若按标称放碰撞体，
+        // RRT 会从 Cube 的**真实**位置抹过去并把它顶走（实测 Y 向漂 25.4 mm 后中止）。
+        const auto [regrasp_cube, regrasp_revision] = cubes.get(task.cube_index);
+        (void)regrasp_revision;
+        if (!scene.applyCollisionObject(cubeObject(object_id, regrasp_cube)))
         {
           RCLCPP_ERROR(node->get_logger(),
             "%s cannot re-apply the cube CollisionObject %s for the regrasp.",
@@ -3191,13 +3196,38 @@ int main(int argc, char** argv)
       // 流程：右臂先释放并竖直退出 → 左臂松开 -Y 面（Cube 由桌面承托）→ 左臂
       // 空载换位吸住 -X 面 → 左臂沿 +X 分段推入格位 → 格内释放并退出。
       // 推入全程贴桌面滑动、不做抬升：单臂吸盘不承重，重量必须由桌面承担。
+      // 「先落桌、再双臂同步撤出」——修正原先的单臂承重窗口。
+      //
+      // SIDE_SHORT_PUSH 结束时 Cube 中心还在 release_z = pre_push.z + kReleaseGapZ，
+      // 即**离桌面 kReleaseGapZ = 20 mm**。原实现让辅助臂先松手并竖直退出、推入臂仍
+      // 吸着，于是这 20 mm 的下落/失稳由**单臂**承担 —— 与本项目"单臂吸盘搬不动
+      // Cube、必须双臂"的前提矛盾（验收实测：Cube 悬着、左臂已退出）。
+      // 改为：① 双臂共同下降 kReleaseGapZ，把 Cube **完全放到桌面**（重量交给桌面）；
+      //       ② 两侧吸盘**同时**松开；③ 之后才各自退出。
+      trajectory_msgs::msg::JointTrajectory left_drop, right_drop;
+      if (!stage("COMMON_DROP_TO_TABLE",
+            sidePose(entry_x, entry_left_y, task.pre_push.position.z + kSideContactCommandZOffset, true),
+            sidePose(entry_x, entry_right_y, task.pre_push.position.z + kSideContactCommandZOffset, false),
+            left_push, right_push, &left_drop, &right_drop) ||
+          !executeSync(left, left_drop, right, right_drop) ||
+          !trace_held("COMMON_DROP_TO_TABLE"))
+      {
+        openBothAndConfirm("safe abort after COMMON_DROP_TO_TABLE failure");
+        all_complete = false;
+        break;
+      }
+      // 两侧吸盘同时松开。Cube 此时已完全由桌面承托，不存在单臂承重阶段。
+      openBothAndConfirm("after COMMON_DROP_TO_TABLE: cube is on the table");
+
       trajectory_msgs::msg::JointTrajectory left_retreat, right_retreat;
+      // 退出段起点改为落桌后的末端（left_drop/right_drop），否则预演的起点与实际
+      // 位置差 kReleaseGapZ，第一段会跳。
       if (!stage("PREPLANNED_COMMON_RETREAT",
             push_left ? sidePose(task.pre_push.position.x, entry_left_y,
               release_z + kLiftHeight, true) : helper_park,
             push_left ? helper_park : sidePose(task.pre_push.position.x, entry_right_y,
               release_z + kLiftHeight, false),
-            left_push, right_push, &left_retreat, &right_retreat))
+            left_drop, right_drop, &left_retreat, &right_retreat))
       {
         openBothAndConfirm("safe abort after retreat preplanning failure");
         all_complete = false;
@@ -3214,26 +3244,17 @@ int main(int argc, char** argv)
       trajectory_msgs::msg::JointTrajectory left_regrasp;
       trajectory_msgs::msg::JointTrajectory left_push_in, right_during_push;
       trajectory_msgs::msg::JointTrajectory left_cell_retreat, right_during_cell_retreat;
-      const auto& ex_start = push_left ? left_push : right_push;
+      // 起点是**落桌后**的末端：中间多了 COMMON_DROP_TO_TABLE 这一段。
+      const auto& ex_start = push_left ? left_drop : right_drop;
       const auto& ex_hold = push_left ? right_retreat : left_retreat;
 
-      // 辅助臂先释放并竖直退出；推入臂仍保持 ±Y 面吸附（桥会持续保持上一次关节目标）。
+      // 吸盘在上面的 COMMON_DROP_TO_TABLE 之后已经**同时**松开，这里只让辅助臂
+      // 空载退到停放位（Cube 已落桌承托，不存在单臂承重）。
       const auto& helper_retreat_traj = push_left ? right_retreat : left_retreat;
-      helper.suction(false);
-      if (!helper.waitSuction(false, 6.0) ||
-          !helper.executeAt(helper_retreat_traj, std::chrono::steady_clock::now()) ||
+      if (!helper.executeAt(helper_retreat_traj, std::chrono::steady_clock::now()) ||
           !helper.waitAtTarget(helper_retreat_traj, kJointSettleToleranceRad, kJointSettleTimeoutSec))
       {
         openBothAndConfirm("safe abort after helper arm retreat failure");
-        all_complete = false;
-        break;
-      }
-
-      // 推入臂松开 ±Y 面：Cube 停在预推位、由桌面承托，随后空载换位到 -X 面。
-      pusher.suction(false);
-      if (!pusher.waitSuction(false, 6.0))
-      {
-        openBothAndConfirm("safe abort after pusher release before regrasp");
         all_complete = false;
         break;
       }
