@@ -1989,6 +1989,23 @@ int main(int argc, char** argv)
         cube_after_left_contact.position.x,
         right_live_contact_y + kRightPreContactOffsetY,
         cube_after_left_contact.position.z + kSideContactCommandZOffset, false);
+      // 关键：外侧接近必须让规划器**重新看见那颗 Cube**。
+      // 上面为了接触/负载段把它从规划场景摘掉了（scene.removeCollisionObjects），
+      // 若这里继续在"无 Cube 世界"里规划，RRT 会把 L 型工具**从 Cube 顶上抹过去**；
+      // 仿真里工具就压在 Cube 顶缘上被接触顶住，停在离目标 ~6.9° 处，
+      // final joint-state 25 s 超时（连续多轮复现，右 TCP 一律停在 Cube 顶面上方
+      // 约 35 mm）。外侧接近是**空载、在 Cube 外侧**的动作，目标位本身离 Cube 面
+      // 还有 kRightPreContactOffsetY=20 mm 净空，带 Cube 规划必然可解；随后的
+      // 接触段仍是 1 mm 间隙的纯 Y 直线靠近。
+      if (!scene.applyCollisionObject(cubeObject(object_id, cube_after_left_contact)))
+      {
+        RCLCPP_ERROR(node->get_logger(),
+          "%s cannot re-apply the cube CollisionObject %s for the outer approach.",
+          task.id, object_id.c_str());
+        all_complete = false;
+        break;
+      }
+      std::this_thread::sleep_for(250ms);
       for (int batch = 1; batch <= kRrtCandidateBatches; ++batch)
       {
         std::vector<trajectory_msgs::msg::JointTrajectory> batch_candidates;
@@ -2004,6 +2021,10 @@ int main(int argc, char** argv)
           std::make_move_iterator(batch_candidates.begin()),
           std::make_move_iterator(batch_candidates.end()));
       }
+      // 外侧接近已规划完：把 Cube 摘回"无 Cube 世界"，后续接触/负载段的
+      // 校验世界必须与 world_after_remove 保持一致。
+      scene.removeCollisionObjects({object_id});
+      std::this_thread::sleep_for(250ms);
       if (right_outer_candidates.empty())
       {
         RCLCPP_ERROR(node->get_logger(), "%s RIGHT_OUTER_APPROACH exhausted %d RRT candidate batches.",
