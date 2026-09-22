@@ -262,27 +262,43 @@ def _add_fr3(root_path, base):
 def _apply_diag_overrides():
     """诊断用：从 task26_diag.json 读取临时覆盖项（默认不存在=完全按官方参数）。
 
-    目前只支持 {"wrist_max_force": <N·m>}：把 J5/J6/J7 的驱动力矩上限从官方 12 N·m
-    临时抬高，用来验证"腕关节力矩上限是不是瓶颈"。**这不是验收配置，正式运行不得启用。**
+    支持（任一项为空 / <=0 表示不改该项）：
+        {"wrist_max_force": <N·m>, "wrist_stiffness": <>, "wrist_damping": <>}
+    只作用于 J5/J6/J7，用于把"腕关节 12 N·m 上限 vs 驱动刚度"这件事分离出来。
+    **这不是验收配置，正式运行不得启用。**
     """
     path = "/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/task26_diag.json"
     if not os.path.exists(path):
         return None
     with open(path) as handle:
         data = json.load(handle)
-    value = float(data.get("wrist_max_force", 0.0))
-    if value <= 0.0:
+    overrides = {}
+    for key, attribute in (
+        ("wrist_max_force", "drive:angular:physics:maxForce"),
+        ("wrist_stiffness", "drive:angular:physics:stiffness"),
+        ("wrist_damping", "drive:angular:physics:damping"),
+    ):
+        try:
+            value = float(data.get(key, 0.0))
+        except (TypeError, ValueError):
+            value = 0.0
+        if value > 0.0:
+            overrides[attribute] = value
+    if not overrides:
         return None
     for root in (LEFT_ROOT, RIGHT_ROOT):
         for joint_index in (5, 6, 7):
             prim = stage.GetPrimAtPath(
                 f"{root}/fr3_link{joint_index - 1}/fr3_joint{joint_index}")
-            if prim.IsValid():
-                attr = prim.GetAttribute("drive:angular:physics:maxForce")
+            if not prim.IsValid():
+                continue
+            for attribute, value in overrides.items():
+                attr = prim.GetAttribute(attribute)
                 if attr.IsValid():
                     attr.Set(value)
-    print(f"[诊断] 腕关节 J5/J6/J7 力矩上限临时改为 {value} N·m（正式运行不得启用）")
-    return value
+    print("[诊断] 腕关节 J5/J6/J7 临时覆盖 %s（正式运行不得启用）"
+          % {k.split(":")[-1]: v for k, v in overrides.items()})
+    return overrides
 
 
 def _set_fr3_official_start_target(root_path):
