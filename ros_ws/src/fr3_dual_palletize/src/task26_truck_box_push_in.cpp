@@ -214,15 +214,15 @@ geometry_msgs::msg::Pose pushPose(double x, double y, double z)
 // y ∈ [cube_y-0.216, cube_y-0.061]；若同列近排已经落稳就会真实碰撞。
 // 车厢：三面围墙（+X 深端、±Y 两侧）+ 顶上无墙，**装料口开在 -X**，底板就是桌面顶面。
 // 车厢在 Y 上居中（对称轴 y=0）、位于 +X 侧。
-constexpr double kBoxInteriorX0 = 0.660;
-constexpr double kBoxInteriorX1 = 0.910;
+constexpr double kBoxInteriorX0 = 0.810;
+constexpr double kBoxInteriorX1 = 1.060;
 constexpr double kBoxInteriorY0 = -0.125;
 constexpr double kBoxInteriorY1 = 0.125;
 constexpr double kWallThickness = 0.020;
 constexpr double kWallHeight = 0.250;
-constexpr double kPrePushX = 0.540;
-constexpr double kCellShallowX = 0.720;
-constexpr double kCellDeepX = 0.840;
+constexpr double kPrePushX = 0.690;
+constexpr double kCellShallowX = 0.870;
+constexpr double kCellDeepX = 0.990;
 constexpr double kRowYPlus = 0.065;
 constexpr double kRowYMinus = -0.065;
 // 推入臂持 **-X 面** 时，杯面到 Cube 中心的名义偏移：TCP_x = cube_x - (kCubeHalf + 间隙)。
