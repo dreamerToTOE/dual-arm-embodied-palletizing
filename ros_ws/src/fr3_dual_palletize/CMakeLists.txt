@@ -6,6 +6,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -655,7 +656,11 @@ ament_target_dependencies(task25_batched_side_suction
 add_executable(task26_truck_box_push_in
   src/task26_truck_box_push_in.cpp
 )
+# 推入控制参数走 config/task26_push_control.yaml，需要 yaml-cpp（非 ament 包，
+# 必须显式链接，ament_target_dependencies 不会带出它）。
+target_link_libraries(task26_truck_box_push_in yaml-cpp)
 ament_target_dependencies(task26_truck_box_push_in
+  ament_index_cpp
   rclcpp
   sensor_msgs
   std_msgs
@@ -763,6 +768,7 @@ ament_export_dependencies(
   moveit_core
   moveit_ros_planning_interface
   yaml-cpp
+  ament_index_cpp
   rosidl_default_runtime
 )
 

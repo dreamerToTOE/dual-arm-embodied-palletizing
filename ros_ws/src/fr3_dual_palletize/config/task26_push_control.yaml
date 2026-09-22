@@ -1,0 +1,39 @@
+# Task26 推入段控制参数（1D 导纳 + 卡阻检测）。
+#
+# 开发顺序（不得颠倒）：
+#   1. Baseline   原纯位置推入可重复运行并留日志
+#   2. Force sense 只加力传感，不改控制器（本文件先服务这一步）
+#   3. 1D admittance  仅推进方向做力控，其余 5 个自由度保持接触瞬间的值
+#   4. Jam detection  力阈值 + 位移停滞双条件
+#   5. Lateral compliance  Fy -> 0
+#   6. Yaw compliance      Mz -> 0
+#
+# 第一版仅实现 1--4。所有参数必须来自本文件，不允许散落硬编码。
+task26_push_control:
+  ros__parameters:
+    # --- 力觉（Step 2）---
+    force_bias_seconds: 0.5      # 静止采集力偏置的时长
+    force_lpf_cutoff_hz: 15.0    # 一阶低通截止频率（10~20 Hz）
+    wrench_log_path: ""          # 非空时把 raw/filtered wrench 写成 CSV
+
+    # --- 接触判据 / 目标力（Step 3）---
+    contact_force_n: 1.5         # F_contact：超过它并持续 contact_hold_sec 才判接触
+    contact_hold_sec: 0.08       # 50~100 ms，避免碰撞尖峰误触发
+    target_force_n: 4.0          # F_target：稳态目标推力
+    force_ramp_sec: 0.4          # 0 -> F_target 的爬升时间，减小冲击
+
+    # --- 二阶导纳（K_d = 0）---
+    virtual_mass: 2.0            # M_d [kg]
+    virtual_damping: 250.0       # B_d [N*s/m]
+    virtual_stiffness: 0.0       # K_d（第一版必须为 0）
+    max_push_speed: 0.016        # v_push_max [m/s]
+    max_retreat_speed: 0.008     # v_retreat_max [m/s]
+
+    # --- 卡阻 / 到位（Step 4）---
+    jam_force_n: 12.0            # F_jam
+    jam_hold_sec: 0.2            # 高推力需持续这么久
+    jam_window_sec: 0.3          # 同时检查最近这段时间内
+    jam_min_progress_m: 0.001    # 位移小于 1 mm 才算卡阻
+    seated_depth_tolerance_m: 0.003  # 到位误差 1~3 mm，优先按插入深度判定
+    jam_retry_limit: 2           # 初版最多重试次数
+    retract_distance_m: 0.008    # 卡阻后退 5~10 mm

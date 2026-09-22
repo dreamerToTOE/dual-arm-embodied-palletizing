@@ -15,6 +15,7 @@
 #include <cmath>
 #include <condition_variable>
 #include <cstdint>
+#include <fstream>
 #include <iomanip>
 #include <iterator>
 #include <limits>
@@ -47,6 +48,9 @@
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
+#include <yaml-cpp/yaml.h>
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 using namespace std::chrono_literals;
 
@@ -1388,6 +1392,115 @@ bool planAndCheckCommon(
   return true;
 }
 
+// ---------------------------------------------------------------- 推入段控制
+//
+// Task26 推入段参数（1D 导纳 + 卡阻检测）。全部来自
+// config/task26_push_control.yaml，不允许散落硬编码。
+struct PushControlConfig
+{
+  double force_bias_seconds{0.5};
+  double force_lpf_cutoff_hz{15.0};
+  std::string wrench_log_path;
+  double contact_force_n{1.5};
+  double contact_hold_sec{0.08};
+  double target_force_n{4.0};
+  double force_ramp_sec{0.4};
+  double virtual_mass{2.0};
+  double virtual_damping{250.0};
+  double virtual_stiffness{0.0};
+  double max_push_speed{0.016};
+  double max_retreat_speed{0.008};
+  double jam_force_n{12.0};
+  double jam_hold_sec{0.2};
+  double jam_window_sec{0.3};
+  double jam_min_progress_m{0.001};
+  double seated_depth_tolerance_m{0.003};
+  int jam_retry_limit{2};
+  double retract_distance_m{0.008};
+};
+
+PushControlConfig loadPushControlConfig(const rclcpp::Node::SharedPtr& node)
+{
+  PushControlConfig config;
+  std::string path;
+  try
+  {
+    const std::string share = ament_index_cpp::get_package_share_directory("fr3_dual_palletize");
+    path = share + "/config/task26_push_control.yaml";
+  }
+  catch (const std::exception& error)
+  {
+    RCLCPP_WARN(node->get_logger(), "找不到 fr3_dual_palletize share 目录：%s", error.what());
+    return config;
+  }
+  std::ifstream stream(path);
+  if (!stream)
+  {
+    RCLCPP_WARN(node->get_logger(), "推入控制参数 %s 不存在，使用内置默认值。", path.c_str());
+    return config;
+  }
+  const YAML::Node root = YAML::Load(stream);
+  const YAML::Node values = root["task26_push_control"]["ros__parameters"];
+  if (!values)
+  {
+    RCLCPP_WARN(node->get_logger(), "%s 缺少 task26_push_control.ros__parameters。", path.c_str());
+    return config;
+  }
+  auto readDouble = [&](const char* key, double& target)
+  {
+    if (values[key]) { target = values[key].as<double>(); }
+  };
+  auto readInt = [&](const char* key, int& target)
+  {
+    if (values[key]) { target = values[key].as<int>(); }
+  };
+  readDouble("force_bias_seconds", config.force_bias_seconds);
+  readDouble("force_lpf_cutoff_hz", config.force_lpf_cutoff_hz);
+  readDouble("contact_force_n", config.contact_force_n);
+  readDouble("contact_hold_sec", config.contact_hold_sec);
+  readDouble("target_force_n", config.target_force_n);
+  readDouble("force_ramp_sec", config.force_ramp_sec);
+  readDouble("virtual_mass", config.virtual_mass);
+  readDouble("virtual_damping", config.virtual_damping);
+  readDouble("virtual_stiffness", config.virtual_stiffness);
+  readDouble("max_push_speed", config.max_push_speed);
+  readDouble("max_retreat_speed", config.max_retreat_speed);
+  readDouble("jam_force_n", config.jam_force_n);
+  readDouble("jam_hold_sec", config.jam_hold_sec);
+  readDouble("jam_window_sec", config.jam_window_sec);
+  readDouble("jam_min_progress_m", config.jam_min_progress_m);
+  readDouble("seated_depth_tolerance_m", config.seated_depth_tolerance_m);
+  readInt("jam_retry_limit", config.jam_retry_limit);
+  readDouble("retract_distance_m", config.retract_distance_m);
+  if (values["wrench_log_path"]) { config.wrench_log_path = values["wrench_log_path"].as<std::string>(); }
+  RCLCPP_INFO(node->get_logger(),
+    "推入控制参数已载入 %s：F_contact=%.2f N, F_target=%.2f N, M_d=%.2f kg, B_d=%.1f N*s/m, "
+    "K_d=%.2f, v_push<=%.3f m/s, F_jam=%.1f N",
+    path.c_str(), config.contact_force_n, config.target_force_n, config.virtual_mass,
+    config.virtual_damping, config.virtual_stiffness, config.max_push_speed, config.jam_force_n);
+  return config;
+}
+
+// 取名字里最后一段连续数字："left_fr3_joint3" / "fr3_joint3" 都得到 3。
+int trailingJointIndex(const std::string& name)
+{
+  int last = -1;
+  int current = -1;
+  for (const char character : name)
+  {
+    if (character >= '0' && character <= '9')
+    {
+      current = (current < 0 ? 0 : current) * 10 + (character - '0');
+    }
+    else if (current >= 0)
+    {
+      last = current;
+      current = -1;
+    }
+  }
+  return current >= 0 ? current : last;
+}
+
 // 关节实测力矩（桥在 /task26/{left,right}/measured_joint_forces 上按 20 Hz 发布）。
 class ForceBuffer
 {
@@ -1398,23 +1511,216 @@ public:
       topic, 10, [this](const sensor_msgs::msg::JointState::SharedPtr message)
       {
         double peak = 0.0;
+        std::vector<double> efforts;
+        efforts.reserve(message->effort.size());
         for (const auto value : message->effort)
         {
           peak = std::max(peak, std::abs(value));
+          efforts.push_back(value);
         }
         std::lock_guard<std::mutex> lock(mutex_);
         peak_ = peak;
+        // 力估计需要完整向量，不再只留 max（peak() 行为保持不变）。
+        efforts_ = std::move(efforts);
         ready_ = true;
       });
   }
   double peak() const { std::lock_guard<std::mutex> lock(mutex_); return peak_; }
   bool ready() const { std::lock_guard<std::mutex> lock(mutex_); return ready_; }
+  std::vector<double> efforts() const { std::lock_guard<std::mutex> lock(mutex_); return efforts_; }
 
 private:
   mutable std::mutex mutex_;
   double peak_{0.0};
+  std::vector<double> efforts_;
   bool ready_{false};
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr subscription_;
+};
+
+// 末端等效力旋量估计（开发顺序 Step 2：只加力传感，不动控制器）。
+//
+// 只用"真机上也能拿到"的信号：关节位置 + 关节实测力矩。
+//   tau_ext = tau_measured - tau_bias
+//   F_ext   = (J^T)^+ tau_ext     J = 末端几何 Jacobian（世界系）
+//   F_push  = -F_ext . e_push     把阻碍推进的环境反力定义为正
+//
+// tau_bias 在接触前的静止窗口采集，因此不做 q 插值（第一版限制：推进期间关节
+// 几乎不动）。Cube--槽 之间的接触力属于仿真上帝视角，只允许写入日志用于真值
+// 对照，绝不允许作为闭环输入。
+class WrenchEstimator
+{
+public:
+  WrenchEstimator(const rclcpp::Node::SharedPtr& node, const std::string& side,
+                  const moveit::core::RobotModelConstPtr& model, const std::string& tip_link,
+                  const Eigen::Vector3d& push_axis, const PushControlConfig& config)
+    : node_(node), side_(side), prefix_(side + "_"), model_(model), tip_link_(tip_link),
+      push_axis_(push_axis.normalized()), config_(config),
+      forces_(node, "/task26/" + side + "/measured_joint_forces"),
+      first_stamp_(node->now())
+  {
+    subscription_ = node_->create_subscription<sensor_msgs::msg::JointState>(
+      "/" + side + "/joint_states", 10,
+      [this](const sensor_msgs::msg::JointState::SharedPtr message)
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        names_ = message->name;
+        positions_ = message->position;
+        seen_ = true;
+      });
+  }
+
+  // 采集力偏置：要求调用方保证这段时间内末端没有接触、机械臂静止。
+  bool collectBias()
+  {
+    bias_torque_.assign(7, 0.0);
+    std::vector<int> samples(7, 0);
+    const auto deadline = std::chrono::steady_clock::now() +
+      std::chrono::duration<double>(config_.force_bias_seconds);
+    while (std::chrono::steady_clock::now() < deadline)
+    {
+      const std::vector<double> torque = forces_.efforts();
+      if (torque.size() >= 7)
+      {
+        for (std::size_t index = 0; index < 7; ++index)
+        {
+          bias_torque_[index] += torque[index];
+          ++samples[index];
+        }
+      }
+      std::this_thread::sleep_for(5ms);
+    }
+    bool ok = true;
+    for (std::size_t index = 0; index < 7; ++index)
+    {
+      if (samples[index] == 0) { ok = false; break; }
+      bias_torque_[index] /= static_cast<double>(samples[index]);
+    }
+    if (!ok)
+    {
+      RCLCPP_ERROR(node_->get_logger(), "%s 力偏置采集期间没有收到实测力矩。", side_.c_str());
+      return false;
+    }
+    RCLCPP_INFO(node_->get_logger(), "%s 力偏置已采集（tau_bias=[%.2f %.2f %.2f %.2f %.2f %.2f %.2f] N*m）。",
+      side_.c_str(), bias_torque_[0], bias_torque_[1], bias_torque_[2], bias_torque_[3],
+      bias_torque_[4], bias_torque_[5], bias_torque_[6]);
+    return true;
+  }
+
+  // 单次估计：返回 false 表示信号不全（没有关节状态 / 力矩）。
+  bool update()
+  {
+    std::vector<std::string> names;
+    std::vector<double> positions;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      if (!seen_) { return false; }
+      names = names_;
+      positions = positions_;
+    }
+    const std::vector<double> torque = forces_.efforts();
+    if (torque.size() < 7 || bias_torque_.size() < 7 || names.size() != positions.size())
+    {
+      return false;
+    }
+
+    // 1) 关节状态按关节号 (1..7) 写入模型，不依赖发布顺序。
+    moveit::core::RobotState state(model_);
+    state.setToDefaultValues();
+    for (std::size_t index = 0; index < names.size(); ++index)
+    {
+      const int joint = trailingJointIndex(names[index]);
+      if (joint < 1 || joint > 7) { continue; }
+      state.setVariablePosition(prefix_ + "fr3_joint" + std::to_string(joint), positions[index]);
+    }
+    state.update();
+
+    const moveit::core::LinkModel* tip = model_->getLinkModel(tip_link_);
+    if (tip == nullptr)
+    {
+      RCLCPP_ERROR_ONCE(node_->get_logger(), "模型里没有 %s。", tip_link_.c_str());
+      return false;
+    }
+    const Eigen::Vector3d tip_position = state.getGlobalLinkTransform(tip).translation();
+
+    // 2) 自建几何 Jacobian（6x7）。FR3 七个关节都绕父连杆局部 +Z 转，
+    //    关节 j 的父连杆是 "{prefix}fr3_link{j-1}"，不依赖 MoveIt 的列顺序约定。
+    Eigen::MatrixXd jacobian(6, 7);
+    Eigen::VectorXd residual = Eigen::VectorXd::Zero(7);
+    for (int joint = 1; joint <= 7; ++joint)
+    {
+      const std::string parent = prefix_ + "fr3_link" + std::to_string(joint - 1);
+      if (model_->getLinkModel(parent) == nullptr)
+      {
+        RCLCPP_ERROR_ONCE(node_->get_logger(), "模型里没有 %s。", parent.c_str());
+        return false;
+      }
+      const Eigen::Isometry3d transform = state.getGlobalLinkTransform(parent);
+      const Eigen::Vector3d axis = transform.linear().col(2).normalized();
+      const Eigen::Vector3d origin = transform.translation();
+      jacobian.block<3, 1>(0, joint - 1) = axis.cross(tip_position - origin);
+      jacobian.block<3, 1>(3, joint - 1) = axis;
+
+      for (std::size_t index = 0; index < names.size() && index < torque.size(); ++index)
+      {
+        if (trailingJointIndex(names[index]) == joint)
+        {
+          residual[joint - 1] = torque[index] - bias_torque_[joint - 1];
+          break;
+        }
+      }
+    }
+
+    const Eigen::VectorXd wrench =
+      jacobian.transpose().completeOrthogonalDecomposition().solve(residual);
+    force_vector_ = wrench.head<3>();
+    raw_force_ = -force_vector_.dot(push_axis_);   // 阻碍推进的力为正
+
+    // 3) 一阶低通（PhysX 接触力不干净，raw 只用于日志）。
+    if (!filter_initialized_)
+    {
+      filtered_force_ = raw_force_;
+      filter_initialized_ = true;
+    }
+    else
+    {
+      const double now = node_->now().seconds();
+      const double dt = std::max(1e-4, now - last_stamp_);
+      const double omega = 2.0 * kPi * std::max(0.1, config_.force_lpf_cutoff_hz);
+      const double alpha = omega * dt / (omega * dt + 1.0);
+      filtered_force_ = alpha * raw_force_ + (1.0 - alpha) * filtered_force_;
+    }
+    last_stamp_ = node_->now().seconds();
+    return true;
+  }
+
+  double rawForce() const { return raw_force_; }
+  double filteredForce() const { return filtered_force_; }
+  double peakTorque() const { return forces_.peak(); }
+  const Eigen::Vector3d& forceVector() const { return force_vector_; }
+  const Eigen::Vector3d& pushAxis() const { return push_axis_; }
+  const std::string& side() const { return side_; }
+
+private:
+  rclcpp::Node::SharedPtr node_;
+  std::string side_;
+  std::string prefix_;
+  moveit::core::RobotModelConstPtr model_;
+  std::string tip_link_;
+  Eigen::Vector3d push_axis_;
+  PushControlConfig config_;
+  ForceBuffer forces_;
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr subscription_;
+  mutable std::mutex mutex_;
+  std::vector<std::string> names_;
+  std::vector<double> positions_;
+  bool seen_{false};
+  std::vector<double> bias_torque_;
+  Eigen::Vector3d force_vector_{Eigen::Vector3d::Zero()};
+  double raw_force_{0.0};
+  double filtered_force_{0.0};
+  bool filter_initialized_{false};
+  double last_stamp_{0.0};
+  rclcpp::Time first_stamp_;
 };
 
 // 把一条已规划的笛卡尔轨迹切成 [t0, t1] 子段，用于「分段推进 + 逐段监督」。
@@ -1632,6 +1938,86 @@ int main(int argc, char** argv)
     moveit::planning_interface::MoveGroupInterface right_group(node, right.groupName());
     left_group.setEndEffectorLink(left.eefLink());
     right_group.setEndEffectorLink(right.eefLink());
+
+    // 力觉探针（开发顺序 Step 2）：**只读**，不发布任何 joint / suction / rail 命令。
+    // 用途是在不改动控制器的前提下验证：力的方向、坐标定义、量级、以及滤波效果。
+    // 推进轴 e_push 由"预推位 -> 格位"的世界位移定义（来自场景几何），
+    // 不允许写死某个世界轴。
+    const std::string wrench_probe = node->declare_parameter<std::string>("wrench_probe", "");
+    if (!wrench_probe.empty())
+    {
+      if (wrench_probe != "left" && wrench_probe != "right")
+      {
+        RCLCPP_ERROR(node->get_logger(), "wrench_probe 只能是 left / right。");
+        break;
+      }
+      const double probe_seconds = node->declare_parameter<double>("wrench_probe_seconds", 20.0);
+      const PushControlConfig probe_config = loadPushControlConfig(node);
+
+      const Arm& probe_arm = (wrench_probe == "left") ? left : right;
+      moveit::planning_interface::MoveGroupInterface& probe_group =
+        (wrench_probe == "left") ? left_group : right_group;
+      Eigen::Vector3d push_axis(
+        kTasks.front().cell.position.x - kTasks.front().pre_push.position.x,
+        kTasks.front().cell.position.y - kTasks.front().pre_push.position.y,
+        kTasks.front().cell.position.z - kTasks.front().pre_push.position.z);
+      push_axis.normalize();
+      RCLCPP_INFO(node->get_logger(),
+        "%s e_push（预推位->格位）= [%.4f %.4f %.4f]；探针时长 %.1f s。",
+        wrench_probe.c_str(), push_axis.x(), push_axis.y(), push_axis.z(), probe_seconds);
+
+      WrenchEstimator estimator(node, wrench_probe, probe_group.getRobotModel(),
+        probe_arm.eefLink(), push_axis, probe_config);
+      if (!estimator.collectBias())
+      {
+        break;
+      }
+
+      const std::string csv_path = probe_config.wrench_log_path.empty()
+        ? ("/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/t26_wrench_" + wrench_probe + ".csv")
+        : probe_config.wrench_log_path;
+      std::ofstream csv(csv_path);
+      csv << "t,raw_F_push,filt_F_push,Fx,Fy,Fz,peak_torque\n";
+      RCLCPP_INFO(node->get_logger(), "%s wrench CSV -> %s", wrench_probe.c_str(), csv_path.c_str());
+
+      double min_force = std::numeric_limits<double>::infinity();
+      double max_force = -std::numeric_limits<double>::infinity();
+      double sum_force = 0.0;
+      double max_torque = 0.0;
+      int samples = 0;
+      const auto deadline = std::chrono::steady_clock::now() +
+        std::chrono::duration<double>(probe_seconds);
+      while (rclcpp::ok() && std::chrono::steady_clock::now() < deadline)
+      {
+        if (estimator.update())
+        {
+          const double filtered = estimator.filteredForce();
+          const Eigen::Vector3d force = estimator.forceVector();
+          min_force = std::min(min_force, filtered);
+          max_force = std::max(max_force, filtered);
+          sum_force += filtered;
+          max_torque = std::max(max_torque, estimator.peakTorque());
+          ++samples;
+          csv << node->now().seconds() << ',' << estimator.rawForce() << ',' << filtered << ','
+              << force.x() << ',' << force.y() << ',' << force.z() << ','
+              << estimator.peakTorque() << '\n';
+        }
+        std::this_thread::sleep_for(20ms);
+      }
+      csv.flush();
+      if (samples > 0)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "%s 力觉探针结束：样本 %d，F_push 范围 [%.3f, %.3f] N，均值 %.3f N，峰值关节力矩 %.2f N*m。",
+          wrench_probe.c_str(), samples, min_force, max_force, sum_force / samples, max_torque);
+      }
+      else
+      {
+        RCLCPP_ERROR(node->get_logger(), "%s 力觉探针没有取到有效样本。", wrench_probe.c_str());
+      }
+      rclcpp::shutdown();
+      return 0;
+    }
     moveit::planning_interface::PlanningSceneInterface scene;
     // 启动时 Planning Scene 只有桌面：未到货件停在桌下休眠位，既不在工作区也不是
     // 障碍物；当前批两件只在到料确认后加入，已完成件始终保留。
