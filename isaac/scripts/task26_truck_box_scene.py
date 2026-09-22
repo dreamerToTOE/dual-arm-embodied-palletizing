@@ -36,9 +36,12 @@ SUPPLY_ROOT = f"{TASK_ROOT}/Supply"
 MARKER_ROOT = f"{TASK_ROOT}/TargetMarkers"
 MATERIAL_PATH = f"{TASK_ROOT}/HighFrictionMaterial"
 
-# Task26 重新摆位：Y 固定 +/-0.60，X 由导轨在 [0.25, 0.70] 内滑动，静止位 x=0.45。
-LEFT_BASE = (0.45, -0.60, 0.00)
-RIGHT_BASE = (0.45, +0.60, 0.00)
+# 基座静止位必须与 MoveIt URDF（fr3_dual_side_suction_description，Task24/25/26 共用）
+# 的 world_to_*_fr3 固定关节一致：x=0.650、y=±0.60。执行器按 URDF 的 0.65 规划，
+# 场景若把基座放成别的 x 会让所有 TCP 目标整体错位。
+# 导轨只在此静止位两侧 ±0.20 内平移；执行器目前不移动它（规划按固定基座 0.65）。
+LEFT_BASE = (0.65, -0.60, 0.00)
+RIGHT_BASE = (0.65, +0.60, 0.00)
 
 # Task24-H 的官方工作高度基线：桌面顶面 0.200 m，底层侧吸接触中心 z=0.261 m。
 TABLE_CENTER = (0.55, 0.00, 0.100)
@@ -66,9 +69,12 @@ BATCH_SIZE = 2
 BATCH_COUNT = 2
 ACTIVE_CUBE_COUNT = BATCH_SIZE * BATCH_COUNT
 
-# 供料槽：放在西侧（车厢开口前方），Y 相对中轴 ±0.10，两臂对称可达。
-SLOT_A = (0.280, -0.100, BOTTOM_Z)
-SLOT_B = (0.280, +0.100, BOTTOM_Z)
+# 供料槽：放在**中轴线 y=0** 上、靠近基座（x=0.50 / 0.35），两臂对称可达。
+# 为什么不放在 ±Y 或更西：双臂共同夹取要求两臂都能到同一件。y=0 时两臂 TCP
+# 各偏 0.539 m（对称）；实测放到 (0.28, ±0.10) 时右臂要到 0.74 m 斜向长臂，
+# RRT 8 候选全部超时。x=0.50/0.35 把最大伸展压到约 0.60 m。
+SLOT_A = (0.500, 0.000, BOTTOM_Z)
+SLOT_B = (0.350, 0.000, BOTTOM_Z)
 
 # 休眠位：桌面下方 5 m，且已关闭重力。被瞬移唤醒前不可能挡住任何通道。
 PARK_Z = -5.000
@@ -113,8 +119,10 @@ PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
 # ---------------------------------------------------------------- 导轨（第七轴）
 #
 # 用户要求：**导轨沿 ±X 轴**，两个机械臂各一条，基座沿 X 平移；车厢放到 +X、Y 向居中。
-# 导轨沿 X 的正好处：推入方向也是 +X，持件臂可以跟着 Cube 往车厢深处走，深格不再是
-# 固定基座下的"极限拉伸"。左/右臂各一条、行程相同（[0.25, 0.70]，静止位 0.45）。
+# 导轨沿 X 的正好处：推入方向也是 +X，第二层或更深的格位不再需要极限拉伸。
+# 左/右臂各一条、行程相同（[0.45, 0.85]，即静止位 0.65 两侧 ±0.20）。
+# 静止位 0.65 必须保持不变：那是 URDF 里 world_to_*_fr3 的固定关节值，也是执行器
+# 规划所依据的基座位置。
 #
 # 实现方式（不改 FR3 资产、不动任何已验收的关节序）：
 #   * 每条导轨由一组**纯视觉**件组成（两条导轨条 + 两端挡块 + 一块滑台），不加
@@ -132,8 +140,8 @@ PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
 RAIL_ROOT = {side: f"/World/{side}_rail" for side in ("left", "right")}
 RAIL_BASE_Y = {"left": LEFT_BASE[1], "right": RIGHT_BASE[1]}   # 固定 ±0.60
 RAIL_REST_X = LEFT_BASE[0]                                     # 静止位 x = 0.45
-RAIL_TRAVEL = {"left": (0.250, 0.700), "right": (0.250, 0.700)}  # X 行程 0.45 m
-RAIL_TRACK_LENGTH = 0.750      # 导轨条总长 = 行程 0.45 + 滑台 0.26 + 余量
+RAIL_TRAVEL = {"left": (0.450, 0.850), "right": (0.450, 0.850)}  # X 行程 0.40 m（±0.20）
+RAIL_TRACK_LENGTH = 0.700      # 导轨条总长 = 行程 0.40 + 滑台 0.26 + 余量
 RAIL_TRACK_WIDTH = 0.028
 RAIL_TRACK_Y_OFFSET = 0.145    # 两条导轨条相对基座中心的 ±Y 偏移（沿 X 走轨）
 RAIL_TRACK_HEIGHT = 0.030

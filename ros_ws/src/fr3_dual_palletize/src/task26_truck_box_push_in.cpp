@@ -151,7 +151,7 @@ struct OfflineTask
   const char* id;
   std::size_t cube_index;
   geometry_msgs::msg::Pose pre_push;   // 双臂紧协调放置的预推位
-  geometry_msgs::msg::Pose cell;       // 单臂 +Y 推入后的格位
+  geometry_msgs::msg::Pose cell;       // 单臂持 -X 面沿 +X 推入后的格位
 };
 
 geometry_msgs::msg::Pose worldPose(double x, double y, double z)
@@ -190,24 +190,43 @@ geometry_msgs::msg::Pose sidePose(double x, double y, double z, bool left)
   return pose;
 }
 
+// 推入姿态：杯面法向（TCP +X）指向世界 +X，即吸住 Cube 的 **-X 面**（装料口那面）。
+//
+// 为什么必须换面：侧吸工具在杯面后方伸出 155 mm。车厢内腔只有 0.25 宽、两排各
+// 0.12，若仍用 ±Y 面持件沿 +X 推入，工具会伸进车厢撞 ±Y 墙或另一排已落稳的 Cube。
+// 持 -X 面时整个工具留在车厢外侧，往里推 +X 不碰任何墙。
+//
+// quaternion (x,y,z,w) = (1,0,0,0) = 绕世界 +X 转 180°：+X 不变、+Y 变 -Y、
+// +Z 变 -Z。即杯面法向为 +X（穿进 Cube），+Z 仍指向下，与 sidePose 的下压约定一致。
+geometry_msgs::msg::Pose pushPose(double x, double y, double z)
+{
+  auto pose = worldPose(x, y, z);
+  pose.orientation.x = 1.0;
+  pose.orientation.y = 0.0;
+  pose.orientation.z = 0.0;
+  pose.orientation.w = 0.0;
+  return pose;
+}
+
 // Task26：车厢第一层 4 件。C1(x=0.700) 与 C2(x=0.820) 两列，每列先远排后近排。
 //
 // 顺序由几何强制：左臂支架在 TCP 后方 155 mm，推远排时会扫过
 // y ∈ [cube_y-0.216, cube_y-0.061]；若同列近排已经落稳就会真实碰撞。
-// 车厢：三面围墙 + 顶上无墙，装料口开在 -Y，底板就是桌面顶面。
-constexpr double kBoxInteriorX0 = 0.560;
-constexpr double kBoxInteriorX1 = 0.960;
-constexpr double kBoxInteriorY0 = 0.090;
-constexpr double kBoxInteriorY1 = 0.380;
+// 车厢：三面围墙（+X 深端、±Y 两侧）+ 顶上无墙，**装料口开在 -X**，底板就是桌面顶面。
+// 车厢在 Y 上居中（对称轴 y=0）、位于 +X 侧。
+constexpr double kBoxInteriorX0 = 0.660;
+constexpr double kBoxInteriorX1 = 0.910;
+constexpr double kBoxInteriorY0 = -0.125;
+constexpr double kBoxInteriorY1 = 0.125;
 constexpr double kWallThickness = 0.020;
-constexpr double kWallHeight = 0.150;
-constexpr double kPrePushY = -0.120;
-constexpr double kColumnX1 = 0.700;
-constexpr double kColumnX2 = 0.820;
-constexpr double kRowYFar = 0.270;
-constexpr double kRowYNear = 0.150;
-// 左臂杯面到 Cube 中心的名义偏移：TCP_y = cube_y - (kCubeHalf + 间隙)。
-constexpr double kLeftCupOffsetY = kCubeHalf + kSideContactCommandGap;
+constexpr double kWallHeight = 0.250;
+constexpr double kPrePushX = 0.540;
+constexpr double kCellShallowX = 0.720;
+constexpr double kCellDeepX = 0.840;
+constexpr double kRowYPlus = 0.065;
+constexpr double kRowYMinus = -0.065;
+// 推入臂持 **-X 面** 时，杯面到 Cube 中心的名义偏移：TCP_x = cube_x - (kCubeHalf + 间隙)。
+constexpr double kPushCupOffsetX = kCubeHalf + kSideContactCommandGap;
 // 推入监督：Cube Ground Truth 落后命令位置超过该值即判为卡死。
 constexpr double kPushJamTolerance = 0.020;
 // 关节实测力矩硬上限：最后一道保护（吸盘 D6 断裂阈值是 1e6 N，位置命令持续前推
@@ -216,19 +235,24 @@ constexpr double kPushTorqueLimit = 80.0;
 // 推进分段数：每段结束后检查「Cube 是否跟着走」与「力矩是否越限」。
 constexpr int kPushSlices = 16;
 
+// 两排（y=+0.065 / -0.065），每排两个格位（深 x=0.840 / 浅 x=0.720）。
+// 批 1 = 第一排（y=+0.065）两件；批 2 = 第二排（y=-0.065）两件。
 const std::array<OfflineTask, 4> kTasks{{
-  {"task26_c1_far", 0, worldPose(kColumnX1, kPrePushY, kBottomZ), worldPose(kColumnX1, kRowYFar, kBottomZ)},
-  {"task26_c1_near", 1, worldPose(kColumnX1, kPrePushY, kBottomZ), worldPose(kColumnX1, kRowYNear, kBottomZ)},
-  {"task26_c2_far", 2, worldPose(kColumnX2, kPrePushY, kBottomZ), worldPose(kColumnX2, kRowYFar, kBottomZ)},
-  {"task26_c2_near", 3, worldPose(kColumnX2, kPrePushY, kBottomZ), worldPose(kColumnX2, kRowYNear, kBottomZ)},
+  {"task26_r0_deep", 0, worldPose(kPrePushX, kRowYPlus, kBottomZ), worldPose(kCellDeepX, kRowYPlus, kBottomZ)},
+  {"task26_r0_shallow", 1, worldPose(kPrePushX, kRowYPlus, kBottomZ), worldPose(kCellShallowX, kRowYPlus, kBottomZ)},
+  {"task26_r1_deep", 2, worldPose(kPrePushX, kRowYMinus, kBottomZ), worldPose(kCellDeepX, kRowYMinus, kBottomZ)},
+  {"task26_r1_shallow", 3, worldPose(kPrePushX, kRowYMinus, kBottomZ), worldPose(kCellShallowX, kRowYMinus, kBottomZ)},
 }};
 
-// 装料：2 批 x 2 件，每批同一列（先远排后近排）。供料槽沿用 Task25 已验收位置。
+// 装料：2 批 x 2 件，每批同一排（先深格后浅格）。供料槽放在**中轴线 y=0** 且靠近
+// 基座（x=0.50 / 0.35），两臂对称可达：y=0 时两臂 TCP 各偏 0.539 m，最大伸展约
+// 0.60 m。放到 (0.28, ±0.10) 时右臂要 0.74 m 斜向长臂，实测 RRT 全部超时。
 constexpr int kBatchSize = 2;
 constexpr int kBatchCount = 2;
-constexpr double kSlotAx = 0.520;
-constexpr double kSlotBx = 0.300;
-constexpr double kSlotY = -0.070;
+constexpr double kSlotAx = 0.500;
+constexpr double kSlotAy = 0.000;
+constexpr double kSlotBx = 0.350;
+constexpr double kSlotBy = 0.000;
 constexpr double kSlotTolerance = 0.003;
 constexpr double kFeedTimeoutSec = 90.0;
 constexpr std::array<double, 7> kHomeQ{
@@ -374,10 +398,10 @@ moveit_msgs::msg::CollisionObject cubeObject(
 
 std::vector<moveit_msgs::msg::CollisionObject> boxWallObjects()
 {
-  // 车厢三面静态围墙：左/右/后。装料口开在 -Y，顶部无墙；底板就是桌面。
+  // 车厢三面静态围墙：+X（深端）、-Y、+Y。装料口开在 -X，顶部无墙；底板就是桌面。
   std::vector<moveit_msgs::msg::CollisionObject> objects;
   const double wall_z = kTableTopZ + kWallHeight * 0.5;
-  const double span_y = (kBoxInteriorY1 - kBoxInteriorY0) + kWallThickness;
+  const double span_y = (kBoxInteriorY1 - kBoxInteriorY0) + 2.0 * kWallThickness;
   const double span_x = (kBoxInteriorX1 - kBoxInteriorX0) + 2.0 * kWallThickness;
   auto add = [&](const std::string& id, const geometry_msgs::msg::Pose& pose,
                  const std::array<double, 3>& size)
@@ -386,15 +410,18 @@ std::vector<moveit_msgs::msg::CollisionObject> boxWallObjects()
     object.primitives.front().dimensions = {size[0], size[1], size[2]};
     objects.push_back(std::move(object));
   };
-  add("task26_box_wall_left",
-      worldPose(kBoxInteriorX0 - kWallThickness * 0.5,
-        (kBoxInteriorY0 + kBoxInteriorY1 + kWallThickness) * 0.5, wall_z),
-      {kWallThickness, span_y, kWallHeight});
-  add("task26_box_wall_right",
+  // +X 墙（深端）
+  add("task26_box_wall_deep",
       worldPose(kBoxInteriorX1 + kWallThickness * 0.5,
-        (kBoxInteriorY0 + kBoxInteriorY1 + kWallThickness) * 0.5, wall_z),
+        (kBoxInteriorY0 + kBoxInteriorY1) * 0.5, wall_z),
       {kWallThickness, span_y, kWallHeight});
-  add("task26_box_wall_back",
+  // -Y 墙
+  add("task26_box_wall_minus_y",
+      worldPose((kBoxInteriorX0 + kBoxInteriorX1) * 0.5,
+        kBoxInteriorY0 - kWallThickness * 0.5, wall_z),
+      {span_x, kWallThickness, kWallHeight});
+  // +Y 墙
+  add("task26_box_wall_plus_y",
       worldPose((kBoxInteriorX0 + kBoxInteriorX1) * 0.5,
         kBoxInteriorY1 + kWallThickness * 0.5, wall_z),
       {span_x, kWallThickness, kWallHeight});
@@ -405,7 +432,7 @@ moveit_msgs::msg::CollisionObject tableObject()
 {
   auto pose = worldPose(0.55, 0.0, 0.100);
   auto object = cubeObject("task26_table", pose);
-  object.primitives.front().dimensions = {1.20, 0.80, 0.200};
+  object.primitives.front().dimensions = {1.50, 0.80, 0.200};
   return object;
 }
 
@@ -1465,15 +1492,16 @@ bool executePushWithSupervision(
     }
     const Eigen::Vector3d tcp = linkPosition(
       model, eef_link, left_slice.joint_names, finalPositions(left_slice));
-    const double commanded_cube_y = tcp.y() + kLeftCupOffsetY;
+    // 推入臂持 -X 面：Cube 中心 = TCP_x + (半件 + 间隙)。
+    const double commanded_cube_x = tcp.x() + kPushCupOffsetX;
     const auto [pose, revision] = cubes.get(task.cube_index);
     (void)revision;
-    const double lag = std::abs(commanded_cube_y - pose.position.y);
+    const double lag = std::abs(commanded_cube_x - pose.position.x);
     const double torque = std::max(left_forces.peak(), right_forces.peak());
     peak_torque = std::max(peak_torque, torque);
     RCLCPP_INFO(node->get_logger(),
-      "%s PUSH slice %d/%d: commanded_cube_y=%.4f, actual=%.4f, lag=%.2f mm, peak_torque=%.2f Nm.",
-      task.id, slice, kPushSlices, commanded_cube_y, pose.position.y, lag * 1000.0, torque);
+      "%s PUSH slice %d/%d: commanded_cube_x=%.4f, actual=%.4f, lag=%.2f mm, peak_torque=%.2f Nm.",
+      task.id, slice, kPushSlices, commanded_cube_x, pose.position.x, lag * 1000.0, torque);
     if (lag > kPushJamTolerance)
     {
       RCLCPP_ERROR(node->get_logger(),
@@ -1595,7 +1623,7 @@ int main(int argc, char** argv)
     // 启动时 Planning Scene 只有桌面：未到货件停在桌下休眠位，既不在工作区也不是
     // 障碍物；当前批两件只在到料确认后加入，已完成件始终保留。
     scene.removeCollisionObjects({
-      "task26_table", "task26_box_wall_left", "task26_box_wall_right", "task26_box_wall_back",
+      "task26_table", "task26_box_wall_deep", "task26_box_wall_minus_y", "task26_box_wall_plus_y",
       "task26_cube_1", "task26_cube_2", "task26_cube_3", "task26_cube_4"});
     std::this_thread::sleep_for(300ms);
     std::vector<moveit_msgs::msg::CollisionObject> initial{tableObject()};
@@ -1611,7 +1639,7 @@ int main(int argc, char** argv)
     // 供料槽位是设计常量。用批 1 的真实 Ground Truth 校验“场景 - bridge - 执行器”
     // 三方对同一槽位的理解一致；不一致就停止，绝不用错误几何继续规划。
     const std::array<geometry_msgs::msg::Pose, kBatchSize> nominal_slots{
-      worldPose(kSlotAx, kSlotY, kBottomZ), worldPose(kSlotBx, kSlotY, kBottomZ)};
+      worldPose(kSlotAx, kSlotAy, kBottomZ), worldPose(kSlotBx, kSlotBy, kBottomZ)};
     if (!feed_state.waitArrived({0, 1}, kFeedTimeoutSec))
     {
       RCLCPP_ERROR(node->get_logger(),
@@ -1967,6 +1995,13 @@ int main(int argc, char** argv)
       }
       RCLCPP_INFO(node->get_logger(), "%s RIGHT_OUTER_APPROACH evaluating %zu candidates from %d batches.",
         task.id, right_outer_candidates.size(), kRrtCandidateBatches);
+      // 记下选中候选预演出的末端轨迹。零命令预检要用它们作为推入段/退出的起点：
+      // 真实执行路径用实际执行后的 left_push / right_retreat，而预检不执行，只能
+      // 用这里预演出的结果。
+      trajectory_msgs::msg::JointTrajectory selected_left_push;
+      trajectory_msgs::msg::JointTrajectory selected_right_push;
+      trajectory_msgs::msg::JointTrajectory selected_left_retreat;
+      trajectory_msgs::msg::JointTrajectory selected_right_retreat;
       bool right_candidate_safe = false;
       for (std::size_t candidate_index = 0; candidate_index < right_outer_candidates.size(); ++candidate_index)
       {
@@ -2071,6 +2106,10 @@ int main(int argc, char** argv)
 
         right_outer_descent = std::move(candidate_outer);
         right_contact = std::move(candidate_contact);
+        selected_left_push = std::move(candidate_left_push);
+        selected_right_push = std::move(candidate_right_push);
+        selected_left_retreat = std::move(candidate_left_retreat);
+        selected_right_retreat = std::move(candidate_right_retreat);
         right_candidate_safe = true;
         RCLCPP_INFO(node->get_logger(), "%s selected right outer candidate=%zu/%zu after full loaded-chain preflight.",
           task.id, candidate_index + 1, right_outer_candidates.size());
@@ -2084,25 +2123,165 @@ int main(int argc, char** argv)
         break;
       }
 
-      if (planning_only)
+      // 推入臂（左臂）持 -X 面时杯面位置：TCP_x = cube_x - (半件 + 间隙)。
+      const double push_entry_x = task.pre_push.position.x - kPushCupOffsetX;
+      const double push_cell_x = task.cell.position.x - kPushCupOffsetX;
+      const double push_cube_y = task.pre_push.position.y;
+      const double push_cube_z = task.cell.position.z;
+
+      // 预推位放置链路的公共几何（只依赖 task，不依赖执行后的 grasp_pose），提前到
+      // 这里以便推入预演段与真实执行段共用。
+      const double entry_x = task.pre_push.position.x - kPrePushOffsetX;
+      const double release_z =
+        task.pre_push.position.z + kSideContactCommandZOffset + kReleaseGapZ;
+      const double entry_left_y = task.pre_push.position.y - kCubeHalf - kSideContactCommandGap;
+      const double entry_right_y = task.pre_push.position.y + kCubeHalf + kSideContactCommandGap;
+
+      // 推入臂必须**按排选取**：每臂只推自己那一侧的一排。反排去推要跨到对面，
+      // 实测约 0.69 m 斜向长臂，RRT 全部超时；同侧则是约 0.57 m 的舒适伸展。
+      // （车厢居中后两排到对面臂的横向距离就是 0.665 m，这是布局的固有代价。）
+      const bool push_left = task.cell.position.y < 0.0;
+      Arm& pusher = push_left ? left : right;
+      Arm& helper = push_left ? right : left;
+      moveit::planning_interface::MoveGroupInterface& pusher_group =
+        push_left ? left_group : right_group;
+      // 辅助臂在推入全程保持在退出位姿不动。
+      const geometry_msgs::msg::Pose helper_hold = push_left
+        ? sidePose(task.pre_push.position.x, entry_right_y, release_z + kLiftHeight, false)
+        : sidePose(task.pre_push.position.x, entry_left_y, release_z + kLiftHeight, true);
+
+      // 「换位到 -X 面 → 沿 +X 推入 → 推出」的完整预演。零命令预检与真实执行共用
+      // 这一段：推入是本任务几何风险最高的一段（新持件面 + 新推进轴），绝不能只
+      // 预演到预推位放置就结束。
+      const auto preplanPush =
+        [&](const trajectory_msgs::msg::JointTrajectory& start_left,
+            const trajectory_msgs::msg::JointTrajectory& hold_right,
+            const std::string& stage_prefix,
+            trajectory_msgs::msg::JointTrajectory* left_regrasp_out,
+            trajectory_msgs::msg::JointTrajectory* left_push_out,
+            trajectory_msgs::msg::JointTrajectory* right_hold_push_out,
+            trajectory_msgs::msg::JointTrajectory* left_retreat_out,
+            trajectory_msgs::msg::JointTrajectory* right_hold_retreat_out)
       {
-        // 零命令预检同样必须推进 Planning Scene：本件虽不会在 Isaac 中真的
-        // 搬运，但下一件的 FCL 需要把它视为已经按离线目标落稳的垛墙障碍物。
-        // 真实执行路径则会用 release 后最新的 Isaac Ground Truth 覆盖此位姿。
-        if (!scene.applyCollisionObject(cubeObject(object_id, task.pre_push)))
+        // 显式设置起始状态而不是用 current state：planPoseCandidates 内部会重置为
+        // current state，而零命令预检不执行任何动作、current state 仍是 HOME，那样
+        // 预演的就不是真正要走的换位段。
+        std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
+        for (int attempt = 1; attempt <= kRrtCandidateCount; ++attempt)
+        {
+          auto state = pusher_group.getCurrentState(2.0);
+          if (!state)
+          {
+            break;
+          }
+          const auto* jmg =
+            pusher_group.getRobotModel()->getJointModelGroup(pusher.groupName());
+          if (jmg)
+          {
+            state->setJointGroupPositions(jmg, finalPositions(start_left));
+            state->update();
+          }
+          pusher_group.setStartState(*state);
+          pusher_group.clearPoseTargets();
+          if (!pusher_group.setPoseTarget(
+                pushPose(push_entry_x, push_cube_y, push_cube_z), pusher.eefLink()))
+          {
+            break;
+          }
+          moveit::planning_interface::MoveGroupInterface::Plan plan;
+          if (pusher_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+              !plan.trajectory_.joint_trajectory.points.empty())
+          {
+            candidates.push_back(plan.trajectory_.joint_trajectory);
+          }
+        }
+        if (candidates.empty())
         {
           RCLCPP_ERROR(node->get_logger(),
-            "%s planning-only cannot restore target CollisionObject %s.",
+            "%s REGRASP_NEG_X produced no RRT candidate (pusher=%s).",
+            task.id, push_left ? "left" : "right");
+          return false;
+        }
+        for (std::size_t index = 0; index < candidates.size(); ++index)
+        {
+          auto hold = holdTrajectory(
+            hold_right, finalPositions(hold_right), pointTime(candidates[index].points.back()));
+          const bool safe = push_left
+            ? validateSync(node, left_group.getRobotModel(), world_after_remove,
+                candidates[index], hold,
+                stage_prefix + " REGRASP_CANDIDATE_" + std::to_string(index + 1))
+            : validateSync(node, left_group.getRobotModel(), world_after_remove,
+                hold, candidates[index],
+                stage_prefix + " REGRASP_CANDIDATE_" + std::to_string(index + 1));
+          if (!safe)
+          {
+            continue;
+          }
+          *left_regrasp_out = std::move(candidates[index]);
+          RCLCPP_INFO(node->get_logger(), "%s selected REGRASP_CANDIDATE_%zu/%zu (pusher=%s).",
+            task.id, index + 1, candidates.size(), push_left ? "left" : "right");
+          break;
+        }
+        if (left_regrasp_out->points.empty())
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s no FCL-safe regrasp candidate.", task.id);
+          return false;
+        }
+        if (push_left)
+        {
+          return planAndCheckCommon(node, left_group, right_group, left, right,
+            finalPositions(*left_regrasp_out), finalPositions(hold_right),
+            pushPose(push_cell_x, push_cube_y, push_cube_z), helper_hold,
+            world_after_remove, stage_prefix + " PUSH_INTO_BOX",
+            left_push_out, right_hold_push_out) &&
+            planAndCheckCommon(node, left_group, right_group, left, right,
+              finalPositions(*left_push_out), finalPositions(*right_hold_push_out),
+              pushPose(push_cell_x, push_cube_y, push_cube_z + kLiftHeight), helper_hold,
+              world_after_remove, stage_prefix + " PREPLANNED_CELL_RETREAT",
+              left_retreat_out, right_hold_retreat_out);
+        }
+        return planAndCheckCommon(node, left_group, right_group, left, right,
+          finalPositions(hold_right), finalPositions(*left_regrasp_out),
+          helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z),
+          world_after_remove, stage_prefix + " PUSH_INTO_BOX",
+          left_push_out, right_hold_push_out) &&
+          planAndCheckCommon(node, left_group, right_group, left, right,
+            finalPositions(*left_push_out), finalPositions(*right_hold_push_out),
+            helper_hold, pushPose(push_cell_x, push_cube_y, push_cube_z + kLiftHeight),
+            world_after_remove, stage_prefix + " PREPLANNED_CELL_RETREAT",
+            left_retreat_out, right_hold_retreat_out);
+      };
+
+      if (planning_only)
+      {
+        // 零命令预检必须把推入段也走完：用候选预演出的 short-push 末端作为起点，
+        // 预演「换位 → +X 推入 → 退出」。任何一段失败都不能算通过。
+        trajectory_msgs::msg::JointTrajectory po_regrasp, po_push, po_right_push;
+        trajectory_msgs::msg::JointTrajectory po_retreat, po_right_retreat;
+        const auto& po_start = push_left ? selected_left_push : selected_right_push;
+        const auto& po_hold = push_left ? selected_right_retreat : selected_left_retreat;
+        if (!preplanPush(po_start, po_hold, std::string(task.id),
+              &po_regrasp, &po_push, &po_right_push, &po_retreat, &po_right_retreat))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s planning-only FAILED at the push stage (regrasp / push / cell retreat).", task.id);
+          all_complete = false;
+          break;
+        }
+        // 推入链路通过：把本件按**格位**放回 Planning Scene，供下一件的 FCL 使用。
+        if (!scene.applyCollisionObject(cubeObject(object_id, task.cell)))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s planning-only cannot restore cell CollisionObject %s.",
             task.id, object_id.c_str());
           all_complete = false;
           break;
         }
         std::this_thread::sleep_for(100ms);
         RCLCPP_INFO(node->get_logger(),
-          "%s TASK24 PLANNING-ONLY PASS: both empty-arm approaches and the complete "
-          "Z->X->Y->Z->X->Z chain passed IK/FCL; target Cube was restored to the "
-          "planning scene for following tasks; no joint or suction command was published.",
-          task.id);
+          "%s TASK26 PLANNING-ONLY PASS: 空载接近 + 共同负载 Z->X->Y->Z->X 链路 + "
+          "换位吸 -X 面 + 沿 +X 推入格位 + 退出，全部通过 IK/FCL；"
+          "未发布任何 joint、suction 或 feed_command。", task.id);
         continue;
       }
 
@@ -2279,11 +2458,6 @@ int main(int argc, char** argv)
         break;
       }
 
-      const double entry_x = task.pre_push.position.x - kPrePushOffsetX;
-      const double release_z =
-        task.pre_push.position.z + kSideContactCommandZOffset + kReleaseGapZ;
-      const double entry_left_y = task.pre_push.position.y - kCubeHalf - kSideContactCommandGap;
-      const double entry_right_y = task.pre_push.position.y + kCubeHalf + kSideContactCommandGap;
       const double transport_z =
         grasp_pose.position.z + kSideContactCommandZOffset + kLiftHeight;
 
@@ -2341,11 +2515,16 @@ int main(int argc, char** argv)
         break;
       }
 
-      // ------------------------------------------------------------- Task26 推入
+      // ------------------------------------------- Task26 推入：沿 +X，持 -X 面
       //
-      // 预推位放置完成后：右臂先释放并竖直退出，左臂保持吸附，然后沿 +Y 把 Cube
-      // 推入格位。全程贴桌面滑动、不做任何抬升——按设定单臂吸盘吸不起 Cube，
-      // 重量必须由桌面承担，所以这里只做推、不做搬。
+      // 为什么必须换持件面：侧吸工具在杯面后方伸出 155 mm，而车厢内腔只有 0.25 宽、
+      // 两排各 0.12。若继续用 ±Y 面持件沿 +X 推入，工具会伸进车厢并撞 ±Y 墙或
+      // 另一排已落稳的 Cube。改持 **-X 面（装料口那面）** 后，整个工具留在车厢
+      // 外侧，往里推 +X 不碰任何墙——这是本车厢唯一可行的推入持件面。
+      //
+      // 流程：右臂先释放并竖直退出 → 左臂松开 -Y 面（Cube 由桌面承托）→ 左臂
+      // 空载换位吸住 -X 面 → 左臂沿 +X 分段推入格位 → 格内释放并退出。
+      // 推入全程贴桌面滑动、不做抬升：单臂吸盘不承重，重量必须由桌面承担。
       trajectory_msgs::msg::JointTrajectory left_retreat, right_retreat;
       if (!stage("PREPLANNED_COMMON_RETREAT",
             sidePose(task.pre_push.position.x, entry_left_y, release_z + kLiftHeight, true),
@@ -2359,25 +2538,16 @@ int main(int argc, char** argv)
       const auto [unused_pose, release_revision] = cubes.get(task.cube_index);
       (void)unused_pose;
 
-      const double cell_left_contact_y =
-        task.cell.position.y - kCubeHalf - kSideContactCommandGap;
+      // 真实执行路径：用**实际执行后**的 short-push 末端与右臂退出位姿作为推入起点
+      // （预检路径用的是候选预演末端）。两段共用同一个 preplanPush，保证「预检覆盖
+      // 的就是真正执行的那一段」，不会各写一份而悄悄分叉。
+      trajectory_msgs::msg::JointTrajectory left_regrasp;
       trajectory_msgs::msg::JointTrajectory left_push_in, right_during_push;
       trajectory_msgs::msg::JointTrajectory left_cell_retreat, right_during_cell_retreat;
-      if (!planAndCheckCommon(node, left_group, right_group, left, right,
-            finalPositions(left_push), finalPositions(right_retreat),
-            sidePose(task.cell.position.x, cell_left_contact_y,
-              task.cell.position.z, true),
-            sidePose(task.pre_push.position.x, entry_right_y,
-              release_z + kLiftHeight, false),
-            world_after_remove, std::string(task.id) + " PUSH_INTO_BOX",
-            &left_push_in, &right_during_push) ||
-          !planAndCheckCommon(node, left_group, right_group, left, right,
-            finalPositions(left_push_in), finalPositions(right_during_push),
-            sidePose(task.cell.position.x, cell_left_contact_y,
-              task.cell.position.z + kLiftHeight, true),
-            sidePose(task.pre_push.position.x, entry_right_y,
-              release_z + kLiftHeight, false),
-            world_after_remove, std::string(task.id) + " PREPLANNED_CELL_RETREAT",
+      const auto& ex_start = push_left ? left_push : right_push;
+      const auto& ex_hold = push_left ? right_retreat : left_retreat;
+      if (!preplanPush(ex_start, ex_hold, std::string(task.id),
+            &left_regrasp, &left_push_in, &right_during_push,
             &left_cell_retreat, &right_during_cell_retreat))
       {
         openBothAndConfirm("safe abort after push preplanning failure");
@@ -2385,37 +2555,69 @@ int main(int argc, char** argv)
         break;
       }
 
-      if (planning_only)
+      // 辅助臂先释放并竖直退出；推入臂仍保持 ±Y 面吸附（桥会持续保持上一次关节目标）。
+      const auto& helper_retreat_traj = push_left ? right_retreat : left_retreat;
+      helper.suction(false);
+      if (!helper.waitSuction(false, 6.0) ||
+          !helper.executeAt(helper_retreat_traj, std::chrono::steady_clock::now()) ||
+          !helper.waitAtTarget(helper_retreat_traj, kJointSettleToleranceRad, kJointSettleTimeoutSec))
       {
-        if (!scene.applyCollisionObject(cubeObject(object_id, task.cell)))
-        {
-          RCLCPP_ERROR(node->get_logger(),
-            "%s planning-only cannot restore cell CollisionObject %s.",
-            task.id, object_id.c_str());
-          all_complete = false;
-          break;
-        }
-        std::this_thread::sleep_for(100ms);
-        RCLCPP_INFO(node->get_logger(),
-          "%s TASK26 PLANNING-ONLY PASS: 预推位放置链路与单臂 PUSH_INTO_BOX 全部通过 IK/FCL；"
-          "未发布任何 joint、suction 命令。", task.id);
-        continue;
-      }
-
-      // 右臂释放并竖直退出；左臂保持吸附（桥会持续保持上一次关节目标）。
-      right.suction(false);
-      if (!right.waitSuction(false, 6.0) ||
-          !right.executeAt(right_retreat, std::chrono::steady_clock::now()) ||
-          !right.waitAtTarget(right_retreat, kJointSettleToleranceRad, kJointSettleTimeoutSec))
-      {
-        openBothAndConfirm("safe abort after right arm retreat failure");
+        openBothAndConfirm("safe abort after helper arm retreat failure");
         all_complete = false;
         break;
       }
 
-      // 左臂分段 +Y 推进，逐段检查 Cube 是否跟随、力矩是否越限。
-      if (!executePushWithSupervision(node, left, right, left_push_in, right_during_push,
-            cubes, task, left_group.getRobotModel(), left.eefLink(),
+      // 推入臂松开 ±Y 面：Cube 停在预推位、由桌面承托，随后空载换位到 -X 面。
+      pusher.suction(false);
+      if (!pusher.waitSuction(false, 6.0))
+      {
+        openBothAndConfirm("safe abort after pusher release before regrasp");
+        all_complete = false;
+        break;
+      }
+      std::this_thread::sleep_for(250ms);
+      if (!pusher.executeAt(left_regrasp, std::chrono::steady_clock::now()) ||
+          !pusher.waitAtTarget(left_regrasp, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+      {
+        all_complete = false;
+        break;
+      }
+      // 换位不搬动 Cube：按最新 Ground Truth 复核它仍停在预推位、没有被带偏。
+      std::this_thread::sleep_for(250ms);
+      {
+        const auto [after_regrasp, after_regrasp_revision] = cubes.get(task.cube_index);
+        (void)after_regrasp_revision;
+        const double drift = distance3d(task.pre_push.position, after_regrasp.position);
+        RCLCPP_INFO(node->get_logger(),
+          "%s after REGRASP: cube=(%.3f, %.3f, %.3f), drift from pre-push=%.2f mm.",
+          task.id, after_regrasp.position.x, after_regrasp.position.y,
+          after_regrasp.position.z, drift * 1000.0);
+        if (drift > kPlacementTolerance)
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s Cube drifted %.1f mm while the pusher re-grasped; abort.",
+            task.id, drift * 1000.0);
+          all_complete = false;
+          break;
+        }
+      }
+      std::thread pusher_on([&]() { pusher.suction(true); });
+      pusher_on.join();
+      if (!pusher.waitSuction(true, 3.0))
+      {
+        RCLCPP_ERROR(node->get_logger(), "%s re-grasp suction did not close.", task.id);
+        openBothAndConfirm("safe abort after regrasp close failure");
+        all_complete = false;
+        break;
+      }
+
+      // 推入臂分段 +X 推进，逐段检查 Cube 是否跟随、力矩是否越限。
+      // executePushWithSupervision 的形参名是 left/right，语义是「推入臂在前」，
+      // 因此按 push_left 把两条轨迹与 eef 链接对上。
+      const auto& pusher_push_traj = push_left ? left_push_in : right_during_push;
+      const auto& helper_hold_traj = push_left ? right_during_push : left_push_in;
+      if (!executePushWithSupervision(node, pusher, helper, pusher_push_traj, helper_hold_traj,
+            cubes, task, left_group.getRobotModel(), pusher.eefLink(),
             left_forces, right_forces))
       {
         openBothAndConfirm("safe abort during push supervision");
@@ -2423,11 +2625,11 @@ int main(int argc, char** argv)
         break;
       }
 
-      // 在格内释放左臂；等新一帧 Ground Truth 校验格位后回写场景。
-      left.suction(false);
-      if (!left.waitSuction(false, 6.0))
+      // 在格内释放推入臂；等新一帧 Ground Truth 校验格位后回写场景。
+      pusher.suction(false);
+      if (!pusher.waitSuction(false, 6.0))
       {
-        openBothAndConfirm("safe abort after left release failure");
+        openBothAndConfirm("safe abort after pusher release failure");
         all_complete = false;
         break;
       }
@@ -2445,14 +2647,16 @@ int main(int argc, char** argv)
         break;
       }
       std::this_thread::sleep_for(300ms);
-      if (!left.executeAt(left_cell_retreat, std::chrono::steady_clock::now()) ||
-          !left.waitAtTarget(left_cell_retreat, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+      const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
+      if (!pusher.executeAt(pusher_cell_retreat, std::chrono::steady_clock::now()) ||
+          !pusher.waitAtTarget(pusher_cell_retreat, kJointSettleToleranceRad, kJointSettleTimeoutSec))
       {
         all_complete = false;
         break;
       }
       RCLCPP_INFO(node->get_logger(),
-        "%s PASS: 双吸盘放到预推位 -> 右臂退出 -> 左臂 +Y 推入格位 -> 格内释放。", task.id);
+        "%s PASS: 双吸盘放到预推位 -> 辅助臂退出 -> %s换位吸 -X 面 -> +X 推入格位 -> 格内释放。",
+        task.id, push_left ? "左臂" : "右臂");
       }  // 批内逐件结束
       if (!all_complete)
       {
