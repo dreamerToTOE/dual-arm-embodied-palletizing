@@ -2987,27 +2987,59 @@ int main(int argc, char** argv)
         // RRT 的终点仍是 -X 面的 2.5 mm 捕获间隙；这里按关节路程排序候选，
         // 优先选择最短、最少绕腕的无碰撞换位路径。此前“先生成即采用”的随机
         // 候选会偶发绕到 Cube 边缘，尽管最终姿态正确，PhysX 中仍可能擦动 Cube。
+        // 单批 8 个 RRTConnect 解并不能稳定覆盖侧向 L 型工具所需的腕部冗余分支：
+        // 某些终点构型虽然换位本身无碰撞，却会令紧接着的 +X Cartesian 推入跳到
+        // 另一支 IK。与 RIGHT_OUTER_APPROACH 一致，这里也采样多批，再以整个
+        // REGRASP -> PUSH -> RETREAT 链路筛选；没有任何候选通过时宁可安全停止。
+        std::vector<std::pair<double, trajectory_msgs::msg::JointTrajectory>> scored_candidates;
+        for (int batch = 1; batch <= kRrtCandidateBatches; ++batch)
+        {
+          std::vector<trajectory_msgs::msg::JointTrajectory> batch_candidates;
+          if (!pusher.planPoseCandidatesFrom(pusher_group, finalPositions(lift_end),
+                pushPose(push_entry_x, push_cube_y, push_cube_z),
+                stage_prefix + " REGRASP_NEG_X batch=" + std::to_string(batch),
+                &batch_candidates))
+          {
+            RCLCPP_WARN(node->get_logger(),
+              "%s REGRASP_NEG_X batch=%d/%d produced no RRT candidate (pusher=%s).",
+              task.id, batch, kRrtCandidateBatches, push_left ? "left" : "right");
+            continue;
+          }
+          for (auto& candidate : batch_candidates)
+          {
+            double travel = 0.0;
+            for (std::size_t point = 1; point < candidate.points.size(); ++point)
+            {
+              for (std::size_t joint = 0; joint < candidate.points[point].positions.size(); ++joint)
+              {
+                travel += std::abs(candidate.points[point].positions[joint] -
+                  candidate.points[point - 1].positions[joint]);
+              }
+            }
+            scored_candidates.emplace_back(travel, std::move(candidate));
+          }
+        }
+        if (scored_candidates.empty())
+        {
+          scene.removeCollisionObjects({object_id});
+          std::this_thread::sleep_for(250ms);
+          RCLCPP_ERROR(node->get_logger(),
+            "%s REGRASP_NEG_X exhausted %d RRT candidate batches (pusher=%s).",
+            task.id, kRrtCandidateBatches, push_left ? "left" : "right");
+          return false;
+        }
+        std::sort(scored_candidates.begin(), scored_candidates.end(),
+          [](const auto& first, const auto& second) { return first.first < second.first; });
         std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
-        if (!pusher.planPoseCandidatesFrom(pusher_group, finalPositions(lift_end),
-              pushPose(push_entry_x, push_cube_y, push_cube_z),
-              stage_prefix + " REGRASP_NEG_X", &candidates))
+        candidates.reserve(scored_candidates.size());
+        for (auto& [travel, candidate] : scored_candidates)
         {
-          scene.removeCollisionObjects({object_id});
-          std::this_thread::sleep_for(250ms);
-          RCLCPP_ERROR(node->get_logger(),
-            "%s REGRASP_NEG_X produced no RRT candidate (pusher=%s).",
-            task.id, push_left ? "left" : "right");
-          return false;
+          (void)travel;
+          candidates.push_back(std::move(candidate));
         }
-        if (candidates.empty())
-        {
-          scene.removeCollisionObjects({object_id});
-          std::this_thread::sleep_for(250ms);
-          RCLCPP_ERROR(node->get_logger(),
-            "%s REGRASP_NEG_X produced no RRT candidate (pusher=%s).",
-            task.id, push_left ? "left" : "right");
-          return false;
-        }
+        RCLCPP_INFO(node->get_logger(),
+          "%s REGRASP_NEG_X evaluating %zu candidates from %d batches, shortest_joint_travel=%.3f.",
+          task.id, candidates.size(), kRrtCandidateBatches, scored_candidates.front().first);
         const auto world_with_regrasp_cube = staticWorld(scene);
         // 退出段用「沿 -X 原路退出装料口」，而不是在格内纯 +Z 抬升：实测「格内垂直
         // 抬升 0.28 m」会让 IK 跳解支（离线 195 mm），而原路返回就是把已经验证笔直的
