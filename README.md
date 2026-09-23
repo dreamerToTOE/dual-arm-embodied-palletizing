@@ -52,6 +52,7 @@
 - [Task 24 — 侧面吸盘紧协调离线码垛](docs/tasks/TASK24_SIDE_SUCTION_TIGHT_OFFLINE.md)
 - [Task 25 — 分批到料的侧面吸盘紧协调码垛](docs/tasks/TASK25_BATCHED_FEED_PALLETIZING.md)
 - [Task 26 — 车厢三面围墙 + 预推入位](docs/tasks/TASK26_TRUCK_BOX_PUSH_IN.md)
+- [Task 27 — 五 Cube 第一层：边侧基准 + 中心插入](docs/tasks/TASK27_FIVE_CUBE_CENTER_INSERT.md)
 - [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
@@ -100,7 +101,8 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 | 23 | 二指夹爪暂存后平推二层验证 | 🟡 已建立独立双 FR3 + 官方手指场景、16 件 Ground Truth 选择器及 `抓取 → 暂存 → 单臂 +X 推送` 执行器；待 Isaac 物理验收 |
 | 24 | 侧面吸盘紧协调离线码垛（L 型阵列侧吸） | 🟡 单 Cube 闭环已通过两次独立 Isaac 物理验收（最终放置误差 0.184 mm / 0.115 mm）；八件静态供料全量预检第一件失败（未处理 Cube 占据另一臂进入侧面中心吸附位的通道），决定改为分批到料（Task25） |
 | 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 场景、bridge 与执行器均已实现并通过编译与冒烟检查（休眠区瞬移、批 1 自动到料、到料判定 `feed_state`、批间共同 HOME 退出）；Isaac 物理验收待执行 |
-| 26 | 车厢三面围墙 + 预推入位（第一层 4 件） | 🟢 **零命令预检已打通（整层 4 件 × 2 批全部 PASS IK/FCL），待物理验收**。最终布局：两臂各一条 **X 向导轨**（行程 [0.45,0.85]、静止位 x=0.65 与共用 URDF 一致）；车厢 **Y 居中**、内腔 x∈[0.81,1.06]、**墙高 0.150**（必须低于推入臂前臂扫过的 z≈0.40）；格位深 0.99/浅 0.87、两排 y=±0.065；预推位 x=0.69；供料槽在中轴线 (0.50,0)/(0.35,0)。推入链路：双吸盘放置 → **辅助臂退到自己一侧停车** → **推入臂换位吸 −X 面**（持件面必须换，否则工具会伸进车厢撞墙）→ **沿 +X 推入** → **沿 −X 原路退出**；换位候选只有让整条链路通过才被选中。**⚠️ 有已确证但未修的根因**：腕关节 12 N·m 力矩上限导致接触段守不住（见 docs/tasks/TASK26_*.md 顶部「待修清单」#2，已用实验确证：抬高该上限即全通过）。**下一步：#1 修换位拖件 → #2 合法修根因** |
+| 26 | 车厢三面围墙 + 预推入位（两件 `+Y` 行基线） | ✅ 已完成两件 Isaac 物理闭环，并完成独立重复复测。深位/浅位 Cube 均完成紧协调搬运、`+X` 推入、`+Y` 侧压贴墙、安全退出与共同 HOME；最新复测的最差位置误差 `1.101 mm`，最差支撑/侧墙间隙 `1.088 mm`。重抓阶段采用三批 RRTConnect 候选并以“重抓→推入→退出”整链 FCL 筛选，避免随机腕部冗余分支造成后续 Cartesian 推入失效。 |
+| 27 | 五 Cube 第一层：边侧基准 + 中心插入 | 🟡 方案已冻结，待实施。阶段 A 按 `+2 → -2 → +1 → -1` 左右交替复用 Task26 的贴墙/贴 Cube 工艺；阶段 B 单独研究中心 Cube 插入。当前 `0.628 m` 内腔容纳五件 `0.120 m` Cube 后必有 `28 mm` 总余量，中心件目标是对称分配约 `14 mm + 14 mm`，而非不物理的双侧零缝。 |
 
 ## 已冻结的吸盘基线结论
 
