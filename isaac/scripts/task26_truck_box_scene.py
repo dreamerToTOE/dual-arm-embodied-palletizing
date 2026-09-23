@@ -112,7 +112,9 @@ PARK_Y = (-0.300, +0.300)
 # 车厢整体 +X 让位：为"推入臂改走滑轨 +X"腾出净空。滑轨静止位 0.650、行程上限已
 # 提到 1.050，推入时基座要走到 0.950，原先车厢 -X 装料口 (0.790) 会挡住前臂。
 # 车厢、格位、预推位**同步**平移，推入行程保持 0.300 m 不变。
-TRUCK_SHIFT_X = 0.150
+# 与 task26_truck_box_push_in.cpp 的 kTruckShiftX 严格同值。侧墙压紧终点需要
+# 横向 IK 余量，故从 +0.150 m 回收 50 mm；仍完全落在 X 导轨覆盖范围内。
+TRUCK_SHIFT_X = 0.100
 BOX_INTERIOR_X = (0.810 + TRUCK_SHIFT_X, 1.060 + TRUCK_SHIFT_X)   # 深 0.250：2 格
 # 车厢 Y 向：5 x 120 mm Cube + 4 x 2 mm 通道间隙 + 两侧各 10 mm 冗余 = 0.628 m。
 BOX_Y_CUBE_CAPACITY = 5
@@ -137,19 +139,28 @@ BOX_WALL_HEIGHT = 0.150
 CELL_FLUSH_SHIFT_X = 0.010
 CELL_SHALLOW_X = 0.870 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
 CELL_DEEP_X = 0.990 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
-# 已验收四件任务继续使用中央两行；扩容后的侧墙已远离这些行。五通道的正式装填
-# 顺序和动态选行不属于本次场景几何改动，后续单独实现。
+# 双臂紧协调搬运与 +X 预推仍使用中央两行；Cube 推到深端墙后，另一臂从侧面
+# 将它压向对应 ±Y 墙，因此最终格位没有侧缝。未来五通道装填仍可从这两个外墙
+# 向中间逐行扩展。
 ROW_Y = (+0.060, -0.060)
+CELL_Y_PLUS = BOX_INTERIOR_Y[1] - CUBE_HALF
+CELL_Y_MINUS = BOX_INTERIOR_Y[0] + CUBE_HALF
 PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X 推入）
 
 # 装填顺序：每排**先推深格、再推浅格**——浅格先落会挡住通往深格的直推通道。
+# pre_push_y 与最终 cell 的 Y 坐标刻意不同：前者是紧协调安全行，后者是压紧后的
+# 墙边格位；绝不能用 cell.y 反推预推位。
 TASKS = (
-    {"cube": 1, "row": 0, "depth": "deep", "cell": (CELL_DEEP_X, ROW_Y[0], BOTTOM_Z)},
-    {"cube": 2, "row": 0, "depth": "shallow", "cell": (CELL_SHALLOW_X, ROW_Y[0], BOTTOM_Z)},
-    {"cube": 3, "row": 1, "depth": "deep", "cell": (CELL_DEEP_X, ROW_Y[1], BOTTOM_Z)},
-    {"cube": 4, "row": 1, "depth": "shallow", "cell": (CELL_SHALLOW_X, ROW_Y[1], BOTTOM_Z)},
+    {"cube": 1, "row": 0, "depth": "deep", "pre_push_y": ROW_Y[0],
+     "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},
+    {"cube": 2, "row": 0, "depth": "shallow", "pre_push_y": ROW_Y[0],
+     "cell": (CELL_SHALLOW_X, CELL_Y_PLUS, BOTTOM_Z)},
+    {"cube": 3, "row": 1, "depth": "deep", "pre_push_y": ROW_Y[1],
+     "cell": (CELL_DEEP_X, CELL_Y_MINUS, BOTTOM_Z)},
+    {"cube": 4, "row": 1, "depth": "shallow", "pre_push_y": ROW_Y[1],
+     "cell": (CELL_SHALLOW_X, CELL_Y_MINUS, BOTTOM_Z)},
 )
-PRE_PUSH = tuple((PRE_PUSH_X, item["cell"][1], BOTTOM_Z) for item in TASKS)
+PRE_PUSH = tuple((PRE_PUSH_X, item["pre_push_y"], BOTTOM_Z) for item in TASKS)
 
 # ---------------------------------------------------------------- 导轨（第七轴）
 #
