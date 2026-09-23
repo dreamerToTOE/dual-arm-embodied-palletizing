@@ -94,11 +94,12 @@ PARK_Y = (-0.300, +0.300)
 # 不再出现「预推位紧贴车厢口、另一臂前臂从车厢上方扫过」的冲突，因此墙高可以
 # 恢复到 0.250 m（两层 Cube 共 0.240 m，墙必须高过它才能约束第二层）。
 #
-# 内净空取 0.250 = 2 x 0.120 货物外廓 + 两侧各 5 mm。零净空（内腔正好 0.240）会
-# 让 Cube 与墙、Cube 与 Cube 直接贴合，落位时必然擦碰。车厢在 Y 上**居中**（对称轴
-# y=0，两臂基座 ±0.60 到两排等距），X 上放在桌面东侧（+X）：
+# Y 向按教师要求扩为 5 个 Cube 通道：5 x 0.120 m、相邻通道各留 2 mm、两侧
+# 各留 10 mm 冗余，总内宽 0.628 m。车厢在 Y 上**居中**（对称轴 y=0），X 上
+# 放在桌面东侧（+X）。本轮只扩车厢和规划碰撞墙体；已验收的四件 Task26 仍占用
+# 中央两条工作行，避免无关地改变其执行链路。
 #   * +X 墙内表面 0.910，深格 Cube 外表面 0.900 -> 10 mm；
-#   * -Y 墙内表面 -0.125、+Y 墙内表面 +0.125，两排外表面各留 5 mm。
+#   * -Y/+Y 墙内表面为 -0.314/+0.314，五通道最外侧 Cube 各留 10 mm。
 #
 # 墙高 0.150（顶面 0.35）：**必须让开推入臂的前臂**，这是硬约束。实测推入时前臂
 # link5 的下沿会扫到 z≈0.40（link 原点 0.447），所以墙顶必须低于 0.40：
@@ -113,7 +114,22 @@ PARK_Y = (-0.300, +0.300)
 # 车厢、格位、预推位**同步**平移，推入行程保持 0.300 m 不变。
 TRUCK_SHIFT_X = 0.150
 BOX_INTERIOR_X = (0.810 + TRUCK_SHIFT_X, 1.060 + TRUCK_SHIFT_X)   # 深 0.250：2 格
-BOX_INTERIOR_Y = (-0.125, 0.125)  # 宽 0.250：2 排，排心 y = +0.065 / -0.065（居中）
+# 车厢 Y 向：5 x 120 mm Cube + 4 x 2 mm 通道间隙 + 两侧各 10 mm 冗余 = 0.628 m。
+BOX_Y_CUBE_CAPACITY = 5
+BOX_Y_INTER_CUBE_GAP = 0.002
+BOX_Y_SIDE_CLEARANCE = 0.010
+BOX_INTERIOR_Y_HALF = 0.5 * (
+    BOX_Y_CUBE_CAPACITY * CUBE_SIZE
+    + (BOX_Y_CUBE_CAPACITY - 1) * BOX_Y_INTER_CUBE_GAP
+    + 2.0 * BOX_Y_SIDE_CLEARANCE
+)
+BOX_INTERIOR_Y = (-BOX_INTERIOR_Y_HALF, BOX_INTERIOR_Y_HALF)
+# 未来五通道任务可直接复用这些中心线：(-0.244, -0.122, 0, 0.122, 0.244)。
+FIVE_LANE_Y = tuple(
+    (index - 0.5 * (BOX_Y_CUBE_CAPACITY - 1))
+    * (CUBE_SIZE + BOX_Y_INTER_CUBE_GAP)
+    for index in range(BOX_Y_CUBE_CAPACITY)
+)
 BOX_WALL_THICKNESS = 0.020
 BOX_WALL_HEIGHT = 0.150
 # 格位再 +10 mm 让 Cube **真正靠到深墙**：原先深格 1.140 时 Cube 远端面在 1.200，
@@ -121,10 +137,8 @@ BOX_WALL_HEIGHT = 0.150
 CELL_FLUSH_SHIFT_X = 0.010
 CELL_SHALLOW_X = 0.870 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
 CELL_DEEP_X = 0.990 + TRUCK_SHIFT_X + CELL_FLUSH_SHIFT_X
-# 排心内移 5 mm（0.065 -> 0.060）：0.065 时 Cube 的 +Y 面正好落在 WallPlusY 内表面
-# （0.125）上，实测再偏 0.3 mm 就**压进墙里**，推入一进装料口就蹭墙、摩擦骤增，
-# 推臂跟不上（实测 PUSH slice 3/4 lag 从 0.33 涨到 2.92 mm 后 25 s 超时）。
-# 内移后每侧留 5 mm 净空，两排在中线贴合。
+# 已验收四件任务继续使用中央两行；扩容后的侧墙已远离这些行。五通道的正式装填
+# 顺序和动态选行不属于本次场景几何改动，后续单独实现。
 ROW_Y = (+0.060, -0.060)
 PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X 推入）
 
@@ -525,6 +539,10 @@ def _build_objects():
     )
     task_root.SetCustomDataByKey("task26_box_interior_x", json.dumps(list(BOX_INTERIOR_X)))
     task_root.SetCustomDataByKey("task26_box_interior_y", json.dumps(list(BOX_INTERIOR_Y)))
+    task_root.SetCustomDataByKey("task26_box_y_cube_capacity", BOX_Y_CUBE_CAPACITY)
+    task_root.SetCustomDataByKey("task26_box_y_lane_centers", json.dumps(list(FIVE_LANE_Y)))
+    task_root.SetCustomDataByKey("task26_box_y_inter_cube_gap", BOX_Y_INTER_CUBE_GAP)
+    task_root.SetCustomDataByKey("task26_box_y_side_clearance", BOX_Y_SIDE_CLEARANCE)
     task_root.SetCustomDataByKey("task26_box_wall_thickness", BOX_WALL_THICKNESS)
     task_root.SetCustomDataByKey("task26_box_wall_height", BOX_WALL_HEIGHT)
     task_root.SetCustomDataByKey("task26_box_opening", "-X")
