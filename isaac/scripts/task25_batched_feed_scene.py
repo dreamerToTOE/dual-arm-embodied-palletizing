@@ -1,11 +1,13 @@
-# Task24-A：固定阵列式侧面吸盘的离线紧协调码垛场景。
+# Task25-A：分批到料的侧面吸盘紧协调码垛场景（休眠区瞬移版）。
 #
 # Isaac Sim 4.5 Script Editor 中，Timeline 停止时运行：
 # exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
-#           "task24_side_suction_tight_scene.py").read())
+#           "task25_batched_feed_scene.py").read())
 #
-# 该脚本不依赖 Task06 已打开的 USD：它重新建立两台官方 FR3、桌面、ROS 图、
-# 一个固定已知的供料 Cube 与对应目标标记。它不运行 MoveIt 或执行吸附。
+# 与 Task24 的区别只有供料方式：8 件 Cube 在场景中一次性创建为真实 Dynamic
+# Rigid Body，但初始全部停放在工作区外的休眠位并关闭重力；哪一批出现、什么
+# 时候出现由 task25_batched_feed_bridge.py 按 ROS 命令决定。吸附几何、工具、
+# 桌面、基座与目标垛型与 Task24 完全一致，不重新标定。
 
 import json
 import math
@@ -18,42 +20,28 @@ from pxr import Gf, PhysxSchema, Usd, UsdGeom, UsdPhysics, UsdShade
 try:
     from isaacsim.storage.native import get_assets_root_path
 except Exception as exc:
-    raise RuntimeError("请在 Isaac Sim 4.5 中运行 Task24 场景脚本。") from exc
+    raise RuntimeError("请在 Isaac Sim 4.5 中运行 Task25 场景脚本。") from exc
 
 
 LEFT_ROOT = "/World/left_fr3"
 RIGHT_ROOT = "/World/right_fr3"
 TABLE_PATH = "/World/Table"
-GRAPH_PATH = "/World/Task24SideSuctionROSGraph"
+GRAPH_PATH = "/World/Task25ROSGraph"
 PHYSICS_PATH = "/physicsScene"
-TASK_ROOT = "/World/Task24"
+TASK_ROOT = "/World/Task25"
 SUPPLY_ROOT = f"{TASK_ROOT}/Supply"
 MARKER_ROOT = f"{TASK_ROOT}/TargetMarkers"
 MATERIAL_PATH = f"{TASK_ROOT}/HighFrictionMaterial"
 
-# Task24-G：保留 x=0.650 的前移基座，同时将两基座沿 +/-Y 向外各移动 100 mm。
-# 这把基座间距从 1.00 m 提高到 1.20 m，使侧吸时 FR3 更倾向于伸展而非折叠
-# 肘/腕链，降低 link2--link7 自碰与两只 L 型工具在中线附近相遇的概率。
-# MoveIt 的 dual_fr3_side_suction.urdf.xacro 必须保持完全相同的固定基座坐标。
+# 与 Task24-G 完全相同的固定基座：x=0.650 前移，沿 +/-Y 外扩到 1.20 m 间距。
 LEFT_BASE = (0.65, -0.60, 0.00)
 RIGHT_BASE = (0.65, +0.60, 0.00)
-# Task24-H：工作高度由 FR3 的官方运动学基线确定，而不是逐个试高度。
-#
-# Franka 官方 move_to_start 示例的关节构型为
-# [0, -pi/4, 0, -3pi/4, 0, pi/2, pi/4]。FR3 的 shoulder 高度约为 0.333 m；
-# 令桌面顶面为 0.200 m 后，底层 Cube 的侧吸接触中心为 z=0.261 m，
-# 相对 shoulder 仅低 72 mm，处在官方 Duo 手册所述的约 0.7 m 高可操作性
-# 工作半径内。上层接触点 z=0.381 m 也仍接近 shoulder 平面。
-#
-# 桌面从 z=0 延伸至 z=0.200 m，不制造悬空台面；MoveIt 的环境发布器和
-# Task24 CollisionObject 必须使用完全相同的几何参数。
+
+# Task24-H 的官方工作高度基线：桌面顶面 0.200 m，底层侧吸接触中心 z=0.261 m。
 TABLE_CENTER = (0.55, 0.00, 0.100)
 TABLE_SIZE = (1.20, 0.80, 0.200)
 TABLE_TOP_Z = 0.200
 
-# Franka 官方 fr3 move_to_start 示例控制器的默认起始构型。它是本场景的
-# 受支持空载准备姿态，不是紧协调过程中的规划约束。Timeline 启动后，USD
-# drive target 会将两臂收敛到该构型；Task24 仍会从真实 joint_states 开始规划。
 FR3_OFFICIAL_START_Q_RAD = (
     0.0,
     -math.pi / 4.0,
@@ -64,36 +52,58 @@ FR3_OFFICIAL_START_Q_RAD = (
     math.pi / 4.0,
 )
 
-# Task24-B：所有物体由双侧吸盘紧协调搬运，Cube 线性尺寸按用户要求放大为
-# 原先 30 mm 基线的 4 倍。质量使用 0.8 kg 的共同搬运基线，而不是按体积
-# 64 倍放大到 6.4 kg；后者超出本轮“物理可行性”验证的 FR3 安全范围。
 CUBE_SIZE = 0.120
 CUBE_HALF = 0.060
 CUBE_MASS = 0.800
 BOTTOM_Z = TABLE_TOP_Z + CUBE_HALF
 UPPER_Z = BOTTOM_Z + CUBE_SIZE
 
-# Task24-I：先用两件连续搬运验证“前一件已入垛、后一件仍在供料区”的真实障碍物
-# 时序。Bridge 从此 CustomData 自动读取数量，避免场景重建后仍发布旧的八件 pose。
-# 两件基线通过后，再逐步扩展到完整八件离线垛型。
-# Task24-M：直接进入完整的 8 Cube 多件离线验证。供料按离垛墙由远到近的
-# 顺序布置；控制器同样按这个顺序取件，因此未处理的 Cube 不会占据正在完成的
-# 垛墙入口。每个 Cube 仍保留 120 mm 的完整侧面，双侧阵列 TCP 必须落在该面的
-# 几何中心，禁止以“半面吸附”换取可达性。
-ACTIVE_CUBE_COUNT = 8
+# Task25：固定 4 批、每批 2 件，共 8 件。
+BATCH_SIZE = 2
+BATCH_COUNT = 4
+ACTIVE_CUBE_COUNT = BATCH_SIZE * BATCH_COUNT
 
-# Task24-E：已确认的固定 L 型阵列式侧面吸盘。
+# 每批两件放在同一 y 行、沿 X 分隔的两个槽位。两件在 X 上完全错开 220 mm，
+# 远大于 L 型阵列面板 70 mm 的 X 向包络，因此任何一件都不会占据另一臂进入
+# “侧面中心吸附位”的 X 走廊。
 #
-# 从 link8 先竖直向下，再水平向侧方伸出；这是固定支架，不含可动关节。
-# 横向偏置把 FR3 腕部留在 Cube 外侧，避免纯竖杆使腕部贴近箱体和垛墙。
-# 阵列面位于 local X-Z 平面，杯面法向沿 local Y；左右工具完全相同，仅以
-# branch_sign 镜像安装。码垛时由末端姿态确保两块阵列面水平、相向朝内。
+# 槽 A 批内先取：负载段 COMMON_X_TRAVEL 在“与供料相同的 y”高度上沿 X 飞行，
+# 先取靠目标侧的槽 A，后取槽 B 时其飞行通道上不再有未取供料件。
+SLOT_A = (0.520, -0.070, BOTTOM_Z)
+SLOT_B = (0.300, -0.070, BOTTOM_Z)
+
+# 休眠位：桌面下方 5 m，且已关闭重力。它们不进入 MoveIt Planning Scene，
+# 也不参与任何 FCL 采样；被瞬移唤醒前在物理上不可能挡住任何通道。
+PARK_Z = -5.000
+PARK_X0 = -0.600
+PARK_X_PITCH = 0.200
+PARK_X_COLUMNS = 4
+PARK_Y = (-0.300, +0.300)
+
+# 目标垛型：批 1/2 打远墙 x=0.820，批 3/4 打近墙 x=0.640。
 #
-# 本次仅供 Isaac 外观评审；确认样式后再将对应 manifold/collision 与多杯
-# 物理约束同步到 MoveIt/bridge。
+# Task25-B：YZ 墙的 Y 向中心距由 240 mm 改为 300 mm。
+# 判据（左臂把 Cube 放到 y=+pitch/2 的一格，邻件已在 y=-pitch/2）：
+#   支架尾端（法兰侧）y = pitch/2 - 60 - 1 - 155 = pitch/2 - 216
+#   邻件朝向落点的那一面 y = -pitch/2 + 60
+#   要求支架尾端仍在邻件之外：pitch/2 - 216 >= -pitch/2 + 60  =>  pitch >= 276 mm
+# 240 mm 时支架尾端在 -0.096 m，邻件面在 -0.060 m，会侵入 36 mm（实测在
+# COMMON_DESCENT_TO_ENTRY 报 left_fr3_side_suction <-> 邻件碰撞）。
+# 取 300 mm：支架尾端 -0.066 m 对邻件面 -0.090 m，余量 24 mm。
+TARGETS = (
+    (0.820, -0.150, BOTTOM_Z),
+    (0.820, +0.150, BOTTOM_Z),
+    (0.820, -0.150, UPPER_Z),
+    (0.820, +0.150, UPPER_Z),
+    (0.640, -0.150, BOTTOM_Z),
+    (0.640, +0.150, BOTTOM_Z),
+    (0.640, -0.150, UPPER_Z),
+    (0.640, +0.150, UPPER_Z),
+)
+
+# 已确认的固定 L 型阵列式侧面吸盘（与 Task24-E/H 同尺寸，不改动）。
 VERTICAL_DROP_Z = 0.080
 LATERAL_STANDOFF_Y = 0.130
-# 竖直段承担主支撑，视觉与结构上加粗；横向段保持紧凑，保留垛墙附近的通道。
 VERTICAL_SUPPORT_WIDTH = 0.028
 LATERAL_SUPPORT_WIDTH = 0.018
 MANIFOLD_Y = 0.138
@@ -107,41 +117,27 @@ CUP_LENGTH = 0.010
 CUP_CENTER_Y = 0.150
 TCP_Y = 0.155
 
-# 墙优先的离线固定垛型：先完整 YZ 墙 x=0.820，再完整 YZ 墙 x=0.640。
-# 每一面墙按 y/z 的 2x2 顺序完成。侧面 L 型阵列在相邻 Cube 间还需要腕部
-# 下降走廊，故 Y 向中心距取 240 mm（120 mm 净空）；Z 向仍为 150 mm。
-# 两面墙的 X 间隔为 180 mm。
-TARGETS = (
-    (0.820, -0.120, BOTTOM_Z),
-    (0.820, +0.120, BOTTOM_Z),
-    (0.820, -0.120, UPPER_Z),
-    (0.820, +0.120, UPPER_Z),
-    (0.640, -0.120, BOTTOM_Z),
-    (0.640, +0.120, BOTTOM_Z),
-    (0.640, -0.120, UPPER_Z),
-    (0.640, +0.120, UPPER_Z),
-)
 
-# 第一版无需选择器，供料起点和执行顺序固定。四列沿 X 从远到近排列、两行沿
-# Y 镜像对称；X 相邻中心距 150 mm，Y 两行中心距 140 mm，Cube 之间分别保留
-# 30 mm / 20 mm 实体净距。Y 取 ±70 mm 而不是更外侧的 ±160 mm，使两臂均能
-# 从外侧进入同一个“侧面中心”接触位；这不是中转等待区，也不需要先推 Cube。
-# 先取最靠近远墙的一列（Cube_07/08），再逐列向外侧供料区退回，避免未处理
-# Cube 出现在正在下降/短推的目标墙附近。
-#
-# 它们都是供料初始位而非灰色等待区：每件 Cube 一经被双臂带离，所在位置立即
-# 清空。若某一件在侧面中心吸附姿态下没有 FCL 安全通道，控制器才会明确报告并
-# 进入后续“单臂无吸附短推后再双臂吸附”的后备策略；绝不改变侧面中心吸点。
-SUPPLY_POSES = (
-    (0.240, -0.070, BOTTOM_Z),  # Cube_01，最后处理
-    (0.240, +0.070, BOTTOM_Z),  # Cube_02，最后处理
-    (0.390, -0.070, BOTTOM_Z),  # Cube_03
-    (0.390, +0.070, BOTTOM_Z),  # Cube_04
-    (0.540, -0.070, BOTTOM_Z),  # Cube_05
-    (0.540, +0.070, BOTTOM_Z),  # Cube_06
-    (0.690, -0.070, BOTTOM_Z),  # Cube_07，最先处理
-    (0.690, +0.070, BOTTOM_Z),  # Cube_08，最先处理
-)
+def _slot_pose(index):
+    """Cube_01/02 为批 1；奇数排在槽 A（先取），偶数排在槽 B（后取）。"""
+    return SLOT_A if index % 2 == 1 else SLOT_B
+
+
+def _park_pose(index):
+    zero_based = index - 1
+    column = zero_based % PARK_X_COLUMNS
+    row = zero_based // PARK_X_COLUMNS
+    row = min(row, len(PARK_Y) - 1)
+    return (
+        PARK_X0 + PARK_X_PITCH * column,
+        PARK_Y[row],
+        PARK_Z,
+    )
+
+
+def _batch_of(index):
+    return (index - 1) // BATCH_SIZE + 1
+
 
 stage = omni.usd.get_context().get_stage()
 if stage is None:
@@ -156,7 +152,7 @@ def _remove(path):
 def _require_stopped_timeline():
     import omni.timeline
     if omni.timeline.get_timeline_interface().is_playing():
-        raise RuntimeError("请先停止 Timeline，再重建 Task24 场景。")
+        raise RuntimeError("请先停止 Timeline，再重建 Task25 场景。")
 
 
 def _asset_url():
@@ -190,7 +186,7 @@ def _add_fr3(root_path, base):
     robot.GetReferences().AddReference(_asset_url())
     xform = UsdGeom.Xformable(robot)
     xform.ClearXformOpOrder()
-    xform.AddTranslateOp(opSuffix="task24_base").Set(Gf.Vec3d(*base))
+    xform.AddTranslateOp(opSuffix="task25_base").Set(Gf.Vec3d(*base))
 
 
 def _set_fr3_official_start_target(root_path):
@@ -221,29 +217,30 @@ def _bind(prim, material):
     UsdShade.MaterialBindingAPI.Apply(prim).Bind(material)
 
 
-def _box(path, center, size, color, dynamic=False, metadata=None):
+def _box(path, center, size, color, dynamic=False, metadata=None, gravity=True):
     box = UsdGeom.Cube.Define(stage, path)
     box.CreateSizeAttr(1.0)
     box.CreateDisplayColorAttr([Gf.Vec3f(*color)])
     transform = UsdGeom.Xformable(box.GetPrim())
-    transform.AddTranslateOp(opSuffix="task24_pose").Set(Gf.Vec3d(*center))
-    transform.AddScaleOp(opSuffix="task24_size").Set(Gf.Vec3f(*size))
+    transform.AddTranslateOp(opSuffix="task25_pose").Set(Gf.Vec3d(*center))
+    transform.AddScaleOp(opSuffix="task25_size").Set(Gf.Vec3f(*size))
     UsdPhysics.CollisionAPI.Apply(box.GetPrim())
     if dynamic:
         UsdPhysics.RigidBodyAPI.Apply(box.GetPrim())
         UsdPhysics.MassAPI.Apply(box.GetPrim()).CreateMassAttr().Set(CUBE_MASS)
+        # 休眠件关闭重力，使其稳定停在桌下休眠位；到料时由 bridge 重新打开。
+        body_api = PhysxSchema.PhysxRigidBodyAPI.Apply(box.GetPrim())
+        body_api.CreateDisableGravityAttr().Set(not gravity)
     if metadata:
-        box.GetPrim().SetCustomDataByKey("task24_metadata", json.dumps(metadata))
+        box.GetPrim().SetCustomDataByKey("task25_metadata", json.dumps(metadata))
     _bind(box.GetPrim(), _MATERIAL)
     return box
 
 
 def _build_tool(robot_root, branch_sign):
     hand_path = f"{robot_root}/fr3_hand"
-    # MoveIt 的 Task24 URDF 将 L 型工具固定在 fr3_link8。必须在 Isaac 中使用
-    # 同一个安装 frame：fr3_hand 在官方资产里带有
-    # 额外的固定旋转，若把工具挂在它下面，MoveIt TCP 与物理 Cup 会产生
-    # 数厘米的 X 向偏差，导致侧面 Surface Gripper 无法接触 Cube。
+    # 与 Task24 相同的安装 frame：工具固定在 fr3_link8，而不是带额外固定旋转的
+    # fr3_hand。否则 MoveIt TCP 与物理 Cup 会产生数厘米偏差。
     mount_path = f"{robot_root}/fr3_link8"
     if not stage.GetPrimAtPath(hand_path).IsValid():
         raise RuntimeError(f"缺少 {hand_path}。")
@@ -254,15 +251,12 @@ def _build_tool(robot_root, branch_sign):
     _disable_visual_and_collision(f"{robot_root}/fr3_leftfinger")
     _disable_visual_and_collision(f"{robot_root}/fr3_rightfinger")
 
-    # 清理早期错误挂在 fr3_hand 下的工具，保证重复运行时不会留下旧 Prim。
     _remove(f"{hand_path}/side_suction_tool")
     _remove(f"{mount_path}/side_suction_tool")
     tool = f"{mount_path}/side_suction_tool"
     _remove(tool)
     UsdGeom.Xform.Define(stage, tool)
 
-    # 固定短 L：先沿局部 +Z 竖直下探，再沿局部 +/-Y 横向伸出。
-    # 这使腕部相对 Cup 保持在箱体外侧，留下垛墙与法兰的碰撞余量。
     vertical_support = UsdGeom.Cube.Define(stage, f"{tool}/vertical_support")
     vertical_support.CreateSizeAttr(1.0)
     vertical_xform = UsdGeom.Xformable(vertical_support.GetPrim())
@@ -299,7 +293,6 @@ def _build_tool(robot_root, branch_sign):
     lateral_support.CreateDisplayColorAttr([Gf.Vec3f(0.22, 0.25, 0.30)])
     UsdPhysics.CollisionAPI.Apply(lateral_support.GetPrim())
 
-    # 刚性吸盘面板：其 X-Z 面承载四个完全相同的吸盘。
     _box(
         f"{tool}/vacuum_manifold",
         (0.0, branch_sign * MANIFOLD_Y, VERTICAL_DROP_Z),
@@ -327,34 +320,59 @@ def _build_tool(robot_root, branch_sign):
     tcp_xform.AddTranslateOp().Set(
         Gf.Vec3d(0.0, branch_sign * TCP_Y, VERTICAL_DROP_Z)
     )
-    # 与 Task24 URDF 中 side_suction_tcp_joint 的 rpy 完全一致。位置和杯面
-    # 已经一致时，Ground Truth 的姿态也必须是同一个 TCP frame，不能只发布
-    # link8 的姿态。
     tcp_xform.AddRotateZOp().Set(branch_sign * 90.0)
 
 
 def _build_objects():
-    # Task24 是可从空 Isaac Stage 直接重建的场景；同一 GUI Session 若曾运行
-    # Task23，遗留的刚体会参与 PhysX，遗留的 ROS ActionGraph 还会对同一机器人
-    # 重复发布 /joint_states、重复写 joint command。两者都会破坏 MoveIt--Isaac
-    # 一一对应关系，因此只清理旧任务根，不触碰 FR3 / Table。
+    # 同一 GUI Session 若曾运行其它 Task，遗留刚体会参与 PhysX，遗留的 ROS
+    # ActionGraph 还会重复发布 /joint_states 并重复写 joint command。这里只清理
+    # 旧任务根与旧 ROS 图，不触碰 FR3 / Table。
     _remove("/World/Task23")
+    _remove("/World/Task24")
     _remove(TASK_ROOT)
+    for graph in (
+        "/World/ActionGraph",
+        "/ActionGraph",
+        "/World/Task06ROSGraph",
+        "/World/Task11SharedBoxROSGraph",
+        "/World/Task12SharedBoxROSGraph",
+        "/World/Task20RuntimeROSGraph",
+        "/World/Task23GripperROSGraph",
+        "/World/Task24SideSuctionROSGraph",
+        "/World/Task25ROSGraph",
+    ):
+        _remove(graph)
+
     UsdGeom.Xform.Define(stage, TASK_ROOT)
-    stage.GetPrimAtPath(TASK_ROOT).SetCustomDataByKey(
-        "task24_active_cube_count", ACTIVE_CUBE_COUNT
+    task_root = stage.GetPrimAtPath(TASK_ROOT)
+    task_root.SetCustomDataByKey("task25_active_cube_count", ACTIVE_CUBE_COUNT)
+    task_root.SetCustomDataByKey("task25_batch_size", BATCH_SIZE)
+    task_root.SetCustomDataByKey("task25_batch_count", BATCH_COUNT)
+    task_root.SetCustomDataByKey("task25_slot_a", json.dumps(list(SLOT_A)))
+    task_root.SetCustomDataByKey("task25_slot_b", json.dumps(list(SLOT_B)))
+    task_root.SetCustomDataByKey(
+        "task25_feed_settle_offset_z", 0.002
     )
     UsdGeom.Xform.Define(stage, SUPPLY_ROOT)
     UsdGeom.Xform.Define(stage, MARKER_ROOT)
-    # 只创建真实的 8 个 Dynamic Cube；不创建 placeholder。它们全部同时进入
-    # PhysX 与 MoveIt Planning Scene，因而每一次多件规划都会考虑其余供料 Cube
-    # 与已经落稳的垛墙，而不是把后续物体从碰撞世界中隐藏。
-    for index, pose in enumerate(SUPPLY_POSES[:ACTIVE_CUBE_COUNT], start=1):
+
+    # 8 件全部是真实 Dynamic Rigid Body：到料后立即进入 PhysX，并由执行器按
+    # Ground Truth 加入 MoveIt Planning Scene。休眠件不进入任何规划场景。
+    for index in range(1, ACTIVE_CUBE_COUNT + 1):
         path = f"{SUPPLY_ROOT}/Cube_{index:02d}"
         _box(
-            path, pose,
+            path, _park_pose(index),
             (CUBE_SIZE, CUBE_SIZE, CUBE_SIZE), (0.92, 0.42, 0.18), True,
-            {"id": f"task24_cube_{index:02d}", "role": "offline_supply", "mass": CUBE_MASS},
+            {
+                "id": f"task25_cube_{index:02d}",
+                "role": "batched_feed",
+                "batch": _batch_of(index),
+                "slot": "A" if index % 2 == 1 else "B",
+                "slot_pose": list(_slot_pose(index)),
+                "park_pose": list(_park_pose(index)),
+                "mass": CUBE_MASS,
+            },
+            gravity=False,
         )
     # 八个目标均仅为可视标记，不创建 Collider 或影响物理。
     for index, pose in enumerate(TARGETS[:ACTIVE_CUBE_COUNT], start=1):
@@ -363,23 +381,11 @@ def _build_objects():
         marker.CreateDisplayColorAttr([Gf.Vec3f(0.15, 0.80, 0.25)])
         xform = UsdGeom.Xformable(marker.GetPrim())
         xform.AddTranslateOp().Set(Gf.Vec3d(*pose))
-        # 目标仅为可视标记，绝不创建 Collider 或影响物理。
         xform.AddScaleOp().Set(Gf.Vec3f(0.026, 0.026, 0.002))
 
 
 def _build_ros_graph():
     import omni.graph.core as og
-    for path in (
-        "/World/ActionGraph",
-        "/ActionGraph",
-        "/World/Task06ROSGraph",
-        "/World/Task11SharedBoxROSGraph",
-        "/World/Task12SharedBoxROSGraph",
-        "/World/Task20RuntimeROSGraph",
-        "/World/Task23GripperROSGraph",
-        GRAPH_PATH,
-    ):
-        _remove(path)
     og.Controller.edit(
         {"graph_path": GRAPH_PATH, "evaluator_name": "execution"},
         {
@@ -441,17 +447,21 @@ _build_objects()
 _build_ros_graph()
 
 print("\n====================================================")
-print("Task24 side-suction tight offline scene ready")
+print("Task25 batched-feed side-suction scene ready")
 print(
     "tools: fixed 2x2 side-suction array, short L support "
     "(80 mm down + 130 mm side), TCP offset=0.155 m"
 )
-print("multi-cube scene: Cube_01 ... Cube_%02d are Dynamic Rigid Bodies, mass=%.3f kg each" %
-      (ACTIVE_CUBE_COUNT, CUBE_MASS))
+print(
+    "batched feed: %d batches x %d cubes; slot A=%s (picked first), slot B=%s" %
+    (BATCH_COUNT, BATCH_SIZE, SLOT_A, SLOT_B)
+)
+print(
+    "park: z=%.3f m with gravity disabled; ALL Cube_01 ... Cube_%02d start parked" %
+    (PARK_Z, ACTIVE_CUBE_COUNT)
+)
 print("table top z=%.3f m; FR3 official move_to_start targets are configured" % TABLE_TOP_Z)
-print("target: YZ far-wall first cell at x=0.820, y=-0.120, z=%.3f" % BOTTOM_Z)
-print("cube: 0.120 m; wall Y pitch: 0.240 m; Z pitch: 0.150 m; pre-push: -X 0.020 m; push: +X 0.020 m")
+print("target: far YZ wall x=0.820 then near YZ wall x=0.640, 2x2 each")
 print("PUB: /clock, /left/joint_states, /right/joint_states")
-print("SUB: joint commands are consumed atomically by task24_side_suction_tight_bridge.py")
-print("Next: Play, then run task24_side_suction_tight_bridge.py")
+print("Next: Play, then run task25_batched_feed_bridge.py")
 print("====================================================")

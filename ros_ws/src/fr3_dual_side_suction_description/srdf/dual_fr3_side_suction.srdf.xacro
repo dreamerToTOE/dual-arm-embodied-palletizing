@@ -17,21 +17,23 @@
 
   <group_state name="home" group="left_arm">
     <joint name="left_fr3_joint1" value="0"/>
-    <joint name="left_fr3_joint2" value="0"/>
+    <!-- Franka 官方 FR3 move_to_start 示例构型：舒适空载准备姿态。 -->
+    <joint name="left_fr3_joint2" value="-0.7853981634"/>
     <joint name="left_fr3_joint3" value="0"/>
-    <joint name="left_fr3_joint4" value="-0.1518"/>
+    <joint name="left_fr3_joint4" value="-2.3561944902"/>
     <joint name="left_fr3_joint5" value="0"/>
-    <joint name="left_fr3_joint6" value="0.5445"/>
-    <joint name="left_fr3_joint7" value="0"/>
+    <joint name="left_fr3_joint6" value="1.5707963268"/>
+    <joint name="left_fr3_joint7" value="0.7853981634"/>
   </group_state>
   <group_state name="home" group="right_arm">
     <joint name="right_fr3_joint1" value="0"/>
-    <joint name="right_fr3_joint2" value="0"/>
+    <!-- Franka 官方 FR3 move_to_start 示例构型：舒适空载准备姿态。 -->
+    <joint name="right_fr3_joint2" value="-0.7853981634"/>
     <joint name="right_fr3_joint3" value="0"/>
-    <joint name="right_fr3_joint4" value="-0.1518"/>
+    <joint name="right_fr3_joint4" value="-2.3561944902"/>
     <joint name="right_fr3_joint5" value="0"/>
-    <joint name="right_fr3_joint6" value="0.5445"/>
-    <joint name="right_fr3_joint7" value="0"/>
+    <joint name="right_fr3_joint6" value="1.5707963268"/>
+    <joint name="right_fr3_joint7" value="0.7853981634"/>
   </group_state>
 
   <xacro:macro name="fr3_internal_collision_matrix" params="p">

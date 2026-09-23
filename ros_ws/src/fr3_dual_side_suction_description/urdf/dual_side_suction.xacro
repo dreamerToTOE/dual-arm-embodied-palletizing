@@ -4,7 +4,7 @@
     Task24：已确认的固定 L 型阵列式侧面吸盘。
 
     从 fr3_link8 沿局部 +Z 下探 80 mm，再沿左右镜像的局部 +/-Y 伸出
-    130 mm。90 x 90 mm 的 X-Z 阵列板携带四个 Cup，Cup 面沿 +/-Y 相向。
+    130 mm。70 x 70 mm 的 X-Z 紧凑阵列板携带四个 Cup，Cup 面沿 +/-Y 相向。
     该固定工具是 Task24 唯一保留的末端结构；其 visual 与 collision
     几何必须和 Isaac 场景及 bridge 的 TCP 偏置保持一致。
   -->
@@ -29,14 +29,17 @@
         <origin xyz="0 ${side_sign * 0.065} 0.080" rpy="0 0 0"/>
         <geometry><box size="0.018 0.130 0.018"/></geometry>
       </collision>
+      <!-- 四个 Cup 的外包络约为 68 x 68 mm；面板采用 70 x 70 mm 的紧凑尺寸，
+           不改变 Cup、TCP 或 L 支架。此前 90 x 90 mm 的冗余边缘会在低位
+           侧吸构型擦到桌面。 -->
       <visual name="manifold_visual">
         <origin xyz="0 ${side_sign * 0.138} 0.080" rpy="0 0 0"/>
-        <geometry><box size="0.090 0.014 0.090"/></geometry>
+        <geometry><box size="0.070 0.014 0.070"/></geometry>
         <material name="${prefix}side_suction_gray"/>
       </visual>
       <collision name="manifold_collision">
         <origin xyz="0 ${side_sign * 0.138} 0.080" rpy="0 0 0"/>
-        <geometry><box size="0.090 0.014 0.090"/></geometry>
+        <geometry><box size="0.070 0.014 0.070"/></geometry>
       </collision>
 
       <!-- 阵列面位于 X-Z 平面，Cup 沿 +/-Y。 -->

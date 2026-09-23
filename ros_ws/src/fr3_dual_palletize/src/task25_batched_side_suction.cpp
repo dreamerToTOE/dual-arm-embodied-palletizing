@@ -1,11 +1,12 @@
-// Task24：短 L 型侧面吸盘的离线紧协调码垛执行器。
+// Task25：分批到料的侧面吸盘紧协调码垛执行器。
 //
-// 设计边界：不读取选择器，不做在线任务排序。8 件 Cube 按固定离线任务表完成
-// “先 YZ 墙、再 X 向第二面墙”的顺序；每一件仍由 Isaac Ground Truth 门禁、MoveIt
-// 规划、同步 FCL 与双 Surface Gripper 物理闭环共同验证。该文件复用 Task11--13 的
-// 共同 lift / transport / descent / release 原则，但侧吸几何和“墙优先 + 短推”是
-// 独立 Task24。任何中心侧吸可达性失败都会明确停止并留下单臂短推后备入口，绝不
-// 以移动到侧面边缘的假吸点继续执行。
+// 设计边界：不读取选择器，不做在线任务排序。8 件 Cube 分 4 批、每批 2 件到料，
+// 批次与目标固定；一次只把当前批两件加入 MoveIt Planning Scene，已完成件始终
+// 保留为真实碰撞物，未到货件停在桌下休眠位、不进入任何规划场景。每一件仍由
+// Isaac Ground Truth 门禁、MoveIt 规划、同步 FCL 与双 Surface Gripper 物理闭环
+// 共同验证。共同 lift / transport / descent / release 原则沿用 Task11--13，
+// 侧吸几何与“墙优先 + 短推”沿用 Task24；任何中心侧吸可达性失败都会明确停止，
+// 绝不以移动到侧面边缘的假吸点继续执行，也不用单臂推送绕开真实碰撞。
 
 #include <algorithm>
 #include <array>
@@ -17,6 +18,7 @@
 #include <iomanip>
 #include <iterator>
 #include <limits>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -42,6 +44,8 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <shape_msgs/msg/solid_primitive.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/int32.hpp>
+#include <std_msgs/msg/int32_multi_array.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 
 using namespace std::chrono_literals;
@@ -86,6 +90,15 @@ constexpr double kPrePushOffsetX = 0.020;
 constexpr double kReleaseGapZ = 0.020;
 constexpr double kCartesianStep = 0.002;
 constexpr double kMinCartesianFraction = 0.999;
+// 笛卡尔轨迹的中间状态允许偏离命令直线的最大值。MoveIt 的 computeCartesianPath 在
+// 个别路径点 IK 失败时仍可能报 1.0000 的 fraction，但中间状态离线极远（实测左臂
+// COMMON_Y_ALIGN 的 TCP 从 y=0.02 甩到 y=-1.2 m 再绕回，途中扫过桌面）。5 mm 对
+// 正常轨迹有上百倍余量（实测贴线轨迹的偏差在 0.1 mm 量级），只用来拦掉这种绕行。
+constexpr double kMaxCartesianLineDeviation = 0.005;
+// jump_threshold 仍按 Task24 的做法关闭：MoveIt 的 jump 判据把「手腕快速转动」和
+// 「解支跳变」混在一起，实测把阈值设成 1.0 会让正常下降段的 fraction 掉到 0.9789。
+// 真正拦绕行的是上面的贴线校验。
+constexpr double kCartesianJumpThreshold = 0.0;
 constexpr double kFclSamplePeriod = 0.010;
 constexpr double kPlacementTolerance = 0.010;
 // Isaac 与 MoveIt 的固定 L 型工具 frame 存在约 2.1 mm 的已实测静态标定差；
@@ -110,12 +123,21 @@ constexpr int kFinalCommandHold = 200;
 // 左右命令，且采用零起止速度的共同 S 曲线进度，避免两套 PD 在阶段边界收到
 // 不同相位/突变速度命令后给 Cube 施加瞬态扭矩。
 constexpr auto kDualCommandPeriod = 10ms;
-// 发送最终 command 并不等于 Isaac Articulation 已到达该关节状态。Task24 的
+// 发送最终 command 并不等于 Isaac Articulation 已到达该关节状态。Task25 的
 // 刚体接触和 Isaac PD 伺服在静态低位姿会留下约 1.5 deg 的关节稳态残差；这里
 // 只把 2 deg 作为“停止继续跟随”的门槛，不能当成几何验收。真正的吸附前和每段
 // 搬运后仍必须通过 validateDualSideAttachment() 的 2 mm TCP/Cube 实测门限。
 constexpr double kJointSettleToleranceRad = 0.035;
-constexpr double kJointSettleTimeoutSec = 12.0;
+// 到位判定的补充路径。关节在负载下可能收敛到一个很小的稳态偏差（本任务 149 次到位
+// 判定里绝大多数是 0.02--0.3 deg，偶发 1.0--2.4 deg），此时再等也不会变小：那是
+// 伺服在负载下的静态偏差，不是还在运动。因此除了「残余 <= 2.0 deg」之外，再接受
+// 「残余 <= kJointSettleResidualToleranceRad 且连续多次读数几乎不变」——后者证明的
+// 是机械臂已经停住，而放置精度由释放后的 Ground Truth 门限（<= 10 mm）单独保证，
+// 这条路径不放宽任何几何精度要求。
+constexpr double kJointSettleResidualToleranceRad = 0.06;
+constexpr double kJointSettleStableDeltaRad = 0.002;
+constexpr int kJointSettleStableSamples = 5;
+constexpr double kJointSettleTimeoutSec = 25.0;
 
 struct OfflineTask
 {
@@ -160,18 +182,45 @@ geometry_msgs::msg::Pose sidePose(double x, double y, double z, bool left)
   return pose;
 }
 
+// Task25：8 件 Cube 的编号与 Isaac 场景完全一致 —— 奇数号排在槽 A（批内先取），
+// 偶数号排在槽 B（批内后取）；批 b 使用 Cube_(2b-1) 与 Cube_(2b)。因此这里
+// task_index 就是 cube_index，不再像 Task24 那样按“供料列由远到近”重排。
+//
+// 目标顺序仍是墙优先：先完整远墙 x=0.820（先底层后上层），再完整近墙 x=0.640。
+//
+// Task25-B：YZ 墙的 Y 向中心距采用 300 mm（不是旧的 240 mm）。L 型阵列 TCP 相对
+// 法兰的侧向偏置为 155 mm，把 Cube 放到 y=+pitch/2 一格时支架尾端会伸到
+// y = pitch/2 - 216，而邻件朝向落点的那一面在 y = -pitch/2 + 60；要在邻件旁边下降
+// 就必须 pitch >= 276 mm。240 mm 会侵入 36 mm，并在 COMMON_DESCENT_TO_ENTRY 处以
+// left_fr3_side_suction <-> 邻件 的真实碰撞被 FCL 拒绝（实测）。300 mm 留 24 mm 余量。
 const std::array<OfflineTask, 8> kTasks{{
-  // 先消耗最靠近远墙的供料列，保证未处理 Cube 不会挡住 x=0.820 的第一面墙。
-  {"task24_yz_wall_far_bottom_left", 6, worldPose(0.820, -0.120, kBottomZ)},
-  {"task24_yz_wall_far_bottom_right", 7, worldPose(0.820, +0.120, kBottomZ)},
-  {"task24_yz_wall_far_upper_left", 4, worldPose(0.820, -0.120, kUpperZ)},
-  {"task24_yz_wall_far_upper_right", 5, worldPose(0.820, +0.120, kUpperZ)},
-  // 远墙完成后，按相同规则向供料区外侧退回，构造第二面 X 向墙。
-  {"task24_yz_wall_near_bottom_left", 2, worldPose(0.640, -0.120, kBottomZ)},
-  {"task24_yz_wall_near_bottom_right", 3, worldPose(0.640, +0.120, kBottomZ)},
-  {"task24_yz_wall_near_upper_left", 0, worldPose(0.640, -0.120, kUpperZ)},
-  {"task24_yz_wall_near_upper_right", 1, worldPose(0.640, +0.120, kUpperZ)},
+  {"task25_batch1_slot_a", 0, worldPose(0.820, -0.150, kBottomZ)},
+  {"task25_batch1_slot_b", 1, worldPose(0.820, +0.150, kBottomZ)},
+  {"task25_batch2_slot_a", 2, worldPose(0.820, -0.150, kUpperZ)},
+  {"task25_batch2_slot_b", 3, worldPose(0.820, +0.150, kUpperZ)},
+  {"task25_batch3_slot_a", 4, worldPose(0.640, -0.150, kBottomZ)},
+  {"task25_batch3_slot_b", 5, worldPose(0.640, +0.150, kBottomZ)},
+  {"task25_batch4_slot_a", 6, worldPose(0.640, -0.150, kUpperZ)},
+  {"task25_batch4_slot_b", 7, worldPose(0.640, +0.150, kUpperZ)},
 }};
+
+// 分批到料：固定 4 批 x 2 件。每批两件放在同一 y 行、沿 X 分隔的两个槽位，两件
+// 在 X 上完全错开 220 mm，远大于 L 型阵列面板 70 mm 的 X 向包络。批内先取槽 A
+// （靠目标侧）：负载段 COMMON_X_TRAVEL 在“与供料相同的 y”高度沿 X 飞行，先取槽 A
+// 后取槽 B 时，这条飞行通道上不再有任何未取供料件。
+constexpr int kBatchSize = 2;
+constexpr int kBatchCount = 4;
+constexpr double kSlotAx = 0.520;
+constexpr double kSlotBx = 0.300;
+constexpr double kSlotY = -0.070;
+// 到料是“到位即停”。执行器只接受 bridge 判定为已落稳的 Ground Truth；槽位偏差
+// 超过该容差视为场景/bridge 漂移，直接停止，而不是继续用错误几何规划。
+constexpr double kSlotTolerance = 0.003;
+constexpr double kFeedTimeoutSec = 90.0;
+// Franka 官方 FR3 move_to_start 空载准备姿态。批间必须同步回到该位并确认到位，
+// 才允许下一批到料；该姿态在八件全在场的初始状态下已被实际使用。
+constexpr std::array<double, 7> kHomeQ{
+  0.0, -kPi / 4.0, 0.0, -3.0 * kPi / 4.0, 0.0, kPi / 2.0, kPi / 4.0};
 
 double pointTime(const trajectory_msgs::msg::JointTrajectoryPoint& point)
 {
@@ -314,7 +363,7 @@ moveit_msgs::msg::CollisionObject cubeObject(
 moveit_msgs::msg::CollisionObject tableObject()
 {
   auto pose = worldPose(0.55, 0.0, 0.100);
-  auto object = cubeObject("task24_table", pose);
+  auto object = cubeObject("task25_table", pose);
   object.primitives.front().dimensions = {1.20, 0.80, 0.200};
   return object;
 }
@@ -328,7 +377,7 @@ bool copyRobotDescriptions(const rclcpp::Node::SharedPtr& node)
   auto client = std::make_shared<rclcpp::AsyncParametersClient>(node, "/move_group");
   if (!client->wait_for_service(10s))
   {
-    RCLCPP_ERROR(node->get_logger(), "Task24 无法连接 /move_group。");
+    RCLCPP_ERROR(node->get_logger(), "Task25 无法连接 /move_group。");
     return false;
   }
   const auto future = client->get_parameters({"robot_description", "robot_description_semantic"});
@@ -336,7 +385,7 @@ bool copyRobotDescriptions(const rclcpp::Node::SharedPtr& node)
       rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_ERROR(node->get_logger(),
-      "Task24 读取 /move_group RobotModel 参数超时；请确认只启动一套 MoveIt。");
+      "Task25 读取 /move_group RobotModel 参数超时；请确认只启动一套 MoveIt。");
     return false;
   }
   const auto values = future.get();
@@ -344,7 +393,7 @@ bool copyRobotDescriptions(const rclcpp::Node::SharedPtr& node)
       values[0].get_type() != rclcpp::ParameterType::PARAMETER_STRING ||
       values[1].get_type() != rclcpp::ParameterType::PARAMETER_STRING)
   {
-    RCLCPP_ERROR(node->get_logger(), "Task24 未从 /move_group 读取到有效 RobotModel。");
+    RCLCPP_ERROR(node->get_logger(), "Task25 未从 /move_group 读取到有效 RobotModel。");
     return false;
   }
   node->declare_parameter<std::string>("robot_description", values[0].as_string());
@@ -359,7 +408,7 @@ public:
     : expected_count_(expected_count)
   {
     subscription_ = node->create_subscription<geometry_msgs::msg::PoseArray>(
-      "/task24/cube_poses", 10,
+      "/task25/cube_poses", 10,
       [this](const geometry_msgs::msg::PoseArray::SharedPtr message)
       {
         if (message->poses.size() != expected_count_)
@@ -409,8 +458,74 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
 };
 
+// Isaac Bridge 每帧发布长度 8 的就位掩码：0 = 未到货（桌下休眠），1 = 已瞬移到槽位
+// 正在落稳，2 = 已到位且静止。执行器只在本标志非 0 时才允许读取该件 Ground Truth 并
+// 规划；未到货的 Cube 停在桌下休眠位，既不是障碍物也不是抓取对象。
+class FeedStateBuffer
+{
+public:
+  FeedStateBuffer(const rclcpp::Node::SharedPtr& node, std::size_t expected_count)
+    : expected_count_(expected_count)
+  {
+    subscription_ = node->create_subscription<std_msgs::msg::Int32MultiArray>(
+      "/task25/feed_state", 10,
+      [this](const std_msgs::msg::Int32MultiArray::SharedPtr message)
+      {
+        if (message->data.size() != expected_count_)
+        {
+          return;
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        state_ = message->data;
+        ready_ = true;
+        condition_.notify_all();
+      });
+  }
+
+  bool wait(double timeout_sec)
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return condition_.wait_for(lock, std::chrono::duration<double>(timeout_sec), [this]() { return ready_; });
+  }
+
+  // 等待给定的一批件全部到位。这是“到位即停”的唯一证据来源：只要有一件没到位，
+  // 就不允许读它的 pose、更不允许围绕它规划。
+  bool waitArrived(const std::vector<std::size_t>& indices, double timeout_sec)
+  {
+    const auto deadline = std::chrono::steady_clock::now() +
+      std::chrono::duration<double>(timeout_sec);
+    std::unique_lock<std::mutex> lock(mutex_);
+    while (std::chrono::steady_clock::now() < deadline)
+    {
+      bool all = ready_;
+      for (const auto index : indices)
+      {
+        if (index >= state_.size() || state_.at(index) == 0)
+        {
+          all = false;
+          break;
+        }
+      }
+      if (all)
+      {
+        return true;
+      }
+      condition_.wait_for(lock, 50ms);
+    }
+    return false;
+  }
+
+private:
+  mutable std::mutex mutex_;
+  mutable std::condition_variable condition_;
+  bool ready_{false};
+  std::size_t expected_count_{0};
+  std::vector<std::int32_t> state_;
+  rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr subscription_;
+};
+
 // Isaac Bridge 在同一个 physics tick 发布 Cube 与两个 side_suction_tcp Pose。
-// Task24 不将 CLOSED 当成“抓正了”：必须用这三个 Ground Truth 显式验证。
+// Task25 不将 CLOSED 当成“抓正了”：必须用这三个 Ground Truth 显式验证。
 class TcpBuffer
 {
 public:
@@ -507,9 +622,9 @@ public:
   {
     joint_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>("/" + side_ + "/joint_command", 10);
     suction_pub_ = node_->create_publisher<std_msgs::msg::Bool>(
-      "/task24/" + side_ + "/suction_command", 10);
+      "/task25/" + side_ + "/suction_command", 10);
     state_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
-      "/task24/" + side_ + "/suction_state", 10,
+      "/task25/" + side_ + "/suction_state", 10,
       [this](const std_msgs::msg::Bool::SharedPtr state)
       {
         seen_state_.store(true);
@@ -623,6 +738,54 @@ public:
     return true;
   }
 
+  // 批间退出：共同回到官方空载准备姿态。空载 RRTConnect 到固定关节目标即可，
+  // 但仍必须整段通过同步 FCL 门禁；这里不执行任何负载段。
+  bool planHome(moveit::planning_interface::MoveGroupInterface& group,
+                const std::array<double, 7>& home,
+                trajectory_msgs::msg::JointTrajectory* output) const
+  {
+    configure(group);
+    group.clearPoseTargets();
+    std::map<std::string, double> target;
+    for (const auto& name : group.getJointNames())
+    {
+      if (name.size() < 2)
+      {
+        continue;
+      }
+      const char last = name.back();
+      if (last < '1' || last > '7')
+      {
+        continue;
+      }
+      target[name] = home.at(static_cast<std::size_t>(last - '1'));
+    }
+    if (target.size() != home.size())
+    {
+      RCLCPP_ERROR(node_->get_logger(),
+        "%s HOME target joint mismatch: resolved=%zu expected=%zu.",
+        side_.c_str(), target.size(), home.size());
+      return false;
+    }
+    group.setStartStateToCurrentState();
+    if (!group.setJointValueTarget(target))
+    {
+      RCLCPP_ERROR(node_->get_logger(), "%s HOME target rejected by MoveIt.", side_.c_str());
+      return false;
+    }
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    if (group.plan(plan) != moveit::core::MoveItErrorCode::SUCCESS ||
+        plan.trajectory_.joint_trajectory.points.empty())
+    {
+      RCLCPP_ERROR(node_->get_logger(), "%s HOME RRTConnect planning failed.", side_.c_str());
+      return false;
+    }
+    *output = plan.trajectory_.joint_trajectory;
+    ensureTiming(*output);
+    RCLCPP_INFO(node_->get_logger(), "%s HOME planned points=%zu.", side_.c_str(), output->points.size());
+    return true;
+  }
+
   bool executeAt(const trajectory_msgs::msg::JointTrajectory& input,
                  const std::chrono::steady_clock::time_point& start) const
   {
@@ -642,7 +805,7 @@ public:
     {
       sensor_msgs::msg::JointState command;
       command.header.stamp = node_->now();
-      command.header.frame_id = "task24_single";
+      command.header.frame_id = "task25_single";
       command.name = names;
       command.position = positions;
       joint_pub_->publish(command);
@@ -687,7 +850,7 @@ public:
     }
     sensor_msgs::msg::JointState command;
     command.header.stamp = stamp;
-    command.header.frame_id = "task24_dual_sync";
+    command.header.frame_id = "task25_dual_sync";
     command.name = std::move(names);
     command.position = interpolate(input, logical_time);
     joint_pub_->publish(command);
@@ -718,6 +881,8 @@ public:
     const auto& target = trajectory.points.back().positions;
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::duration<double>(timeout_sec);
     double last_max_error = std::numeric_limits<double>::infinity();
+    double previous_max_error = std::numeric_limits<double>::infinity();
+    int stable_samples = 0;
     while (std::chrono::steady_clock::now() < deadline)
     {
       {
@@ -742,6 +907,26 @@ public:
         {
           RCLCPP_INFO(node_->get_logger(), "%s final joint-state settled: max_error=%.3f deg.",
             side_.c_str(), last_max_error * 180.0 / kPi);
+          return true;
+        }
+        // 稳态残余：连续若干次读数几乎不变且残余有界，说明已经停住，可以继续推进。
+        if (complete && std::isfinite(last_max_error) &&
+            last_max_error <= kJointSettleResidualToleranceRad &&
+            std::abs(last_max_error - previous_max_error) <= kJointSettleStableDeltaRad)
+        {
+          ++stable_samples;
+        }
+        else
+        {
+          stable_samples = 0;
+        }
+        previous_max_error = last_max_error;
+        if (stable_samples >= kJointSettleStableSamples)
+        {
+          RCLCPP_WARN(node_->get_logger(),
+            "%s final joint-state at rest with bounded residual: max_error=%.3f deg (<= %.3f deg).",
+            side_.c_str(), last_max_error * 180.0 / kPi,
+            kJointSettleResidualToleranceRad * 180.0 / kPi);
           return true;
         }
         joint_condition_.wait_for(lock, 50ms);
@@ -837,7 +1022,7 @@ bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& l
 
   // time_scale_ 原本已经被 Arm 持有；通过左臂读取后两个 Arm 构造时传入同一值。
   // 使用 0..1 的三次平滑时间律 3u^2-2u^3：起止速度为零，两个 Articulation
-  // 共享同一 phase 与总时长。Task24 实测它的连续倾角小于五次时间律，故保留。
+  // 共享同一 phase 与总时长。Task25 实测它的连续倾角小于五次时间律，故保留。
   const double physical_duration = common_duration * left.timeScale();
   std::size_t tick = 0;
   while (true)
@@ -953,7 +1138,7 @@ bool validateSync(
             const auto& p = state.getGlobalLinkTransform(name).translation();
             RCLCPP_ERROR(node->get_logger(), "%s FCL link %s origin=(%.3f, %.3f, %.3f).",
               label.c_str(), name.c_str(), p.x(), p.y(), p.z());
-            // Task24 侧吸盘的 collision 依次是：竖杆、横杆、面板、四个 Cup。
+            // Task25 侧吸盘的 collision 依次是：竖杆、横杆、面板、四个 Cup。
             // 输出各 primitive 的世界原点，以便定位真实擦碰实体；不据此放宽 ACM。
             const auto* link = model->getLinkModel(name);
             const auto& local_origins = link->getCollisionOriginTransforms();
@@ -975,13 +1160,55 @@ bool validateSync(
   return true;
 }
 
+// 用 FK 检查一条笛卡尔轨迹的中间状态是否真的贴着命令直线。
+// MoveIt 的 computeCartesianPath 在个别路径点 IK 失败时仍会报出 1.0000 的 fraction，
+// 但中间状态可能离直线极远（实测左臂 COMMON_Y_ALIGN 的 TCP 从 y=0.02 甩到 y=-1.2 m
+// 再绕回来，且中途扫过桌面）。这类轨迹既不是真实碰撞也不是可用构型，必须整体拒绝并
+// 换一个采样步长重规划，而不是等同步 FCL 在最后一段才发现。
+double cartesianLineDeviation(
+  const moveit::core::RobotModelConstPtr& model, const std::string& eef_link,
+  const trajectory_msgs::msg::JointTrajectory& trajectory,
+  const geometry_msgs::msg::Pose& target)
+{
+  if (trajectory.points.empty() || trajectory.joint_names.empty())
+  {
+    return std::numeric_limits<double>::infinity();
+  }
+  const auto poseAt = [&](const std::vector<double>& positions) {
+    moveit::core::RobotState state(model);
+    state.setToDefaultValues();
+    state.setVariablePositions(trajectory.joint_names, positions);
+    state.update();
+    return state.getGlobalLinkTransform(eef_link).translation();
+  };
+  const Eigen::Vector3d start = poseAt(trajectory.points.front().positions);
+  const Eigen::Vector3d goal(
+    target.position.x, target.position.y, target.position.z);
+  const Eigen::Vector3d delta = goal - start;
+  const double span = delta.norm();
+  if (span <= 1e-9)
+  {
+    return 0.0;
+  }
+  const Eigen::Vector3d direction = delta / span;
+  double worst = 0.0;
+  for (const auto& point : trajectory.points)
+  {
+    const Eigen::Vector3d actual = poseAt(point.positions);
+    const double alpha = std::clamp(
+      (actual - start).dot(direction) / span, 0.0, 1.0);
+    worst = std::max(worst, (actual - (start + alpha * delta)).norm());
+  }
+  return worst;
+}
+
 bool planCommonCartesian(
   const rclcpp::Node::SharedPtr& node, moveit::planning_interface::MoveGroupInterface& group,
   const std::string& own_group, const std::string& partner_group,
   const std::vector<double>& own_start, const std::vector<double>& partner_start,
   const geometry_msgs::msg::Pose& target, const std::string& label,
   trajectory_msgs::msg::JointTrajectory* output,
-  bool avoid_collisions = false)
+  const std::string& eef_link, bool avoid_collisions = false)
 {
   const auto model = group.getRobotModel();
   const auto* own = model->getJointModelGroup(own_group);
@@ -990,27 +1217,46 @@ bool planCommonCartesian(
   {
     return false;
   }
-  for (int attempt = 1; attempt <= kRetries; ++attempt)
+  // 同一个起点可能因为 IK 采样序列不同而产生贴线或离线的轨迹。先按默认步长试，
+  // 只有在轨迹离线时才换步长重试；不接受任何不贴线的轨迹。
+  const std::array<double, 4> steps{kCartesianStep, 0.0015, 0.003, 0.001};
+  for (const double step : steps)
   {
-    auto state = group.getCurrentState(2.0);
-    if (!state)
+    for (int attempt = 1; attempt <= kRetries; ++attempt)
     {
-      return false;
-    }
-    state->setJointGroupPositions(own, own_start);
-    state->setJointGroupPositions(partner, partner_start);
-    state->update();
-    group.setStartState(*state);
-    moveit_msgs::msg::RobotTrajectory candidate;
-    moveit_msgs::msg::MoveItErrorCodes error;
-    // 共同搬运阶段的完整双臂 FCL 在候选同步后进行；不能把搭档臂冻结在阶段
-    // 起点而误判。但空载接触阶段必须同时避开桌面，故由调用点显式开启。
-    const double fraction = group.computeCartesianPath(
-      {target}, kCartesianStep, 0.0, candidate, avoid_collisions, &error);
-    RCLCPP_INFO(node->get_logger(), "%s Cartesian fraction=%.4f error=%d attempt=%d/%d.",
-      label.c_str(), fraction, error.val, attempt, kRetries);
-    if (fraction >= kMinCartesianFraction && !candidate.joint_trajectory.points.empty())
-    {
+      auto state = group.getCurrentState(2.0);
+      if (!state)
+      {
+        return false;
+      }
+      state->setJointGroupPositions(own, own_start);
+      state->setJointGroupPositions(partner, partner_start);
+      state->update();
+      group.setStartState(*state);
+      moveit_msgs::msg::RobotTrajectory candidate;
+      moveit_msgs::msg::MoveItErrorCodes error;
+      // 共同搬运阶段的完整双臂 FCL 在候选同步后进行；不能把搭档臂冻结在阶段
+      // 起点而误判。但空载接触阶段必须同时避开桌面，故由调用点显式开启。
+      const double fraction = group.computeCartesianPath(
+        {target}, step, kCartesianJumpThreshold, candidate, avoid_collisions, &error);
+      if (fraction < kMinCartesianFraction || candidate.joint_trajectory.points.empty())
+      {
+        RCLCPP_INFO(node->get_logger(), "%s Cartesian fraction=%.4f error=%d step=%.4f attempt=%d/%d.",
+          label.c_str(), fraction, error.val, step, attempt, kRetries);
+        continue;
+      }
+      const double deviation = cartesianLineDeviation(
+        model, eef_link, candidate.joint_trajectory, target);
+      RCLCPP_INFO(node->get_logger(),
+        "%s Cartesian fraction=%.4f error=%d step=%.4f attempt=%d/%d line_deviation=%.3f mm.",
+        label.c_str(), fraction, error.val, step, attempt, kRetries, deviation * 1000.0);
+      if (deviation > kMaxCartesianLineDeviation)
+      {
+        RCLCPP_WARN(node->get_logger(),
+          "%s rejected: 中间状态离线 %.1f mm（超过 %.1f mm）；换步长重规划。",
+          label.c_str(), deviation * 1000.0, kMaxCartesianLineDeviation * 1000.0);
+        break;
+      }
       *output = candidate.joint_trajectory;
       ensureTiming(*output);
       return true;
@@ -1039,10 +1285,21 @@ bool planAndCheckCommon(
   const std::vector<moveit_msgs::msg::CollisionObject>& world, const std::string& stage,
   trajectory_msgs::msg::JointTrajectory* left_output, trajectory_msgs::msg::JointTrajectory* right_output)
 {
+  // 共同负载段：两臂在同一 phase 下同步运动，但 computeCartesianPath 只能一次
+  // 规划一条单臂路径，并且会把搭档臂冻结在该段起点。Task25 的 COMMON_Y_ALIGN 需要
+  // 把 Cube 从 y=-0.070 搬到目标行的 y=±0.120，两臂要一起走 +190 mm；此时“冻结的
+  // 搭档臂”会被真实运动的另一臂扫到，MoveIt 会把 Cartesian 路径截断在约 63.5%
+  // （实测截断点接触对为 left_fr3_side_suction <-> right_fr3_side_suction）。
+  // 那是冻结假设造成的假阳性，不是真实碰撞。
+  //
+  // 因此共同段的两条单臂路径不做“对冻结搭档”的碰撞判断，真正的门禁是紧随其后的
+  // validateSync：它按同一时间参数采样左右两条轨迹，对完整双臂 RobotState 做
+  // robot--robot 与 robot--world 的 FCL 检查。ACM 没有扩大，世界障碍物也没有移除，
+  // 任何真实碰撞仍会在 validateSync 处以具体碰撞对和接触点被拒绝。
   if (!planCommonCartesian(node, left_group, left.groupName(), right.groupName(), left_start, right_start,
-                           left_target, stage + " left", left_output, true) ||
+                           left_target, stage + " left", left_output, left.eefLink(), false) ||
       !planCommonCartesian(node, right_group, right.groupName(), left.groupName(), right_start, left_start,
-                           right_target, stage + " right", right_output, true) ||
+                           right_target, stage + " right", right_output, right.eefLink(), false) ||
       !synchronize(left_output, right_output) ||
       !validateSync(node, left_group.getRobotModel(), world, *left_output, *right_output, stage))
   {
@@ -1067,18 +1324,15 @@ bool validPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& task
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<rclcpp::Node>("task24_side_suction_tight");
-  const int requested = node->declare_parameter<int>("max_cubes", static_cast<int>(kTasks.size()));
-  // Task24-M 默认执行完整 8 件。Scene、bridge 与 MoveIt 同时维护全部真实 Cube
-  // CollisionObject；任何调用方若只做小批量诊断，必须显式同时降低这两个参数。
-  const int active_cube_count = node->declare_parameter<int>("active_cube_count", static_cast<int>(kTasks.size()));
+  auto node = std::make_shared<rclcpp::Node>("task25_batched_side_suction");
+  // 统一按“批”计数：默认完整 4 批 8 件；单批物理验收用 -p max_batches:=1。
+  const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
-  // 只做 MoveIt/IK/FCL 链路筛选，绝不发布 joint 或 suction command。它用于在
-  // 改动台面、供料或目标坐标前先验证 FR3 的可达工作区，避免把几何试错带入
-  // Isaac 物理执行。
+  // 零命令预检：只做 MoveIt/IK/FCL 链路筛选，不发布 joint、suction，也绝不请求
+  // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
+  // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
-  if (requested < 1 || requested > active_cube_count ||
-      active_cube_count < 1 || active_cube_count > static_cast<int>(kTasks.size()) ||
+  if (max_batches < 1 || max_batches > kBatchCount ||
       time_scale < 1.0 ||
       !copyRobotDescriptions(node))
   {
@@ -1086,9 +1340,12 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  CubeBuffer cubes(node, static_cast<std::size_t>(active_cube_count));
-  TcpBuffer left_tcp(node, "/task24/left/side_suction_tcp_pose");
-  TcpBuffer right_tcp(node, "/task24/right/side_suction_tcp_pose");
+  const std::size_t cube_count = kTasks.size();
+  CubeBuffer cubes(node, cube_count);
+  FeedStateBuffer feed_state(node, cube_count);
+  TcpBuffer left_tcp(node, "/task25/left/side_suction_tcp_pose");
+  TcpBuffer right_tcp(node, "/task25/right/side_suction_tcp_pose");
+  auto feed_command_pub = node->create_publisher<std_msgs::msg::Int32>("/task25/feed_command", 10);
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 4);
   executor.add_node(node);
   std::thread spin([&executor]() { executor.spin(); });
@@ -1096,23 +1353,29 @@ int main(int argc, char** argv)
   do
   {
     RCLCPP_INFO(node->get_logger(),
-      "========== Task24 OFFLINE SIDE-SUCTION TIGHT: requested=%d, active_scene_cubes=%d, wall-first YZ->X, time_scale=%.2f ==========" ,
-      requested, active_cube_count, time_scale);
+      "========== Task25 BATCHED-FEED SIDE-SUCTION TIGHT: batches=%d, cubes=%zu, planning_only=%s, time_scale=%.2f ==========" ,
+      max_batches, cube_count, planning_only ? "true" : "false", time_scale);
     if (!cubes.wait(10.0))
     {
-      RCLCPP_ERROR(node->get_logger(), "Task24 等待 /task24/cube_poses 超时。");
+      RCLCPP_ERROR(node->get_logger(), "Task25 等待 /task25/cube_poses 超时。");
+      break;
+    }
+    if (!feed_state.wait(10.0))
+    {
+      RCLCPP_ERROR(node->get_logger(),
+        "Task25 等待 /task25/feed_state 超时；Isaac 侧 bridge 必须先运行。");
       break;
     }
     if (!left_tcp.wait(10.0) || !right_tcp.wait(10.0))
     {
-      RCLCPP_ERROR(node->get_logger(), "Task24 等待侧吸盘 TCP Ground Truth 超时。");
+      RCLCPP_ERROR(node->get_logger(), "Task25 等待侧吸盘 TCP Ground Truth 超时。");
       break;
     }
     Arm left(node, true, time_scale);
     Arm right(node, false, time_scale);
     if (!left.waitBridge() || !right.waitBridge())
     {
-      RCLCPP_ERROR(node->get_logger(), "Task24 Isaac side-suction bridge 未就绪。");
+      RCLCPP_ERROR(node->get_logger(), "Task25 Isaac side-suction bridge 未就绪。");
       break;
     }
     // 从 CLOSE 起，只要任一后续规划、执行或 Ground Truth 门禁失败，就必须
@@ -1125,13 +1388,15 @@ int main(int argc, char** argv)
       std::thread right_off([&]() { right.suction(false); });
       left_off.join();
       right_off.join();
-      if (!left.waitSuction(false, 3.0) || !right.waitSuction(false, 3.0))
+      // 释放确认给 6 s：桥的吸盘状态是按仿真时间 20 Hz 发布的，仿真偶尔掉帧时
+      // 3 s 会误判成「没确认」。这里只是等待时长，不放宽任何门限。
+      if (!left.waitSuction(false, 6.0) || !right.waitSuction(false, 6.0))
       {
-        RCLCPP_ERROR(node->get_logger(), "Task24 emergency SUCTION OFF was not confirmed on both arms.");
+        RCLCPP_ERROR(node->get_logger(), "Task25 emergency SUCTION OFF was not confirmed on both arms.");
         return false;
       }
       RCLCPP_INFO(node->get_logger(),
-        "Task24 %s: both side suctions are OPEN.", context);
+        "Task25 %s: both side suctions are OPEN.", context);
       return true;
     };
     moveit::planning_interface::MoveGroupInterface left_group(node, left.groupName());
@@ -1139,31 +1404,184 @@ int main(int argc, char** argv)
     left_group.setEndEffectorLink(left.eefLink());
     right_group.setEndEffectorLink(right.eefLink());
     moveit::planning_interface::PlanningSceneInterface scene;
-    std::vector<moveit_msgs::msg::CollisionObject> initial{tableObject()};
-    const std::size_t scene_cube_count = static_cast<std::size_t>(active_cube_count);
-    for (std::size_t index = 0; index < scene_cube_count; ++index)
-    {
-      const auto [pose, revision] = cubes.get(index);
-      (void)revision;
-      initial.push_back(cubeObject("task24_cube_" + std::to_string(index + 1), pose));
-    }
+    // 启动时 Planning Scene 只有桌面：未到货件停在桌下休眠位，既不在工作区也不是
+    // 障碍物；当前批两件只在到料确认后加入，已完成件始终保留。
     scene.removeCollisionObjects({
-      "task24_table", "task24_cube_1", "task24_cube_2", "task24_cube_3", "task24_cube_4",
-      "task24_cube_5", "task24_cube_6", "task24_cube_7", "task24_cube_8"});
+      "task25_table", "task25_cube_1", "task25_cube_2", "task25_cube_3", "task25_cube_4",
+      "task25_cube_5", "task25_cube_6", "task25_cube_7", "task25_cube_8"});
     std::this_thread::sleep_for(300ms);
-    if (!scene.applyCollisionObjects(initial))
+    if (!scene.applyCollisionObject(tableObject()))
     {
-      RCLCPP_ERROR(node->get_logger(), "Task24 无法初始化 MoveIt Planning Scene。");
+      RCLCPP_ERROR(node->get_logger(), "Task25 无法初始化 MoveIt Planning Scene。");
       break;
     }
     std::this_thread::sleep_for(500ms);
 
-    bool all_complete = true;
-    for (int task_index = 0; task_index < requested; ++task_index)
+    // 供料槽位是设计常量。用批 1 的真实 Ground Truth 校验“场景 - bridge - 执行器”
+    // 三方对同一槽位的理解一致；不一致就停止，绝不用错误几何继续规划。
+    const std::array<geometry_msgs::msg::Pose, kBatchSize> nominal_slots{
+      worldPose(kSlotAx, kSlotY, kBottomZ), worldPose(kSlotBx, kSlotY, kBottomZ)};
+    if (!feed_state.waitArrived({0, 1}, kFeedTimeoutSec))
     {
+      RCLCPP_ERROR(node->get_logger(),
+        "Task25 批 1 未在 %.0f s 内到位；请确认 Isaac bridge 已启动（它会自动释放批 1）。",
+        kFeedTimeoutSec);
+      break;
+    }
+    bool slot_ok = true;
+    for (std::size_t slot = 0; slot < nominal_slots.size(); ++slot)
+    {
+      const auto [live, live_revision] = cubes.get(slot);
+      (void)live_revision;
+      const double error = distance3d(nominal_slots.at(slot).position, live.position);
+      RCLCPP_INFO(node->get_logger(),
+        "Task25 槽 %c 设计值=(%.3f, %.3f, %.3f) 实际=(%.3f, %.3f, %.3f) 偏差=%.2f mm。",
+        slot == 0 ? 'A' : 'B',
+        nominal_slots.at(slot).position.x, nominal_slots.at(slot).position.y,
+        nominal_slots.at(slot).position.z,
+        live.position.x, live.position.y, live.position.z, error * 1000.0);
+      if (error > kSlotTolerance)
+      {
+        // 物理执行时批 1 两件必须真的停在设计槽位，否则场景已被前一次运行消耗，
+        // 绝不能带着错误几何继续。零命令预检不改变世界，允许在“上批已搬走”的
+        // 现场上重跑，只报警告。
+        if (planning_only)
+        {
+          RCLCPP_WARN(node->get_logger(),
+            "Task25 槽 %c 当前偏差 %.1f mm（超过 %.1f mm）：planning-only 仍按设计槽位预演，"
+            "物理执行前必须重建场景。",
+            slot == 0 ? 'A' : 'B', error * 1000.0, kSlotTolerance * 1000.0);
+          continue;
+        }
+        RCLCPP_ERROR(node->get_logger(),
+          "Task25 槽 %c 偏差超过 %.1f mm；场景或 bridge 已漂移，停止。",
+          slot == 0 ? 'A' : 'B', kSlotTolerance * 1000.0);
+        slot_ok = false;
+      }
+    }
+    if (!slot_ok)
+    {
+      break;
+    }
+
+    bool all_complete = true;
+    for (int batch = 1; batch <= max_batches && all_complete; ++batch)
+    {
+      std::array<std::size_t, kBatchSize> batch_indices{};
+      for (int slot = 0; slot < kBatchSize; ++slot)
+      {
+        batch_indices.at(static_cast<std::size_t>(slot)) =
+          static_cast<std::size_t>(batch - 1) * kBatchSize + static_cast<std::size_t>(slot);
+      }
+      RCLCPP_INFO(node->get_logger(),
+        "########## Task25 batch %d/%d: Cube_%02zu (slot A, picked first) then Cube_%02zu (slot B) ##########",
+        batch, max_batches, batch_indices.front() + 1, batch_indices.back() + 1);
+
+      std::array<geometry_msgs::msg::Pose, kBatchSize> batch_sources;
+      if (planning_only)
+      {
+        // 零命令预检不请求到料：按设计槽位虚拟推进，绝不发布 feed_command。
+        for (int slot = 0; slot < kBatchSize; ++slot)
+        {
+          batch_sources.at(static_cast<std::size_t>(slot)) =
+            nominal_slots.at(static_cast<std::size_t>(slot));
+        }
+        RCLCPP_INFO(node->get_logger(),
+          "Task25 planning-only batch %d: 使用设计槽位预演，未发布 feed_command 或任何运动命令。", batch);
+      }
+      else
+      {
+        if (batch > 1)
+        {
+          std_msgs::msg::Int32 command;
+          command.data = batch;
+          for (int repeat = 0; repeat < 20; ++repeat)
+          {
+            feed_command_pub->publish(command);
+            std::this_thread::sleep_for(10ms);
+          }
+          RCLCPP_INFO(node->get_logger(), "Task25 已请求第 %d 批到料，等待落稳。", batch);
+        }
+        std::uint64_t arrival_mark = 0;
+        {
+          const auto [mark_pose, mark_revision] = cubes.get(batch_indices.front());
+          (void)mark_pose;
+          arrival_mark = mark_revision;
+        }
+        if (!feed_state.waitArrived(
+              {batch_indices.front(), batch_indices.back()}, kFeedTimeoutSec))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "Task25 batch %d 未在 %.0f s 内全部到位。", batch, kFeedTimeoutSec);
+          all_complete = false;
+          break;
+        }
+        // 到料是瞬移 + 落稳：必须等到新一帧 Ground Truth，绝不使用瞬移前的缓存 pose。
+        geometry_msgs::msg::Pose fresh;
+        if (!cubes.waitNew(batch_indices.front(), arrival_mark, 5.0, &fresh))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "Task25 batch %d 到位后没有收到新的 Ground Truth。", batch);
+          all_complete = false;
+          break;
+        }
+        std::this_thread::sleep_for(200ms);
+        for (int slot = 0; slot < kBatchSize; ++slot)
+        {
+          const std::size_t index = batch_indices.at(static_cast<std::size_t>(slot));
+          const auto [live, live_revision] = cubes.get(index);
+          (void)live_revision;
+          batch_sources.at(static_cast<std::size_t>(slot)) = live;
+          const double error = distance3d(
+            nominal_slots.at(static_cast<std::size_t>(slot)).position, live.position);
+          if (error > kSlotTolerance)
+          {
+            RCLCPP_ERROR(node->get_logger(),
+              "Task25 batch %d Cube_%02zu 实际落在 (%.3f, %.3f, %.3f)，与槽位偏差 %.1f mm 超过 %.1f mm；停止。",
+              batch, index + 1, live.position.x, live.position.y, live.position.z,
+              error * 1000.0, kSlotTolerance * 1000.0);
+            all_complete = false;
+          }
+        }
+        if (!all_complete)
+        {
+          break;
+        }
+      }
+
+      // 当前批两件按最新 Ground Truth 加入 Planning Scene；此前批次已落稳的件一直
+      // 保留为真实碰撞物，后续批次的休眠件从不进入规划场景。
+      std::vector<moveit_msgs::msg::CollisionObject> batch_objects;
+      for (int slot = 0; slot < kBatchSize; ++slot)
+      {
+        const std::size_t index = batch_indices.at(static_cast<std::size_t>(slot));
+        batch_objects.push_back(cubeObject(
+          "task25_cube_" + std::to_string(index + 1),
+          batch_sources.at(static_cast<std::size_t>(slot))));
+      }
+      if (!scene.applyCollisionObjects(batch_objects))
+      {
+        RCLCPP_ERROR(node->get_logger(),
+          "Task25 batch %d 无法把当前批两件加入 Planning Scene。", batch);
+        all_complete = false;
+        break;
+      }
+      std::this_thread::sleep_for(300ms);
+
+      // 批内逐件执行 Task24 已验证的紧协调链路（先槽 A 后槽 B）。
+      for (int slot = 0; slot < kBatchSize; ++slot)
+      {
+      const int task_index = static_cast<int>(batch_indices.at(static_cast<std::size_t>(slot)));
       const auto& task = kTasks.at(static_cast<std::size_t>(task_index));
-      const std::string object_id = "task24_cube_" + std::to_string(task.cube_index + 1);
-      const auto [source, source_revision] = cubes.get(task.cube_index);
+      const std::string object_id = "task25_cube_" + std::to_string(task.cube_index + 1);
+      const auto [live_source, source_revision] = cubes.get(task.cube_index);
+      (void)live_source;
+      // 物理执行时 source 就是该批到料落稳后读到的真实 Ground Truth；零命令预检
+      // 不请求到料，后续批次仍停在桌下休眠位（z=-5 m），因此必须使用该批的设计槽位
+      // 作为预演起点，绝不能把休眠位当成抓取位姿。
+      const geometry_msgs::msg::Pose source = planning_only
+        ? batch_sources.at(static_cast<std::size_t>(slot))
+        : live_source;
       RCLCPP_INFO(node->get_logger(), "---------- %s: source=(%.3f, %.3f, %.3f), target=(%.3f, %.3f, %.3f) ----------",
         task.id, source.position.x, source.position.y, source.position.z,
         task.target.position.x, task.target.position.y, task.target.position.z);
@@ -1237,7 +1655,7 @@ int main(int argc, char** argv)
         trajectory_msgs::msg::JointTrajectory candidate_outer;
         if (!planCommonCartesian(node, left_group, left.groupName(), right.groupName(),
               finalPositions(candidate_pre), finalPositions(right_pre), left_low_pre,
-              candidate_prefix + " OUTER_DESCENT", &candidate_outer, true))
+              candidate_prefix + " OUTER_DESCENT", &candidate_outer, left.eefLink(), true))
         {
           continue;
         }
@@ -1254,7 +1672,7 @@ int main(int argc, char** argv)
               finalPositions(candidate_outer), finalPositions(right_pre),
               sidePose(source.position.x, initial_left_contact_y,
                 source.position.z + kSideContactCommandZOffset, true),
-              candidate_prefix + " CONTACT", &candidate_contact, true))
+              candidate_prefix + " CONTACT", &candidate_contact, left.eefLink(), true))
         {
           continue;
         }
@@ -1373,7 +1791,7 @@ int main(int argc, char** argv)
               sidePose(cube_after_left_contact.position.x, right_live_contact_y,
                 cube_after_left_contact.position.z + kSideContactCommandZOffset, false),
               std::string(task.id) + " RIGHT_CONTACT_CANDIDATE_" + std::to_string(candidate_index + 1),
-              &candidate_contact, true))
+              &candidate_contact, right.eefLink(), true))
         {
           continue;
         }
@@ -1766,7 +2184,49 @@ int main(int argc, char** argv)
         break;
       }
       RCLCPP_INFO(node->get_logger(), "%s PASS: dual side suction -> lift -> transport -> descent -> 20 mm short push -> release.", task.id);
-    }
+      }  // 批内逐件结束
+      if (!all_complete)
+      {
+        break;
+      }
+
+      // 批间退出：两件都放置完成、并且双臂同步回到共同 HOME 之后，才允许下一批到料。
+      // 该姿态在八件全在场的初始状态下已被实际使用，因此是“有已完成垛墙时仍然安全”
+      // 的退出位；仍必须整段通过同步 FCL 门禁，不允许为了退出而放宽碰撞规则。
+      trajectory_msgs::msg::JointTrajectory home_left;
+      trajectory_msgs::msg::JointTrajectory home_right;
+      if (!left.planHome(left_group, kHomeQ, &home_left) ||
+          !right.planHome(right_group, kHomeQ, &home_right) ||
+          !synchronize(&home_left, &home_right))
+      {
+        RCLCPP_ERROR(node->get_logger(), "Task25 batch %d 无法规划共同 HOME 退出。", batch);
+        all_complete = false;
+        break;
+      }
+      if (!validateSync(node, left_group.getRobotModel(), staticWorld(scene),
+            home_left, home_right, std::string("task25 COMMON_HOME batch ") + std::to_string(batch)))
+      {
+        RCLCPP_ERROR(node->get_logger(),
+          "Task25 batch %d 的共同 HOME 退出轨迹未通过同步 FCL；不执行该退出。", batch);
+        all_complete = false;
+        break;
+      }
+      if (planning_only)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "Task25 planning-only batch %d PASS: 当前批两件与共同 HOME 退出均通过 IK/FCL 门禁；"
+          "未发布任何 joint、suction 或 feed_command。", batch);
+        continue;
+      }
+      if (!executeSync(left, home_left, right, home_right))
+      {
+        RCLCPP_ERROR(node->get_logger(), "Task25 batch %d 执行共同 HOME 退出失败。", batch);
+        all_complete = false;
+        break;
+      }
+      RCLCPP_INFO(node->get_logger(),
+        "Task25 batch %d PASS: 两件已落稳入垛，双臂已回到共同 HOME，等待下一批到料。", batch);
+    }  // 批次循环结束
     success = all_complete;
   } while (false);
 

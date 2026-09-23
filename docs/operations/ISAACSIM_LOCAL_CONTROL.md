@@ -65,3 +65,17 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 
 先运行 Scene，确认 Stage 已重建后点击 Timeline Play，再运行 Bridge。
 Bridge 启动日志中应包含 `/task24/cube_poses` 与左右吸盘、关节命令主题。
+
+## Task25 例子
+
+Task25 的分批到料场景与 bridge 用法相同，但 bridge **必须在 Play 之后**运行，
+因为它会在启动时立即释放第 1 批：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_scene.py").read())
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task25_batched_feed_bridge.py").read())
+```
+
+启动日志中应包含 `/task25/cube_poses`、`/task25/feed_state`、`/task25/feed_command`
+以及左右吸盘与侧吸 TCP 主题；随后应出现 “批 1（自动）… 等待落稳” 与
+“Cube_01 到位且静止”。完整验收步骤见 `docs/tasks/TASK25_BATCHED_FEED_PALLETIZING.md`。

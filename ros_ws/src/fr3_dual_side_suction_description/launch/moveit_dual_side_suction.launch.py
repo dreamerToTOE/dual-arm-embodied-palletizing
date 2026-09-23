@@ -78,8 +78,10 @@ def generate_launch_description():
         parameters=[{
             "table_id": "task24_table",
             "table_frame": "world",
-            "table_center": [0.55, 0.0, 0.025],
-            "table_size": [1.20, 0.80, 0.050],
+            # 与 Task24 Isaac 场景及执行器的 CollisionObject 严格同构。
+            # 桌面顶面 z=0.200 m：按官方 FR3 准备姿态使侧吸工作区靠近 shoulder 高度。
+            "table_center": [0.55, 0.0, 0.100],
+            "table_size": [1.20, 0.80, 0.200],
         }],
     )
     move_group = Node(

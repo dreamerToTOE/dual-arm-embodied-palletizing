@@ -6,6 +6,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -635,6 +636,42 @@ ament_target_dependencies(task24_side_contact_demo
   moveit_ros_planning_interface
 )
 
+# Task25：分批到料的侧面吸盘紧协调码垛执行器（休眠区瞬移 + 批间共同 HOME 退出）。
+add_executable(task25_batched_side_suction
+  src/task25_batched_side_suction.cpp
+)
+ament_target_dependencies(task25_batched_side_suction
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
+# Task26：货车车厢三面围墙 + 预推入位（第一层 4 件）。
+add_executable(task26_truck_box_push_in
+  src/task26_truck_box_push_in.cpp
+)
+# 推入控制参数走 config/task26_push_control.yaml，需要 yaml-cpp（非 ament 包，
+# 必须显式链接，ament_target_dependencies 不会带出它）。
+target_link_libraries(task26_truck_box_push_in yaml-cpp)
+ament_target_dependencies(task26_truck_box_push_in
+  ament_index_cpp
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -676,6 +713,8 @@ install(
     task23_gripper_stage_push
     task24_side_suction_tight
     task24_side_contact_demo
+    task25_batched_side_suction
+    task26_truck_box_push_in
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -729,6 +768,7 @@ ament_export_dependencies(
   moveit_core
   moveit_ros_planning_interface
   yaml-cpp
+  ament_index_cpp
   rosidl_default_runtime
 )
 
