@@ -250,8 +250,18 @@ geometry_msgs::msg::Pose pushPose(double x, double y, double z)
 constexpr double kTruckShiftX = 0.150;
 constexpr double kBoxInteriorX0 = 0.810 + kTruckShiftX;
 constexpr double kBoxInteriorX1 = 1.060 + kTruckShiftX;
-constexpr double kBoxInteriorY0 = -0.125;
-constexpr double kBoxInteriorY1 = 0.125;
+// 车厢 Y 向五通道：5 x 120 mm Cube、相邻通道 2 mm、两侧各 10 mm 冗余。
+// 必须与 isaac/scripts/task26_truck_box_scene.py 同值，保证 MoveIt 的三面墙
+// 与 PhysX 的三面墙完全同构。现有四件 Task26 仍使用中央两行。
+constexpr int kBoxYCubeCapacity = 5;
+constexpr double kBoxYInterCubeGap = 0.002;
+constexpr double kBoxYSideClearance = 0.010;
+constexpr double kBoxInteriorYHalf = 0.5 * (
+  kBoxYCubeCapacity * kCubeSize +
+  (kBoxYCubeCapacity - 1) * kBoxYInterCubeGap +
+  2.0 * kBoxYSideClearance);
+constexpr double kBoxInteriorY0 = -kBoxInteriorYHalf;
+constexpr double kBoxInteriorY1 = kBoxInteriorYHalf;
 constexpr double kWallThickness = 0.020;
 // 墙高必须让开推入臂的前臂（硬约束）：前臂 link5 下沿扫到 z≈0.40，所以墙顶要低于它。
 //   0.250 -> 顶到墙顶 0.420 mm（拒）；0.200 -> 仍擦 0.014 mm（拒）；0.150 -> 净空约 50 mm。
@@ -264,9 +274,7 @@ constexpr double kPrePushX = 0.690 + kTruckShiftX;
 constexpr double kCellFlushShiftX = 0.010;
 constexpr double kCellShallowX = 0.870 + kTruckShiftX + kCellFlushShiftX;
 constexpr double kCellDeepX = 0.990 + kTruckShiftX + kCellFlushShiftX;
-// 排心内移 5 mm（0.065 -> 0.060）。0.065 时 Cube 的 +Y 面正好压住 WallPlusY 内表面
-// （0.125），实测再偏 0.3 mm 就压进墙里，推入进装料口时蹭墙导致推臂跟不上
-// （PUSH slice 3/4 lag 0.33 -> 2.92 mm 后 25 s 超时）。内移后每侧 5 mm 净空。
+// 已验收四件任务保留中央两行，避免车厢扩容改变原有任务的搬运目标。
 // 与场景的 ROW_Y 必须一致。
 constexpr double kRowYPlus = 0.060;
 constexpr double kRowYMinus = -0.060;
