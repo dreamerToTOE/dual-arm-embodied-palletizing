@@ -1,5 +1,9 @@
 # Task26：车厢三面围墙 + 预推入位（第一层 4 件）的侧面吸盘场景。
 #
+# Task27 通过 task27_five_cube_center_insert_scene.py 设定 _SIDE_SUCTION_SCENARIO
+# 后复用本文件的已验收 FR3、L 型侧吸工具、桌面、围墙和 ROS 图构造。默认仍是
+# Task26；不通过修改 Task26 的默认场景来验证五件横向布局。
+#
 # Isaac Sim 4.5 Script Editor 中，Timeline 停止时运行：
 # exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
 #           "task26_truck_box_scene.py").read())
@@ -30,9 +34,14 @@ except Exception as exc:
 LEFT_ROOT = "/World/left_fr3"
 RIGHT_ROOT = "/World/right_fr3"
 TABLE_PATH = "/World/Table"
-GRAPH_PATH = "/World/Task26ROSGraph"
+SCENARIO = globals().get("_SIDE_SUCTION_SCENARIO", "task26")
+if SCENARIO not in ("task26", "task27"):
+    raise RuntimeError("_SIDE_SUCTION_SCENARIO 只能是 task26 或 task27。")
+TASK27_MODE = SCENARIO == "task27"
+TASK_LABEL = "Task27" if TASK27_MODE else "Task26"
+GRAPH_PATH = "/World/Task27ROSGraph" if TASK27_MODE else "/World/Task26ROSGraph"
 PHYSICS_PATH = "/physicsScene"
-TASK_ROOT = "/World/Task26"
+TASK_ROOT = "/World/Task27" if TASK27_MODE else "/World/Task26"
 SUPPLY_ROOT = f"{TASK_ROOT}/Supply"
 MARKER_ROOT = f"{TASK_ROOT}/TargetMarkers"
 MATERIAL_PATH = f"{TASK_ROOT}/HighFrictionMaterial"
@@ -66,8 +75,10 @@ BOTTOM_Z = TABLE_TOP_Z + CUBE_HALF
 UPPER_Z = BOTTOM_Z + CUBE_SIZE
 
 # Task26：车厢第一层 4 件，分 2 批到料、每批 2 件（同一列）。
-BATCH_SIZE = 2
-BATCH_COUNT = 2
+# Task27：五件横向布局，必须逐件到料；未处理 Cube 始终停在桌下，不会占用
+# 两臂共同抓取通道。前四件是外/内侧支撑基准，第五件才是中心插入。
+BATCH_SIZE = 1 if TASK27_MODE else 2
+BATCH_COUNT = 5 if TASK27_MODE else 2
 ACTIVE_CUBE_COUNT = BATCH_SIZE * BATCH_COUNT
 
 # 供料槽：放在**中轴线 y=0** 上、靠近基座（x=0.50 / 0.35），两臂对称可达。
@@ -150,16 +161,34 @@ PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X
 # 装填顺序：每排**先推深格、再推浅格**——浅格先落会挡住通往深格的直推通道。
 # pre_push_y 与最终 cell 的 Y 坐标刻意不同：前者是紧协调安全行，后者是压紧后的
 # 墙边格位；绝不能用 cell.y 反推预推位。
-TASKS = (
-    {"cube": 1, "row": 0, "depth": "deep", "pre_push_y": ROW_Y[0],
-     "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},
-    {"cube": 2, "row": 0, "depth": "shallow", "pre_push_y": ROW_Y[0],
-     "cell": (CELL_SHALLOW_X, CELL_Y_PLUS, BOTTOM_Z)},
-    {"cube": 3, "row": 1, "depth": "deep", "pre_push_y": ROW_Y[1],
-     "cell": (CELL_DEEP_X, CELL_Y_MINUS, BOTTOM_Z)},
-    {"cube": 4, "row": 1, "depth": "shallow", "pre_push_y": ROW_Y[1],
-     "cell": (CELL_SHALLOW_X, CELL_Y_MINUS, BOTTOM_Z)},
-)
+if TASK27_MODE:
+    # 第一层五件均在最深 X 格：外件先贴对应侧墙，内件贴外件，中心件最后沿 +X
+    # 插入由两侧内件留下的余量。外/内交替的到料顺序与 Task27 C++ 执行器一致。
+    CELL_Y_INNER_PLUS = CELL_Y_PLUS - CUBE_SIZE
+    CELL_Y_INNER_MINUS = CELL_Y_MINUS + CUBE_SIZE
+    TASKS = (
+        {"cube": 1, "row": "plus_outer", "depth": "deep", "pre_push_y": ROW_Y[0],
+         "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},
+        {"cube": 2, "row": "minus_outer", "depth": "deep", "pre_push_y": ROW_Y[1],
+         "cell": (CELL_DEEP_X, CELL_Y_MINUS, BOTTOM_Z)},
+        {"cube": 3, "row": "plus_inner", "depth": "deep", "pre_push_y": ROW_Y[0],
+         "cell": (CELL_DEEP_X, CELL_Y_INNER_PLUS, BOTTOM_Z)},
+        {"cube": 4, "row": "minus_inner", "depth": "deep", "pre_push_y": ROW_Y[1],
+         "cell": (CELL_DEEP_X, CELL_Y_INNER_MINUS, BOTTOM_Z)},
+        {"cube": 5, "row": "center", "depth": "deep", "pre_push_y": 0.0,
+         "cell": (CELL_DEEP_X, 0.0, BOTTOM_Z)},
+    )
+else:
+    TASKS = (
+        {"cube": 1, "row": 0, "depth": "deep", "pre_push_y": ROW_Y[0],
+         "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},
+        {"cube": 2, "row": 0, "depth": "shallow", "pre_push_y": ROW_Y[0],
+         "cell": (CELL_SHALLOW_X, CELL_Y_PLUS, BOTTOM_Z)},
+        {"cube": 3, "row": 1, "depth": "deep", "pre_push_y": ROW_Y[1],
+         "cell": (CELL_DEEP_X, CELL_Y_MINUS, BOTTOM_Z)},
+        {"cube": 4, "row": 1, "depth": "shallow", "pre_push_y": ROW_Y[1],
+         "cell": (CELL_SHALLOW_X, CELL_Y_MINUS, BOTTOM_Z)},
+    )
 PRE_PUSH = tuple((PRE_PUSH_X, item["pre_push_y"], BOTTOM_Z) for item in TASKS)
 
 # ---------------------------------------------------------------- 导轨（第七轴）
@@ -339,6 +368,9 @@ def _apply_diag_overrides():
     只作用于 J5/J6/J7，用于把"腕关节 12 N·m 上限 vs 驱动刚度"这件事分离出来。
     **这不是验收配置，正式运行不得启用。**
     """
+    # Task27 是新的物理基线，绝不继承 Task26 调试文件中的力矩/刚度覆盖。
+    if TASK27_MODE:
+        return None
     path = "/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/task26_diag.json"
     if not os.path.exists(path):
         return None
@@ -524,7 +556,11 @@ def _build_objects():
     # 旧任务根与旧 ROS 图，不触碰 FR3 / Table。
     _remove("/World/Task23")
     _remove("/World/Task24")
-    _remove(TASK_ROOT)
+    # Task26 / Task27 不能在同一 Stage 共存：旧车厢墙和休眠/动态 Cube 都会参与
+    # PhysX，旧图还可能重复发布 joint state。切换任务时只清理这两个任务根，
+    # 不触碰共用 FR3、Table 或其它用户资产。
+    _remove("/World/Task26")
+    _remove("/World/Task27")
     for graph in (
         "/World/ActionGraph",
         "/ActionGraph",
@@ -535,6 +571,7 @@ def _build_objects():
         "/World/Task23GripperROSGraph",
         "/World/Task24SideSuctionROSGraph",
         "/World/Task26ROSGraph",
+        "/World/Task27ROSGraph",
     ):
         _remove(graph)
 
@@ -727,7 +764,7 @@ _build_objects()
 _build_ros_graph()
 
 print("\n====================================================")
-print("Task26 truck-box push-in scene ready")
+print(f"{TASK_LABEL} truck-box side-suction scene ready")
 print(
     "tools: fixed 2x2 side-suction array, short L support "
     "(80 mm down + 130 mm side), TCP offset=0.155 m"
@@ -742,11 +779,13 @@ print("rails (X axis, visual only): rest x=%.3f travel=%s; base y fixed %s" %
       (RAIL_REST_X, RAIL_TRAVEL["left"], (RAIL_BASE_Y["left"], RAIL_BASE_Y["right"])))
 print("TRUCK SHIFT: 车厢/格位/预推位 X 平移 %+.3f m；滑轨行程 %s；静止位 %.3f"
       % (TRUCK_SHIFT_X, RAIL_TRAVEL["left"], RAIL_REST_X))
-print("rails are moved by the bridge via /task26/{left,right}/rail_command")
+print(f"rails are moved by the bridge via /{'task27' if TASK27_MODE else 'task26'}/{{left,right}}/rail_command")
 print(
     "feed: %d batches x %d cubes; slot A=%s (picked first), slot B=%s; all cubes start parked at z=%.3f" %
     (BATCH_COUNT, BATCH_SIZE, SLOT_A, SLOT_B, PARK_Z)
 )
 print("PUB: /clock, /left/joint_states, /right/joint_states")
-print("Next: Play, then run task26_truck_box_bridge.py")
+print("Next: Play, then run %s" % (
+    "task27_five_cube_center_insert_bridge.py" if TASK27_MODE
+    else "task26_truck_box_bridge.py"))
 print("====================================================")

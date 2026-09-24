@@ -672,6 +672,25 @@ ament_target_dependencies(task26_truck_box_push_in
   moveit_ros_planning_interface
 )
 
+# Task27：第一层五 Cube。执行器以独立编译单元复用 Task26 已通过的双侧吸、
+# 同步 FCL 与物理门禁；编译期开关仅启用“外件贴墙 / 内件贴外件 / 中心插入”布局。
+add_executable(task27_five_cube_center_insert
+  src/task27_five_cube_center_insert.cpp
+)
+target_link_libraries(task27_five_cube_center_insert yaml-cpp)
+ament_target_dependencies(task27_five_cube_center_insert
+  ament_index_cpp
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -715,6 +734,7 @@ install(
     task24_side_contact_demo
     task25_batched_side_suction
     task26_truck_box_push_in
+    task27_five_cube_center_insert
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

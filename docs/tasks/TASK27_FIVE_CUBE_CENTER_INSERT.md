@@ -1,6 +1,6 @@
 # Task27：第一层五 Cube 的两段式紧协调装箱
 
-状态：🟡 **已完成方案冻结，尚未开始修改场景或执行器。**
+状态：🟡 **场景、Isaac bridge 与独立执行器已实现并通过 Python 语法检查、ROS 构建；待 Isaac / MoveIt 零命令预检和物理验收。**
 
 ## 目标
 
@@ -93,6 +93,93 @@
 - 不做 force / impedance control；
 - 不修改 Task26 已验证的碰撞门限或 Allowed Collision Matrix；
 - 不把中心插入失败伪装成“允许碰撞”。
+
+## 已实现工程边界（2026-09-24）
+
+- `isaac/scripts/task27_five_cube_center_insert_scene.py`：Task27 场景入口。它复用
+  Task26 已验收的 FR3、L 型阵列侧吸、桌面、围墙、关节量程对齐和 ROS 图，但建立
+  独立 `/World/Task27` 根、五件 Cube 和五个逐件到料批次；启动时会清理旧的
+  `/World/Task26` / `/World/Task27`，避免旧刚体或旧 ROS 图混入。
+- `isaac/scripts/task27_five_cube_center_insert_bridge.py`：复用真实 Surface Gripper、
+  原子双臂关节下发、Ground Truth 与滑轨互锁，但使用独立 `/task27/*` ROS namespace。
+- `task27_five_cube_center_insert`：独立可执行节点。其编译单元复用 Task26 的
+  Cartesian 贴线检查、同步 FCL、三批重抓候选筛选、分段推入/力矩监督和物理退出，
+  不改变 `task26_truck_box_push_in` 的默认任务布局。
+- 外侧 Cube 验收贴 `±Y` 围墙；内侧 Cube 的间隙以外侧 Cube 的 **Isaac Ground Truth**
+  面为准；中心 Cube 以两个内侧 Cube 的真实面为准，验收深端墙贴合、总余量、左右
+  间隙平衡与中心偏置。
+- 支持两段独立进程执行：中心阶段开始时会先验证前四件的 Ground Truth，并重新写入
+  新进程的 MoveIt Planning Scene，不能假定上一次进程留下的 CollisionObject 仍存在。
+
+## 构建与验收命令
+
+Isaac Sim 4.5 中先停止 Timeline，在 Script Editor 运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task27_five_cube_center_insert_scene.py").read())
+```
+
+点击 Play，等待 FR3 关节归位后，在同一 Script Editor 运行：
+
+```python
+exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/"
+          "task27_five_cube_center_insert_bridge.py").read())
+```
+
+终端 A 启动 MoveIt：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch fr3_dual_side_suction_description \
+  moveit_dual_side_suction.launch.py use_rviz:=false
+```
+
+终端 B 构建并先预检阶段 A：
+
+```bash
+cd /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+export ROS_LOCALHOST_ONLY=0
+
+colcon build --packages-select fr3_dual_palletize --symlink-install
+source install/setup.bash
+
+ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args \
+  -p planning_only:=true \
+  -p first_batch:=1 \
+  -p max_batches:=4
+```
+
+阶段 A 物理执行（只放四件边侧基准 Cube）：
+
+```bash
+ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args \
+  -p first_batch:=1 \
+  -p max_batches:=4 \
+  -p execution_time_scale:=3.0
+```
+
+**不重建 Isaac 场景**，阶段 A 成功、四件仍在车厢内后，分别预检和执行中心件：
+
+```bash
+ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args \
+  -p planning_only:=true \
+  -p first_batch:=5 \
+  -p max_batches:=1
+
+ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args \
+  -p first_batch:=5 \
+  -p max_batches:=1 \
+  -p execution_time_scale:=3.0
+```
+
+`ROS_LOCALHOST_ONLY=0` 必须保持：Isaac GUI 中的 ROS 2 Bridge 与终端节点需要相互发现。
 
 ## 实施顺序
 

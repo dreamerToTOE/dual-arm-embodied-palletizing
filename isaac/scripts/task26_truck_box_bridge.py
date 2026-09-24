@@ -52,11 +52,17 @@ RIGID_GRASP_TORQUE_LIMIT = 1.0e6
 GRASP_STIFFNESS = {"left": 1.0e4, "right": 1.0e4}
 GRASP_DAMPING = {"left": 1.0e3, "right": 1.0e3}
 
-# 共同负载阶段由同一个 physics callback 原子写入左右目标。Task26 使用独立
-# frame_id，避免与 Task24 执行器的消息混入同一对（两个执行器不得同时运行）。
-DUAL_SYNC_FRAME_ID = "task26_dual_sync"
+# 共同负载阶段由同一个 physics callback 原子写入左右目标。Task26 / Task27 使用
+# 各自 frame_id 与 ROS namespace；两个执行器不得同时运行。
+SCENARIO = globals().get("_SIDE_SUCTION_SCENARIO", "task26")
+if SCENARIO not in ("task26", "task27"):
+    raise RuntimeError("_SIDE_SUCTION_SCENARIO 只能是 task26 或 task27。")
+TASK27_MODE = SCENARIO == "task27"
+TASK_LABEL = "Task27" if TASK27_MODE else "Task26"
+TASK_TOPIC = "/task27" if TASK27_MODE else "/task26"
+DUAL_SYNC_FRAME_ID = "task27_dual_sync" if TASK27_MODE else "task26_dual_sync"
 
-TASK_ROOT = "/World/Task26"
+TASK_ROOT = "/World/Task27" if TASK27_MODE else "/World/Task26"
 TABLE_TOP_Z = 0.200
 CUBE_HALF = 0.060
 BOTTOM_Z = TABLE_TOP_Z + CUBE_HALF
@@ -82,7 +88,7 @@ RAIL_MAX_SPEED = 0.20
 # flag 文件存在才采样，正式运行不开。
 CLEARANCE_FLAG = '/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/t26_clearance_probe.flag'
 CLEARANCE_LOG = '/home/ubuntu2004/WorkBuddy/2026-09-21-10-05-14/t26_clearance.jsonl'
-TRUCK_BOX_PATH = '/World/Task26/TruckBox'
+TRUCK_BOX_PATH = f'{TASK_ROOT}/TruckBox'
 # 到位判定要求"连续 RAIL_HOLD_SEC 秒都落在容差内"，与到料的 ARRIVAL_HOLD_SEC 同一语义。
 RAIL_HOLD_SEC = 0.20
 # 导轨会整体搬动一条机械臂，属于"只在静止相位之间发生"的动作。最近这么久内
@@ -206,7 +212,11 @@ class Task26BatchedFeedBridge:
 
         self.context = Context()
         rclpy.init(context=self.context)
-        self.node = rclpy.create_node("task26_batched_feed_bridge", context=self.context)
+        self.node = rclpy.create_node(
+            "task27_five_cube_center_insert_bridge" if TASK27_MODE
+            else "task26_batched_feed_bridge",
+            context=self.context,
+        )
         self.executor = SingleThreadedExecutor(context=self.context)
         self.executor.add_node(self.node)
         self.command_subs = {}
@@ -216,7 +226,7 @@ class Task26BatchedFeedBridge:
         self.force_pubs = {}
         for side in SIDES:
             self.command_subs[side] = self.node.create_subscription(
-                Bool, f"/task26/{side}/suction_command",
+                Bool, f"{TASK_TOPIC}/{side}/suction_command",
                 lambda message, current_side=side: self._command(current_side, message), 10,
             )
             self.joint_command_subs[side] = self.node.create_subscription(
@@ -224,31 +234,31 @@ class Task26BatchedFeedBridge:
                 lambda message, current_side=side: self._joint_command(current_side, message), 20,
             )
             self.state_pubs[side] = self.node.create_publisher(
-                Bool, f"/task26/{side}/suction_state", 10
+                Bool, f"{TASK_TOPIC}/{side}/suction_state", 10
             )
             self.tcp_pubs[side] = self.node.create_publisher(
-                PoseStamped, f"/task26/{side}/side_suction_tcp_pose", 10
+                PoseStamped, f"{TASK_TOPIC}/{side}/side_suction_tcp_pose", 10
             )
             # 关节实测力矩：给执行器的推进力监督提供真实数据（不是估算）。
             self.force_pubs[side] = self.node.create_publisher(
-                JointState, f"/task26/{side}/measured_joint_forces", 10
+                JointState, f"{TASK_TOPIC}/{side}/measured_joint_forces", 10
             )
-        self.cube_pub = self.node.create_publisher(PoseArray, "/task26/cube_poses", 10)
+        self.cube_pub = self.node.create_publisher(PoseArray, f"{TASK_TOPIC}/cube_poses", 10)
         self.feed_state_pub = self.node.create_publisher(
-            Int32MultiArray, "/task26/feed_state", 10
+            Int32MultiArray, f"{TASK_TOPIC}/feed_state", 10
         )
         self.feed_command_sub = self.node.create_subscription(
-            Int32, "/task26/feed_command", self._feed_command, 10
+            Int32, f"{TASK_TOPIC}/feed_command", self._feed_command, 10
         )
         self.rail_command_subs = {}
         self.rail_state_pubs = {}
         for side in SIDES:
             self.rail_command_subs[side] = self.node.create_subscription(
-                Float64, f"/task26/{side}/rail_command",
+                Float64, f"{TASK_TOPIC}/{side}/rail_command",
                 lambda message, current_side=side: self._rail_command(current_side, message), 10,
             )
             self.rail_state_pubs[side] = self.node.create_publisher(
-                Float64MultiArray, f"/task26/{side}/rail_state", 10
+                Float64MultiArray, f"{TASK_TOPIC}/{side}/rail_state", 10
             )
 
         self.spin_thread = threading.Thread(target=self.executor.spin, daemon=True)
@@ -263,21 +273,21 @@ class Task26BatchedFeedBridge:
         )
 
         print("\n====================================================")
-        print("Task26 batched-feed side-suction ROS bridge started")
-        print("SUB: /task26/feed_command std_msgs/Int32 (batch index 1..%d)" % self.batch_count)
-        print("SUB: /task26/{left,right}/suction_command std_msgs/Bool")
+        print(f"{TASK_LABEL} batched-feed side-suction ROS bridge started")
+        print(f"SUB: {TASK_TOPIC}/feed_command std_msgs/Int32 (batch index 1..{self.batch_count})")
+        print(f"SUB: {TASK_TOPIC}/{{left,right}}/suction_command std_msgs/Bool")
         print("SUB: /{left,right}/joint_command sensor_msgs/JointState")
-        print("PUB: /task26/feed_state std_msgs/Int32MultiArray (0=parked, 1=arriving, 2=arrived and settled)")
+        print(f"PUB: {TASK_TOPIC}/feed_state std_msgs/Int32MultiArray (0=parked, 1=arriving, 2=arrived and settled)")
         print(
-            "PUB: /task26/cube_poses geometry_msgs/PoseArray "
+            f"PUB: {TASK_TOPIC}/cube_poses geometry_msgs/PoseArray "
             f"(Cube_01 ... Cube_{len(self.cube_paths):02d})"
         )
-        print("PUB: /task26/{left,right}/suction_state std_msgs/Bool")
-        print("PUB: /task26/{left,right}/side_suction_tcp_pose geometry_msgs/PoseStamped")
-        print("PUB: /task26/{left,right}/measured_joint_forces sensor_msgs/JointState (effort)")
-        print("SUB: /task26/{left,right}/rail_command std_msgs/Float64 (target rail x)")
+        print(f"PUB: {TASK_TOPIC}/{{left,right}}/suction_state std_msgs/Bool")
+        print(f"PUB: {TASK_TOPIC}/{{left,right}}/side_suction_tcp_pose geometry_msgs/PoseStamped")
+        print(f"PUB: {TASK_TOPIC}/{{left,right}}/measured_joint_forces sensor_msgs/JointState (effort)")
+        print(f"SUB: {TASK_TOPIC}/{{left,right}}/rail_command std_msgs/Float64 (target rail x)")
         print(
-            "PUB: /task26/{left,right}/rail_state std_msgs/Float64MultiArray "
+            f"PUB: {TASK_TOPIC}/{{left,right}}/rail_state std_msgs/Float64MultiArray "
             "[target, arrived, measured, x_min, x_max]"
         )
         print(
