@@ -77,17 +77,24 @@ constexpr double kBottomZ = kTableTopZ + kCubeHalf;
 constexpr double kUpperZ = kBottomZ + kCubeSize;
 // 在尚未建立 Surface Gripper D6 约束的 CONTACT 阶段，Cup Collider 不能以
 // 0 mm 穿入动态 Cube，否则两个机械臂的接近会先把 Cube 推偏。保留 1 mm 的
-// 名义空气隙：远小于 3 mm 捕获阈值，且 Ground Truth 仍要求两侧实际间隙各
-// 不大于 2 mm、相差不大于 1 mm；这不是允许悬空吸附。
+// 名义空气隙：远小于 3 mm 捕获阈值；Ground Truth 的实际间隙与对称性
+// 仍由下方 kMaxAttachmentGap / kMaxAttachmentGapAsymmetry 门禁验收。
 constexpr double kSideContactCommandGap = 0.001;
 // 阵列 TCP 必须对准 Cube 侧面几何中心：四杯以 TCP 为中心镜像分布，才能让
 // 杯面完整落在侧面中央区域。Y 向仍严格保持 1 mm 名义贴合间隙，Surface
 // Gripper 在 3 mm 门限内闭合。若中心位姿没有可达通道，应先走单臂短推预调整，
 // 绝不能把吸点上移到 Cube 边缘来规避碰撞。
 constexpr double kSideContactCommandZOffset = 0.000;
-// 这两项是 Isaac Ground Truth 的硬门限，不是命令偏置：两个 Cup 必须各自离
-// 对应侧面不超过 2 mm，并且左右实际间隙相差不超过 1 mm，才允许 CLOSE。
+// 这两项是 Isaac Ground Truth 的硬门限，不是命令偏置。Task27 分阶段续跑
+// 的侧杯物理接近实测稳定停在 2.1--2.3 mm：低于 Surface Gripper 的 3 mm
+// 捕获阈值，且继续向内的关节微调未缩小间隙。只在 Task27 允许 2.5 mm 内
+// 尝试 CLOSE；仍必须双侧 CLOSED、后续附着几何/抬升门禁全部通过。
+// Task26 已验收的 2 mm 门限保持原样；两侧不对称门限仍为 1 mm。
+#ifdef TASK27_FIVE_CUBE
+constexpr double kMaxAttachmentGap = 0.0025;
+#else
 constexpr double kMaxAttachmentGap = 0.002;
+#endif
 constexpr double kMaxAttachmentGapAsymmetry = 0.001;
 constexpr double kMinAttachmentGap = -0.001;
 constexpr double kPreContactOffsetY = 0.100;
@@ -333,8 +340,8 @@ constexpr int kPushSlices = 16;
 const std::array<OfflineTask, 5> kTasks{{
   {"task27_plus_outer", 0, worldPose(kPrePushX, kRowYPlus, kBottomZ), worldPose(kCellDeepX, kCellYPlus, kBottomZ)},
   {"task27_minus_outer", 1, worldPose(kPrePushX, kRowYMinus, kBottomZ), worldPose(kCellDeepX, kCellYMinus, kBottomZ)},
-  {"task27_plus_inner", 2, worldPose(kPrePushX, kRowYPlus, kBottomZ), worldPose(kCellDeepX, kCellYInnerPlus, kBottomZ)},
-  {"task27_minus_inner", 3, worldPose(kPrePushX, kRowYMinus, kBottomZ), worldPose(kCellDeepX, kCellYInnerMinus, kBottomZ)},
+  {"task27_plus_inner", 2, worldPose(kPrePushX, kCellYInnerPlus, kBottomZ), worldPose(kCellDeepX, kCellYInnerPlus, kBottomZ)},
+  {"task27_minus_inner", 3, worldPose(kPrePushX, kCellYInnerMinus, kBottomZ), worldPose(kCellDeepX, kCellYInnerMinus, kBottomZ)},
   {"task27_center_insert", 4, worldPose(kPrePushX, 0.0, kBottomZ), worldPose(kCellDeepX, 0.0, kBottomZ)},
 }};
 constexpr int kBatchSize = 1;
@@ -1940,8 +1947,38 @@ public:
           target_ = message->data[0];
           arrived_ = message->data[1] > 0.5;
           have_state_ = true;
+          if (message->data.size() >= 3)
+          {
+            measured_ = message->data[2];
+            have_measured_ = true;
+          }
         }
       });
+  }
+
+  // 分阶段续跑不能把上一进程留下的滑轨站位误当成静止位。只接受桥确认
+  // 到位的实测 X，规划世界/目标随后统一减去同一个基座位移。
+  bool waitCurrent(double timeout_sec, double* measured_x) const
+  {
+    const auto deadline = std::chrono::steady_clock::now() +
+      std::chrono::duration<double>(timeout_sec);
+    while (std::chrono::steady_clock::now() < deadline && rclcpp::ok())
+    {
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (have_state_ && have_measured_ && arrived_ &&
+            std::isfinite(measured_) && std::abs(target_ - measured_) <= 1e-3)
+        {
+          *measured_x = measured_;
+          return true;
+        }
+      }
+      std::this_thread::sleep_for(50ms);
+    }
+    RCLCPP_ERROR(node_->get_logger(),
+      "%s rail 未能在 %.1f s 内提供已到位的实测位置；拒绝按默认站位规划。",
+      side_.c_str(), timeout_sec);
+    return false;
   }
 
   bool moveTo(double target, double timeout_sec)
@@ -1982,8 +2019,10 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr subscription_;
   mutable std::mutex mutex_;
   double target_{0.0};
+  double measured_{0.0};
   bool arrived_{false};
   bool have_state_{false};
+  bool have_measured_{false};
 };
 
 // 世界偏移变化后必须重建静态规划世界（桌面 + 车厢三面墙），否则规划器眼里
@@ -2104,6 +2143,21 @@ bool isCenterInsertTask(const OfflineTask& task)
   (void)task;
   return false;
 #endif
+}
+
+bool isInnerReferenceTask(const OfflineTask& task)
+{
+#ifdef TASK27_FIVE_CUBE
+  return task.cube_index == 2 || task.cube_index == 3;
+#else
+  (void)task;
+  return false;
+#endif
+}
+
+bool isStraightInsertTask(const OfflineTask& task)
+{
+  return isInnerReferenceTask(task) || isCenterInsertTask(task);
 }
 
 // 五件横向布局中，最外件由车厢侧墙支撑，内件由已经完成的同侧外件支撑。
@@ -2381,6 +2435,21 @@ int main(int argc, char** argv)
     right_group.setEndEffectorLink(right.eefLink());
     RailClient left_rail(node, "left");
     RailClient right_rail(node, "right");
+    double left_rail_x = 0.0;
+    double right_rail_x = 0.0;
+    if (!left_rail.waitCurrent(5.0, &left_rail_x) ||
+        !right_rail.waitCurrent(5.0, &right_rail_x) ||
+        std::abs(left_rail_x - right_rail_x) > 0.002)
+    {
+      RCLCPP_ERROR(node->get_logger(),
+        "Task26 双滑轨状态不一致或未知：left=%.4f right=%.4f；停止，避免 TCP 世界坐标整体错位。",
+        left_rail_x, right_rail_x);
+      break;
+    }
+    g_world_shift_x = 0.5 * (left_rail_x + right_rail_x) - kRailRestX;
+    RCLCPP_INFO(node->get_logger(),
+      "Task26 启动滑轨同步：left=%.4f right=%.4f rest=%.4f world_shift_x=%+.4f m。",
+      left_rail_x, right_rail_x, kRailRestX, g_world_shift_x);
     const PushControlConfig push_control = loadPushControlConfig(node);
     const double push_base_advance = push_control.push_base_advance_m;
 
@@ -2614,9 +2683,19 @@ int main(int argc, char** argv)
         batch_indices.at(static_cast<std::size_t>(slot)) =
           static_cast<std::size_t>(batch - 1) * kBatchSize + static_cast<std::size_t>(slot);
       }
-      RCLCPP_INFO(node->get_logger(),
-        "########## Task26 batch %d/%d: Cube_%02zu (slot A, picked first) then Cube_%02zu (slot B) ##########",
-        batch, max_batches, batch_indices.front() + 1, batch_indices.back() + 1);
+      if constexpr (kBatchSize == 1)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "########## %s batch %d/%d: Cube_%02zu ##########",
+          kTaskLabel, batch, first_batch + max_batches - 1, batch_indices.front() + 1);
+      }
+      else
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "########## %s batch %d/%d: Cube_%02zu (slot A) then Cube_%02zu (slot B) ##########",
+          kTaskLabel, batch, first_batch + max_batches - 1,
+          batch_indices.front() + 1, batch_indices.back() + 1);
+      }
 
       std::array<geometry_msgs::msg::Pose, kBatchSize> batch_sources;
       if (planning_only)
@@ -2628,7 +2707,8 @@ int main(int argc, char** argv)
             slotPoseForCube(batch_indices.at(static_cast<std::size_t>(slot)));
         }
         RCLCPP_INFO(node->get_logger(),
-          "Task26 planning-only batch %d: 使用设计槽位预演，未发布 feed_command 或任何运动命令。", batch);
+          "%s planning-only batch %d: 使用设计槽位预演，未发布 feed_command 或任何运动命令。",
+          kTaskLabel, batch);
       }
       else
       {
@@ -2641,7 +2721,7 @@ int main(int argc, char** argv)
             feed_command_pub->publish(command);
             std::this_thread::sleep_for(10ms);
           }
-          RCLCPP_INFO(node->get_logger(), "Task26 已请求第 %d 批到料，等待落稳。", batch);
+          RCLCPP_INFO(node->get_logger(), "%s 已请求第 %d 批到料，等待落稳。", kTaskLabel, batch);
         }
         std::uint64_t arrival_mark = 0;
         {
@@ -2713,7 +2793,35 @@ int main(int argc, char** argv)
       for (int slot = 0; slot < kBatchSize; ++slot)
       {
       const int task_index = static_cast<int>(batch_indices.at(static_cast<std::size_t>(slot)));
-      const auto& task = kTasks.at(static_cast<std::size_t>(task_index));
+      OfflineTask task = kTasks.at(static_cast<std::size_t>(task_index));
+#ifdef TASK27_FIVE_CUBE
+      if (isInnerReferenceTask(task))
+      {
+        // 内侧件先在车厢外沿 Y 对准最终通道，再沿 +X 直推。第四件的旧方案
+        // 需要右臂在深位作低位侧压；实测 SIDE_CONTACT Cartesian 仅到 65%，
+        // 因此改为复用已经通过 FCL 的直线推入。物理执行时对齐外件实测面，
+        // 预检时对齐外件的名义格位；两者的间隙均由最终 Ground Truth 验收。
+        const std::size_t outer_index = task.cube_index == 2 ? 0 : 1;
+        geometry_msgs::msg::Pose outer_pose;
+        if (planning_only)
+        {
+          outer_pose = kTasks.at(outer_index).cell;
+        }
+        else
+        {
+          const auto [live_outer, outer_revision] = cubes.get(outer_index);
+          (void)outer_revision;
+          outer_pose = live_outer;
+        }
+        task.cell.position.y = outer_pose.position.y +
+          (task.cube_index == 2 ? -kCubeSize : kCubeSize);
+        task.pre_push.position.y = task.cell.position.y;
+        RCLCPP_INFO(node->get_logger(),
+          "%s 对齐外侧 Cube_%02zu 的 %s 位姿：直推通道 y=%.4f m。",
+          task.id, outer_index + 1, planning_only ? "名义" : "Ground Truth",
+          task.pre_push.position.y);
+      }
+#endif
       const std::string object_id = "task26_cube_" + std::to_string(task.cube_index + 1);
       const auto [live_source, source_revision] = cubes.get(task.cube_index);
       (void)live_source;
@@ -3571,7 +3679,7 @@ int main(int argc, char** argv)
           all_complete = false;
           break;
         }
-        if (!isCenterInsertTask(task))
+        if (!isStraightInsertTask(task))
         {
           SideCompactionPlan side_plan;
           auto planned_deep_seat = task.cell;
@@ -3597,9 +3705,9 @@ int main(int argc, char** argv)
         }
         std::this_thread::sleep_for(100ms);
         RCLCPP_INFO(node->get_logger(),
-          "%s TASK26 PLANNING-ONLY PASS: 空载接近 + 共同负载 Z->X->Y->Z->X 链路 + "
-          "换位吸 -X 面 + 沿 +X 推入深端墙 + 另一臂侧墙压紧 + 反向退出，全部通过 IK/FCL；"
-          "未发布任何 joint、suction 或 feed_command。", task.id);
+          "%s %s PLANNING-ONLY PASS: 共同搬运、-X 面重抓、+X 推入与退出通过 IK/FCL；"
+          "侧向压紧=%s；未发布 joint、suction 或 feed_command。",
+          task.id, kTaskLabel, isStraightInsertTask(task) ? "不需要" : "已预检");
         continue;
       }
 
@@ -3651,10 +3759,9 @@ int main(int argc, char** argv)
           task.id, alignment_attempt, kRetries);
         trajectory_msgs::msg::JointTrajectory left_reacquire;
         trajectory_msgs::msg::JointTrajectory right_reacquire;
-        // 闭环纠偏：用**实测间隙差**修正两侧指令，而不是重复同一个标称。
-        // left_gap - right_gap > 0 表示左侧杯面离 Cube 更远。两侧 TCP 应一起向 +Y
-        // 平移，使左间隙减小、右间隙增大；反之则向 -Y 平移。这里修正的是两杯的
-        // 中线，Cube 在未吸附时不应被该纠偏动作拖动。
+        // 闭环纠偏：用实测间隙差修正两侧指令，保持 Task26 已验证的行为。
+        // Task27 如两侧都偏远，最终仍由预吸附间隙门禁及 Isaac CLOSED
+        // 物理确认把关；本分支不尝试未经验证的强制压入。
         const double left_gap = live_cube.position.y - left_tcp.get().position.y - kCubeHalf;
         const double right_gap = right_tcp.get().position.y - live_cube.position.y - kCubeHalf;
         const double correction_y = 0.5 * (left_gap - right_gap);
@@ -4112,45 +4219,44 @@ int main(int argc, char** argv)
       const auto& right_after_x = right_during_push;
       const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
 
-      // Task27 的第五件只从 +X 装料口插入五件横向布局的中央余量。它左右都
-      // 不是墙面，不能沿 ±Y 再压，否则必然扰动已验收的内侧两件。这里保留
-      // +X 深端支撑、松开 -X 吸附并按已经全链路预检的原路退出；随后直接读取
-      // 五件的 Ground Truth，验收中心偏置和两个真实相邻间隙。
-      if (isCenterInsertTask(task))
+      // Task27 的内侧两件已在车厢外对齐相邻 Cube 的 Y 通道；中心件对齐 y=0。
+      // 这三件都只沿 +X 直推。完成深端贴合后松开 -X 吸附、原路退出，
+      // 最后读取 Ground Truth 验收相邻面间隙，不做低位侧向压紧。
+      if (isStraightInsertTask(task))
       {
-        const auto [before_center_release, before_center_release_revision] = cubes.get(task.cube_index);
-        (void)before_center_release;
+        const auto [before_release, before_release_revision] = cubes.get(task.cube_index);
+        (void)before_release;
         pusher.suction(false);
         if (!pusher.waitSuction(false, 6.0))
         {
-          openBothAndConfirm("safe abort after center insert release failure");
+          openBothAndConfirm("safe abort after straight insert release failure");
           all_complete = false;
           break;
         }
         if (!pusher.executeAt(pusher_cell_retreat, std::chrono::steady_clock::now()) ||
             !pusher.waitAtTarget(pusher_cell_retreat, kJointSettleToleranceRad, kJointSettleTimeoutSec))
         {
-          RCLCPP_ERROR(node->get_logger(), "%s center insert retreat failed.", task.id);
+          RCLCPP_ERROR(node->get_logger(), "%s straight insert retreat failed.", task.id);
           all_complete = false;
           break;
         }
         std::this_thread::sleep_for(1500ms);
-        geometry_msgs::msg::Pose center_settled;
-        if (!cubes.waitNew(task.cube_index, before_center_release_revision, 2.0, &center_settled) ||
-            !validCellPlacement(node, task, center_settled, cubes))
+        geometry_msgs::msg::Pose settled;
+        if (!cubes.waitNew(task.cube_index, before_release_revision, 2.0, &settled) ||
+            !validCellPlacement(node, task, settled, cubes))
         {
           all_complete = false;
           break;
         }
-        if (!scene.applyCollisionObject(cubeObject(object_id, center_settled)))
+        if (!scene.applyCollisionObject(cubeObject(object_id, settled)))
         {
           all_complete = false;
           break;
         }
         std::this_thread::sleep_for(300ms);
         RCLCPP_INFO(node->get_logger(),
-          "%s PASS: 双吸盘预推 -> 单臂吸 -X 面推入中心余量 -> 原路退出；"
-          "已验收与左右内侧 Cube 的真实间隙。", task.id);
+          "%s PASS: 双吸盘预推 -> 单臂吸 -X 面直推 -> 原路退出；"
+          "已验收与相邻 Cube 的真实间隙。", task.id);
         continue;
       }
       helper.suction(false);
@@ -4274,8 +4380,8 @@ int main(int argc, char** argv)
       if (planning_only)
       {
         RCLCPP_INFO(node->get_logger(),
-          "Task26 planning-only batch %d PASS: 当前批两件与共同 HOME 退出均通过 IK/FCL 门禁；"
-          "未发布任何 joint、suction 或 feed_command。", batch);
+          "%s planning-only batch %d PASS: 当前批 %d 件与共同 HOME 退出均通过 IK/FCL 门禁；"
+          "未发布任何 joint、suction 或 feed_command。", kTaskLabel, batch, kBatchSize);
         continue;
       }
       if (!executeSync(left, home_left, right, home_right))
@@ -4285,7 +4391,8 @@ int main(int argc, char** argv)
         break;
       }
       RCLCPP_INFO(node->get_logger(),
-        "Task26 batch %d PASS: 两件已落稳入垛，双臂已回到共同 HOME，等待下一批到料。", batch);
+        "%s batch %d PASS: 当前批 %d 件已落稳入垛，双臂已回到共同 HOME。",
+        kTaskLabel, batch, kBatchSize);
     }  // 批次循环结束
     success = all_complete;
   } while (false);

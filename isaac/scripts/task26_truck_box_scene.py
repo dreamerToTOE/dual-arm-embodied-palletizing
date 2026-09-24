@@ -49,7 +49,8 @@ MATERIAL_PATH = f"{TASK_ROOT}/HighFrictionMaterial"
 # 基座静止位必须与 MoveIt URDF（fr3_dual_side_suction_description，Task24/25/26 共用）
 # 的 world_to_*_fr3 固定关节一致：x=0.650、y=±0.60。执行器按 URDF 的 0.65 规划，
 # 场景若把基座放成别的 x 会让所有 TCP 目标整体错位。
-# 导轨只在此静止位两侧 ±0.20 内平移；执行器目前不移动它（规划按固定基座 0.65）。
+# 导轨在此静止位两侧 ±0.20 内平移；执行器推入前会移动滑轨，续跑时
+# 必须从 bridge 的实测 rail_state 恢复当前偏移，不能始终按 0.65 规划。
 LEFT_BASE = (0.65, -0.60, 0.00)
 RIGHT_BASE = (0.65, +0.60, 0.00)
 
@@ -171,9 +172,9 @@ if TASK27_MODE:
          "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},
         {"cube": 2, "row": "minus_outer", "depth": "deep", "pre_push_y": ROW_Y[1],
          "cell": (CELL_DEEP_X, CELL_Y_MINUS, BOTTOM_Z)},
-        {"cube": 3, "row": "plus_inner", "depth": "deep", "pre_push_y": ROW_Y[0],
+        {"cube": 3, "row": "plus_inner", "depth": "deep", "pre_push_y": CELL_Y_INNER_PLUS,
          "cell": (CELL_DEEP_X, CELL_Y_INNER_PLUS, BOTTOM_Z)},
-        {"cube": 4, "row": "minus_inner", "depth": "deep", "pre_push_y": ROW_Y[1],
+        {"cube": 4, "row": "minus_inner", "depth": "deep", "pre_push_y": CELL_Y_INNER_MINUS,
          "cell": (CELL_DEEP_X, CELL_Y_INNER_MINUS, BOTTOM_Z)},
         {"cube": 5, "row": "center", "depth": "deep", "pre_push_y": 0.0,
          "cell": (CELL_DEEP_X, 0.0, BOTTOM_Z)},
