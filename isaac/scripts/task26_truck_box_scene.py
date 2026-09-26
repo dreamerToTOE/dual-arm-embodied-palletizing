@@ -165,8 +165,10 @@ PRE_PUSH_X = 0.690 + TRUCK_SHIFT_X   # 装料口外 120 mm 的预推位（纯 +X
 if TASK27_MODE:
     # 第一层五件均在最深 X 格：外件先贴对应侧墙，内件贴外件，中心件最后沿 +X
     # 插入由两侧内件留下的余量。外/内交替的到料顺序与 Task27 C++ 执行器一致。
-    CELL_Y_INNER_PLUS = CELL_Y_PLUS - CUBE_SIZE
-    CELL_Y_INNER_MINUS = CELL_Y_MINUS + CUBE_SIZE
+    # 内侧直推预留 1.5 mm 角点扫掠余量，必须与执行器的目标保持一致。
+    INNER_STRAIGHT_INSERT_CLEARANCE = 0.0015
+    CELL_Y_INNER_PLUS = CELL_Y_PLUS - CUBE_SIZE - INNER_STRAIGHT_INSERT_CLEARANCE
+    CELL_Y_INNER_MINUS = CELL_Y_MINUS + CUBE_SIZE + INNER_STRAIGHT_INSERT_CLEARANCE
     TASKS = (
         {"cube": 1, "row": "plus_outer", "depth": "deep", "pre_push_y": ROW_Y[0],
          "cell": (CELL_DEEP_X, CELL_Y_PLUS, BOTTOM_Z)},

@@ -20,6 +20,7 @@
 #include <condition_variable>
 #include <cstdint>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iterator>
 #include <limits>
@@ -309,8 +310,17 @@ constexpr double kCellYPlus = kBoxInteriorY1 - kCubeHalf;
 constexpr double kCellYMinus = kBoxInteriorY0 + kCubeHalf;
 // Task27 最深层的五件横向布局：两侧外件先贴墙，内件再贴外件，中心件最终
 // 插入由两侧内件留下的余量。Task26 仍只使用 kCellYPlus/kCellYMinus。
-constexpr double kCellYInnerPlus = kCellYPlus - kCubeSize;
-constexpr double kCellYInnerMinus = kCellYMinus + kCubeSize;
+#ifdef TASK27_FIVE_CUBE
+// 内侧直推时，Cube 并非绝对无旋转的理想方块。实测第 4 件在靠近外侧件时
+// 偏航约 0.36°，两个实际包围范围在 Y 向交叠约 0.98 mm，关节扭矩随即
+// 达到 87 N·m。预留 1.5 mm 名义通道吸收角点扫掠和小幅跟踪偏差；最终仍须
+// 通过原有的 3 mm 邻件间隙验收，不能放宽扭矩或碰撞门限。
+constexpr double kInnerStraightInsertClearance = 0.0015;
+#else
+constexpr double kInnerStraightInsertClearance = 0.0;
+#endif
+constexpr double kCellYInnerPlus = kCellYPlus - kCubeSize - kInnerStraightInsertClearance;
+constexpr double kCellYInnerMinus = kCellYMinus + kCubeSize + kInnerStraightInsertClearance;
 // 推入臂持 **-X 面** 时，杯面到 Cube 中心的名义偏移：TCP_x = cube_x - (kCubeHalf + 间隙)。
 // 维持 1 mm 间隙，它既位于 Surface Gripper 3 mm 捕获阈值内，又是当前 FR3
 // 侧向姿态下可稳定求得低位 -X 接触 IK 的位置。
@@ -2248,7 +2258,8 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
     const double minus_gap = (actual.position.y - kCubeHalf) -
       (minus_inner.position.y + kCubeHalf);
     constexpr double kExpectedCenterTotalGap =
-      (kBoxInteriorY1 - kBoxInteriorY0) - 5.0 * kCubeSize;
+      (kBoxInteriorY1 - kBoxInteriorY0) - 5.0 * kCubeSize -
+      2.0 * kInnerStraightInsertClearance;
     constexpr double kCenterTotalGapTolerance = 0.006;
     constexpr double kCenterGapBalanceTolerance = 0.006;
     constexpr double kCenterOffsetTolerance = 0.006;
@@ -2814,12 +2825,15 @@ int main(int argc, char** argv)
           outer_pose = live_outer;
         }
         task.cell.position.y = outer_pose.position.y +
-          (task.cube_index == 2 ? -kCubeSize : kCubeSize);
+          (task.cube_index == 2
+            ? -(kCubeSize + kInnerStraightInsertClearance)
+            : (kCubeSize + kInnerStraightInsertClearance));
         task.pre_push.position.y = task.cell.position.y;
         RCLCPP_INFO(node->get_logger(),
-          "%s 对齐外侧 Cube_%02zu 的 %s 位姿：直推通道 y=%.4f m。",
+          "%s 对齐外侧 Cube_%02zu 的 %s 位姿：直推通道 y=%.4f m，"
+          "名义邻件余量=%.1f mm。",
           task.id, outer_index + 1, planning_only ? "名义" : "Ground Truth",
-          task.pre_push.position.y);
+          task.pre_push.position.y, 1000.0 * kInnerStraightInsertClearance);
       }
 #endif
       const std::string object_id = "task26_cube_" + std::to_string(task.cube_index + 1);
@@ -2864,7 +2878,7 @@ int main(int argc, char** argv)
 
       scene.removeCollisionObjects({object_id});
       std::this_thread::sleep_for(250ms);
-      const auto world_after_remove = staticWorld(scene);
+      auto world_after_remove = staticWorld(scene);
       trajectory_msgs::msg::JointTrajectory left_contact;
       trajectory_msgs::msg::JointTrajectory right_contact;
       // Contact 建立使用确定的左->右微时序。不能从 HIGH_PRE_CONTACT 斜向
@@ -3211,6 +3225,14 @@ int main(int argc, char** argv)
       // 只规划不执行 → 右臂 11.8° 追不上）。
       trajectory_msgs::msg::JointTrajectory regrasp_lift;
 
+      // Task27 外侧件的重抓候选还必须允许后续侧压。此回调在下方定义好
+      // planSideCompaction 后赋值；Task26 和 Task27 内侧/中央件不改变筛选链。
+      std::function<bool(
+        const trajectory_msgs::msg::JointTrajectory&,
+        const trajectory_msgs::msg::JointTrajectory&,
+        const geometry_msgs::msg::Pose&,
+        const std::string&)> side_preflight;
+
       // 「换位到 -X 面 → 沿 +X 推入 → 原路退出」的完整预演。零命令预检与真实执行共用
       // 这一段：推入是本任务几何风险最高的一段（新持件面 + 新推进轴），绝不能只
       // 预演到预推位放置就结束。
@@ -3404,6 +3426,32 @@ int main(int argc, char** argv)
               task.id, index + 1, candidates.size());
             continue;
           }
+#ifdef TASK27_FIVE_CUBE
+          if ((lift_already_done || planning_only) && !isStraightInsertTask(task) && side_preflight)
+          {
+            // 在真正吸住 -X 面之前，用同一候选的 PUSH 末端预演侧压。
+            // 失败就换重抓构型，不能等 Cube 已推到深墙才发现横移不可达。
+            auto predicted_seat = task.cell;
+            predicted_seat.position.y = push_cube_y;
+            predicted_seat.position.z = push_cube_z;
+            if (!side_preflight(push_l, push_r, predicted_seat,
+                  stage_prefix + " REGRASP_CANDIDATE_" + std::to_string(index + 1)))
+            {
+              RCLCPP_WARN(node->get_logger(),
+                "%s REGRASP_CANDIDATE_%zu/%zu 推入通过，但后续侧压整链未通过；换候选。",
+                task.id, index + 1, candidates.size());
+              if (!scene.applyCollisionObject(cubeObject(object_id, regrasp_cube)))
+              {
+                return false;
+              }
+              std::this_thread::sleep_for(250ms);
+              continue;
+            }
+            RCLCPP_INFO(node->get_logger(),
+              "%s REGRASP_CANDIDATE_%zu PREPUSH_SIDE_PREFLIGHT PASS: "
+              "推入前已从同一 PUSH 末端验证侧压整链。", task.id, index + 1);
+          }
+#endif
           *left_regrasp_out = std::move(regrasp_candidate);
           *left_push_out = std::move(push_l);
           *right_hold_push_out = std::move(push_r);
@@ -3428,10 +3476,9 @@ int main(int argc, char** argv)
 
       // ------------------------------------------------------ 侧墙压紧
       //
-      // +X 推入后，Cube 已经由桌面承托并贴住深端墙。推入臂必须先松开、沿已
-      // 验证的 -X 轨迹退出；随后**另一只**机械臂以吸盘杯面（不建立 suction
-      // 约束）从侧方短程压向其所属 ±Y 墙。这样侧向接触力只由压紧臂施加，且
-      // 推入臂不会因 D6 约束还在而反向拉住 Cube。
+      // +X 推入后，Cube 已经由桌面承托并贴住深端墙。推入臂保持 -X 面吸附，
+      // 作为随 Y 横移的背挡；另一臂以未吸附的杯面侧压。规划起点必须是 PUSH
+      // 末端，不能误用已经退出后的姿态。侧压完成后才释放并反向退出。
       //
       // 该链包含：空载 RRT 高位入场 -> 笛卡尔下降到 1 mm 名义间隙 -> 笛卡尔
       // 短压 -> 三段严格反向撤离。入场/下降阶段带当前 Cube 碰撞体；压紧阶段
@@ -3649,7 +3696,7 @@ int main(int argc, char** argv)
           selected = true;
           RCLCPP_INFO(node->get_logger(),
             "%s SIDE_COMPACTION selected candidate=%zu/%zu: %s arm presses %.1f mm toward %s wall.",
-            task.id, index + 1, candidates.size(), compactor_is_left ? "left" : "right",
+            stage_prefix.c_str(), index + 1, candidates.size(), compactor_is_left ? "left" : "right",
             std::abs(task.cell.position.y - seated_cube.position.y) * 1000.0,
             press_direction_y > 0.0 ? "+Y" : "-Y");
           break;
@@ -3662,6 +3709,18 @@ int main(int argc, char** argv)
         }
         return selected;
       };
+
+#ifdef TASK27_FIVE_CUBE
+      side_preflight = [&](const trajectory_msgs::msg::JointTrajectory& left_push,
+                           const trajectory_msgs::msg::JointTrajectory& right_push,
+                           const geometry_msgs::msg::Pose& predicted_seat,
+                           const std::string& label)
+      {
+        SideCompactionPlan plan;
+        return planSideCompaction(left_push, right_push, predicted_seat,
+          label + " PREPUSH_SIDE_PREFLIGHT", &plan);
+      };
+#endif
 
       if (planning_only)
       {
@@ -3684,7 +3743,7 @@ int main(int argc, char** argv)
           SideCompactionPlan side_plan;
           auto planned_deep_seat = task.cell;
           planned_deep_seat.position.y = task.pre_push.position.y;
-          if (!planSideCompaction(po_retreat, po_right_retreat, planned_deep_seat,
+          if (!planSideCompaction(po_push, po_right_push, planned_deep_seat,
                 std::string(task.id) + " PLANNING_ONLY", &side_plan))
           {
             RCLCPP_ERROR(node->get_logger(),
@@ -4129,6 +4188,29 @@ int main(int argc, char** argv)
           all_complete = false;
           break;
         }
+        // 滑轨改变后，不能继续用搬运前捕获的 FCL 世界：它仍在旧坐标系。
+        // 同时将场景中已存在的 Cube 按最新 Ground Truth 重投影（不添加待供料件），
+        // 保证桌面、围墙和已完成件与当前目标共享同一 world_shift_x。
+        std::vector<moveit_msgs::msg::CollisionObject> shifted_cubes;
+        const auto present_objects = scene.getObjects();
+        for (std::size_t index = 0; index < cube_count; ++index)
+        {
+          const std::string id = "task26_cube_" + std::to_string(index + 1);
+          if (id == object_id || present_objects.count(id) == 0)
+          {
+            continue;
+          }
+          const auto [pose, revision] = cubes.get(index);
+          (void)revision;
+          shifted_cubes.push_back(cubeObject(id, pose));
+        }
+        if (!shifted_cubes.empty() && !scene.applyCollisionObjects(shifted_cubes))
+        {
+          openBothAndConfirm("safe abort after shifted cube world refresh failure");
+          all_complete = false;
+          break;
+        }
+        world_after_remove = staticWorld(scene);
         RCLCPP_INFO(node->get_logger(),
           "%s 滑轨站位完成：基座 %.3f -> %.3f（世界偏移 %.3f m，规划世界已按偏移重建）。",
           task.id, kRailRestX, rail_target, g_world_shift_x);
@@ -4270,6 +4352,7 @@ int main(int argc, char** argv)
             std::string(task.id) + " EXECUTION", &side_plan))
       {
         RCLCPP_ERROR(node->get_logger(), "%s cannot preflight a safe SIDE_COMPACTION chain.", task.id);
+        openBothAndConfirm("safe abort after SIDE_COMPACTION preflight failure");
         all_complete = false;
         break;
       }
