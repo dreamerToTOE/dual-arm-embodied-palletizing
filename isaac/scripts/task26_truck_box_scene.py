@@ -128,17 +128,20 @@ PARK_Y = (-0.300, +0.300)
 # 横向 IK 余量，故从 +0.150 m 回收 50 mm；仍完全落在 X 导轨覆盖范围内。
 TRUCK_SHIFT_X = 0.100
 BOX_INTERIOR_X = (0.810 + TRUCK_SHIFT_X, 1.060 + TRUCK_SHIFT_X)   # 深 0.250：2 格
-# 车厢 Y 向：5 x 120 mm Cube + 4 x 2 mm 通道间隙 + 两侧各 10 mm 冗余 = 0.628 m。
+# 车厢 Y 向：5 x 120 mm Cube；Task26 四个通道各 2 mm、两侧
+# 各 10 mm 冗余、内宽 0.628 m；Task27 通道和两侧各 1 mm、内宽 0.606 m。
 BOX_Y_CUBE_CAPACITY = 5
-BOX_Y_INTER_CUBE_GAP = 0.002
-BOX_Y_SIDE_CLEARANCE = 0.010
+BOX_Y_INTER_CUBE_GAP = 0.001 if TASK27_MODE else 0.002
+# Task27 专用窄车厢：五件总宽 600 mm、内宽 606 mm，中央不再天然留
+# 10–12 mm/侧的大缝；Task26 已验收的 628 mm 内宽保持原样。
+BOX_Y_SIDE_CLEARANCE = 0.001 if TASK27_MODE else 0.010
 BOX_INTERIOR_Y_HALF = 0.5 * (
     BOX_Y_CUBE_CAPACITY * CUBE_SIZE
     + (BOX_Y_CUBE_CAPACITY - 1) * BOX_Y_INTER_CUBE_GAP
     + 2.0 * BOX_Y_SIDE_CLEARANCE
 )
 BOX_INTERIOR_Y = (-BOX_INTERIOR_Y_HALF, BOX_INTERIOR_Y_HALF)
-# 未来五通道任务可直接复用这些中心线：(-0.244, -0.122, 0, 0.122, 0.244)。
+# 五通道中心线按当前通道间隙自动计算，Task26/27 各自保持同构。
 FIVE_LANE_Y = tuple(
     (index - 0.5 * (BOX_Y_CUBE_CAPACITY - 1))
     * (CUBE_SIZE + BOX_Y_INTER_CUBE_GAP)

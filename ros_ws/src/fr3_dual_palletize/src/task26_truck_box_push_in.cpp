@@ -278,12 +278,20 @@ geometry_msgs::msg::Pose pushPose(double x, double y, double z)
 constexpr double kTruckShiftX = 0.100;
 constexpr double kBoxInteriorX0 = 0.810 + kTruckShiftX;
 constexpr double kBoxInteriorX1 = 1.060 + kTruckShiftX;
-// 车厢 Y 向五通道：5 x 120 mm Cube、相邻通道 2 mm、两侧各 10 mm 冗余。
+// 车厢 Y 向五通道：5 x 120 mm Cube；Task26 相邻通道 2 mm、两侧各
+// 10 mm 冗余，Task27 相邻通道和两侧各 1 mm 冗余。
 // 必须与 isaac/scripts/task26_truck_box_scene.py 同值，保证 MoveIt 的三面墙
 // 与 PhysX 的三面墙完全同构。现有四件 Task26 仍使用中央两行。
 constexpr int kBoxYCubeCapacity = 5;
+#ifdef TASK27_FIVE_CUBE
+// Task27 五件同一 X 层：内宽 606 mm，实体总宽 600 mm，留给
+// 两侧墙和四条件间缝隙的总量为 6 mm；Task26 仍保持原 628 mm 车厢。
+constexpr double kBoxYInterCubeGap = 0.001;
+constexpr double kBoxYSideClearance = 0.001;
+#else
 constexpr double kBoxYInterCubeGap = 0.002;
 constexpr double kBoxYSideClearance = 0.010;
+#endif
 constexpr double kBoxInteriorYHalf = 0.5 * (
   kBoxYCubeCapacity * kCubeSize +
   (kBoxYCubeCapacity - 1) * kBoxYInterCubeGap +
@@ -314,8 +322,16 @@ constexpr double kCellYMinus = kBoxInteriorY0 + kCubeHalf;
 // 内侧直推时，Cube 并非绝对无旋转的理想方块。实测第 4 件在靠近外侧件时
 // 偏航约 0.36°，两个实际包围范围在 Y 向交叠约 0.98 mm，关节扭矩随即
 // 达到 87 N·m。预留 1.5 mm 名义通道吸收角点扫掠和小幅跟踪偏差；最终仍须
-// 通过原有的 3 mm 邻件间隙验收，不能放宽扭矩或碰撞门限。
+// 再做单臂短侧压并通过更紧的 1.5 mm 邻件间隙验收，不能放宽扭矩或碰撞门限。
 constexpr double kInnerStraightInsertClearance = 0.0015;
+// 直推时保留 1.5 mm 扫掠余量；到深端墙后由仍吸住 -X 面的推入臂沿 Y
+// 再压 1.0 mm，名义邻件剩余 0.5 mm。压紧和退出都必须从同一候选预检。
+constexpr double kInnerPressedTargetGap = 0.0005;
+constexpr double kInnerLateralTrim =
+  kInnerStraightInsertClearance - kInnerPressedTargetGap;
+// 1 mm 固定短压后仍可能因负载伺服残差留下 >1.5 mm 的真实间隙。
+// 仅允许额外最多 1 mm 的受控侧压，且候选需预检这段及压后退出。
+constexpr double kInnerExtraTrimMax = 0.001;
 #else
 constexpr double kInnerStraightInsertClearance = 0.0;
 #endif
@@ -783,6 +799,17 @@ bool validateDualSideAttachment(
     std::abs(cube.position.z + kSideContactCommandZOffset - right_tcp.position.z),
     std::abs(left_tcp.position.z - right_tcp.position.z)});
   const double tilt_deg = orientationAngleDeg(cube.orientation);
+#ifdef TASK27_FIVE_CUBE
+  // 实体复测：中心件从吸附前 0.902 mm 增至运输中 1.080 mm，随后
+  // 第二件也从 0.991 mm 增至 1.164 mm，两次均被运输的 1 mm 门槛
+  // 安全拦截。因此 Task27 所有 Cube 在吸附前都要求 <=0.3 mm，先用
+  // 原有未吸附闭环纠偏消除偏差；运输门槛不放宽，Task26 完全不变。
+  const double allowed_gap_asymmetry =
+    (phase == "PRE_CLOSE_GEOMETRY")
+    ? 0.0003 : kMaxAttachmentGapAsymmetry;
+#else
+  const double allowed_gap_asymmetry = kMaxAttachmentGapAsymmetry;
+#endif
 
   RCLCPP_INFO(node->get_logger(),
     "%s %s ATTACHMENT: x=%.3f mm z=%.3f mm left_gap=%.3f mm right_gap=%.3f mm gap_delta=%.3f mm tilt=%.3f deg.",
@@ -792,7 +819,7 @@ bool validateDualSideAttachment(
       z_mismatch > kAttachmentAlignmentTolerance ||
       left_gap < kMinAttachmentGap || right_gap < kMinAttachmentGap ||
       left_gap > kMaxAttachmentGap || right_gap > kMaxAttachmentGap ||
-      gap_asymmetry > kMaxAttachmentGapAsymmetry ||
+      gap_asymmetry > allowed_gap_asymmetry ||
       tilt_deg > kAttachmentOrientationToleranceDeg)
   {
     RCLCPP_ERROR(node->get_logger(),
@@ -1511,7 +1538,16 @@ bool planCommonCartesian(
   }
   // 同一个起点可能因为 IK 采样序列不同而产生贴线或离线的轨迹。先按默认步长试，
   // 只有在轨迹离线时才换步长重试；不接受任何不贴线的轨迹。
+#ifdef TASK27_FIVE_CUBE
+  // 预吸附闭环修正通常不足 1 mm。若仍用常规 1--3 mm 步长，MoveIt 可能
+  // 返回 fraction=1 且仅包含原起点；必须对这种微动使用亚毫米插值。
+  const bool fine_reacquire = label.find("PRE_CLOSE_REACQUIRE") != std::string::npos;
+  const std::array<double, 4> steps = fine_reacquire
+    ? std::array<double, 4>{0.0001, 0.00005, 0.0002, 0.0005}
+    : std::array<double, 4>{kCartesianStep, 0.0015, 0.003, 0.001};
+#else
   const std::array<double, 4> steps{kCartesianStep, 0.0015, 0.003, 0.001};
+#endif
   for (const double step : steps)
   {
     for (int attempt = 1; attempt <= kRetries; ++attempt)
@@ -1537,6 +1573,31 @@ bool planCommonCartesian(
           label.c_str(), fraction, error.val, step, attempt, kRetries);
         continue;
       }
+#ifdef TASK27_FIVE_CUBE
+      if (fine_reacquire)
+      {
+        moveit::core::RobotState end_state(model);
+        end_state.setToDefaultValues();
+        end_state.setVariablePositions(
+          candidate.joint_trajectory.joint_names,
+          candidate.joint_trajectory.points.back().positions);
+        end_state.update();
+        const Eigen::Vector3d planned = end_state.getGlobalLinkTransform(eef_link).translation();
+        const Eigen::Vector3d requested(
+          target.position.x, target.position.y, target.position.z);
+        const double endpoint_error = (planned - requested).norm();
+        RCLCPP_INFO(node->get_logger(),
+          "%s endpoint FK error=%.3f mm, points=%zu, step=%.4f m.",
+          label.c_str(), endpoint_error * 1000.0,
+          candidate.joint_trajectory.points.size(), step);
+        if (endpoint_error > 0.00005)
+        {
+          RCLCPP_WARN(node->get_logger(),
+            "%s rejected: Cartesian fraction=1 但终点未到达目标。", label.c_str());
+          continue;
+        }
+      }
+#endif
       const double deviation = cartesianLineDeviation(
         model, eef_link, candidate.joint_trajectory, target);
       RCLCPP_INFO(node->get_logger(),
@@ -2247,8 +2308,9 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
   if (isCenterInsertTask(task))
   {
 #ifdef TASK27_FIVE_CUBE
-    // Cube 03 / 04 分别是已经验收的 +Y / -Y 内件。车厢比五件总宽多 28 mm，
-    // 中心件的正确结果是两侧各约 14 mm，而不是靠穿透碰撞体伪造双侧零缝。
+    // Cube 03 / 04 分别是已经验收的 +Y / -Y 内件。Task27 窄车厢比
+    // 五件总宽仍多 6 mm；内件侧压后中央理论总余量 5 mm，不能靠穿透
+    // 碰撞体伪造零缝。
     const auto [plus_inner, plus_revision] = cubes.get(2);
     const auto [minus_inner, minus_revision] = cubes.get(3);
     (void)plus_revision;
@@ -2259,10 +2321,11 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
       (minus_inner.position.y + kCubeHalf);
     constexpr double kExpectedCenterTotalGap =
       (kBoxInteriorY1 - kBoxInteriorY0) - 5.0 * kCubeSize -
-      2.0 * kInnerStraightInsertClearance;
-    constexpr double kCenterTotalGapTolerance = 0.006;
-    constexpr double kCenterGapBalanceTolerance = 0.006;
+      2.0 * kInnerPressedTargetGap;
+    constexpr double kCenterTotalGapTolerance = 0.003;
+    constexpr double kCenterGapBalanceTolerance = 0.003;
     constexpr double kCenterOffsetTolerance = 0.006;
+    constexpr double kCenterMaxSideGap = 0.004;
     RCLCPP_INFO(node->get_logger(),
       "%s center Ground Truth: expected=(%.3f, %.3f, %.3f), actual=(%.3f, %.3f, %.3f), "
       "cell_error=%.3f mm, +X_gap=%+.3f mm, +Y_inner_gap=%+.3f mm, -Y_inner_gap=%+.3f mm, "
@@ -2272,7 +2335,8 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
       x_gap * 1000.0, plus_gap * 1000.0, minus_gap * 1000.0,
       (plus_gap + minus_gap) * 1000.0);
     return error <= kPlacementTolerance && std::abs(x_gap) <= kWallFlushTolerance &&
-           plus_gap >= -kWallFlushTolerance && minus_gap >= -kWallFlushTolerance &&
+           plus_gap >= -0.0005 && minus_gap >= -0.0005 &&
+           plus_gap <= kCenterMaxSideGap && minus_gap <= kCenterMaxSideGap &&
            std::abs((plus_gap + minus_gap) - kExpectedCenterTotalGap) <= kCenterTotalGapTolerance &&
            std::abs(plus_gap - minus_gap) <= kCenterGapBalanceTolerance &&
            std::abs(actual.position.y) <= kCenterOffsetTolerance;
@@ -2287,7 +2351,13 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
     xSupportName(task), x_gap * 1000.0, sideSupportName(task), side_gap * 1000.0);
   return error <= kPlacementTolerance &&
          std::abs(x_gap) <= kWallFlushTolerance &&
+#ifdef TASK27_FIVE_CUBE
+         (isInnerReferenceTask(task)
+           ? (side_gap >= -0.0005 && side_gap <= 0.0015)
+           : std::abs(side_gap) <= kWallFlushTolerance);
+#else
          std::abs(side_gap) <= kWallFlushTolerance;
+#endif
 }
 
 // 分段推进并逐段监督：Cube 必须跟着命令走，且关节力矩不得越限。
@@ -2835,6 +2905,28 @@ int main(int argc, char** argv)
           task.id, outer_index + 1, planning_only ? "名义" : "Ground Truth",
           task.pre_push.position.y, 1000.0 * kInnerStraightInsertClearance);
       }
+      else if (isCenterInsertTask(task))
+      {
+        // 中央件不能死守设计 y=0：前四件的侧压残差会使实际通道偏心。
+        // 取两件内侧 Cube 的实测中心中点，几何上恰好使中央左右余隙相等；
+        // 预检仍使用设计位姿。后续 IK/FCL 和实体间隙验收保持原有门禁。
+        const auto [plus_inner, plus_revision] = cubes.get(2);
+        const auto [minus_inner, minus_revision] = cubes.get(3);
+        (void)plus_revision;
+        (void)minus_revision;
+        const double plus_y = planning_only
+          ? kTasks.at(2).cell.position.y : plus_inner.position.y;
+        const double minus_y = planning_only
+          ? kTasks.at(3).cell.position.y : minus_inner.position.y;
+        const double channel_mid_y = 0.5 * (plus_y + minus_y);
+        task.pre_push.position.y = channel_mid_y;
+        task.cell.position.y = channel_mid_y;
+        RCLCPP_INFO(node->get_logger(),
+          "%s 中央通道按 %s 内侧 Cube 中点设置：plus_y=%.4f, minus_y=%.4f, "
+          "target_y=%.4f m。",
+          task.id, planning_only ? "设计" : "Isaac Ground Truth",
+          plus_y, minus_y, channel_mid_y);
+      }
 #endif
       const std::string object_id = "task26_cube_" + std::to_string(task.cube_index + 1);
       const auto [live_source, source_revision] = cubes.get(task.cube_index);
@@ -2946,6 +3038,45 @@ int main(int argc, char** argv)
         {
           continue;
         }
+
+#ifdef TASK27_FIVE_CUBE
+        // 不能先把左臂实际移到 CONTACT，再发现它的冗余 IK 分支无法完成后续
+        // COMMON_X_TRAVEL。即使 Cartesian fraction=1，FK 仍可能偏离直线数百 mm。
+        // 在发出任何关节命令前，先从同一个候选 CONTACT 预演左臂抬升和 X 搬运；
+        // 右臂此时只作为保持在高位的 FCL 障碍。真实双臂链路仍在下面完整复核。
+        trajectory_msgs::msg::JointTrajectory candidate_left_lift_probe;
+        trajectory_msgs::msg::JointTrajectory candidate_left_x_probe;
+        const auto probe_lift_target = sidePose(
+          source.position.x, initial_left_contact_y,
+          source.position.z + kSideContactCommandZOffset + kLiftHeight, true);
+        const auto probe_x_target = sidePose(
+          task.pre_push.position.x - kPrePushOffsetX, initial_left_contact_y,
+          source.position.z + kSideContactCommandZOffset + kLiftHeight, true);
+        if (!planCommonCartesian(node, left_group, left.groupName(), right.groupName(),
+              finalPositions(candidate_contact), finalPositions(right_pre),
+              probe_lift_target, candidate_prefix + " LEFT_LOADED_LIFT_PROBE",
+              &candidate_left_lift_probe, left.eefLink()) ||
+            !validateSync(node, left_group.getRobotModel(), world_after_remove,
+              candidate_left_lift_probe,
+              holdTrajectory(right_pre, finalPositions(right_pre),
+                pointTime(candidate_left_lift_probe.points.back())),
+              candidate_prefix + " LEFT_LOADED_LIFT_PROBE") ||
+            !planCommonCartesian(node, left_group, left.groupName(), right.groupName(),
+              finalPositions(candidate_left_lift_probe), finalPositions(right_pre),
+              probe_x_target, candidate_prefix + " LEFT_LOADED_X_PROBE",
+              &candidate_left_x_probe, left.eefLink()) ||
+            !validateSync(node, left_group.getRobotModel(), world_after_remove,
+              candidate_left_x_probe,
+              holdTrajectory(right_pre, finalPositions(right_pre),
+                pointTime(candidate_left_x_probe.points.back())),
+              candidate_prefix + " LEFT_LOADED_X_PROBE"))
+        {
+          RCLCPP_WARN(node->get_logger(),
+            "%s 预抓左臂候选无法完成后续贴线 LIFT/X，拒绝该候选并保持吸盘关闭。",
+            candidate_prefix.c_str());
+          continue;
+        }
+#endif
 
         left_pre = candidate_pre;
         left_outer_descent = std::move(candidate_outer);
@@ -3146,6 +3277,7 @@ int main(int argc, char** argv)
         trajectory_msgs::msg::JointTrajectory candidate_left_y_path, candidate_right_y_path;
         trajectory_msgs::msg::JointTrajectory candidate_left_descent, candidate_right_descent;
         trajectory_msgs::msg::JointTrajectory candidate_left_push, candidate_right_push;
+        trajectory_msgs::msg::JointTrajectory candidate_left_drop, candidate_right_drop;
         trajectory_msgs::msg::JointTrajectory candidate_left_retreat, candidate_right_retreat;
         const std::string candidate_prefix = std::string(task.id) + " RIGHT_CANDIDATE_" +
           std::to_string(candidate_index + 1);
@@ -3173,8 +3305,22 @@ int main(int argc, char** argv)
               sidePose(task.pre_push.position.x, candidate_entry_right_y, candidate_release_z, false),
               world_after_remove, candidate_prefix + " COMMON_SIDE_SHORT_PUSH",
               &candidate_left_push, &candidate_right_push) ||
+#ifdef TASK27_FIVE_CUBE
             !planAndCheckCommon(node, left_group, right_group, left, right,
               finalPositions(candidate_left_push), finalPositions(candidate_right_push),
+              sidePose(candidate_entry_x, candidate_entry_left_y,
+                task.pre_push.position.z + kSideContactCommandZOffset, true),
+              sidePose(candidate_entry_x, candidate_entry_right_y,
+                task.pre_push.position.z + kSideContactCommandZOffset, false),
+              world_after_remove, candidate_prefix + " COMMON_DROP_TO_TABLE",
+              &candidate_left_drop, &candidate_right_drop) ||
+#endif
+            !planAndCheckCommon(node, left_group, right_group, left, right,
+#ifdef TASK27_FIVE_CUBE
+              finalPositions(candidate_left_drop), finalPositions(candidate_right_drop),
+#else
+              finalPositions(candidate_left_push), finalPositions(candidate_right_push),
+#endif
               push_left ? sidePose(task.pre_push.position.x, candidate_entry_left_y,
                 candidate_release_z + kLiftHeight, true) : helper_park,
               push_left ? helper_park : sidePose(task.pre_push.position.x, candidate_entry_right_y,
@@ -3220,10 +3366,12 @@ int main(int argc, char** argv)
       const double entry_left_y = task.pre_push.position.y - kCubeHalf - kSideContactCommandGap;
       const double entry_right_y = task.pre_push.position.y + kCubeHalf + kSideContactCommandGap;
 
-      // 换位第一段（笛卡尔竖直抬起）由 preplanPush 规划后写到这里：真实执行时**必须先
-      // 走这一段**，否则后续从抬起位出发的 RRT 起点与实际位置不符（踩过一次：
-      // 只规划不执行 → 右臂 11.8° 追不上）。
+      // Task26 旧路径需要独立的换位抬升；Task27 则在 DROP 后让双臂共同
+      // 退出，其中推入臂已经到达安全高位，不应再次执行这段抬升。
       trajectory_msgs::msg::JointTrajectory regrasp_lift;
+#ifdef TASK27_FIVE_CUBE
+      trajectory_msgs::msg::JointTrajectory inner_press_left, inner_press_right;
+#endif
 
       // Task27 外侧件的重抓候选还必须允许后续侧压。此回调在下方定义好
       // planSideCompaction 后赋值；Task26 和 Task27 内侧/中央件不改变筛选链。
@@ -3258,6 +3406,7 @@ int main(int argc, char** argv)
         // 绕行路径会擦到 Cube 并把它拖走（实测被拖 446 mm，见 TASK26 文档「待修清单」#1）。
         // 抬起是沿 Cube 侧面滑升，1.5 mm 间隙保持不变，不会拖件。
         trajectory_msgs::msg::JointTrajectory grasp_lift_l, grasp_lift_r;
+        if (!lift_already_done)
         {
           const geometry_msgs::msg::Pose lift_left_target = push_left
             ? sidePose(push_entry_x, push_cube_y - kPushCupOffsetX,
@@ -3427,6 +3576,75 @@ int main(int argc, char** argv)
             continue;
           }
 #ifdef TASK27_FIVE_CUBE
+          if (isInnerReferenceTask(task))
+          {
+            const double trim_y = push_cube_y +
+              (push_left ? -kInnerLateralTrim : kInnerLateralTrim);
+            trajectory_msgs::msg::JointTrajectory trim_l, trim_r, trim_exit_l, trim_exit_r;
+            const bool trim_safe = push_left
+              ? (planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(push_l), finalPositions(push_r),
+                   pushPose(push_cell_x, trim_y, push_cube_z), helper_park,
+                   world_after_remove, stage_prefix + " INNER_SIDE_TRIM",
+                   &trim_l, &trim_r) &&
+                 planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(trim_l), finalPositions(trim_r),
+                   pushPose(push_entry_x, trim_y, push_cube_z), helper_park,
+                   world_after_remove, stage_prefix + " INNER_TRIM_EXIT",
+                   &trim_exit_l, &trim_exit_r))
+              : (planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(push_l), finalPositions(push_r),
+                   helper_park, pushPose(push_cell_x, trim_y, push_cube_z),
+                   world_after_remove, stage_prefix + " INNER_SIDE_TRIM",
+                   &trim_l, &trim_r) &&
+                 planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(trim_l), finalPositions(trim_r),
+                   helper_park, pushPose(push_entry_x, trim_y, push_cube_z),
+                   world_after_remove, stage_prefix + " INNER_TRIM_EXIT",
+                   &trim_exit_l, &trim_exit_r));
+            if (!trim_safe)
+            {
+              RCLCPP_WARN(node->get_logger(),
+                "%s REGRASP_CANDIDATE_%zu 压邻件/退出未通过同步 FCL，换候选。",
+                task.id, index + 1);
+              continue;
+            }
+            const double extra_y = trim_y +
+              (push_left ? -kInnerExtraTrimMax : kInnerExtraTrimMax);
+            trajectory_msgs::msg::JointTrajectory extra_l, extra_r, extra_exit_l, extra_exit_r;
+            const bool extra_safe = push_left
+              ? (planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(trim_l), finalPositions(trim_r),
+                   pushPose(push_cell_x, extra_y, push_cube_z), helper_park,
+                   world_after_remove, stage_prefix + " INNER_EXTRA_TRIM_PREFLIGHT",
+                   &extra_l, &extra_r) &&
+                 planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(extra_l), finalPositions(extra_r),
+                   pushPose(push_entry_x, extra_y, push_cube_z), helper_park,
+                   world_after_remove, stage_prefix + " INNER_EXTRA_EXIT_PREFLIGHT",
+                   &extra_exit_l, &extra_exit_r))
+              : (planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(trim_l), finalPositions(trim_r),
+                   helper_park, pushPose(push_cell_x, extra_y, push_cube_z),
+                   world_after_remove, stage_prefix + " INNER_EXTRA_TRIM_PREFLIGHT",
+                   &extra_l, &extra_r) &&
+                 planAndCheckCommon(node, left_group, right_group, left, right,
+                   finalPositions(extra_l), finalPositions(extra_r),
+                   helper_park, pushPose(push_entry_x, extra_y, push_cube_z),
+                   world_after_remove, stage_prefix + " INNER_EXTRA_EXIT_PREFLIGHT",
+                   &extra_exit_l, &extra_exit_r));
+            if (!extra_safe)
+            {
+              RCLCPP_WARN(node->get_logger(),
+                "%s REGRASP_CANDIDATE_%zu 补压/退出预检未通过，换候选。",
+                task.id, index + 1);
+              continue;
+            }
+            inner_press_left = std::move(trim_l);
+            inner_press_right = std::move(trim_r);
+            ret_l = std::move(trim_exit_l);
+            ret_r = std::move(trim_exit_r);
+          }
           if ((lift_already_done || planning_only) && !isStraightInsertTask(task) && side_preflight)
           {
             // 在真正吸住 -X 面之前，用同一候选的 PUSH 末端预演侧压。
@@ -3464,6 +3682,10 @@ int main(int argc, char** argv)
           RCLCPP_INFO(node->get_logger(),
             "%s selected shortest safe REGRASP_CANDIDATE_%zu/%zu with full PUSH/RETREAT preflight (pusher=%s).",
             task.id, index + 1, candidates.size(), push_left ? "left" : "right");
+#ifdef TASK27_FIVE_CUBE
+          RCLCPP_INFO(node->get_logger(), "%s REGRASP selected goal q=%s.",
+            task.id, formatJointPositions(finalPositions(*left_regrasp_out)).c_str());
+#endif
           return true;
         }
         scene.removeCollisionObjects({object_id});
@@ -3728,9 +3950,18 @@ int main(int argc, char** argv)
         // 预演「换位 → +X 推入 → 退出」。任何一段失败都不能算通过。
         trajectory_msgs::msg::JointTrajectory po_regrasp, po_push, po_right_push;
         trajectory_msgs::msg::JointTrajectory po_retreat, po_right_retreat;
+#ifdef TASK27_FIVE_CUBE
+        const auto& po_start = push_left ? selected_left_retreat : selected_right_retreat;
+#else
         const auto& po_start = push_left ? selected_left_push : selected_right_push;
+#endif
         const auto& po_hold = push_left ? selected_right_retreat : selected_left_retreat;
-        if (!preplanPush(po_start, po_hold, std::string(task.id), false, false,
+        if (!preplanPush(po_start, po_hold, std::string(task.id), false,
+#ifdef TASK27_FIVE_CUBE
+              true,
+#else
+              false,
+#endif
               &po_regrasp, &po_push, &po_right_push, &po_retreat, &po_right_retreat))
         {
           RCLCPP_ERROR(node->get_logger(),
@@ -3766,7 +3997,9 @@ int main(int argc, char** argv)
         RCLCPP_INFO(node->get_logger(),
           "%s %s PLANNING-ONLY PASS: 共同搬运、-X 面重抓、+X 推入与退出通过 IK/FCL；"
           "侧向压紧=%s；未发布 joint、suction 或 feed_command。",
-          task.id, kTaskLabel, isStraightInsertTask(task) ? "不需要" : "已预检");
+          task.id, kTaskLabel,
+          isInnerReferenceTask(task) ? "内侧短压已预检" :
+            (isCenterInsertTask(task) ? "中心无需侧压" : "外侧双臂侧压已预检"));
         continue;
       }
 
@@ -3818,17 +4051,55 @@ int main(int argc, char** argv)
           task.id, alignment_attempt, kRetries);
         trajectory_msgs::msg::JointTrajectory left_reacquire;
         trajectory_msgs::msg::JointTrajectory right_reacquire;
-        // 闭环纠偏：用实测间隙差修正两侧指令，保持 Task26 已验证的行为。
-        // Task27 如两侧都偏远，最终仍由预吸附间隙门禁及 Isaac CLOSED
-        // 物理确认把关；本分支不尝试未经验证的强制压入。
+        // 吸附前才允许纠偏。Task26 保持既有行为；Task27 必须从上一条
+        // 实际发送的命令终点累计修正，而不是每次回到同一个名义 1 mm
+        // 目标。实测 0.184 mm 的共同平移连续两次没有改变杯面间隙，
+        // 固定目标重复规划只会空转。分别按各自实测残差修正，两杯仍
+        // 保持在 Cube 外侧；每次最多移动 1 mm，并在下一次复测后决定
+        // 是否允许打开吸盘。
         const double left_gap = live_cube.position.y - left_tcp.get().position.y - kCubeHalf;
         const double right_gap = right_tcp.get().position.y - live_cube.position.y - kCubeHalf;
+#ifdef TASK27_FIVE_CUBE
+        constexpr double kReacquireGain = 0.5;
+        constexpr double kReacquireMaxStep = 0.001;
+        // MoveIt 对约 0.2 mm 的位移可能返回 fraction=1、但仅 1 个原起点。
+        // 小于 0.15 mm 的残差不单独动作；需要动作时至少下发 0.65 mm，
+        // 实体复测中 0.35 mm 仍可能被 Cartesian 服务量化成仅有原起点。
+        // 再用实际 TCP 复测。每步仍不超过 1 mm，不能把单点轨迹当作成功。
+        const auto effective_step = [](double raw) {
+          if (std::abs(raw) < 0.00015)
+          {
+            return 0.0;
+          }
+          return std::copysign(std::max(std::abs(raw), 0.00065), raw);
+        };
+        const double left_delta = effective_step(std::clamp(
+          kReacquireGain * (left_gap - kSideContactCommandGap),
+          -kReacquireMaxStep, kReacquireMaxStep));
+        const double right_delta = effective_step(std::clamp(
+          -kReacquireGain * (right_gap - kSideContactCommandGap),
+          -kReacquireMaxStep, kReacquireMaxStep));
+        const double commanded_left_y = linkPosition(
+          left_group.getRobotModel(), left.eefLink(), left_contact.joint_names,
+          finalPositions(left_contact)).y();
+        const double commanded_right_y = linkPosition(
+          right_group.getRobotModel(), right.eefLink(), right_contact.joint_names,
+          finalPositions(right_contact)).y();
+        const double live_left_y = commanded_left_y + left_delta;
+        const double live_right_y = commanded_right_y + right_delta;
+        RCLCPP_WARN(node->get_logger(),
+          "%s PRE_CLOSE_GEOMETRY 闭环纠偏：left_gap=%.3f mm right_gap=%.3f mm, "
+          "left_delta=%+.3f mm right_delta=%+.3f mm。",
+          task.id, left_gap * 1000.0, right_gap * 1000.0,
+          left_delta * 1000.0, right_delta * 1000.0);
+#else
         const double correction_y = 0.5 * (left_gap - right_gap);
         const double live_left_y = live_cube.position.y - kCubeHalf - kSideContactCommandGap + correction_y;
         const double live_right_y = live_cube.position.y + kCubeHalf + kSideContactCommandGap + correction_y;
         RCLCPP_WARN(node->get_logger(),
           "%s PRE_CLOSE_GEOMETRY 纠偏：left_gap=%.3f mm right_gap=%.3f mm ⇒ 两侧 y 指令平移 %+.3f mm。",
           task.id, left_gap * 1000.0, right_gap * 1000.0, correction_y * 1000.0);
+#endif
         if (!planAndCheckCommon(node, left_group, right_group, left, right,
               finalPositions(left_contact), finalPositions(right_contact),
               sidePose(live_cube.position.x, live_left_y,
@@ -4068,11 +4339,23 @@ int main(int argc, char** argv)
       trajectory_msgs::msg::JointTrajectory left_push_in, right_during_push;
       trajectory_msgs::msg::JointTrajectory left_cell_retreat, right_during_cell_retreat;
       // 起点是**落桌后**的末端：中间多了 COMMON_DROP_TO_TABLE 这一段。
+#ifdef TASK27_FIVE_CUBE
+      const auto& ex_start = push_left ? left_retreat : right_retreat;
+#else
       const auto& ex_start = push_left ? left_drop : right_drop;
+#endif
       const auto& ex_hold = push_left ? right_retreat : left_retreat;
 
-      // 吸盘在上面的 COMMON_DROP_TO_TABLE 之后已经**同时**松开，这里只让辅助臂
-      // 空载退到停放位（Cube 已落桌承托，不存在单臂承重）。
+#ifdef TASK27_FIVE_CUBE
+      // Cube 已由桌面承托、双吸盘均 OPEN；两臂沿刚才同步 FCL 通过的共同
+      // 退出轨迹**同时**离开，推入臂直接到重抓高位、辅助臂到安全停放位。
+      if (!executeSync(left, left_retreat, right, right_retreat))
+      {
+        openBothAndConfirm("safe abort after simultaneous empty-arm retreat failure");
+        all_complete = false;
+        break;
+      }
+#else
       const auto& helper_retreat_traj = push_left ? right_retreat : left_retreat;
       if (!helper.executeAt(helper_retreat_traj, std::chrono::steady_clock::now()) ||
           !helper.waitAtTarget(helper_retreat_traj, kJointSettleToleranceRad, kJointSettleTimeoutSec))
@@ -4081,6 +4364,7 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+#endif
 
       // ---------------------------------------- 换位第一段：竖直抬起（滑轨平移之前）
       // 顺序很关键：**抬起必须在滑轨平移之前执行**。平移时工具已在 Cube 上方
@@ -4113,6 +4397,7 @@ int main(int argc, char** argv)
           task.pre_push.position.x - kPushCupOffsetX,
           1000.0 * (live_cube.position.x - task.pre_push.position.x));
       }
+#ifndef TASK27_FIVE_CUBE
       {
         trajectory_msgs::msg::JointTrajectory dummy_regrasp, dummy_push, dummy_hold_push;
         trajectory_msgs::msg::JointTrajectory dummy_retreat, dummy_hold_retreat;
@@ -4136,6 +4421,10 @@ int main(int argc, char** argv)
       }
       RCLCPP_INFO(node->get_logger(), "%s REGRASP_LIFT 已在滑轨平移之前完成（工具已抬离 Cube）。",
         task.id);
+#else
+      RCLCPP_INFO(node->get_logger(),
+        "%s 双臂共同退出已使推入臂到达高位；不重复执行 REGRASP_LIFT。", task.id);
+#endif
 
       // ------------------------------------------------ 滑轨搬站位（推入前）
       // 实测（t26_baseline2.log）：基座停在 0.650 时推入最后两片的推力需求达
@@ -4217,7 +4506,13 @@ int main(int argc, char** argv)
       }
 
       // 抬起段已在滑轨平移之前执行：这里以它为起点，只规划摆动/推入/退出。
-      if (!preplanPush(regrasp_lift, ex_hold, std::string(task.id), false, true,
+      if (!preplanPush(
+#ifdef TASK27_FIVE_CUBE
+            ex_start,
+#else
+            regrasp_lift,
+#endif
+            ex_hold, std::string(task.id), false, true,
             &left_regrasp, &left_push_in, &right_during_push,
             &left_cell_retreat, &right_during_cell_retreat))
       {
@@ -4291,6 +4586,121 @@ int main(int argc, char** argv)
         break;
       }
 
+#ifdef TASK27_FIVE_CUBE
+      if (isInnerReferenceTask(task))
+      {
+        // 在 +X 直推阶段保留 1.5 mm 邻件扫掠余量；到深墙后仍由 -X 面吸盘
+        // 托住 Cube，沿 ±Y 轻压 1 mm，再从**压后端点**原路退出。
+        // 空载辅助臂保持安全停放位。每段检查真实邻件间隙与关节力矩，绝不
+        // 依赖关节命令已到位就宣称 Cube 已贴紧。
+        if (inner_press_left.points.empty() || inner_press_right.points.empty())
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s INNER_SIDE_TRIM 没有预检轨迹。", task.id);
+          openBothAndConfirm("safe abort before inner compaction");
+          all_complete = false;
+          break;
+        }
+        constexpr int kInnerPressSlices = 4;
+        const double duration = std::max(pointTime(inner_press_left.points.back()),
+          pointTime(inner_press_right.points.back()));
+        bool trim_ok = true;
+        for (int slice = 1; slice <= kInnerPressSlices; ++slice)
+        {
+          const double t0 = duration * static_cast<double>(slice - 1) / kInnerPressSlices;
+          const double t1 = duration * static_cast<double>(slice) / kInnerPressSlices;
+          trajectory_msgs::msg::JointTrajectory trim_left_slice, trim_right_slice;
+          if (!sliceTrajectory(inner_press_left, t0, t1, &trim_left_slice) ||
+              !sliceTrajectory(inner_press_right, t0, t1, &trim_right_slice) ||
+              !executeSync(left, trim_left_slice, right, trim_right_slice))
+          {
+            trim_ok = false;
+            break;
+          }
+          const auto [trim_pose, trim_rev] = cubes.get(task.cube_index);
+          (void)trim_rev;
+          const double gap = measuredSideSupportGap(task, trim_pose, cubes);
+          const double torque = std::max(left_forces.peak(), right_forces.peak());
+          RCLCPP_INFO(node->get_logger(),
+            "%s INNER_SIDE_TRIM slice %d/%d: neighbor_gap=%+.3f mm, peak_torque=%.2f Nm.",
+            task.id, slice, kInnerPressSlices, gap * 1000.0, torque);
+          if (torque > kPushTorqueLimit || gap < -0.0005)
+          {
+            RCLCPP_ERROR(node->get_logger(),
+              "%s INNER_SIDE_TRIM 安全停止：torque=%.2f Nm, gap=%+.3f mm。",
+              task.id, torque, gap * 1000.0);
+            trim_ok = false;
+            break;
+          }
+        }
+        auto [trimmed_pose, trimmed_rev] = cubes.get(task.cube_index);
+        (void)trimmed_rev;
+        double final_gap = measuredSideSupportGap(task, trimmed_pose, cubes);
+        if (trim_ok && final_gap > 0.0015)
+        {
+          // 固定短压受伺服残差影响时，不能把 1.961 mm 误报成压实，也不能
+          // 盲目把 nominal 目标继续往邻件里送。以 Isaac 实测间隙计算一次
+          // 最多 1 mm 的补压，目标仍保留至少 0.6 mm 名义间隙；提前规划
+          // 补压和补压后的 -X 退出，任一失败则保持原安全停机行为。
+          const double extra = std::clamp(final_gap - 0.0006, 0.0002,
+            kInnerExtraTrimMax);
+          const double extra_y = push_cube_y +
+            (push_left ? -1.0 : 1.0) * (kInnerLateralTrim + extra);
+          trajectory_msgs::msg::JointTrajectory extra_left, extra_right;
+          trajectory_msgs::msg::JointTrajectory extra_exit_left, extra_exit_right;
+          const bool extra_planned = push_left
+            ? (planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(inner_press_left), finalPositions(inner_press_right),
+                 pushPose(push_cell_x, extra_y, push_cube_z), helper_park,
+                 world_after_remove, std::string(task.id) + " INNER_EXTRA_TRIM",
+                 &extra_left, &extra_right) &&
+               planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(extra_left), finalPositions(extra_right),
+                 pushPose(push_entry_x, extra_y, push_cube_z), helper_park,
+                 world_after_remove, std::string(task.id) + " INNER_EXTRA_EXIT",
+                 &extra_exit_left, &extra_exit_right))
+            : (planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(inner_press_left), finalPositions(inner_press_right),
+                 helper_park, pushPose(push_cell_x, extra_y, push_cube_z),
+                 world_after_remove, std::string(task.id) + " INNER_EXTRA_TRIM",
+                 &extra_left, &extra_right) &&
+               planAndCheckCommon(node, left_group, right_group, left, right,
+                 finalPositions(extra_left), finalPositions(extra_right),
+                 helper_park, pushPose(push_entry_x, extra_y, push_cube_z),
+                 world_after_remove, std::string(task.id) + " INNER_EXTRA_EXIT",
+                 &extra_exit_left, &extra_exit_right));
+          if (!extra_planned || !executeSync(left, extra_left, right, extra_right))
+          {
+            trim_ok = false;
+          }
+          else
+          {
+            const auto [extra_pose, extra_rev] = cubes.get(task.cube_index);
+            (void)extra_rev;
+            trimmed_pose = extra_pose;
+            final_gap = measuredSideSupportGap(task, trimmed_pose, cubes);
+            const double torque = std::max(left_forces.peak(), right_forces.peak());
+            RCLCPP_INFO(node->get_logger(),
+              "%s INNER_EXTRA_TRIM command=%.3f mm, neighbor_gap=%+.3f mm, "
+              "peak_torque=%.2f Nm.", task.id, extra * 1000.0,
+              final_gap * 1000.0, torque);
+            trim_ok = torque <= kPushTorqueLimit && final_gap >= -0.0005;
+            if (trim_ok)
+            {
+              left_cell_retreat = std::move(extra_exit_left);
+              right_during_cell_retreat = std::move(extra_exit_right);
+            }
+          }
+        }
+        if (!trim_ok || final_gap > 0.0015 || !validDeepWallSeat(node, task, trimmed_pose))
+        {
+          openBothAndConfirm("safe abort after inner compaction gate failure");
+          all_complete = false;
+          break;
+        }
+        deep_seated = trimmed_pose;
+      }
+#endif
+
       // 物理背挡：推入臂先**保持** -X 面吸附，作为深端墙的主动反向挡块。此前
       // 它先释放/退出再侧压，横向杯面摩擦会把 Cube 回带约 15 mm，重新产生深端
       // 缝隙；这不是可以靠放宽门限掩盖的问题。
@@ -4302,8 +4712,8 @@ int main(int argc, char** argv)
       const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
 
       // Task27 的内侧两件已在车厢外对齐相邻 Cube 的 Y 通道；中心件对齐 y=0。
-      // 这三件都只沿 +X 直推。完成深端贴合后松开 -X 吸附、原路退出，
-      // 最后读取 Ground Truth 验收相邻面间隙，不做低位侧向压紧。
+      // 三件先沿 +X 直推；内侧件还在深墙处完成 1 mm 单臂侧压。随后松开
+      // -X 吸附并沿预检过的压后轨迹退出，最后以 Ground Truth 验收间隙。
       if (isStraightInsertTask(task))
       {
         const auto [before_release, before_release_revision] = cubes.get(task.cube_index);
@@ -4337,8 +4747,9 @@ int main(int argc, char** argv)
         }
         std::this_thread::sleep_for(300ms);
         RCLCPP_INFO(node->get_logger(),
-          "%s PASS: 双吸盘预推 -> 单臂吸 -X 面直推 -> 原路退出；"
-          "已验收与相邻 Cube 的真实间隙。", task.id);
+          "%s PASS: 双吸盘预推 -> 单臂吸 -X 面直推%s -> 原路退出；"
+          "已验收与相邻 Cube 的真实间隙。", task.id,
+          isInnerReferenceTask(task) ? " -> 深墙处短侧压" : "");
         continue;
       }
       helper.suction(false);
@@ -4438,6 +4849,55 @@ int main(int argc, char** argv)
       {
         break;
       }
+
+#ifdef TASK27_FIVE_CUBE
+      // Task27 每批只有一件。下一件将直接从本件安全退出后的实测关节状态
+      // 规划到预吸高位，不必先绕共同 HOME。跳过 HOME 前必须证明：即使下一件
+      // 已在供料槽，它也不会与当前姿态或两条顺序入场路径碰撞。
+      // 这里只做预检；下一批到料后仍重新从实际关节状态规划、校验完整抓取链。
+      if (!planning_only && batch + 1 < first_batch + max_batches)
+      {
+        const std::size_t next_index = static_cast<std::size_t>(batch) * kBatchSize;
+        const auto next_source = slotPoseForCube(next_index);
+        auto next_world = staticWorld(scene);
+        next_world.push_back(cubeObject(
+          "task26_cube_" + std::to_string(next_index + 1), next_source));
+        const double next_pre_z =
+          next_source.position.z + kSideContactCommandZOffset + kLiftHeight;
+        trajectory_msgs::msg::JointTrajectory next_left_pre, next_right_pre;
+        const bool direct_handoff_safe =
+          left.planPose(left_group,
+            sidePose(next_source.position.x,
+              next_source.position.y - kCubeHalf - kSideContactCommandGap -
+                kPreContactOffsetY, next_pre_z, true),
+            "Task27 DIRECT_NEXT_LEFT_PRE_CONTACT", &next_left_pre) &&
+          right.planPose(right_group,
+            sidePose(next_source.position.x,
+              next_source.position.y + kCubeHalf + kSideContactCommandGap +
+                kRightPreContactOffsetY, next_pre_z, false),
+            "Task27 DIRECT_NEXT_RIGHT_PRE_CONTACT", &next_right_pre) &&
+          validateSync(node, left_group.getRobotModel(), next_world,
+            next_left_pre,
+            holdTrajectory(next_right_pre, next_right_pre.points.front().positions,
+              pointTime(next_left_pre.points.back())),
+            "Task27 DIRECT_NEXT_PRE_CONTACT left") &&
+          validateSync(node, left_group.getRobotModel(), next_world,
+            holdTrajectory(next_left_pre, finalPositions(next_left_pre),
+              pointTime(next_right_pre.points.back())),
+            next_right_pre, "Task27 DIRECT_NEXT_PRE_CONTACT right");
+        if (direct_handoff_safe)
+        {
+          RCLCPP_INFO(node->get_logger(),
+            "Task27 batch %d PASS: Cube 已落稳，双臂已安全退出；下一件 Cube_%02zu "
+            "可从当前状态直接到预吸高位，跳过批间 HOME。",
+            batch, next_index + 1);
+          continue;
+        }
+        RCLCPP_WARN(node->get_logger(),
+          "Task27 batch %d：直接到下一件预吸高位未通过完整双臂 FCL；回退到共同 HOME。",
+          batch);
+      }
+#endif
 
       // 批间退出：两件都放置完成、并且双臂同步回到共同 HOME 之后，才允许下一批到料。
       // 该姿态在八件全在场的初始状态下已被实际使用，因此是“有已完成垛墙时仍然安全”
