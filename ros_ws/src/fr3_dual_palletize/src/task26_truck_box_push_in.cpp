@@ -2495,7 +2495,9 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
          std::abs(x_gap) <= kWallFlushTolerance &&
 #ifdef TASK27_FIVE_CUBE
          (isInnerReferenceTask(task)
-           ? (side_gap >= -0.0005 && side_gap <= 0.0015)
+           // PhysX/Ros GT 经 float32 后在 1.5 mm 边界可多出约 38 nm。
+           // 100 nm 仅用于数值比较，不修改目标几何或毫米级验收阈值。
+           ? (side_gap >= -0.0005 - 1e-7 && side_gap <= 0.0015 + 1e-7)
            : std::abs(side_gap) <= kWallFlushTolerance);
 #else
          std::abs(side_gap) <= kWallFlushTolerance;
@@ -2575,6 +2577,17 @@ int main(int argc, char** argv)
   const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
+#ifdef TASK27_FIVE_CUBE
+  // Task01 对称性探针：仅第五件允许指定单臂推入者。默认 right，保持原 Task27 行为。
+  const std::string center_pusher_arm =
+    node->declare_parameter<std::string>("center_pusher_arm", "right");
+  if (center_pusher_arm != "left" && center_pusher_arm != "right")
+  {
+    RCLCPP_ERROR(node->get_logger(), "center_pusher_arm 必须是 left 或 right。");
+    rclcpp::shutdown();
+    return 1;
+  }
+#endif
   // 零命令预检：只做 MoveIt/IK/FCL 链路筛选，不发布 joint、suction，也绝不请求
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
   // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
@@ -3338,7 +3351,17 @@ int main(int argc, char** argv)
         task.id, right_outer_candidates.size(), kRrtCandidateBatches);
       // 推入臂**按排选取**：每臂只推自己那一侧的一排。反排去推要跨到对面，实测约
       // 0.69 m 斜向长臂，RRT 全部超时；同侧则是约 0.57 m。
+#ifdef TASK27_FIVE_CUBE
+      const bool push_left = isCenterInsertTask(task)
+        ? center_pusher_arm == "left" : task.cell.position.y < 0.0;
+#else
       const bool push_left = task.cell.position.y < 0.0;
+#endif
+      if (isCenterInsertTask(task))
+      {
+        RCLCPP_INFO(node->get_logger(), "%s Task01 center pusher=%s（仅探针可选；默认原 right）。",
+          task.id, push_left ? "left" : "right");
+      }
       Arm& pusher = push_left ? left : right;
       Arm& helper = push_left ? right : left;
       moveit::planning_interface::MoveGroupInterface& pusher_group =
