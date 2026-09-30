@@ -893,9 +893,12 @@ public:
 
   bool planPoseCandidates(moveit::planning_interface::MoveGroupInterface& group,
                           const geometry_msgs::msg::Pose& target, const std::string& label,
-                          std::vector<trajectory_msgs::msg::JointTrajectory>* outputs) const
+                          std::vector<trajectory_msgs::msg::JointTrajectory>* outputs,
+                          int candidate_count = kRrtCandidateCount,
+                          double planning_time = 20.0) const
   {
     configure(group);
+    group.setPlanningTime(planning_time);
     group.clearPoseTargets();
     if (!group.setPoseTarget(target, eef_))
     {
@@ -905,7 +908,7 @@ public:
     // 主动采样有限组候选并选择关节累计位移最小者，避免偶发选择绕过关节极限的
     // 大回环解；这不是放宽碰撞约束，MoveIt 仍逐候选做碰撞检查。
     std::vector<std::pair<double, trajectory_msgs::msg::JointTrajectory>> candidates;
-    for (int attempt = 1; attempt <= kRrtCandidateCount; ++attempt)
+    for (int attempt = 1; attempt <= candidate_count; ++attempt)
     {
       group.setStartStateToCurrentState();
       moveit::planning_interface::MoveGroupInterface::Plan plan;
@@ -924,12 +927,12 @@ public:
         }
         RCLCPP_INFO(node_->get_logger(),
           "%s %s RRTConnect candidate sample=%d/%d points=%zu joint_travel=%.3f.",
-          side_.c_str(), label.c_str(), attempt, kRrtCandidateCount, candidate.points.size(), cost);
+          side_.c_str(), label.c_str(), attempt, candidate_count, candidate.points.size(), cost);
         candidates.emplace_back(cost, candidate);
         continue;
       }
       RCLCPP_WARN(node_->get_logger(), "%s %s RRTConnect candidate sample failed=%d/%d.",
-        side_.c_str(), label.c_str(), attempt, kRrtCandidateCount);
+        side_.c_str(), label.c_str(), attempt, candidate_count);
     }
     if (candidates.empty())
     {
@@ -951,10 +954,13 @@ public:
 
   bool planPose(moveit::planning_interface::MoveGroupInterface& group,
                 const geometry_msgs::msg::Pose& target, const std::string& label,
-                trajectory_msgs::msg::JointTrajectory* output) const
+                trajectory_msgs::msg::JointTrajectory* output,
+                int candidate_count = kRrtCandidateCount,
+                double planning_time = 20.0) const
   {
     std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
-    if (!planPoseCandidates(group, target, label, &candidates))
+    if (!planPoseCandidates(group, target, label, &candidates,
+          candidate_count, planning_time))
     {
       return false;
     }
@@ -2186,6 +2192,142 @@ Eigen::Vector3d linkPosition(const moveit::core::RobotModelConstPtr& model,
   return state.getGlobalLinkTransform(link).translation();
 }
 
+#ifdef TASK27_FIVE_CUBE
+geometry_msgs::msg::Pose linkPose(const moveit::core::RobotModelConstPtr& model,
+                                 const std::string& link,
+                                 const trajectory_msgs::msg::JointTrajectory& trajectory)
+{
+  moveit::core::RobotState state(model);
+  state.setToDefaultValues();
+  state.setVariablePositions(trajectory.joint_names,
+    trajectory.points.back().positions);
+  state.update();
+  const auto& transform = state.getGlobalLinkTransform(link);
+  const Eigen::Quaterniond quaternion(transform.rotation());
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = transform.translation().x();
+  pose.position.y = transform.translation().y();
+  pose.position.z = transform.translation().z();
+  pose.orientation.x = quaternion.x();
+  pose.orientation.y = quaternion.y();
+  pose.orientation.z = quaternion.z();
+  pose.orientation.w = quaternion.w();
+  return pose;
+}
+
+#endif
+
+#ifdef TASK27_FIVE_CUBE
+// 吸盘释放后，在已通过 FCL 的退出轨迹上找「完整双臂 + L 型工具」真正脱离
+// 已放置 Cube 的第一个状态；不能用 TCP 固定后退 50/110 mm 猜测工具净空。
+// 为避免单个离散样本刚好贴边，要求连续 3 个样本无碰撞。之后只每增加
+// 20 mm 净空保留一个候选，RRT 不可达时才逐段多退出一点，而非直接原路返回。
+std::vector<double> clearanceCutTimes(
+  const rclcpp::Node::SharedPtr& node,
+  const moveit::core::RobotModelConstPtr& model,
+  const std::vector<moveit_msgs::msg::CollisionObject>& world,
+  const trajectory_msgs::msg::JointTrajectory& left,
+  const trajectory_msgs::msg::JointTrajectory& right,
+  const std::string& moving_eef,
+  int axis, double direction,
+  const std::string& label)
+{
+  if (left.points.size() < 2 || right.points.size() < 2 ||
+      left.joint_names.empty() || right.joint_names.empty() ||
+      (axis != 0 && axis != 1) || std::abs(direction) < 0.5)
+  {
+    return {};
+  }
+  auto fcl_scene = std::make_shared<planning_scene::PlanningScene>(model);
+  for (const auto& object : world)
+  {
+    if (!fcl_scene->processCollisionObjectMsg(object))
+    {
+      return {};
+    }
+  }
+  moveit::core::RobotState state(model);
+  state.setToDefaultValues();
+  state.setVariablePositions(left.joint_names, left.points.front().positions);
+  state.setVariablePositions(right.joint_names, right.points.front().positions);
+  state.update();
+  // translation() 返回 Eigen 视图；必须复制数值。若用 auto 保存，后续
+  // state.update() 会让「起点」跟着当前点变化，测得的退出距离恒为 0。
+  const Eigen::Vector3d origin =
+    state.getGlobalLinkTransform(moving_eef).translation();
+  const double duration = std::min(pointTime(left.points.back()),
+    pointTime(right.points.back()));
+  std::vector<double> cuts;
+  double last_distance = 0.0;
+  int consecutive_clear = 0;
+  bool has_been_clear = false;
+  for (double t = kFclSamplePeriod; t < duration - kFclSamplePeriod;
+       t += kFclSamplePeriod)
+  {
+    state.setVariablePositions(left.joint_names, interpolate(left, t));
+    state.setVariablePositions(right.joint_names, interpolate(right, t));
+    state.update();
+    const double distance = direction *
+      (state.getGlobalLinkTransform(moving_eef).translation()[axis] - origin[axis]);
+    if (distance < 0.005)
+    {
+      continue;
+    }
+    collision_detection::CollisionRequest request;
+    collision_detection::CollisionResult result;
+    fcl_scene->checkCollision(request, result, state);
+    if (result.collision)
+    {
+      // 一旦已清障，后续退出轨迹不得再穿过已落稳 Cube。
+      if (has_been_clear)
+      {
+        break;
+      }
+      consecutive_clear = 0;
+      continue;
+    }
+    ++consecutive_clear;
+    if (consecutive_clear < 3 ||
+        (!cuts.empty() && distance - last_distance < 0.020))
+    {
+      continue;
+    }
+    cuts.push_back(t);
+    has_been_clear = true;
+    last_distance = distance;
+    if (cuts.size() == 6)
+    {
+      break;
+    }
+  }
+  if (cuts.empty())
+  {
+    const double end_time = std::max(0.0, duration - kFclSamplePeriod);
+    state.setVariablePositions(left.joint_names, interpolate(left, end_time));
+    state.setVariablePositions(right.joint_names, interpolate(right, end_time));
+    state.update();
+    collision_detection::CollisionRequest request;
+    request.contacts = true;
+    request.max_contacts = 4;
+    collision_detection::CollisionResult result;
+    fcl_scene->checkCollision(request, result, state);
+    const double end_distance = direction *
+      (state.getGlobalLinkTransform(moving_eef).translation()[axis] - origin[axis]);
+    RCLCPP_ERROR(node->get_logger(),
+      "%s FCL 清障搜索失败：末端移动 %.1f mm，末态碰撞=%s。",
+      label.c_str(), end_distance * 1000.0,
+      result.collision ? "yes" : "no");
+    for (const auto& [pair, contacts] : result.contacts)
+    {
+      (void)contacts;
+      RCLCPP_ERROR(node->get_logger(), "%s 末态碰撞对：%s <-> %s。",
+        label.c_str(), pair.first.c_str(), pair.second.c_str());
+    }
+  }
+  return cuts;
+}
+#endif
+
 // +X 推入后、侧墙压紧前的中间验收：深格贴车厢深端墙；浅格贴同排已完成的
 // 深格 Cube。二者都属于 +X 方向的实体支撑面，不能把浅格到外墙的 120 mm
 // 正常层内间距误判为失败。
@@ -2871,6 +3013,9 @@ int main(int argc, char** argv)
       std::this_thread::sleep_for(300ms);
 
       // 批内逐件执行 Task24 已验证的紧协调链路（先槽 A 后槽 B）。
+#ifdef TASK27_FIVE_CUBE
+      bool early_handoff_done = false;
+#endif
       for (int slot = 0; slot < kBatchSize; ++slot)
       {
       const int task_index = static_cast<int>(batch_indices.at(static_cast<std::size_t>(slot)));
@@ -3982,6 +4127,84 @@ int main(int argc, char** argv)
             all_complete = false;
             break;
           }
+#ifdef TASK27_FIVE_CUBE
+          if (batch + 1 < first_batch + max_batches)
+          {
+            auto left_target = linkPose(left_group.getRobotModel(),
+              left.eefLink(), side_plan.left_press);
+            auto right_target = linkPose(left_group.getRobotModel(),
+              right.eefLink(), side_plan.right_press);
+            if (push_left)
+            {
+              left_target.position.x -= 0.120;
+              right_target.position.y += 0.120;
+            }
+            else
+            {
+              right_target.position.x -= 0.120;
+              left_target.position.y -= 0.120;
+            }
+            trajectory_msgs::msg::JointTrajectory left_exit, right_exit;
+            if (!planAndCheckCommon(node, left_group, right_group, left, right,
+                  finalPositions(side_plan.left_press), finalPositions(side_plan.right_press),
+                  left_target, right_target, world_after_remove,
+                  std::string(task.id) + " PLANNING_ONLY_DIVERGENT_CLEARANCE",
+                  &left_exit, &right_exit))
+            {
+              RCLCPP_ERROR(node->get_logger(),
+                "%s planning-only 双臂法向短退预检失败。", task.id);
+              all_complete = false;
+              break;
+            }
+            auto guarded_world = world_after_remove;
+            const auto next_index = static_cast<std::size_t>(batch) * kBatchSize;
+            const std::string next_id =
+              "task26_cube_" + std::to_string(next_index + 1);
+            guarded_world.erase(std::remove_if(guarded_world.begin(),
+              guarded_world.end(), [&](const auto& object)
+              {
+                return object.id == object_id || object.id == next_id;
+              }), guarded_world.end());
+            auto guarded_cube = cubeObject(object_id, task.cell);
+            for (auto& dimension : guarded_cube.primitives.front().dimensions)
+            {
+              dimension += 0.006;
+            }
+            guarded_world.push_back(std::move(guarded_cube));
+            guarded_world.push_back(cubeObject(next_id, slotPoseForCube(next_index)));
+            const auto& moving_exit = push_left ? left_exit : right_exit;
+            const auto start_position = linkPosition(left_group.getRobotModel(),
+              pusher.eefLink(), moving_exit.joint_names,
+              moving_exit.points.front().positions);
+            const auto end_position = linkPosition(left_group.getRobotModel(),
+              pusher.eefLink(), moving_exit.joint_names,
+              moving_exit.points.back().positions);
+            RCLCPP_INFO(node->get_logger(),
+              "%s 法向短退诊断：pusher=%s points=%zu duration=%.3f s, "
+              "TCP start=(%.3f, %.3f, %.3f) end=(%.3f, %.3f, %.3f)。",
+              task.id, push_left ? "left" : "right", moving_exit.points.size(),
+              pointTime(moving_exit.points.back()),
+              start_position.x(), start_position.y(), start_position.z(),
+              end_position.x(), end_position.y(), end_position.z());
+            const auto cuts = clearanceCutTimes(node, left_group.getRobotModel(),
+              guarded_world, left_exit, right_exit, pusher.eefLink(), 0, -1.0,
+              std::string(task.id) + " PLANNING_ONLY_DIVERGENT_CLEARANCE");
+            if (cuts.empty())
+            {
+              RCLCPP_ERROR(node->get_logger(),
+                "%s planning-only 无法找到两臂法向短退后的 FCL 净空位。", task.id);
+              all_complete = false;
+              break;
+            }
+            const auto cut_position = linkPosition(left_group.getRobotModel(),
+              pusher.eefLink(), moving_exit.joint_names,
+              interpolate(moving_exit, cuts.front()));
+            RCLCPP_INFO(node->get_logger(),
+              "%s planning-only 最早 FCL 清障位：背挡臂仅退 %.1f mm；"
+              "物理执行后仍会从实测关节状态重新做 RRT/FCL。",
+              task.id, (start_position.x() - cut_position.x()) * 1000.0);
+          }
+#endif
         }
         // 整条链路通过：把本件按最终的"深端 + 侧墙均贴合"格位放回 Planning
         // Scene，供下一件的 FCL 使用。
@@ -4711,6 +4934,179 @@ int main(int argc, char** argv)
       const auto& right_after_x = right_during_push;
       const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
 
+#ifdef TASK27_FIVE_CUBE
+      const std::size_t handoff_next_index = static_cast<std::size_t>(batch) * kBatchSize;
+      const auto handoff_next_source = slotPoseForCube(handoff_next_index);
+      const std::string handoff_next_id =
+        "task26_cube_" + std::to_string(handoff_next_index + 1);
+      const auto handoffWorld = [&](const geometry_msgs::msg::Pose& settled)
+      {
+        auto world = staticWorld(scene);
+        world.erase(std::remove_if(world.begin(), world.end(),
+          [&](const auto& object)
+          {
+            return object.id == object_id || object.id == handoff_next_id;
+          }), world.end());
+        auto guarded_cube = cubeObject(object_id, settled);
+        // 仍保留每侧 3 mm 的模型冗余，由 FCL 寻找真正的最小清障距离。
+        for (auto& dimension : guarded_cube.primitives.front().dimensions)
+        {
+          dimension += 0.006;
+        }
+        world.push_back(std::move(guarded_cube));
+        world.push_back(cubeObject(handoff_next_id, handoff_next_source));
+        return world;
+      };
+      // 返回 1：已直达下一件上方待命；0：此净空位 RRT/FCL 拒绝，稍退再试；
+      // -1：执行中失败，必须停机，不能从未知关节状态继续。
+      const auto tryEarlyHandoff = [&](const geometry_msgs::msg::Pose& settled) -> int
+      {
+        if (planning_only || batch + 1 >= first_batch + max_batches)
+        {
+          return 0;
+        }
+        const auto world = handoffWorld(settled);
+        if (!scene.applyCollisionObjects({world[world.size() - 2], world.back()}))
+        {
+          scene.removeCollisionObjects({object_id, handoff_next_id});
+          return 0;
+        }
+        std::this_thread::sleep_for(250ms);
+        const double staging_z = handoff_next_source.position.z +
+          kSideContactCommandZOffset + kLiftHeight + 0.030;
+        trajectory_msgs::msg::JointTrajectory next_left, next_right;
+        const bool safe =
+          left.planPose(left_group,
+            sidePose(handoff_next_source.position.x,
+              handoff_next_source.position.y - kCubeHalf - kSideContactCommandGap -
+                kPreContactOffsetY, staging_z, true),
+            "Task27 EARLY_HANDOFF_LEFT", &next_left, 3, 3.0) &&
+          right.planPose(right_group,
+            sidePose(handoff_next_source.position.x,
+              handoff_next_source.position.y + kCubeHalf + kSideContactCommandGap +
+                kRightPreContactOffsetY, staging_z, false),
+            "Task27 EARLY_HANDOFF_RIGHT", &next_right, 3, 3.0) &&
+          next_left.points.size() >= 2 && next_right.points.size() >= 2 &&
+          validateSync(node, left_group.getRobotModel(), world, next_left,
+            holdTrajectory(next_right, next_right.points.front().positions,
+              pointTime(next_left.points.back())),
+            "Task27 EARLY_HANDOFF left -> next Cube") &&
+          validateSync(node, left_group.getRobotModel(), world,
+            holdTrajectory(next_left, finalPositions(next_left),
+              pointTime(next_right.points.back())), next_right,
+            "Task27 EARLY_HANDOFF right -> next Cube");
+        if (!safe)
+        {
+          scene.removeCollisionObjects({object_id, handoff_next_id});
+          std::this_thread::sleep_for(250ms);
+          RCLCPP_WARN(node->get_logger(),
+            "%s 当前清障位到 Cube_%02zu 待命位的 RRT/FCL 未通过；"
+            "仅沿已验证退出轨迹再增加一小段净空。",
+            task.id, handoff_next_index + 1);
+          return 0;
+        }
+        if (!left.executeAt(next_left, std::chrono::steady_clock::now()) ||
+            !left.waitAtTarget(next_left, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
+            !right.executeAt(next_right, std::chrono::steady_clock::now()) ||
+            !right.waitAtTarget(next_right, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s 提前转场执行失败：关节状态可能已变化，禁止旧轨迹回退。", task.id);
+          return -1;
+        }
+        if (!scene.applyCollisionObject(cubeObject(object_id, settled)))
+        {
+          return -1;
+        }
+        scene.removeCollisionObjects({handoff_next_id});
+        std::this_thread::sleep_for(250ms);
+        RCLCPP_INFO(node->get_logger(),
+          "%s 已从短清障位经 RRTConnect + 双臂 FCL 到 Cube_%02zu 上方待命位；"
+          "省略后半段原路退出与批间 HOME。", task.id,
+          handoff_next_index + 1);
+        return 1;
+      };
+
+      // 已完成放置且下批存在时，沿预验证的退出轨迹仅走到第一个 FCL 净空位。
+      // 若 RRTConnect 从这个构型不可达，再增加约 20 mm 净空重试；无解则
+      // 原地停止并报错，绝不把「整条原路返回」伪装成正常转场。
+      const auto runShortHandoff = [&]
+        (const trajectory_msgs::msg::JointTrajectory& left_exit,
+         const trajectory_msgs::msg::JointTrajectory& right_exit,
+         int axis, double direction, bool both_move) -> bool
+      {
+        const auto [release_pose, release_revision] = cubes.get(task.cube_index);
+        (void)release_revision;
+        const auto cuts = clearanceCutTimes(node, left_group.getRobotModel(),
+          handoffWorld(release_pose), left_exit, right_exit,
+          pusher.eefLink(), axis, direction,
+          std::string(task.id) + " SHORT_CLEARANCE");
+        if (cuts.empty())
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s 已验证退出轨迹中找不到双臂与落位 Cube 均无碰撞的短清障状态。",
+            task.id);
+          return false;
+        }
+        double previous_time = 0.0;
+        for (std::size_t index = 0; index < cuts.size(); ++index)
+        {
+          trajectory_msgs::msg::JointTrajectory left_step, right_step;
+          if (!sliceTrajectory(left_exit, previous_time, cuts[index], &left_step) ||
+              !sliceTrajectory(right_exit, previous_time, cuts[index], &right_step))
+          {
+            return false;
+          }
+          const auto& moving_exit = pusher.isLeft() ? left_exit : right_exit;
+          const auto start = linkPosition(left_group.getRobotModel(),
+            pusher.eefLink(), moving_exit.joint_names,
+            moving_exit.points.front().positions);
+          const auto current = linkPosition(left_group.getRobotModel(),
+            pusher.eefLink(), moving_exit.joint_names,
+            interpolate(moving_exit, cuts[index]));
+          RCLCPP_INFO(node->get_logger(),
+            "%s SHORT_CLEARANCE %zu/%zu: exit=%.1f mm, 之后直达下一件预吸位。",
+            task.id, index + 1, cuts.size(),
+            direction * (current[axis] - start[axis]) * 1000.0);
+          const bool moved = both_move
+            ? (executeSync(left, left_step, right, right_step) &&
+               left.waitAtTarget(left_step, kJointSettleToleranceRad, kJointSettleTimeoutSec) &&
+               right.waitAtTarget(right_step, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+            : (pusher.executeAt(pusher.isLeft() ? left_step : right_step,
+                 std::chrono::steady_clock::now()) &&
+               pusher.waitAtTarget(pusher.isLeft() ? left_step : right_step,
+                 kJointSettleToleranceRad, kJointSettleTimeoutSec));
+          if (!moved)
+          {
+            RCLCPP_ERROR(node->get_logger(),
+              "%s 短清障执行失败，不能从未知关节状态继续。", task.id);
+            return false;
+          }
+          std::this_thread::sleep_for(300ms);
+          const auto [settled, revision] = cubes.get(task.cube_index);
+          (void)revision;
+          if (!validCellPlacement(node, task, settled, cubes))
+          {
+            return false;
+          }
+          const int result = tryEarlyHandoff(settled);
+          if (result > 0)
+          {
+            return true;
+          }
+          if (result < 0)
+          {
+            return false;
+          }
+          previous_time = cuts[index];
+        }
+        RCLCPP_ERROR(node->get_logger(),
+          "%s 短清障候选均未找到通过 RRTConnect + 完整双臂 FCL 的直达下一件路径；"
+          "保持当前位置，不执行长距离原路返回。", task.id);
+        return false;
+      };
+#endif
+
       // Task27 的内侧两件已在车厢外对齐相邻 Cube 的 Y 通道；中心件对齐 y=0。
       // 三件先沿 +X 直推；内侧件还在深墙处完成 1 mm 单臂侧压。随后松开
       // -X 吸附并沿预检过的压后轨迹退出，最后以 Ground Truth 验收间隙。
@@ -4725,6 +5121,21 @@ int main(int argc, char** argv)
           all_complete = false;
           break;
         }
+#ifdef TASK27_FIVE_CUBE
+        // 直推件：只沿 -X 退出到 FCL 判定的最小净空位，随即 RRTConnect
+        // 到下一件预吸位；不预设 50 mm，更不先回装料口或 HOME。
+        if (!planning_only && batch + 1 < first_batch + max_batches)
+        {
+          if (!runShortHandoff(left_cell_retreat, right_during_cell_retreat,
+                0, -1.0, false))
+          {
+            all_complete = false;
+            break;
+          }
+          early_handoff_done = true;
+          continue;
+        }
+#endif
         if (!pusher.executeAt(pusher_cell_retreat, std::chrono::steady_clock::now()) ||
             !pusher.waitAtTarget(pusher_cell_retreat, kJointSettleToleranceRad, kJointSettleTimeoutSec))
         {
@@ -4767,6 +5178,43 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+#ifdef TASK27_FIVE_CUBE
+      trajectory_msgs::msg::JointTrajectory divergent_left_exit, divergent_right_exit;
+      if (batch + 1 < first_batch + max_batches)
+      {
+        // 原 WITHDRAW 会让背挡臂随侧压臂一起横移，背挡杯面仍贴着 Cube。
+        // 松吸盘后两臂必须沿各自杯面外法向分开：背挡臂 -X、侧压臂向外 Y。
+        // 先从 SIDE_PRESS 终点预规划 120 mm 的安全包络，再在执行时按
+        // 已落稳 Cube 的 Ground Truth 截取第一个 FCL 净空前缀。
+        auto left_clearance_target = linkPose(left_group.getRobotModel(),
+          left.eefLink(), side_plan.left_press);
+        auto right_clearance_target = linkPose(left_group.getRobotModel(),
+          right.eefLink(), side_plan.right_press);
+        if (push_left)
+        {
+          left_clearance_target.position.x -= 0.120;
+          right_clearance_target.position.y += 0.120;
+        }
+        else
+        {
+          right_clearance_target.position.x -= 0.120;
+          left_clearance_target.position.y -= 0.120;
+        }
+        if (!planAndCheckCommon(node, left_group, right_group, left, right,
+              finalPositions(side_plan.left_press), finalPositions(side_plan.right_press),
+              left_clearance_target, right_clearance_target,
+              world_after_remove, std::string(task.id) + " DIVERGENT_CLEARANCE",
+              &divergent_left_exit, &divergent_right_exit))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s 双臂各沿杯面法向退出的轨迹未通过预规划/FCL；不开始侧压。",
+            task.id);
+          openBothAndConfirm("safe abort after divergent-clearance preflight failure");
+          all_complete = false;
+          break;
+        }
+      }
+#endif
       const auto execute_side_stage =
         [&](const std::string& name,
             const trajectory_msgs::msg::JointTrajectory& left_trajectory,
@@ -4807,6 +5255,22 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+#ifdef TASK27_FIVE_CUBE
+      // 外侧件松吸盘后双臂沿各自杯面外法向稍退。按完整 L 型工具
+      // 与已落位 Cube 的 FCL 结果选最短清障前缀，之后直接 RRT 到下一件；
+      // 不按旧 WITHDRAW 横移，更不执行后续 LIFT/RETURN。
+      if (!planning_only && batch + 1 < first_batch + max_batches)
+      {
+        if (!runShortHandoff(divergent_left_exit, divergent_right_exit,
+              0, -1.0, true))
+        {
+          all_complete = false;
+          break;
+        }
+        early_handoff_done = true;
+        continue;
+      }
+#endif
       if (!execute_side_stage("WITHDRAW", side_plan.left_withdraw, side_plan.right_withdraw) ||
           !execute_side_stage("LIFT", side_plan.left_lift, side_plan.right_lift) ||
           !execute_side_stage("RETURN", side_plan.left_return, side_plan.right_return))
@@ -4851,6 +5315,13 @@ int main(int argc, char** argv)
       }
 
 #ifdef TASK27_FIVE_CUBE
+      if (early_handoff_done)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "Task27 batch %d PASS: Cube 已落稳；双臂从短清障位经 RRTConnect "
+          "到下一件上方待命位，未执行长距离原路退出或批间 HOME。", batch);
+        continue;
+      }
       // Task27 每批只有一件。下一件将直接从本件安全退出后的实测关节状态
       // 规划到预吸高位，不必先绕共同 HOME。跳过 HOME 前必须证明：即使下一件
       // 已在供料槽，它也不会与当前姿态或两条顺序入场路径碰撞。
