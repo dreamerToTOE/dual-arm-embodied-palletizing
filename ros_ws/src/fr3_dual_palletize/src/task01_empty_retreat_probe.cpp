@@ -67,6 +67,26 @@ int main(int argc, char** argv)
     passed = passed && planSeededEmptyCartesian(node, state, left, left_eef,
       target(left_eef, 0.0), "UNIT zero displacement", &zero) &&
       zero.points.size() >= 2 && pointTime(zero.points.back()) > 0.0;
+    // [EXPERIMENTAL] 已执行中心件落桌日志的四位小数 seed 重放。
+    // 主运行可能普通 IK 就通过；这个无命令测试必须直接覆盖长距离备用求解器。
+    moveit::core::RobotState replay(model);
+    replay.setToDefaultValues();
+    replay.setJointGroupPositions(left,
+      std::vector<double>{0.9743, -0.3174, 0.3022, -2.6567, 0.1309, 2.3462, 1.1693});
+    replay.setJointGroupPositions(right,
+      std::vector<double>{-1.2243, -0.3044, -0.0443, -2.6584, -0.0178, 2.3519, -1.2533});
+    replay.update();
+    trajectory_msgs::msg::JointTrajectory replay_left, replay_right;
+    const double exit_z = kTableTopZ + kCubeHalf + kReleaseGapZ + kLiftHeight;
+    const bool replay_safe = planSeededEmptyCartesian(node, replay, left, left_eef,
+      sidePose(kPrePushX - 0.10, -0.32, exit_z, true), "REPLAY rounded left empty exit", &replay_left) &&
+      planSeededEmptyCartesian(node, replay, right, right_eef,
+      sidePose(kPrePushX, kCubeHalf + kSideContactCommandGap, exit_z, false),
+      "REPLAY rounded right empty exit", &replay_right) &&
+      synchronize(&replay_left, &replay_right) &&
+      validateSync(node, model, {cubeObject("replay_released_cube", worldPose(0.7712, 0.0001, 0.2600))},
+        replay_left, replay_right, "REPLAY released Cube included");
+    passed = passed && replay_safe;
     RCLCPP_INFO(node->get_logger(), "EMPTY_RETREAT_READ_ONLY_TEST %s; no joint/suction publisher constructed.",
       passed ? "PASS" : "FAIL");
   }
