@@ -15,6 +15,7 @@
 #include <algorithm>
 #ifdef TASK01_CUBE04_PRECISION_INSERT
 #include "fr3_dual_palletize/cube04_precision_policy.hpp"
+#include "fr3_dual_palletize/empty_retreat_policy.hpp"
 #endif
 #include <array>
 #include <atomic>
@@ -1544,7 +1545,7 @@ bool planFinePreclose(
   const rclcpp::Node::SharedPtr& node, moveit::core::RobotState state,
   const moveit::core::JointModelGroup* own, const std::string& eef_link,
   const geometry_msgs::msg::Pose& target, const std::string& label,
-  trajectory_msgs::msg::JointTrajectory* output)
+  trajectory_msgs::msg::JointTrajectory* output, bool emit_log = true)
 {
   const Eigen::Isometry3d start = state.getGlobalLinkTransform(eef_link);
   const Eigen::Vector3d goal(target.position.x, target.position.y, target.position.z);
@@ -1641,10 +1642,95 @@ bool planFinePreclose(
     point.positions = q;
     result.points.push_back(point);
   }
-  RCLCPP_INFO(node->get_logger(), "%s fine IK span=%.3f mm points=%zu, position gate=0.005 mm.",
-    label.c_str(), span * 1000.0, result.points.size());
+  if (emit_log)
+  {
+    RCLCPP_INFO(node->get_logger(), "%s fine IK span=%.3f mm points=%zu, position gate=0.005 mm.",
+      label.c_str(), span * 1000.0, result.points.size());
+  }
   *output = std::move(result);
   ensureTiming(*output);
+  return true;
+}
+#endif
+
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+// [ENGINEERING] 已释放后的备用空载直线：每段以刚求得的构型作 seed。
+// 不更改负载路径、目标或 ACM；调用方必须再做完整双臂+已释放 Cube 的 FCL。
+bool planSeededEmptyCartesian(
+  const rclcpp::Node::SharedPtr& node, moveit::core::RobotState state,
+  const moveit::core::JointModelGroup* own, const std::string& eef_link,
+  const geometry_msgs::msg::Pose& target, const std::string& label,
+  trajectory_msgs::msg::JointTrajectory* output)
+{
+  if (!own || !state.getRobotModel()->hasLinkModel(eef_link) || !state.satisfiesBounds(own))
+  {
+    return false;
+  }
+  state.update();
+  const Eigen::Isometry3d start = state.getGlobalLinkTransform(eef_link);
+  const Eigen::Vector3d goal(target.position.x, target.position.y, target.position.z);
+  Eigen::Quaterniond goal_q(target.orientation.w, target.orientation.x,
+    target.orientation.y, target.orientation.z);
+  if (!goal.allFinite() || !goal_q.coeffs().allFinite() || goal_q.norm() < 1e-9)
+  {
+    return false;
+  }
+  goal_q.normalize();
+  const Eigen::Quaterniond start_q(start.rotation());
+  const double span = (goal - start.translation()).norm();
+  const auto segments = fr3_dual_palletize::emptyRetreatSegmentCount(
+    span, start_q.angularDistance(goal_q));
+  if (segments == 0)
+  {
+    RCLCPP_ERROR(node->get_logger(), "%s seeded empty IK outside bounded retreat scope.", label.c_str());
+    return false;
+  }
+  trajectory_msgs::msg::JointTrajectory result;
+  result.joint_names = own->getVariableNames();
+  trajectory_msgs::msg::JointTrajectoryPoint first;
+  state.copyJointGroupPositions(own, first.positions);
+  result.points.push_back(first);
+  for (std::size_t index = 1; index <= segments; ++index)
+  {
+    const double alpha = static_cast<double>(index) / segments;
+    const Eigen::Vector3d position = start.translation() + alpha * (goal - start.translation());
+    const Eigen::Quaterniond orientation = start_q.slerp(alpha, goal_q);
+    geometry_msgs::msg::Pose waypoint;
+    waypoint.position.x = position.x();
+    waypoint.position.y = position.y();
+    waypoint.position.z = position.z();
+    waypoint.orientation.x = orientation.x();
+    waypoint.orientation.y = orientation.y();
+    waypoint.orientation.z = orientation.z();
+    waypoint.orientation.w = orientation.w();
+    trajectory_msgs::msg::JointTrajectory micro;
+    if (!planFinePreclose(node, state, own, eef_link, waypoint,
+          label + " segment=" + std::to_string(index), &micro, false) ||
+        micro.points.empty())
+    {
+      RCLCPP_ERROR(node->get_logger(), "%s seeded empty IK failed segment=%zu/%zu.",
+        label.c_str(), index, segments);
+      return false;
+    }
+    // 保留 2 mm 段端点，使用原 30 ms/点时间约定；不要将 0.1 mm 内部迭代点
+    // 全部当作 30 ms 命令点而把空载退出放慢 20 倍。插值后的完整路径仍交给 FCL。
+    trajectory_msgs::msg::JointTrajectoryPoint point;
+    point.positions = micro.points.back().positions;
+    state.setJointGroupPositions(own, point.positions);
+    state.update();
+    result.points.push_back(std::move(point));
+  }
+  const double deviation = cartesianLineDeviation(
+    state.getRobotModel(), eef_link, result, target);
+  if (!std::isfinite(deviation) || deviation > kMaxCartesianLineDeviation)
+  {
+    return false;
+  }
+  RCLCPP_INFO(node->get_logger(),
+    "%s seeded empty IK PASS: segments=%zu span=%.3f mm line_deviation=%.3f mm; FCL still required.",
+    label.c_str(), segments, span * 1000.0, deviation * 1000.0);
+  ensureTiming(result);
+  *output = std::move(result);
   return true;
 }
 #endif
@@ -4753,17 +4839,96 @@ int main(int argc, char** argv)
         break;
       }
       // 两侧吸盘同时松开。Cube 此时已完全由桌面承托，不存在单臂承重阶段。
-      openBothAndConfirm("after COMMON_DROP_TO_TABLE: cube is on the table");
+      if (!openBothAndConfirm("after COMMON_DROP_TO_TABLE: cube is on the table"))
+      {
+        all_complete = false;
+        break;
+      }
 
       trajectory_msgs::msg::JointTrajectory left_retreat, right_retreat;
       // 退出段起点改为落桌后的末端（left_drop/right_drop），否则预演的起点与实际
       // 位置差 kReleaseGapZ，第一段会跳。
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      // [ENGINEERING] 松开后不能将命令终点当作真实关节位置。用一份当前 RobotState
+      // 同时取两臂；等待新的 Cube GT，并把已释放 Cube 放回严格碰撞校验世界。
+      const auto measured_state = left_group.getCurrentState(2.0);
+      const auto* left_jmg = left_group.getRobotModel()->getJointModelGroup(left.groupName());
+      const auto* right_jmg = left_group.getRobotModel()->getJointModelGroup(right.groupName());
+      std::vector<double> measured_left, measured_right;
+      if (measured_state && left_jmg && right_jmg)
+      {
+        measured_state->copyJointGroupPositions(left_jmg, measured_left);
+        measured_state->copyJointGroupPositions(right_jmg, measured_right);
+      }
+      geometry_msgs::msg::Pose released_cube;
+      const auto [previous_cube, previous_revision] = cubes.get(task.cube_index);
+      (void)previous_cube;
+      if (!fr3_dual_palletize::validEmptyRetreatSeed(
+            left.isClosed(), right.isClosed(), measured_left, measured_right,
+            left_jmg ? left_jmg->getVariableCount() : 0,
+            right_jmg ? right_jmg->getVariableCount() : 0) ||
+          !cubes.waitNew(task.cube_index, previous_revision, 2.0, &released_cube))
+      {
+        RCLCPP_ERROR(node->get_logger(), "%s empty retreat rejected: OPEN / live state / fresh Cube GT missing.", task.id);
+        all_complete = false;
+        break;
+      }
+      const auto log_start = [&](const char* side, const std::vector<double>& measured,
+                                 const trajectory_msgs::msg::JointTrajectory& command)
+      {
+        const auto commanded = finalPositions(command);
+        double worst = 0.0;
+        for (std::size_t joint = 0; joint < measured.size(); ++joint)
+        {
+          worst = std::max(worst, std::abs(measured[joint] - commanded.at(joint)));
+        }
+        RCLCPP_INFO(node->get_logger(), "%s empty retreat %s measured_start=%s command_delta=%.6f rad.",
+          task.id, side, formatJointPositions(measured).c_str(), worst);
+      };
+      log_start("left", measured_left, left_drop);
+      log_start("right", measured_right, right_drop);
+      const auto left_target = push_left ? sidePose(task.pre_push.position.x, entry_left_y,
+        release_z + kLiftHeight, true) : helper_park;
+      const auto right_target = push_left ? helper_park : sidePose(task.pre_push.position.x,
+        entry_right_y, release_z + kLiftHeight, false);
+      auto released_world = world_after_remove;
+      released_world.push_back(cubeObject(object_id, released_cube));
+      const std::string retreat_label = std::string(task.id) + " PREPLANNED_COMMON_RETREAT";
+      // 普通 IK 与连续 seed 的候选共享相同目标和最后一道 FCL。不能接受失真的
+      // fraction=1；不能通过拿掉刚落桌的 Cube 或扩大 ACM 来解决起点碰撞。
+      const auto plan_empty = [&](moveit::planning_interface::MoveGroupInterface& group,
+                                  const Arm& own_arm, const Arm& partner_arm,
+                                  const std::vector<double>& own_q,
+                                  const std::vector<double>& partner_q,
+                                  const geometry_msgs::msg::Pose& target,
+                                  const moveit::core::JointModelGroup* jmg,
+                                  const std::string& label,
+                                  trajectory_msgs::msg::JointTrajectory* trajectory)
+      {
+        if (planCommonCartesian(node, group, own_arm.groupName(), partner_arm.groupName(),
+              own_q, partner_q, target, label, trajectory, own_arm.eefLink(), false))
+        {
+          return true;
+        }
+        RCLCPP_WARN(node->get_logger(), "%s try bounded continuous-seed empty IK; no collision exemption.", label.c_str());
+        return planSeededEmptyCartesian(node, *measured_state, jmg, own_arm.eefLink(), target, label, trajectory);
+      };
+      if (!plan_empty(left_group, left, right, measured_left, measured_right,
+            left_target, left_jmg, retreat_label + " left", &left_retreat) ||
+          !plan_empty(right_group, right, left, measured_right, measured_left,
+            right_target, right_jmg, retreat_label + " right", &right_retreat) ||
+          !synchronize(&left_retreat, &right_retreat) ||
+          !validateSync(node, left_group.getRobotModel(), released_world,
+            left_retreat, right_retreat, retreat_label + " RELEASED_CUBE_INCLUDED") ||
+          left.isClosed() || right.isClosed())
+#else
       if (!stage("PREPLANNED_COMMON_RETREAT",
             push_left ? sidePose(task.pre_push.position.x, entry_left_y,
               release_z + kLiftHeight, true) : helper_park,
             push_left ? helper_park : sidePose(task.pre_push.position.x, entry_right_y,
               release_z + kLiftHeight, false),
             left_drop, right_drop, &left_retreat, &right_retreat))
+#endif
       {
         openBothAndConfirm("safe abort after retreat preplanning failure");
         all_complete = false;
