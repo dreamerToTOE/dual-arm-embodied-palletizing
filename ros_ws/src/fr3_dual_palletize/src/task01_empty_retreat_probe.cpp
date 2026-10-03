@@ -56,7 +56,8 @@ int main(int argc, char** argv)
       !planSeededEmptyCartesian(node, state, left, left_eef,
         target(left_eef, 0.8), "UNIT oversized reject", &rejected);
     auto invalid = target(left_eef, 0.02);
-    invalid.orientation = geometry_msgs::msg::Quaternion{};
+    // ROS geometry_msgs 的默认 w=1，不是无效的全零四元数。
+    invalid.orientation.x = invalid.orientation.y = invalid.orientation.z = invalid.orientation.w = 0.0;
     passed = passed && !planSeededEmptyCartesian(
       node, state, left, left_eef, invalid, "UNIT quaternion reject", &rejected);
     const auto obstructing_cube = cubeObject("unit_released_cube", target(left_eef, 0.0));
