@@ -677,6 +677,9 @@ ament_target_dependencies(task26_truck_box_push_in
 add_executable(task27_five_cube_center_insert
   src/task27_five_cube_center_insert.cpp
 )
+target_include_directories(task27_five_cube_center_insert PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 target_link_libraries(task27_five_cube_center_insert yaml-cpp)
 ament_target_dependencies(task27_five_cube_center_insert
   ament_index_cpp

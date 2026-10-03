@@ -768,7 +768,10 @@ class Task26BatchedFeedBridge:
             raise RuntimeError(f"Ground Truth Prim 不存在：{path}")
         transform = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
         position = transform.ExtractTranslation()
-        rotation = transform.ExtractRotationQuat()
+        # Task27 / TASK01 校准已证实：带 Cube scale 的矩阵不能直接提取旋转。
+        # 仅修 Task27，Task26 已验收的默认行为保持不变。
+        rotation = (Gf.Transform(transform).GetRotation().GetQuat()
+                    if TASK27_MODE else transform.ExtractRotationQuat())
         imaginary = rotation.GetImaginary()
         norm = math.sqrt(sum(float(value) ** 2 for value in imaginary) + float(rotation.GetReal()) ** 2)
         result = Pose()

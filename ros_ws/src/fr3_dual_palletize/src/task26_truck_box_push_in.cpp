@@ -34,6 +34,11 @@
 #include <utility>
 #include <vector>
 
+#ifdef TASK27_FIVE_CUBE
+#include <Eigen/Cholesky>
+#include <fr3_dual_palletize/preclose_alignment.hpp>
+#endif
+
 #include <builtin_interfaces/msg/time.hpp>
 #include <geometry_msgs/msg/pose_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
@@ -1527,6 +1532,119 @@ double cartesianLineDeviation(
   return worst;
 }
 
+#ifdef TASK27_FIVE_CUBE
+// [ENGINEERING] 只用于未吸附的亚毫米修正，非新的搬运/论文规划算法。
+// Cartesian 服务可能把短位移视作已经满足目标；使用同一 MoveIt FK 模型的
+// 数值 Jacobian 精细求解，保持 seed 附近构型。完整同步 FCL 仍由调用方执行。
+bool planFinePreclose(
+  const rclcpp::Node::SharedPtr& node, moveit::core::RobotState state,
+  const moveit::core::JointModelGroup* own, const std::string& eef_link,
+  const geometry_msgs::msg::Pose& target, const std::string& label,
+  trajectory_msgs::msg::JointTrajectory* output)
+{
+  const Eigen::Isometry3d start = state.getGlobalLinkTransform(eef_link);
+  const Eigen::Vector3d goal(target.position.x, target.position.y, target.position.z);
+  Eigen::Quaterniond quaternion(target.orientation.w, target.orientation.x,
+    target.orientation.y, target.orientation.z);
+  if (!goal.allFinite() || !quaternion.coeffs().allFinite() || quaternion.norm() < 1e-9)
+  {
+    return false;
+  }
+  const Eigen::Matrix3d goal_rotation = quaternion.normalized().toRotationMatrix();
+  const double span = (goal - start.translation()).norm();
+  const Eigen::AngleAxisd rotation_span(goal_rotation * start.rotation().transpose());
+  if (span > 0.004 || rotation_span.angle() > 0.02)
+  {
+    RCLCPP_ERROR(node->get_logger(), "%s fine IK outside micro-correction scope.", label.c_str());
+    return false;
+  }
+  std::vector<double> seed, q;
+  state.copyJointGroupPositions(own, seed);
+  q = seed;
+  trajectory_msgs::msg::JointTrajectory result;
+  result.joint_names = own->getVariableNames();
+  trajectory_msgs::msg::JointTrajectoryPoint first;
+  first.positions = q;
+  result.points.push_back(first);
+  const int samples = std::max(1, static_cast<int>(std::ceil(span / 0.0001)));
+  for (int sample = 1; sample <= samples; ++sample)
+  {
+    const double alpha = static_cast<double>(sample) / samples;
+    const Eigen::Vector3d waypoint = start.translation() + alpha * (goal - start.translation());
+    const Eigen::Matrix3d waypoint_rotation = Eigen::Quaterniond(start.rotation()).slerp(
+      alpha, Eigen::Quaterniond(goal_rotation)).toRotationMatrix();
+    bool reached = false;
+    for (int iteration = 0; iteration < 60; ++iteration)
+    {
+      state.setJointGroupPositions(own, q);
+      state.update();
+      const Eigen::Isometry3d current = state.getGlobalLinkTransform(eef_link);
+      const Eigen::AngleAxisd angle(waypoint_rotation * current.rotation().transpose());
+      Eigen::Matrix<double, 6, 1> error;
+      error.head<3>() = waypoint - current.translation();
+      error.tail<3>() = angle.angle() * angle.axis();
+      if (error.head<3>().norm() <= 0.000005 && error.tail<3>().norm() <= 0.00005)
+      {
+        reached = true;
+        break;
+      }
+      // 直接在 world FK 中差分，避免将 group-base Jacobian 误作世界系。
+      Eigen::MatrixXd jacobian(6, q.size());
+      constexpr double epsilon = 1e-6;
+      for (std::size_t joint = 0; joint < q.size(); ++joint)
+      {
+        auto perturbed = q;
+        perturbed[joint] += epsilon;
+        state.setJointGroupPositions(own, perturbed);
+        state.update();
+        const Eigen::Isometry3d probe = state.getGlobalLinkTransform(eef_link);
+        jacobian.block<3, 1>(0, joint) = (probe.translation() - current.translation()) / epsilon;
+        const Eigen::AngleAxisd rotation(probe.rotation() * current.rotation().transpose());
+        jacobian.block<3, 1>(3, joint) = rotation.angle() * rotation.axis() / epsilon;
+      }
+      const Eigen::Matrix<double, 6, 6> normal = jacobian * jacobian.transpose() +
+        1e-8 * Eigen::Matrix<double, 6, 6>::Identity();
+      Eigen::VectorXd increment = jacobian.transpose() * normal.ldlt().solve(error);
+      if (!increment.allFinite())
+      {
+        return false;
+      }
+      if (increment.cwiseAbs().maxCoeff() > 0.02)
+      {
+        increment *= 0.02 / increment.cwiseAbs().maxCoeff();
+      }
+      for (std::size_t joint = 0; joint < q.size(); ++joint)
+      {
+        q[joint] += increment[joint];
+        if (std::abs(q[joint] - seed[joint]) > 0.08)
+        {
+          return false;
+        }
+      }
+      state.setJointGroupPositions(own, q);
+      state.update();
+      if (!state.satisfiesBounds(own))
+      {
+        return false;
+      }
+    }
+    if (!reached)
+    {
+      RCLCPP_ERROR(node->get_logger(), "%s fine IK did not reach waypoint.", label.c_str());
+      return false;
+    }
+    trajectory_msgs::msg::JointTrajectoryPoint point;
+    point.positions = q;
+    result.points.push_back(point);
+  }
+  RCLCPP_INFO(node->get_logger(), "%s fine IK span=%.3f mm points=%zu, position gate=0.005 mm.",
+    label.c_str(), span * 1000.0, result.points.size());
+  *output = std::move(result);
+  ensureTiming(*output);
+  return true;
+}
+#endif
+
 bool planCommonCartesian(
   const rclcpp::Node::SharedPtr& node, moveit::planning_interface::MoveGroupInterface& group,
   const std::string& own_group, const std::string& partner_group,
@@ -1548,6 +1666,18 @@ bool planCommonCartesian(
   // 预吸附闭环修正通常不足 1 mm。若仍用常规 1--3 mm 步长，MoveIt 可能
   // 返回 fraction=1 且仅包含原起点；必须对这种微动使用亚毫米插值。
   const bool fine_reacquire = label.find("PRE_CLOSE_REACQUIRE") != std::string::npos;
+  if (fine_reacquire)
+  {
+    auto state = group.getCurrentState(2.0);
+    if (!state)
+    {
+      return false;
+    }
+    state->setJointGroupPositions(own, own_start);
+    state->setJointGroupPositions(partner, partner_start);
+    state->update();
+    return planFinePreclose(node, *state, own, eef_link, target, label, output);
+  }
   const std::array<double, 4> steps = fine_reacquire
     ? std::array<double, 4>{0.0001, 0.00005, 0.0002, 0.0005}
     : std::array<double, 4>{kCartesianStep, 0.0015, 0.003, 0.001};
@@ -4306,25 +4436,10 @@ int main(int argc, char** argv)
         const double left_gap = live_cube.position.y - left_tcp.get().position.y - kCubeHalf;
         const double right_gap = right_tcp.get().position.y - live_cube.position.y - kCubeHalf;
 #ifdef TASK27_FIVE_CUBE
-        constexpr double kReacquireGain = 0.5;
-        constexpr double kReacquireMaxStep = 0.001;
-        // MoveIt 对约 0.2 mm 的位移可能返回 fraction=1、但仅 1 个原起点。
-        // 小于 0.15 mm 的残差不单独动作；需要动作时至少下发 0.65 mm，
-        // 实体复测中 0.35 mm 仍可能被 Cartesian 服务量化成仅有原起点。
-        // 再用实际 TCP 复测。每步仍不超过 1 mm，不能把单点轨迹当作成功。
-        const auto effective_step = [](double raw) {
-          if (std::abs(raw) < 0.00015)
-          {
-            return 0.0;
-          }
-          return std::copysign(std::max(std::abs(raw), 0.00065), raw);
-        };
-        const double left_delta = effective_step(std::clamp(
-          kReacquireGain * (left_gap - kSideContactCommandGap),
-          -kReacquireMaxStep, kReacquireMaxStep));
-        const double right_delta = effective_step(std::clamp(
-          -kReacquireGain * (right_gap - kSideContactCommandGap),
-          -kReacquireMaxStep, kReacquireMaxStep));
+        // 直接按各自残差修正，最多 1 mm、没有最小步长。精细 FK 求解防止
+        // 微动被规划服务吞掉；随后仍按原 0.3 mm gate 复测，最多三次。
+        const double left_delta = fr3_dual_palletize::precloseAlignmentDelta(left_gap, true);
+        const double right_delta = fr3_dual_palletize::precloseAlignmentDelta(right_gap, false);
         const double commanded_left_y = linkPosition(
           left_group.getRobotModel(), left.eefLink(), left_contact.joint_names,
           finalPositions(left_contact)).y();
