@@ -37,6 +37,7 @@
 #ifdef TASK27_FIVE_CUBE
 #include <Eigen/Cholesky>
 #include <fr3_dual_palletize/preclose_alignment.hpp>
+#include <std_msgs/msg/string.hpp>
 #endif
 
 #include <builtin_interfaces/msg/time.hpp>
@@ -2708,6 +2709,20 @@ int main(int argc, char** argv)
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
 #ifdef TASK27_FIVE_CUBE
+  // [EXPERIMENTAL] 真实 FR3 已知载荷校验专用；默认 0，不改变普通 Task27。
+  // 只停任务主线程，ROS executor 必须继续接收实时关节状态，不能 SIGSTOP 节点。
+  const double calibration_hold_sec =
+    node->declare_parameter<double>("task01_calibration_hold_sec", 0.0);
+  if (!std::isfinite(calibration_hold_sec) || calibration_hold_sec < 0.0 ||
+      calibration_hold_sec > 15.0)
+  {
+    RCLCPP_ERROR(node->get_logger(), "task01_calibration_hold_sec 必须在 [0, 15] s。");
+    rclcpp::shutdown();
+    return 1;
+  }
+  const auto calibration_phase_pub = calibration_hold_sec > 0.0
+    ? node->create_publisher<std_msgs::msg::String>("/task01/calibration_phase", 10)
+    : rclcpp::Publisher<std_msgs::msg::String>::SharedPtr{};
   // Task01 对称性探针：仅第五件允许指定单臂推入者。默认 right，保持原 Task27 行为。
   const std::string center_pusher_arm =
     node->declare_parameter<std::string>("center_pusher_arm", "right");
@@ -4586,6 +4601,34 @@ int main(int argc, char** argv)
 
       const double transport_z =
         grasp_pose.position.z + kSideContactCommandZOffset + kLiftHeight;
+
+#ifdef TASK27_FIVE_CUBE
+      if (calibration_hold_sec > 0.0)
+      {
+        std_msgs::msg::String phase;
+        phase.data = "STATIC_LIFT_HOLD";
+        calibration_phase_pub->publish(phase);
+        RCLCPP_INFO(node->get_logger(),
+          "TASK01 STATIC_LIFT_HOLD BEGIN: %.2f s, ROS executor remains active.",
+          calibration_hold_sec);
+        const auto until = std::chrono::steady_clock::now() +
+          std::chrono::duration<double>(calibration_hold_sec);
+        while (rclcpp::ok() && std::chrono::steady_clock::now() < until &&
+               left.isClosed() && right.isClosed())
+        {
+          std::this_thread::sleep_for(10ms);
+        }
+        phase.data = "STATIC_LIFT_HOLD_END";
+        calibration_phase_pub->publish(phase);
+        RCLCPP_INFO(node->get_logger(), "TASK01 STATIC_LIFT_HOLD END.");
+        if (!rclcpp::ok() || !trace_held("STATIC_LIFT_HOLD_CHECK"))
+        {
+          openBothAndConfirm("safe abort after static-load calibration hold");
+          all_complete = false;
+          break;
+        }
+      }
+#endif
 
       // 吸住 Cube 后不再允许 OMPL 产生任意弯绕路径。共同负载轨迹被显式拆为
       // Z(lift) -> X(travel) -> Y(align) -> Z(descent) -> X(short push)；每段均
