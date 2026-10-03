@@ -13,6 +13,9 @@
 // 绝不以移动到侧面边缘的假吸点继续执行，也不用单臂推送绕开真实碰撞。
 
 #include <algorithm>
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+#include "fr3_dual_palletize/cube04_precision_policy.hpp"
+#endif
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -2504,6 +2507,15 @@ bool isStraightInsertTask(const OfflineTask& task)
   return isInnerReferenceTask(task) || isCenterInsertTask(task);
 }
 
+bool needsInnerSideTrim(const OfflineTask& task)
+{
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+  return fr3_dual_palletize::requiresInnerTrim(task.cube_index);
+#else
+  return isInnerReferenceTask(task);
+#endif
+}
+
 // 五件横向布局中，最外件由车厢侧墙支撑，内件由已经完成的同侧外件支撑。
 // Task26 的两个目标都在最外侧，故默认行为完全不变。
 bool sideSupportIsWall(const OfflineTask& task)
@@ -2701,7 +2713,11 @@ int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>(
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+    "task01_cube04_precision_insert");
+#else
     std::string(kTaskLabel) == "Task27" ? "task27_five_cube_center_insert" : "task26_batched_side_suction");
+#endif
   // max_batches 始终表示“从 first_batch 起连续执行多少批”，保持既有单批
   // -p max_batches:=1 的含义。Task27 因此可先执行 first_batch=1/max=4，
   // 再在同一 Isaac 场景中只执行 first_batch=5/max=1 的中心插入阶段。
@@ -3202,11 +3218,32 @@ int main(int argc, char** argv)
             ? -(kCubeSize + kInnerStraightInsertClearance)
             : (kCubeSize + kInnerStraightInsertClearance));
         task.pre_push.position.y = task.cell.position.y;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        // 场景/格位不变：仅第四件控制暂放目标提前到旧侧压后的 0.5 mm 位置。
+        // 第五件仍以两内件实测中点对齐；第一至三件保持原协议。
+        const double staging_gap = fr3_dual_palletize::stagingGap(
+          task.cube_index, kInnerStraightInsertClearance, kInnerPressedTargetGap);
+        task.pre_push.position.y = outer_pose.position.y +
+          (task.cube_index == 2 ? -(kCubeSize + staging_gap) : kCubeSize + staging_gap);
+        if (task.cube_index == 3)
+        {
+          RCLCPP_INFO(node->get_logger(),
+            "%s CUBE04_PRECISION_PROTOCOL: precise PRE_PUSH target_y=%.6f, "
+            "neighbor_target=%.3f mm; single rear suction, no INNER_SIDE_TRIM; "
+            "original final acceptance unchanged.", task.id, task.pre_push.position.y,
+            staging_gap * 1000.0);
+        }
+#endif
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        const double logged_staging_gap = staging_gap;
+#else
+        const double logged_staging_gap = kInnerStraightInsertClearance;
+#endif
         RCLCPP_INFO(node->get_logger(),
           "%s 对齐外侧 Cube_%02zu 的 %s 位姿：直推通道 y=%.4f m，"
           "名义邻件余量=%.1f mm。",
           task.id, outer_index + 1, planning_only ? "名义" : "Ground Truth",
-          task.pre_push.position.y, 1000.0 * kInnerStraightInsertClearance);
+          task.pre_push.position.y, 1000.0 * logged_staging_gap);
       }
       else if (isCenterInsertTask(task))
       {
@@ -3889,7 +3926,7 @@ int main(int argc, char** argv)
             continue;
           }
 #ifdef TASK27_FIVE_CUBE
-          if (isInnerReferenceTask(task))
+          if (needsInnerSideTrim(task))
           {
             const double trim_y = push_cube_y +
               (push_left ? -kInnerLateralTrim : kInnerLateralTrim);
@@ -4389,8 +4426,9 @@ int main(int argc, char** argv)
           "%s %s PLANNING-ONLY PASS: 共同搬运、-X 面重抓、+X 推入与退出通过 IK/FCL；"
           "侧向压紧=%s；未发布 joint、suction 或 feed_command。",
           task.id, kTaskLabel,
-          isInnerReferenceTask(task) ? "内侧短压已预检" :
-            (isCenterInsertTask(task) ? "中心无需侧压" : "外侧双臂侧压已预检"));
+          needsInnerSideTrim(task) ? "内侧短压已预检" :
+            (isCenterInsertTask(task) ? "中心无需侧压" :
+              (isInnerReferenceTask(task) ? "第四件精确直推，无侧压" : "外侧双臂侧压已预检")));
         continue;
       }
 
@@ -4946,6 +4984,38 @@ int main(int argc, char** argv)
           "%s after REGRASP: cube=(%.3f, %.3f, %.3f), drift since regrasp start=%.2f mm.",
           task.id, after_regrasp.position.x, after_regrasp.position.y,
           after_regrasp.position.z, drift * 1000.0);
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        if (task.cube_index == 3)
+        {
+          // 第四件不能依赖后续侧压纠偏：重抓后、开后吸盘前核对精准暂放。
+          // 0.5 mm 是此变体的更严工程门控，不取代/放宽最终 1.5 mm 验收。
+          const auto [outer, outer_revision] = cubes.get(1);
+          (void)outer_revision;
+          const auto half_y = [](const geometry_msgs::msg::Pose& pose)
+          {
+            Eigen::Quaterniond q(pose.orientation.w, pose.orientation.x,
+              pose.orientation.y, pose.orientation.z);
+            if (!q.coeffs().allFinite() || q.norm() < 1e-9)
+              return std::numeric_limits<double>::infinity();
+            return kCubeHalf * q.normalized().toRotationMatrix().row(1).cwiseAbs().sum();
+          };
+          const double y_error = std::abs(after_regrasp.position.y - task.pre_push.position.y);
+          const double projected_gap = after_regrasp.position.y - half_y(after_regrasp) -
+            (outer.position.y + half_y(outer));
+          RCLCPP_INFO(node->get_logger(),
+            "%s CUBE04_PRECISION_GATE: y_error=%.3f mm (<=0.500), "
+            "oriented_neighbor_clearance=%.3f mm (>=0); helper remains OPEN.",
+            task.id, y_error * 1000.0, projected_gap * 1000.0);
+          if (!std::isfinite(y_error) || !std::isfinite(projected_gap) ||
+              y_error > kInnerPressedTargetGap || projected_gap < 0.0 || helper.isClosed())
+          {
+            RCLCPP_ERROR(node->get_logger(),
+              "%s CUBE04_PRECISION_GATE failed; no rear suction or push command.", task.id);
+            all_complete = false;
+            break;
+          }
+        }
+#endif
         if (drift > kPlacementTolerance)
         {
           RCLCPP_ERROR(node->get_logger(),
@@ -4991,7 +5061,7 @@ int main(int argc, char** argv)
       }
 
 #ifdef TASK27_FIVE_CUBE
-      if (isInnerReferenceTask(task))
+      if (needsInnerSideTrim(task))
       {
         // 在 +X 直推阶段保留 1.5 mm 邻件扫掠余量；到深墙后仍由 -X 面吸盘
         // 托住 Cube，沿 ±Y 轻压 1 mm，再从**压后端点**原路退出。
@@ -5341,7 +5411,7 @@ int main(int argc, char** argv)
         RCLCPP_INFO(node->get_logger(),
           "%s PASS: 双吸盘预推 -> 单臂吸 -X 面直推%s -> 原路退出；"
           "已验收与相邻 Cube 的真实间隙。", task.id,
-          isInnerReferenceTask(task) ? " -> 深墙处短侧压" : "");
+          needsInnerSideTrim(task) ? " -> 深墙处短侧压" : "");
         continue;
       }
       helper.suction(false);

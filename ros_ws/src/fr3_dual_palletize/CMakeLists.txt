@@ -694,6 +694,18 @@ ament_target_dependencies(task27_five_cube_center_insert
   moveit_ros_planning_interface
 )
 
+add_executable(task01_cube04_precision_insert
+  src/task01_cube04_precision_insert.cpp
+)
+target_include_directories(task01_cube04_precision_insert PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(task01_cube04_precision_insert yaml-cpp)
+ament_target_dependencies(task01_cube04_precision_insert
+  ament_index_cpp rclcpp sensor_msgs std_msgs geometry_msgs shape_msgs
+  trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -738,6 +750,7 @@ install(
     task25_batched_side_suction
     task26_truck_box_push_in
     task27_five_cube_center_insert
+    task01_cube04_precision_insert
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
