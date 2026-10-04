@@ -4184,7 +4184,8 @@ int main(int argc, char** argv)
         [&](const trajectory_msgs::msg::JointTrajectory& left_start,
             const trajectory_msgs::msg::JointTrajectory& right_start,
             const geometry_msgs::msg::Pose& seated_cube,
-            const std::string& stage_prefix, SideCompactionPlan* output)
+            const std::string& stage_prefix, SideCompactionPlan* output,
+            bool measured_execution_start = false)
       {
         if (!output || left_start.points.empty() || right_start.points.empty())
         {
@@ -4194,6 +4195,63 @@ int main(int argc, char** argv)
         // 无意义的编译告警。
         SideCompactionPlan reset_plan;
         *output = std::move(reset_plan);
+        auto left_seed = left_start;
+        auto right_seed = right_start;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        if (measured_execution_start)
+        {
+          // [ENGINEERING] 真正推入后再规划空载侧压臂入场。背挡臂虽然保持吸附，
+          // 命令终点仍不等于实测关节状态；命令 seed 配实测 Cube 会制造起点碰撞。
+          // 两臂取同一 RobotState，当前 Cube 仍留在下方严格 FCL 中；不扩大 ACM。
+          const auto measured = left_group.getCurrentState(2.0);
+          const auto* left_jmg = left_group.getRobotModel()->getJointModelGroup(left.groupName());
+          const auto* right_jmg = left_group.getRobotModel()->getJointModelGroup(right.groupName());
+          if (!measured || !left_jmg || !right_jmg || !pusher.isClosed() || helper.isClosed())
+          {
+            RCLCPP_ERROR(node->get_logger(), "%s live side start rejected: state/grasp status missing.",
+              stage_prefix.c_str());
+            return false;
+          }
+          std::vector<double> measured_left, measured_right;
+          measured->copyJointGroupPositions(left_jmg, measured_left);
+          measured->copyJointGroupPositions(right_jmg, measured_right);
+          if (!fr3_dual_palletize::validMeasuredJointSeed(measured_left, left_jmg->getVariableCount()) ||
+              !fr3_dual_palletize::validMeasuredJointSeed(measured_right, right_jmg->getVariableCount()) ||
+              !measured->satisfiesBounds(left_jmg) || !measured->satisfiesBounds(right_jmg))
+          {
+            return false;
+          }
+          const auto seed = [&](const char* side, const trajectory_msgs::msg::JointTrajectory& commanded,
+                                const std::vector<double>& q, trajectory_msgs::msg::JointTrajectory* result)
+          {
+            const auto last = finalPositions(commanded);
+            if (last.size() != q.size())
+            {
+              return false;
+            }
+            double error = 0.0;
+            for (std::size_t i = 0; i < q.size(); ++i)
+            {
+              error = std::max(error, std::abs(last[i] - q[i]));
+            }
+            RCLCPP_INFO(node->get_logger(), "%s side start %s measured_q=%s command_delta=%.6f rad.",
+              stage_prefix.c_str(), side, formatJointPositions(q).c_str(), error);
+            if (error > kJointSettleToleranceRad)
+            {
+              return false;
+            }
+            *result = holdTrajectory(commanded, q, 0.2);
+            return true;
+          };
+          if (!seed("left", left_start, measured_left, &left_seed) ||
+              !seed("right", right_start, measured_right, &right_seed))
+          {
+            return false;
+          }
+        }
+#else
+        (void)measured_execution_start;
+#endif
         // 原推入臂按任务行选择；另一臂一定从相反侧压向对应墙：
         //   +Y 行：right 负责 +X 推入，left 从 -Y 压向 +Y 墙；
         //   -Y 行：left 负责 +X 推入，right 从 +Y 压向 -Y 墙。
@@ -4209,7 +4267,7 @@ int main(int argc, char** argv)
         const Arm& compactor = compactor_is_left ? left : right;
         auto& compactor_group = compactor_is_left ? left_group : right_group;
         const std::vector<double> compactor_start = compactor_is_left
-          ? finalPositions(left_start) : finalPositions(right_start);
+          ? finalPositions(left_seed) : finalPositions(right_seed);
         const double entry_contact_y = seated_cube.position.y -
           press_direction_y * (kCubeHalf + kSideContactCommandGap);
         const double final_contact_y = task.cell.position.y +
@@ -4245,9 +4303,9 @@ int main(int argc, char** argv)
         for (std::size_t index = 0; index < candidates.size(); ++index)
         {
           auto left_approach = compactor_is_left ? candidates[index] : holdTrajectory(
-            left_start, finalPositions(left_start), pointTime(candidates[index].points.back()));
+            left_seed, finalPositions(left_seed), pointTime(candidates[index].points.back()));
           auto right_approach = compactor_is_left ? holdTrajectory(
-            right_start, finalPositions(right_start), pointTime(candidates[index].points.back())) : candidates[index];
+            right_seed, finalPositions(right_seed), pointTime(candidates[index].points.back())) : candidates[index];
           if (!validateSync(node, left_group.getRobotModel(), world_with_cube,
                 left_approach, right_approach,
                 stage_prefix + " SIDE_HIGH_APPROACH_" + std::to_string(index + 1)))
@@ -5741,7 +5799,11 @@ int main(int argc, char** argv)
       }
       SideCompactionPlan side_plan;
       if (!planSideCompaction(left_after_x, right_after_x, deep_seated,
-            std::string(task.id) + " EXECUTION", &side_plan))
+            std::string(task.id) + " EXECUTION", &side_plan
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+            , true
+#endif
+            ))
       {
         RCLCPP_ERROR(node->get_logger(), "%s cannot preflight a safe SIDE_COMPACTION chain.", task.id);
         openBothAndConfirm("safe abort after SIDE_COMPACTION preflight failure");
