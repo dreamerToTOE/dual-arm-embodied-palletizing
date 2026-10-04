@@ -4543,12 +4543,64 @@ int main(int argc, char** argv)
       // 歪斜几何进入共同抬升。
       bool pre_close_geometry_ok = false;
       geometry_msgs::msg::Pose grasp_pose;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      const auto preclose_started = std::chrono::steady_clock::now();
+      int xyz_checks = 0;
+      int xyz_corrections = 0;
+      double xyz_plan_wall_s = 0.0;
+      double xyz_execute_wall_s = 0.0;
+#endif
       for (int alignment_attempt = 1; alignment_attempt <= kRetries; ++alignment_attempt)
       {
         std::this_thread::sleep_for(250ms);
         const auto [live_cube, live_revision] = cubes.get(task.cube_index);
         (void)live_revision;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        ++xyz_checks;
+        // 同一次检查只取一次每侧 GT；静止态诊断，不冒充同一步同步传感器。
+        const auto measured_left_tcp = left_tcp.get();
+        const auto measured_right_tcp = right_tcp.get();
+        if (left.isClosed() || right.isClosed())
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s PRE_CLOSE_XYZ refused: correction requires both suction cups OPEN.", task.id);
+          break;
+        }
+        auto measured_state = left_group.getCurrentState(2.0);
+        if (measured_state)
+        {
+          measured_state->update();
+          const auto diagnostic = [&](const Arm& arm,
+            const trajectory_msgs::msg::JointTrajectory& command,
+            const geometry_msgs::msg::Pose& actual)
+          {
+            auto commanded = linkPosition(left_group.getRobotModel(), arm.eefLink(),
+              command.joint_names, finalPositions(command));
+            auto measured_fk = Eigen::Vector3d(
+              measured_state->getGlobalLinkTransform(arm.eefLink()).translation());
+            commanded.x() += g_world_shift_x;
+            measured_fk.x() += g_world_shift_x;
+            const Eigen::Vector3d isaac(actual.position.x, actual.position.y, actual.position.z);
+            const auto tracking = measured_fk - commanded;
+            const auto model_difference = isaac - measured_fk;
+            RCLCPP_INFO(node->get_logger(),
+              "%s PRE_CLOSE_KINEMATICS side=%s attempt=%d commanded=(%.6f,%.6f,%.6f) "
+              "measured_fk=(%.6f,%.6f,%.6f) isaac=(%.6f,%.6f,%.6f) "
+              "tracking_mm=(%.3f,%.3f,%.3f) fk_isaac_mm=(%.3f,%.3f,%.3f).",
+              task.id, arm.isLeft() ? "left" : "right", alignment_attempt,
+              commanded.x(), commanded.y(), commanded.z(),
+              measured_fk.x(), measured_fk.y(), measured_fk.z(), isaac.x(), isaac.y(), isaac.z(),
+              tracking.x() * 1000.0, tracking.y() * 1000.0, tracking.z() * 1000.0,
+              model_difference.x() * 1000.0, model_difference.y() * 1000.0,
+              model_difference.z() * 1000.0);
+          };
+          diagnostic(left, left_contact, measured_left_tcp);
+          diagnostic(right, right_contact, measured_right_tcp);
+        }
+        if (validateDualSideAttachment(node, task, live_cube, measured_left_tcp, measured_right_tcp,
+#else
         if (validateDualSideAttachment(node, task, live_cube, left_tcp.get(), right_tcp.get(),
+#endif
               "PRE_CLOSE_GEOMETRY"))
         {
           grasp_pose = live_cube;
@@ -4572,6 +4624,71 @@ int main(int argc, char** argv)
         // 固定目标重复规划只会空转。分别按各自实测残差修正，两杯仍
         // 保持在 Cube 外侧；每次最多移动 1 mm，并在下一次复测后决定
         // 是否允许打开吸盘。
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+        // [ENGINEERING] 实测残差累加到上一条命令 FK。直接重复名义 XYZ 目标
+        // 不能消除执行稳态偏差；不改杯面姿态，也不做吸附后的在线补偿。
+        const auto desired_left = sidePose(live_cube.position.x,
+          live_cube.position.y - kCubeHalf - kSideContactCommandGap,
+          live_cube.position.z + kSideContactCommandZOffset, true);
+        const auto desired_right = sidePose(live_cube.position.x,
+          live_cube.position.y + kCubeHalf + kSideContactCommandGap,
+          live_cube.position.z + kSideContactCommandZOffset, false);
+        const auto correction = [&](const Arm& arm, const geometry_msgs::msg::Pose& desired,
+          const geometry_msgs::msg::Pose& actual,
+          const trajectory_msgs::msg::JointTrajectory& command)
+        {
+          // sidePose 的 X 已经减去滑轨世界偏移；残差与命令都统一到模型系。
+          const auto delta = fr3_dual_palletize::precloseAlignmentDeltaXYZ(
+            {desired.position.x, desired.position.y, desired.position.z},
+            {actual.position.x - g_world_shift_x, actual.position.y, actual.position.z});
+          const auto commanded = linkPosition(left_group.getRobotModel(), arm.eefLink(),
+            command.joint_names, finalPositions(command));
+          auto target = desired;
+          target.position.x = commanded.x() + delta[0];
+          target.position.y = commanded.y() + delta[1];
+          target.position.z = commanded.z() + delta[2];
+          RCLCPP_INFO(node->get_logger(),
+            "%s PRE_CLOSE_XYZ_CORRECTION side=%s delta_mm=(%.3f,%.3f,%.3f) norm_mm=%.3f.",
+            task.id, arm.isLeft() ? "left" : "right", delta[0] * 1000.0,
+            delta[1] * 1000.0, delta[2] * 1000.0,
+            std::hypot(std::hypot(delta[0], delta[1]), delta[2]) * 1000.0);
+          return target;
+        };
+        geometry_msgs::msg::Pose left_xyz_target, right_xyz_target;
+        try
+        {
+          left_xyz_target = correction(left, desired_left, measured_left_tcp, left_contact);
+          right_xyz_target = correction(right, desired_right, measured_right_tcp, right_contact);
+        }
+        catch (const std::invalid_argument& error)
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s PRE_CLOSE_XYZ invalid residual: %s.",
+            task.id, error.what());
+          break;
+        }
+        const auto plan_started = std::chrono::steady_clock::now();
+        const bool planned = planAndCheckCommon(node, left_group, right_group, left, right,
+          finalPositions(left_contact), finalPositions(right_contact),
+          left_xyz_target, right_xyz_target, world_after_remove,
+          std::string(task.id) + " PRE_CLOSE_REACQUIRE_XYZ", &left_reacquire, &right_reacquire);
+        xyz_plan_wall_s += std::chrono::duration<double>(
+          std::chrono::steady_clock::now() - plan_started).count();
+        if (!planned || left.isClosed() || right.isClosed())
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s PRE_CLOSE_REACQUIRE_XYZ planning/OPEN check failed.", task.id);
+          break;
+        }
+        const auto execute_started = std::chrono::steady_clock::now();
+        const bool executed = executeSync(left, left_reacquire, right, right_reacquire);
+        xyz_execute_wall_s += std::chrono::duration<double>(
+          std::chrono::steady_clock::now() - execute_started).count();
+        ++xyz_corrections;
+        if (!executed)
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s PRE_CLOSE_REACQUIRE_XYZ execution failed.", task.id);
+          break;
+        }
+#else
         const double left_gap = live_cube.position.y - left_tcp.get().position.y - kCubeHalf;
         const double right_gap = right_tcp.get().position.y - live_cube.position.y - kCubeHalf;
 #ifdef TASK27_FIVE_CUBE
@@ -4613,9 +4730,18 @@ int main(int argc, char** argv)
           RCLCPP_ERROR(node->get_logger(), "%s PRE_CLOSE_REACQUIRE failed.", task.id);
           break;
         }
+#endif
         left_contact = std::move(left_reacquire);
         right_contact = std::move(right_reacquire);
       }
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      RCLCPP_INFO(node->get_logger(),
+        "%s PRE_CLOSE_XYZ_STATS checks=%d corrections=%d plan_wall_s=%.6f "
+        "execute_wall_s=%.6f total_wall_s=%.6f result=%s.", task.id, xyz_checks, xyz_corrections,
+        xyz_plan_wall_s, xyz_execute_wall_s,
+        std::chrono::duration<double>(std::chrono::steady_clock::now() - preclose_started).count(),
+        pre_close_geometry_ok ? "PASS" : "FAIL");
+#endif
       if (!pre_close_geometry_ok)
       {
         RCLCPP_ERROR(node->get_logger(),

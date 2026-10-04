@@ -67,6 +67,32 @@ int main(int argc, char** argv)
     passed = passed && planSeededEmptyCartesian(node, state, left, left_eef,
       target(left_eef, 0.0), "UNIT zero displacement", &zero) &&
       zero.points.size() >= 2 && pointTime(zero.points.back()) > 0.0;
+    // [ENGINEERING] 同时覆盖新 XYZ 微调在真实 RobotModel 上的细 IK / 联合 FCL。
+    // 这里不构造 Arm，也不创建机器人/吸盘 publisher。
+    const auto xyz_target = [&](const std::string& eef, double direction)
+    {
+      auto pose = target(eef, 0.0);
+      const auto delta = fr3_dual_palletize::precloseAlignmentDeltaXYZ(
+        {direction * .0003, direction * .0004, .0005}, {0, 0, 0});
+      pose.position.x += delta[0]; pose.position.y += delta[1]; pose.position.z += delta[2];
+      return pose;
+    };
+    const auto xyz_left_goal = xyz_target(left_eef, 1);
+    const auto xyz_right_goal = xyz_target(right_eef, -1);
+    trajectory_msgs::msg::JointTrajectory xyz_left, xyz_right;
+    const bool xyz_safe = planFinePreclose(node, state, left, left_eef,
+      xyz_left_goal, "UNIT left XYZ", &xyz_left) &&
+      planFinePreclose(node, state, right, right_eef,
+      xyz_right_goal, "UNIT right XYZ", &xyz_right) &&
+      synchronize(&xyz_left, &xyz_right) &&
+      cartesianLineDeviation(model, left_eef, xyz_left, xyz_left_goal) <= kMaxCartesianLineDeviation &&
+      cartesianLineDeviation(model, right_eef, xyz_right, xyz_right_goal) <= kMaxCartesianLineDeviation &&
+      validateSync(node, model, {}, xyz_left, xyz_right, "UNIT combined XYZ") &&
+      !validateSync(node, model, {obstructing_cube}, xyz_left, xyz_right,
+        "UNIT XYZ obstruction must reject");
+    passed = passed && xyz_safe;
+    RCLCPP_INFO(node->get_logger(), "PRE_CLOSE_XYZ_READ_ONLY_TEST %s; no robot commands.",
+      xyz_safe ? "PASS" : "FAIL");
     // [EXPERIMENTAL] 已执行中心件落桌日志的四位小数 seed 重放。
     // 主运行可能普通 IK 就通过；这个无命令测试必须直接覆盖长距离备用求解器。
     moveit::core::RobotState replay(model);
