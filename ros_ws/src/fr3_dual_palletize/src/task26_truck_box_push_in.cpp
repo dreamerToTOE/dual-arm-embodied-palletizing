@@ -2810,6 +2810,28 @@ int main(int argc, char** argv)
   const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+  // [ENGINEERING] 只读实验阶段标记；默认不插入额外等待、不改变旧节点行为。
+  const auto release_phase_pub = node->create_publisher<std_msgs::msg::String>(
+    "/task01/release_phase", rclcpp::QoS(10).transient_local());
+  const double release_diagnostic_hold_sec =
+    node->declare_parameter<double>("release_diagnostic_hold_sec", 0.0);
+  if (!std::isfinite(release_diagnostic_hold_sec) || release_diagnostic_hold_sec < 0.0 ||
+      release_diagnostic_hold_sec > 5.0)
+  {
+    RCLCPP_ERROR(node->get_logger(), "release_diagnostic_hold_sec 必须在 [0,5] s。");
+    rclcpp::shutdown();
+    return 1;
+  }
+  const auto markReleasePhase = [&](const std::string& object, const char* phase)
+  {
+    std_msgs::msg::String message;
+    message.data = object + ":" + phase;
+    release_phase_pub->publish(message);
+    RCLCPP_INFO(node->get_logger(), "TASK01_RELEASE_PHASE object=%s phase=%s.",
+      object.c_str(), phase);
+  };
+#endif
 #ifdef TASK27_FIVE_CUBE
   // [EXPERIMENTAL] 真实 FR3 已知载荷校验专用；默认 0，不改变普通 Task27。
   // 只停任务主线程，ROS executor 必须继续接收实时关节状态，不能 SIGSTOP 节点。
@@ -5610,6 +5632,9 @@ int main(int argc, char** argv)
             "%s SHORT_CLEARANCE %zu/%zu: exit=%.1f mm, 之后直达下一件预吸位。",
             task.id, index + 1, cuts.size(),
             direction * (current[axis] - start[axis]) * 1000.0);
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+          markReleasePhase(task.id, "CLEARANCE_ENTER");
+#endif
           const bool moved = both_move
             ? (executeSync(left, left_step, right, right_step) &&
                left.waitAtTarget(left_step, kJointSettleToleranceRad, kJointSettleTimeoutSec) &&
@@ -5627,6 +5652,9 @@ int main(int argc, char** argv)
           std::this_thread::sleep_for(300ms);
           const auto [settled, revision] = cubes.get(task.cube_index);
           (void)revision;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+          markReleasePhase(task.id, "CLEARANCE_SETTLED");
+#endif
           if (!validCellPlacement(node, task, settled, cubes))
           {
             return false;
@@ -5780,16 +5808,25 @@ int main(int argc, char** argv)
       }
       const auto [before_press_pose, before_press_revision] = cubes.get(task.cube_index);
       (void)before_press_pose;
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      markReleasePhase(task.id, "SIDE_PRESS_ENTER");
+#endif
       if (!execute_side_stage("PRESS", side_plan.left_press, side_plan.right_press))
       {
         all_complete = false;
         break;
       }
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      markReleasePhase(task.id, "SIDE_PRESS_SETTLED");
+#endif
       // 保持末端压紧位一小段时间，使 PhysX 接触解算把 Cube 真正推到墙面。
       std::this_thread::sleep_for(500ms);
       // 侧墙已到位后再解除 -X 面吸附。此前若在侧压之前打开，横向接触力会把
       // Cube 回带离开深端墙；此时 Cube 已同时受 +X/+Y（或 -Y）墙约束，解除
       // 后两臂的反向撤离不会再形成可见缝隙。
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      markReleasePhase(task.id, "RELEASE_REQUEST");
+#endif
       pusher.suction(false);
       if (!pusher.waitSuction(false, 6.0))
       {
@@ -5797,6 +5834,16 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+      markReleasePhase(task.id, "RELEASE_OPEN");
+      if (release_diagnostic_hold_sec > 0.0)
+      {
+        // [EXPERIMENTAL] 保持原有末端命令，仅暂停任务主线程，ROS继续接收。
+        // 用于区分「未动就回带」和退出轨迹问题，不用于宣称普通流程PASS。
+        std::this_thread::sleep_for(std::chrono::duration<double>(release_diagnostic_hold_sec));
+        markReleasePhase(task.id, "RELEASE_HOLD_DONE");
+      }
+#endif
 #ifdef TASK27_FIVE_CUBE
       // 外侧件松吸盘后双臂沿各自杯面外法向稍退。按完整 L 型工具
       // 与已落位 Cube 的 FCL 结果选最短清障前缀，之后直接 RRT 到下一件；
