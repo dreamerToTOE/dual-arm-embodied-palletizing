@@ -48,6 +48,9 @@
 #include <geometry_msgs/msg/pose_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <moveit/collision_detection/collision_common.h>
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+#include <moveit/kinematic_constraints/kinematic_constraint.h>
+#endif
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
@@ -1494,6 +1497,161 @@ bool validateSync(
   RCLCPP_INFO(node->get_logger(), "%s synchronized FCL PASS, samples=%zu.", label.c_str(), samples + 1);
   return true;
 }
+
+#ifdef TASK01_CUBE04_PRECISION_INSERT
+// [ENGINEERING] 无负载时可用既有 RRTConnect 避开 Cartesian 奇异/限位路径。
+// 同一实测起点、原目标，最多每臂3次/每次3s；不接受被拒绝的跳支 Cartesian。
+// 当前落桌 Cube 必须存在于 world 和 MoveIt scene，由调用方完成临时同步/恢复。
+bool planReleasedEmptyRrt(
+  const rclcpp::Node::SharedPtr& node,
+  moveit::planning_interface::MoveGroupInterface& left_group,
+  moveit::planning_interface::MoveGroupInterface& right_group,
+  const moveit::core::RobotState& start,
+  bool left_closed, bool right_closed,
+  const std::string& left_eef, const std::string& right_eef,
+  const geometry_msgs::msg::Pose& left_target, const geometry_msgs::msg::Pose& right_target,
+  const std::vector<moveit_msgs::msg::CollisionObject>& world, const std::string& label,
+  trajectory_msgs::msg::JointTrajectory* left_out,
+  trajectory_msgs::msg::JointTrajectory* right_out)
+{
+  const auto model = start.getRobotModel();
+  const auto* lj = model->getJointModelGroup(left_group.getName());
+  const auto* rj = model->getJointModelGroup(right_group.getName());
+  if (!left_out || !right_out || !lj || !rj || left_closed || right_closed ||
+      !model->hasLinkModel(left_eef) || !model->hasLinkModel(right_eef))
+  {
+    return false;
+  }
+  const auto valid_pose = [](const geometry_msgs::msg::Pose& pose)
+  {
+    const Eigen::Quaterniond q(pose.orientation.w, pose.orientation.x,
+      pose.orientation.y, pose.orientation.z);
+    return std::isfinite(pose.position.x) && std::isfinite(pose.position.y) &&
+      std::isfinite(pose.position.z) && q.coeffs().allFinite() &&
+      std::abs(q.norm() - 1.0) <= 1e-6;
+  };
+  if (!valid_pose(left_target) || !valid_pose(right_target))
+  {
+    return false;
+  }
+  std::vector<double> lq, rq;
+  start.copyJointGroupPositions(lj, lq);
+  start.copyJointGroupPositions(rj, rq);
+  if (!fr3_dual_palletize::validEmptyRetreatSeed(left_closed, right_closed,
+        lq, rq, lj->getVariableCount(), rj->getVariableCount()) ||
+      !start.satisfiesBounds(lj) || !start.satisfiesBounds(rj))
+  {
+    return false;
+  }
+  trajectory_msgs::msg::JointTrajectory lp, rp;
+  lp.joint_names = lj->getVariableNames(); rp.joint_names = rj->getVariableNames();
+  if (!validateSync(node, model, world, holdTrajectory(lp, lq, .1), holdTrajectory(rp, rq, .1),
+        label + " MEASURED_START_RELEASED_CUBE_INCLUDED"))
+  {
+    return false;
+  }
+  const auto candidates = [&](moveit::planning_interface::MoveGroupInterface& group,
+                              const std::string& eef, const geometry_msgs::msg::Pose& target)
+  {
+    std::vector<std::pair<double, trajectory_msgs::msg::JointTrajectory>> ranked;
+    std::vector<trajectory_msgs::msg::JointTrajectory> paths;
+    const auto* jmg = model->getJointModelGroup(group.getName());
+    std::vector<double> seed;
+    start.copyJointGroupPositions(jmg, seed);
+    group.setPlannerId("RRTConnectkConfigDefault");
+    group.setPlanningTime(3.0); group.setNumPlanningAttempts(1);
+    group.setMaxVelocityScalingFactor(.12); group.setMaxAccelerationScalingFactor(.12);
+    group.setPoseReferenceFrame("world");
+    if (!group.setEndEffectorLink(eef)) return paths;
+    group.clearPoseTargets();
+    if (!group.setPoseTarget(target, eef))
+    {
+      return paths;
+    }
+    moveit_msgs::msg::MotionPlanRequest goal_request;
+    group.constructMotionPlanRequest(goal_request);
+    planning_scene::PlanningScene goal_scene(model);
+    for (int attempt = 1; attempt <= 3; ++attempt)
+    {
+      group.setStartState(start);
+      moveit::planning_interface::MoveGroupInterface::Plan plan;
+      if (group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS &&
+          plan.trajectory_.joint_trajectory.points.size() >= 2)
+      {
+        auto path = plan.trajectory_.joint_trajectory;
+        ensureTiming(path);
+        // 不接受规划adapter暗改实测起点，也不依赖FCL替代数值/限位/终点检查。
+        bool valid = path.joint_names == jmg->getVariableNames();
+        std::string rejection = valid ? "none" : "joint_names";
+        double travel = 0.0, previous_time = -1.0;
+        moveit::core::RobotState checked(start);
+        for (std::size_t point = 0; valid && point < path.points.size(); ++point)
+        {
+          const auto& q = path.points[point].positions;
+          const double time = pointTime(path.points[point]);
+          valid = fr3_dual_palletize::validMeasuredJointSeed(q, seed.size()) &&
+            std::isfinite(time) && time >= 0.0 && time > previous_time;
+          if (!valid) { rejection = "nonfinite_shape_time"; break; }
+          for (std::size_t joint = 0; joint < q.size(); ++joint)
+          {
+            if (point == 0 && std::abs(q[joint] - seed[joint]) > 1e-6)
+            { valid = false; rejection = "adapter_changed_start"; }
+            if (point > 0) travel += std::abs(q[joint] - path.points[point - 1].positions[joint]);
+          }
+          checked.setJointGroupPositions(jmg, q);
+          checked.update();
+          if (!checked.satisfiesBounds(jmg)) { valid = false; rejection = "joint_bounds"; }
+          previous_time = time;
+        }
+        if (valid)
+        {
+          const auto& tf = checked.getGlobalLinkTransform(eef);
+          const Eigen::Vector3d p(target.position.x, target.position.y, target.position.z);
+          const Eigen::Quaterniond goal(target.orientation.w, target.orientation.x,
+            target.orientation.y, target.orientation.z);
+          // 使用本次MoveIt请求的原目标约束，不自创比其逐轴角误差更严的总角度门限。
+          bool goal_satisfied = false;
+          for (const auto& message : goal_request.goal_constraints)
+          {
+            kinematic_constraints::KinematicConstraintSet constraints(model);
+            if (constraints.add(message, goal_scene.getTransforms()) && constraints.decide(checked).satisfied)
+              goal_satisfied = true;
+          }
+          valid = goal_satisfied;
+          if (!valid) rejection = "original_MoveIt_goal_constraint";
+          RCLCPP_INFO(node->get_logger(), "%s %s empty RRT endpoint position_error=%.6f mm angle_error=%.6f rad original_goal=%s.",
+            label.c_str(), group.getName().c_str(), (tf.translation() - p).norm() * 1000.0,
+            Eigen::Quaterniond(tf.rotation()).angularDistance(goal), valid ? "PASS" : "FAIL");
+        }
+        RCLCPP_INFO(node->get_logger(), "%s %s empty RRT attempt=%d/3 numeric_seed_goal=%s travel=%.3f rejection=%s.",
+          label.c_str(), group.getName().c_str(), attempt, valid ? "PASS" : "FAIL", travel, rejection.c_str());
+        if (valid) ranked.emplace_back(travel, std::move(path));
+      }
+    }
+    group.clearPoseTargets();
+    std::sort(ranked.begin(), ranked.end(),
+      [](const auto& first, const auto& second) { return first.first < second.first; });
+    for (auto& candidate : ranked) paths.push_back(std::move(candidate.second));
+    return paths;
+  };
+  const auto left_paths = candidates(left_group, left_eef, left_target);
+  const auto right_paths = candidates(right_group, right_eef, right_target);
+  for (const auto& left_path : left_paths)
+  {
+    for (const auto& right_path : right_paths)
+    {
+      auto l = left_path; auto r = right_path;
+      if (synchronize(&l, &r) && validateSync(node, model, world, l, r,
+            label + " FREE_EMPTY_RRT_RELEASED_CUBE_INCLUDED"))
+      {
+        *left_out = std::move(l); *right_out = std::move(r);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+#endif
 
 // 用 FK 检查一条笛卡尔轨迹的中间状态是否真的贴着命令直线。
 // MoveIt 的 computeCartesianPath 在个别路径点 IK 失败时仍会报出 1.0000 的 fraction，
@@ -5119,14 +5277,48 @@ int main(int argc, char** argv)
         RCLCPP_WARN(node->get_logger(), "%s try bounded continuous-seed empty IK; no collision exemption.", label.c_str());
         return planSeededEmptyCartesian(node, *measured_state, jmg, own_arm.eefLink(), target, label, trajectory);
       };
-      if (!plan_empty(left_group, left, right, measured_left, measured_right,
-            left_target, left_jmg, retreat_label + " left", &left_retreat) ||
-          !plan_empty(right_group, right, left, measured_right, measured_left,
-            right_target, right_jmg, retreat_label + " right", &right_retreat) ||
-          !synchronize(&left_retreat, &right_retreat) ||
-          !validateSync(node, left_group.getRobotModel(), released_world,
-            left_retreat, right_retreat, retreat_label + " RELEASED_CUBE_INCLUDED") ||
-          left.isClosed() || right.isClosed())
+      bool empty_safe = plan_empty(left_group, left, right, measured_left, measured_right,
+        left_target, left_jmg, retreat_label + " left", &left_retreat);
+      empty_safe = empty_safe && plan_empty(right_group, right, left, measured_right, measured_left,
+        right_target, right_jmg, retreat_label + " right", &right_retreat);
+      empty_safe = empty_safe && synchronize(&left_retreat, &right_retreat) &&
+        validateSync(node, left_group.getRobotModel(), released_world,
+          left_retreat, right_retreat, retreat_label + " RELEASED_CUBE_INCLUDED");
+      if (!empty_safe && !left.isClosed() && !right.isClosed())
+      {
+        RCLCPP_WARN(node->get_logger(), "%s Cartesian/fine IK rejected; bounded OPEN-only free-space RRT.",
+          retreat_label.c_str());
+        const auto prior = scene.getObjects({object_id});
+        try
+        {
+          if (scene.applyCollisionObject(cubeObject(object_id, released_cube)))
+          {
+            empty_safe = planReleasedEmptyRrt(node, left_group, right_group, *measured_state,
+              left.isClosed(), right.isClosed(), left.eefLink(), right.eefLink(),
+              left_target, right_target, released_world, retreat_label, &left_retreat, &right_retreat);
+          }
+        }
+        catch (const std::exception& error)
+        {
+          RCLCPP_ERROR(node->get_logger(), "%s empty RRT exception: %s.", retreat_label.c_str(), error.what());
+          empty_safe = false;
+        }
+        bool restored = false;
+        if (prior.count(object_id))
+        {
+          restored = scene.applyCollisionObject(prior.at(object_id));
+        }
+        else
+        {
+          moveit_msgs::msg::CollisionObject remove;
+          remove.id = object_id;
+          remove.operation = moveit_msgs::msg::CollisionObject::REMOVE;
+          restored = scene.applyCollisionObject(remove) && scene.getObjects({object_id}).empty();
+        }
+        empty_safe = empty_safe && restored;
+        if (!restored) RCLCPP_ERROR(node->get_logger(), "%s temporary Cube scene restore failed; no execution.", retreat_label.c_str());
+      }
+      if (!empty_safe || left.isClosed() || right.isClosed())
 #else
       if (!stage("PREPLANNED_COMMON_RETREAT",
             push_left ? sidePose(task.pre_push.position.x, entry_left_y,
