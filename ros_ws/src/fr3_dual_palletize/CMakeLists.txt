@@ -706,6 +706,22 @@ ament_target_dependencies(task01_cube04_precision_insert
   trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
 )
 
+add_executable(task01_dual_suction_fixture src/task01_dual_suction_fixture.cpp)
+target_include_directories(task01_dual_suction_fixture PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(task01_dual_suction_fixture yaml-cpp)
+ament_target_dependencies(task01_dual_suction_fixture
+  ament_index_cpp rclcpp sensor_msgs std_msgs geometry_msgs shape_msgs
+  trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
+)
+
+add_executable(task01_dual_fixture_probe src/task01_dual_fixture_probe.cpp)
+target_include_directories(task01_dual_fixture_probe PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(task01_dual_fixture_probe yaml-cpp)
+ament_target_dependencies(task01_dual_fixture_probe
+  ament_index_cpp rclcpp sensor_msgs std_msgs geometry_msgs shape_msgs
+  trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
+)
+
 # 只读回归探针，与真实执行器共用实现，不构造 Arm 命令发布器。
 add_executable(task01_empty_retreat_probe src/task01_empty_retreat_probe.cpp)
 target_include_directories(task01_empty_retreat_probe PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -760,6 +776,8 @@ install(
     task26_truck_box_push_in
     task27_five_cube_center_insert
     task01_cube04_precision_insert
+    task01_dual_suction_fixture
+    task01_dual_fixture_probe
     task01_empty_retreat_probe
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

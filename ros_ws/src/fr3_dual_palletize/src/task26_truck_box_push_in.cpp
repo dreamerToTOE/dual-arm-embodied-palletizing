@@ -13,6 +13,9 @@
 // 绝不以移动到侧面边缘的假吸点继续执行，也不用单臂推送绕开真实碰撞。
 
 #include <algorithm>
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+#include "fr3_dual_palletize/dual_fixture_policy.hpp"
+#endif
 #ifdef TASK01_CUBE04_PRECISION_INSERT
 #include "fr3_dual_palletize/cube04_precision_policy.hpp"
 #include "fr3_dual_palletize/empty_retreat_policy.hpp"
@@ -1335,7 +1338,8 @@ private:
 };
 
 bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& left_trajectory,
-                 const Arm& right, const trajectory_msgs::msg::JointTrajectory& right_trajectory)
+                 const Arm& right, const trajectory_msgs::msg::JointTrajectory& right_trajectory,
+                 const std::function<bool()>& active_guard = {})
 {
   auto left_command = left_trajectory;
   auto right_command = right_trajectory;
@@ -1365,6 +1369,7 @@ bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& l
   std::size_t tick = 0;
   while (true)
   {
+    if (active_guard && !active_guard()) return false;
     const auto now = std::chrono::steady_clock::now();
     const double elapsed = std::chrono::duration<double>(now - start).count();
     const double linear_phase = std::clamp(elapsed / physical_duration, 0.0, 1.0);
@@ -1382,6 +1387,7 @@ bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& l
 
   for (int repeat = 0; repeat < kFinalCommandHold; ++repeat)
   {
+    if (active_guard && !active_guard()) return false;
     const auto stamp = left.nowMsg();
     left.publishAt(left_command, left_duration, stamp);
     right.publishAt(right_command, right_duration, stamp);
@@ -2753,6 +2759,9 @@ bool isStraightInsertTask(const OfflineTask& task)
 
 bool needsInnerSideTrim(const OfflineTask& task)
 {
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  if (fr3_dual_palletize::dualFixtureRequired(task.cube_index)) return false;
+#endif
 #ifdef TASK01_CUBE04_PRECISION_INSERT
   return fr3_dual_palletize::requiresInnerTrim(task.cube_index);
 #else
@@ -2953,11 +2962,17 @@ bool executePushWithSupervision(
 
 }  // namespace
 
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+#include "task01_dual_fixture_impl.inc"
+#endif
+
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>(
-#ifdef TASK01_CUBE04_PRECISION_INSERT
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+    "task01_dual_suction_fixture");
+#elif defined(TASK01_CUBE04_PRECISION_INSERT)
     "task01_cube04_precision_insert");
 #else
     std::string(kTaskLabel) == "Task27" ? "task27_five_cube_center_insert" : "task26_batched_side_suction");
@@ -3019,6 +3034,15 @@ int main(int argc, char** argv)
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
   // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  if (planning_only)
+  {
+    RCLCPP_ERROR(node->get_logger(),
+      "New dual fixture requires its rear+side contact-chain probe; legacy planning_only does not validate this protocol.");
+    rclcpp::shutdown();
+    return 1;
+  }
+#endif
   // 诊断开关：把车厢三面墙从 MoveIt 规划场景里去掉。用于分辨"失败是不是车厢碰撞体
   // 参与判定造成的"——它不是验收配置，正式运行必须保持 true。
   const bool include_box_walls = node->declare_parameter<bool>("include_box_walls", true);
@@ -4261,7 +4285,11 @@ int main(int argc, char** argv)
             ret_l = std::move(trim_exit_l);
             ret_r = std::move(trim_exit_r);
           }
-          if ((lift_already_done || planning_only) && !isStraightInsertTask(task) && side_preflight)
+          if ((lift_already_done || planning_only) && !isStraightInsertTask(task) && side_preflight
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+              && !fr3_dual_palletize::dualFixtureRequired(task.cube_index)
+#endif
+              )
           {
             // 在真正吸住 -X 面之前，用同一候选的 PUSH 末端预演侧压。
             // 失败就换重抓构型，不能等 Cube 已推到深墙才发现横移不可达。
@@ -5603,6 +5631,30 @@ int main(int argc, char** argv)
       // 因此按 push_left 把两条轨迹与 eef 链接对上。
       const auto& pusher_push_traj = push_left ? left_push_in : right_during_push;
       const auto& helper_hold_traj = push_left ? right_during_push : left_push_in;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      DualFixtureMotion dual_motion;
+      const bool dual_fixture = fr3_dual_palletize::dualFixtureRequired(task.cube_index);
+      if (dual_fixture)
+      {
+        if (!runDualFixture(node, left_group, right_group, scene, left, right,
+              pusher, helper, cubes, left_tcp, right_tcp, left_forces, right_forces,
+              task, &dual_motion))
+        {
+          openBothAndConfirm("safe abort during dual fixture contact/push");
+          const auto [failed_pose, failed_revision] = cubes.get(task.cube_index);
+          (void)failed_revision;
+          if (!scene.applyCollisionObject(cubeObject(object_id, failed_pose)))
+          {
+            RCLCPP_ERROR(node->get_logger(), "%s safe abort: current Cube world restore failed.", task.id);
+          }
+          all_complete = false;
+          break;
+        }
+        left_push_in = dual_motion.left_end;
+        right_during_push = dual_motion.right_end;
+      }
+      else
+#endif
       if (!executePushWithSupervision(node, pusher, helper, pusher_push_traj, helper_hold_traj,
             cubes, task, left_group.getRobotModel(), pusher.eefLink(),
             left_forces, right_forces))
@@ -5927,6 +5979,49 @@ int main(int argc, char** argv)
       };
 #endif
 
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      if (dual_fixture)
+      {
+        markReleasePhase(task.id, "RELEASE_REQUEST");
+        if (!openBothAndConfirm("dual fixture pressed: release both suction"))
+        {
+          all_complete = false;
+          break;
+        }
+        markReleasePhase(task.id, "RELEASE_OPEN");
+        if (!planning_only && batch + 1 < first_batch + max_batches)
+        {
+          if (!runShortHandoff(dual_motion.left_exit, dual_motion.right_exit, 0, -1.0, true))
+          {
+            all_complete = false;
+            break;
+          }
+          early_handoff_done = true;
+          continue;
+        }
+        const auto [released, revision] = cubes.get(task.cube_index); (void)revision;
+        auto released_world = staticWorld(scene);
+        released_world.push_back(cubeObject(object_id, released));
+        if (!validateSync(node, left_group.getRobotModel(), released_world,
+              dual_motion.left_exit, dual_motion.right_exit,
+              std::string(task.id) + " DUAL_RELEASED_CUBE_INCLUDED") ||
+            !executeSync(left, dual_motion.left_exit, right, dual_motion.right_exit))
+        {
+          all_complete = false;
+          break;
+        }
+        std::this_thread::sleep_for(300ms);
+        const auto [settled, settled_revision] = cubes.get(task.cube_index); (void)settled_revision;
+        if (!validCellPlacement(node, task, settled, cubes) ||
+            !scene.applyCollisionObject(cubeObject(object_id, settled)))
+        {
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(), "%s DUAL_FIXTURE PASS: rear+side CLOSED during X/Y, role swap then both OPEN.", task.id);
+        continue;
+      }
+#endif
       // Task27 的内侧两件已在车厢外对齐相邻 Cube 的 Y 通道；中心件对齐 y=0。
       // 三件先沿 +X 直推；内侧件还在深墙处完成 1 mm 单臂侧压。随后松开
       // -X 吸附并沿预检过的压后轨迹退出，最后以 Ground Truth 验收间隙。
