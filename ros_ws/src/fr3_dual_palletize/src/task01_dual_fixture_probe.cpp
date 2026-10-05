@@ -46,6 +46,7 @@ int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("task01_dual_fixture_probe");
+  const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
   if (!copyRobotDescriptions(node) || !copyProbeKinematics(node))
     { rclcpp::shutdown(); return 1; }
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -62,6 +63,27 @@ int main(int argc, char** argv)
     lg.setEndEffectorLink(le); rg.setEndEffectorLink(re);
     lg.setPoseReferenceFrame("world"); rg.setPoseReferenceFrame("world");
     g_world_shift_x = .100;  // 原推入阶段的双轨站位，不移动任何物理基座。
+    if (diagnose_released_state)
+    {
+      // [EXPERIMENTAL] 当前释放后静态姿态；不能倒推为互锁触发那一物理步。
+      // 只在本地检查桌/墙/其余Cube与机器人干涉，忽略当前合法接触Cube01。
+      const auto state = lg.getCurrentState(2.0);
+      moveit::planning_interface::PlanningSceneInterface scene;
+      auto world = staticWorld(scene);
+      world.erase(std::remove_if(world.begin(), world.end(), [](const auto& object) {
+        return object.id == "task26_cube_1";
+      }), world.end());
+      if (!state) throw std::runtime_error("No current joint-state snapshot");
+      std::vector<double> lq, rq;
+      state->copyJointGroupPositions(lj, lq); state->copyJointGroupPositions(rj, rq);
+      RCLCPP_INFO(node->get_logger(), "RELEASED_STATE_ONLY q left=%s right=%s.",
+        formatJointPositions(lq).c_str(), formatJointPositions(rq).c_str());
+      trajectory_msgs::msg::JointTrajectory lp, rp;
+      lp.joint_names = lj->getVariableNames(); rp.joint_names = rj->getVariableNames();
+      lp = holdTrajectory(lp, lq, .1); rp = holdTrajectory(rp, rq, .1);
+      passed = validateSync(node, model, world, lp, rp, "RELEASED_STATE_ONLY current measured FR3");
+    }
+    else
     for (std::size_t index = 0; index < 3; ++index)
     {
       const auto& task = kTasks.at(index);
@@ -133,7 +155,8 @@ int main(int argc, char** argv)
     RCLCPP_ERROR(node->get_logger(), "NO_COMMAND probe exception: %s", error.what());
     passed = false;
   }
-  RCLCPP_INFO(node->get_logger(), "NO_COMMAND three nominal contact chains %s; no physical benchmark PASS implied.", passed ? "PASS" : "FAIL");
+  RCLCPP_INFO(node->get_logger(), "NO_COMMAND %s %s; no physical benchmark PASS implied.",
+    diagnose_released_state ? "released static-state diagnostic" : "three nominal contact chains", passed ? "PASS" : "FAIL");
   executor.cancel(); spin.join(); rclcpp::shutdown();
   return passed ? 0 : 1;
 }
