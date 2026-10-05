@@ -290,8 +290,16 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
       if (!sliceTrajectory(l, duration * (slice-1) / kPushSlices, duration * slice / kPushSlices, &lpart) ||
           !sliceTrajectory(r, duration * (slice-1) / kPushSlices, duration * slice / kPushSlices, &rpart) ||
           !executeSync(left, lpart, right, rpart, [&] {
-            return rclcpp::ok() && rear.isClosed() && side.isClosed() &&
-              std::max(lf.peak(), rf.peak()) <= kPushTorqueLimit;
+            const double left_torque = lf.peak(), right_torque = rf.peak();
+            const bool safe = rclcpp::ok() && rear.isClosed() && side.isClosed() &&
+              std::isfinite(left_torque) && std::isfinite(right_torque) &&
+              std::max(left_torque, right_torque) <= kPushTorqueLimit;
+            if (!safe)
+              RCLCPP_ERROR(node->get_logger(),
+                "%s %s slice=%d active interlock: rear=%s side=%s left_peak=%.3f Nm right_peak=%.3f Nm (limit=%.3f); no later command.",
+                task.id, label.c_str(), slice, rear.isClosed() ? "CLOSED" : "OPEN",
+                side.isClosed() ? "CLOSED" : "OPEN", left_torque, right_torque, kPushTorqueLimit);
+            return safe;
           }) || !geometry(true, label + " slice " + std::to_string(slice))) return false;
       const auto [actual, revision] = cubes.get(task.cube_index); (void)revision;
       if (pushing_x)
@@ -312,6 +320,32 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   if (!run(lx, rx, "DUAL_REAR_PRIMARY_X", true)) return false;
   const auto [seated, revision] = cubes.get(task.cube_index); (void)revision;
   if (!validDeepWallSeat(node, task, seated)) return false;
+  // [ENGINEERING] 推到实体深墙后不能从命令终点继续：微小伺服残差在两个D6
+  // 闭环下会变成额外顶墙命令。重新读取一份双臂实测状态，不改几何/力矩门限。
+  trajectory_msgs::msg::JointTrajectory measured_l, measured_r;
+  geometry_msgs::msg::Pose measured_cube;
+  if (!seed(&measured_l, &measured_r) ||
+      !cubes.waitNew(task.cube_index, revision, 2.0, &measured_cube) ||
+      !rear.isClosed() || !side.isClosed() || !geometry(true, "DUAL_ROLE_SWAP_MEASURED") ||
+      !validateSync(node, model, world_push, measured_l, measured_r,
+        std::string(task.id) + " DUAL_ROLE_SWAP_MEASURED_START")) return false;
+  const auto log_delta = [&](const char* arm,
+    const trajectory_msgs::msg::JointTrajectory& command,
+    const trajectory_msgs::msg::JointTrajectory& measured)
+  {
+    double delta = 0.0;
+    const auto q = finalPositions(command), actual = finalPositions(measured);
+    for (std::size_t joint = 0; joint < q.size(); ++joint)
+      delta = std::max(delta, std::abs(q[joint] - actual.at(joint)));
+    RCLCPP_INFO(node->get_logger(), "%s DUAL_ROLE_SWAP measured %s max_command_delta=%.6f rad.",
+      task.id, arm, delta);
+  };
+  log_delta("left", lx, measured_l); log_delta("right", rx, measured_r);
+  if (!stage(measured_l, measured_r, 0,
+        dualFixturePressY(task, measured_cube.position.y, direction) - measured_cube.position.y,
+        world_push, std::string(task.id) + " DUAL_SIDE_PRIMARY_Y_MEASURED", &ly, &ry) ||
+      !planDualFixtureReleaseExit(node, model, ly, ry, side_left, world_push,
+        std::string(task.id) + " DUAL_RELEASE_EXIT_MEASURED", &output->left_exit, &output->right_exit)) return false;
   RCLCPP_INFO(node->get_logger(), "%s DUAL_ROLE_SWAP: side PRIMARY, rear deep-wall HOLD; no suction release.", task.id);
   if (!run(ly, ry, "DUAL_SIDE_PRIMARY_Y", false)) return false;
   const auto [pressed, pressed_revision] = cubes.get(task.cube_index); (void)pressed_revision;
