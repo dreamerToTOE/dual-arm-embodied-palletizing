@@ -49,11 +49,17 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("task01_dual_fixture_probe");
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
+  const bool diagnose_side_high = node->declare_parameter<bool>("diagnose_side_high", false);
+  const auto diagnostic_left_q = node->declare_parameter<std::vector<double>>("diagnostic_left_q", std::vector<double>{});
+  const auto diagnostic_right_q = node->declare_parameter<std::vector<double>>("diagnostic_right_q", std::vector<double>{});
+  const auto diagnostic_cube = node->declare_parameter<std::vector<double>>("diagnostic_cube", std::vector<double>{});
+  const auto diagnostic_index = node->declare_parameter<int>("diagnostic_cube_index", 2);
   // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
   const double rear_roll_magnitude_deg = node->declare_parameter<double>("rear_roll_magnitude_deg", 0.0);
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
-  if (!fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
+  if ((diagnose_released_state && diagnose_side_high) ||
+      !fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
       !fr3_dual_palletize::validRearFixtureRoll(rear_roll_magnitude_deg))
     { rclcpp::shutdown(); return 1; }
   std::ofstream audit_file;
@@ -80,7 +86,79 @@ int main(int argc, char** argv)
     lg.setEndEffectorLink(le); rg.setEndEffectorLink(re);
     lg.setPoseReferenceFrame("world"); rg.setPoseReferenceFrame("world");
     g_world_shift_x = .100;  // 原推入阶段的双轨站位，不移动任何物理基座。
-    if (diagnose_released_state)
+    if (diagnose_side_high)
+    {
+      // [ENGINEERING] 实测后抓固定、侧臂不同IK种子的只读终点诊断。
+      // 不发任何机器人命令；当前Cube仍在本地FCL，不扩大ACM。
+      if (diagnostic_index < 0 || diagnostic_index >= 3 || diagnostic_cube.size()!=7 ||
+          !fr3_dual_palletize::validMeasuredJointSeed(diagnostic_left_q, lj->getVariableCount()) ||
+          !fr3_dual_palletize::validMeasuredJointSeed(diagnostic_right_q, rj->getVariableCount()) ||
+          !fr3_dual_palletize::validFixturePose({diagnostic_cube[0],diagnostic_cube[1],
+            diagnostic_cube[2],diagnostic_cube[3],diagnostic_cube[4],diagnostic_cube[5],diagnostic_cube[6]}))
+        throw std::runtime_error("Invalid exact diagnostic joint/Cube snapshot");
+      geometry_msgs::msg::Pose cube;
+      cube.position.x=diagnostic_cube[0]; cube.position.y=diagnostic_cube[1]; cube.position.z=diagnostic_cube[2];
+      cube.orientation.x=diagnostic_cube[3]; cube.orientation.y=diagnostic_cube[4];
+      cube.orientation.z=diagnostic_cube[5]; cube.orientation.w=diagnostic_cube[6];
+      moveit::core::RobotState original(model);
+      original.setToDefaultValues();
+      original.setJointGroupPositions(lj, diagnostic_left_q);
+      original.setJointGroupPositions(rj, diagnostic_right_q); original.update();
+      if (!original.satisfiesBounds()) throw std::runtime_error("Diagnostic seed outside original bounds");
+      moveit::planning_interface::PlanningSceneInterface remote_scene;
+      auto world=staticWorld(remote_scene);
+      const auto id="task26_cube_"+std::to_string(diagnostic_index+1);
+      world.erase(std::remove_if(world.begin(),world.end(),[&](const auto& o) { return o.id==id; }),world.end());
+      world.push_back(cubeObject(id,cube));
+      planning_scene::PlanningScene collision_scene(model);
+      for (const auto& object:world) collision_scene.processCollisionObjectMsg(object);
+      const bool side_left=diagnostic_index!=1;
+      const auto* own=side_left ? lj:rj;
+      const auto& eef=side_left ? le:re;
+      const auto goal=dualSideFixturePose(cube.position.x,
+        cube.position.y-(side_left ? 1.:-1.)*(kCubeHalf+kSideContactCommandGap),
+        cube.position.z+kRegraspLiftHeight,side_left,side_roll_world_y_deg);
+      RCLCPP_INFO(node->get_logger(),"SIDE_HIGH_DIAGNOSTIC index=%d goal_model=(%.9f,%.9f,%.9f) fixed_rear=%s; NOT_EXECUTED.",
+        static_cast<int>(diagnostic_index),goal.position.x,goal.position.y,goal.position.z,side_left ? "right":"left");
+      collision_detection::CollisionRequest request;
+      request.contacts=true; request.max_contacts=100; request.max_contacts_per_pair=1;
+      std::map<std::pair<std::string,std::string>,int> pairs;
+      int solved=0,free=0;
+      for (int sample=0;sample<60;++sample)
+      {
+        moveit::core::RobotState state(original);
+        if (sample)
+        {
+          auto q=side_left ? diagnostic_left_q:diagnostic_right_q;
+          const auto& names=own->getVariableNames();
+          for (std::size_t j=0;j<q.size();++j)
+          {
+            const auto& bound=model->getVariableBounds(names[j]);
+            const double fraction=.01+.98*((sample*17+static_cast<int>(j)*7)%101)/100.;
+            q[j]=bound.min_position_+fraction*(bound.max_position_-bound.min_position_);
+          }
+          state.setJointGroupPositions(own,q); state.update();
+        }
+        if (!state.setFromIK(own,fixturePoseTransform(goal),eef,.05)) continue;
+        state.update();
+        if (!state.satisfiesBounds()) continue;
+        ++solved;
+        collision_detection::CollisionResult result;
+        collision_scene.checkCollision(request,result,state);
+        if (!result.collision)
+        {
+          ++free; std::vector<double> q; state.copyJointGroupPositions(own,q);
+          RCLCPP_INFO(node->get_logger(),"SIDE_HIGH_DIAGNOSTIC FREE sample=%d q=%s.",sample,formatJointPositions(q).c_str());
+        }
+        for (const auto& contact:result.contacts) ++pairs[contact.first];
+      }
+      for (const auto& pair:pairs)
+        RCLCPP_INFO(node->get_logger(),"SIDE_HIGH_DIAGNOSTIC COLLISION %s <-> %s candidates=%d.",
+          pair.first.first.c_str(),pair.first.second.c_str(),pair.second);
+      RCLCPP_INFO(node->get_logger(),"SIDE_HIGH_DIAGNOSTIC samples=60 IK_solved=%d collision_free=%d; zero free is NOT an infeasibility proof.",solved,free);
+      passed=free>0;
+    }
+    else if (diagnose_released_state)
     {
       // [EXPERIMENTAL] 当前释放后静态姿态；不能倒推为互锁触发那一物理步。
       // 只在本地检查桌/墙/其余Cube与机器人干涉，忽略当前合法接触Cube01。
@@ -198,7 +276,9 @@ int main(int argc, char** argv)
     passed = false;
   }
   RCLCPP_INFO(node->get_logger(), "NO_COMMAND %s %s; no physical benchmark PASS implied.",
-    diagnose_released_state ? "released static-state diagnostic" : "three nominal contact chains", passed ? "PASS" : "FAIL");
+    diagnose_side_high ? "measured side-high goal diagnostic" :
+      (diagnose_released_state ? "released static-state diagnostic" : "three nominal contact chains"),
+    passed ? "PASS" : "FAIL");
   executor.cancel(); spin.join(); rclcpp::shutdown();
   return passed ? 0 : 1;
 }
