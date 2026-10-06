@@ -16,6 +16,8 @@ constexpr bool validDualFixtureContactState(std::size_t index, bool rear, bool s
 // [ENGINEERING] 有限姿态参数范围，不是放宽物理/碰撞/力矩验收门限。
 inline bool validSideFixtureRoll(double degrees)
 { return std::isfinite(degrees) && std::abs(degrees) <= 30.0; }
+inline bool validRearFixtureRoll(double degrees)
+{ return std::isfinite(degrees) && degrees >= 0.0 && degrees <= 60.0; }
 // [ENGINEERING] 观测格式/新鲜度，不更改原几何与力矩门限。
 inline bool validFixturePose(const std::array<double, 7>& pose)
 {

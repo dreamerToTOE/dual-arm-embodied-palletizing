@@ -83,6 +83,27 @@ struct DualFixtureMotion
   trajectory_msgs::msg::JointTrajectory left_end, right_end, left_exit, right_exit;
 };
 
+// [EXPERIMENTAL] 只读探针候选：后杯面TCP+X始终指世界+X，绕该法向翻腕。
+// +Y件向中央(-Y)让腕，-Y件镜像(+Y)；未在执行器中启用。
+geometry_msgs::msg::Pose dualRearFixturePose(double x, double y, double z,
+  std::size_t cube_index, double roll_magnitude_deg)
+{
+  if (!fr3_dual_palletize::validRearFixtureRoll(roll_magnitude_deg) || cube_index >= 3)
+    throw std::runtime_error("Invalid rear cup-normal diagnostic roll");
+  auto pose = pushPose(x, y, z);
+  if (roll_magnitude_deg == 0.0) return pose;
+  const Eigen::Quaterniond original(pose.orientation.w, pose.orientation.x,
+    pose.orientation.y, pose.orientation.z);
+  const double sign = cube_index == 1 ? -1.0 : 1.0;
+  const Eigen::Quaterniond rotated = Eigen::Quaterniond(Eigen::AngleAxisd(
+    sign * roll_magnitude_deg * kPi / 180., Eigen::Vector3d::UnitX())) * original;
+  if ((rotated * Eigen::Vector3d::UnitX()-original * Eigen::Vector3d::UnitX()).norm() > 1e-10)
+    throw std::runtime_error("Rear diagnostic roll changed cup normal");
+  pose.orientation.w=rotated.w(); pose.orientation.x=rotated.x();
+  pose.orientation.y=rotated.y(); pose.orientation.z=rotated.z();
+  return pose;
+}
+
 bool fixtureRelativePathSafe(const rclcpp::Node::SharedPtr& node,
   const moveit::core::RobotModelConstPtr& model,
   const std::string& left_eef, const std::string& right_eef,

@@ -51,8 +51,10 @@ int main(int argc, char** argv)
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
   // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
+  const double rear_roll_magnitude_deg = node->declare_parameter<double>("rear_roll_magnitude_deg", 0.0);
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
-  if (!fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg))
+  if (!fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
+      !fr3_dual_palletize::validRearFixtureRoll(rear_roll_magnitude_deg))
     { rclcpp::shutdown(); return 1; }
   std::ofstream audit_file;
   if (!wrist_audit_path.empty())
@@ -105,8 +107,8 @@ int main(int argc, char** argv)
       const bool side_left = index != 1;
       const double direction = side_left ? 1.0 : -1.0;
       const auto initial = task.pre_push;
-      auto rear_pose = pushPose(initial.position.x - kPushCupOffsetX,
-        initial.position.y, initial.position.z);
+      auto rear_pose = dualRearFixturePose(initial.position.x - kPushCupOffsetX,
+        initial.position.y, initial.position.z, index, rear_roll_magnitude_deg);
       auto side_pose = dualSideFixturePose(initial.position.x,
         initial.position.y - direction * (kCubeHalf + kSideContactCommandGap),
         initial.position.z, side_left, side_roll_world_y_deg);
