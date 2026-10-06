@@ -2988,9 +2988,12 @@ int main(int argc, char** argv)
   // 原Isaac mesh审计候选，保留0deg供旧姿态诊断。无效参数在任何Arm/命令前拒绝。
   const double side_fixture_roll = node->declare_parameter<double>(
     "dual_fixture_side_roll_world_y_deg", -15.0);
-  if (!fr3_dual_palletize::validSideFixtureRoll(side_fixture_roll))
+  const double rear_fixture_roll = node->declare_parameter<double>(
+    "dual_fixture_rear_roll_magnitude_deg", 45.0);
+  if (!fr3_dual_palletize::validSideFixtureRoll(side_fixture_roll) ||
+      !fr3_dual_palletize::validRearFixtureRoll(rear_fixture_roll))
   {
-    RCLCPP_ERROR(node->get_logger(), "dual_fixture_side_roll_world_y_deg 必须有限且在[-30,30]deg。");
+    RCLCPP_ERROR(node->get_logger(), "side roll须有限在[-30,30]deg，rear roll幅值须有限在[0,60]deg。");
     rclcpp::shutdown(); return 1;
   }
 #endif
@@ -3581,6 +3584,19 @@ int main(int argc, char** argv)
       }
 #endif
       const std::string object_id = "task26_cube_" + std::to_string(task.cube_index + 1);
+      const auto rearPoseForTask = [&](double x, double y, double z) {
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+        if (fr3_dual_palletize::dualFixtureRequired(task.cube_index))
+          return dualRearFixturePose(x, y, z, task.cube_index, rear_fixture_roll);
+#endif
+        return pushPose(x, y, z);  // 原Task26/27与第四第五件完全保留。
+      };
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      if (fr3_dual_palletize::dualFixtureRequired(task.cube_index))
+        RCLCPP_INFO(node->get_logger(),
+          "%s DUAL_REAR_WRIST_ROLL worldX=%+.3f deg; original cup center/normal; OPEN regrasp only.",
+          task.id, (task.cube_index == 1 ? -1.0 : 1.0) * rear_fixture_roll);
+#endif
       const auto [live_source, source_revision] = cubes.get(task.cube_index);
       (void)live_source;
       // 物理执行时 source 就是该批到料落稳后读到的真实 Ground Truth；零命令预检
@@ -4138,7 +4154,7 @@ int main(int argc, char** argv)
         {
           std::vector<trajectory_msgs::msg::JointTrajectory> batch_candidates;
           if (!pusher.planPoseCandidatesFrom(pusher_group, finalPositions(lift_end),
-                pushPose(push_entry_x, push_cube_y, push_cube_z),
+                rearPoseForTask(push_entry_x, push_cube_y, push_cube_z),
                 stage_prefix + " REGRASP_NEG_X batch=" + std::to_string(batch),
                 &batch_candidates))
           {
@@ -4211,22 +4227,22 @@ int main(int argc, char** argv)
           const bool chain_ok = push_left
             ? (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(regrasp_candidate), finalPositions(hold_right),
-                 pushPose(push_cell_x, push_cube_y, push_cube_z), helper_park,
+                 rearPoseForTask(push_cell_x, push_cube_y, push_cube_z), helper_park,
                  world_after_remove, stage_prefix + " PUSH_INTO_BOX",
                  &push_l, &push_r) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(push_l), finalPositions(push_r),
-                 pushPose(push_entry_x, push_cube_y, push_cube_z), helper_park,
+                 rearPoseForTask(push_entry_x, push_cube_y, push_cube_z), helper_park,
                  world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
                  &ret_l, &ret_r))
             : (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(hold_right), finalPositions(regrasp_candidate),
-                 helper_park, pushPose(push_cell_x, push_cube_y, push_cube_z),
+                 helper_park, rearPoseForTask(push_cell_x, push_cube_y, push_cube_z),
                  world_after_remove, stage_prefix + " PUSH_INTO_BOX",
                  &push_l, &push_r) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(push_l), finalPositions(push_r),
-                 helper_park, pushPose(push_entry_x, push_cube_y, push_cube_z),
+                 helper_park, rearPoseForTask(push_entry_x, push_cube_y, push_cube_z),
                  world_after_remove, stage_prefix + " PREPLANNED_CELL_EXIT",
                  &ret_l, &ret_r));
           if (!chain_ok)
@@ -4246,22 +4262,22 @@ int main(int argc, char** argv)
             const bool trim_safe = push_left
               ? (planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(push_l), finalPositions(push_r),
-                   pushPose(push_cell_x, trim_y, push_cube_z), helper_park,
+                   rearPoseForTask(push_cell_x, trim_y, push_cube_z), helper_park,
                    world_after_remove, stage_prefix + " INNER_SIDE_TRIM",
                    &trim_l, &trim_r) &&
                  planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(trim_l), finalPositions(trim_r),
-                   pushPose(push_entry_x, trim_y, push_cube_z), helper_park,
+                   rearPoseForTask(push_entry_x, trim_y, push_cube_z), helper_park,
                    world_after_remove, stage_prefix + " INNER_TRIM_EXIT",
                    &trim_exit_l, &trim_exit_r))
               : (planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(push_l), finalPositions(push_r),
-                   helper_park, pushPose(push_cell_x, trim_y, push_cube_z),
+                   helper_park, rearPoseForTask(push_cell_x, trim_y, push_cube_z),
                    world_after_remove, stage_prefix + " INNER_SIDE_TRIM",
                    &trim_l, &trim_r) &&
                  planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(trim_l), finalPositions(trim_r),
-                   helper_park, pushPose(push_entry_x, trim_y, push_cube_z),
+                   helper_park, rearPoseForTask(push_entry_x, trim_y, push_cube_z),
                    world_after_remove, stage_prefix + " INNER_TRIM_EXIT",
                    &trim_exit_l, &trim_exit_r));
             if (!trim_safe)
@@ -4277,22 +4293,22 @@ int main(int argc, char** argv)
             const bool extra_safe = push_left
               ? (planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(trim_l), finalPositions(trim_r),
-                   pushPose(push_cell_x, extra_y, push_cube_z), helper_park,
+                   rearPoseForTask(push_cell_x, extra_y, push_cube_z), helper_park,
                    world_after_remove, stage_prefix + " INNER_EXTRA_TRIM_PREFLIGHT",
                    &extra_l, &extra_r) &&
                  planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(extra_l), finalPositions(extra_r),
-                   pushPose(push_entry_x, extra_y, push_cube_z), helper_park,
+                   rearPoseForTask(push_entry_x, extra_y, push_cube_z), helper_park,
                    world_after_remove, stage_prefix + " INNER_EXTRA_EXIT_PREFLIGHT",
                    &extra_exit_l, &extra_exit_r))
               : (planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(trim_l), finalPositions(trim_r),
-                   helper_park, pushPose(push_cell_x, extra_y, push_cube_z),
+                   helper_park, rearPoseForTask(push_cell_x, extra_y, push_cube_z),
                    world_after_remove, stage_prefix + " INNER_EXTRA_TRIM_PREFLIGHT",
                    &extra_l, &extra_r) &&
                  planAndCheckCommon(node, left_group, right_group, left, right,
                    finalPositions(extra_l), finalPositions(extra_r),
-                   helper_park, pushPose(push_entry_x, extra_y, push_cube_z),
+                   helper_park, rearPoseForTask(push_entry_x, extra_y, push_cube_z),
                    world_after_remove, stage_prefix + " INNER_EXTRA_EXIT_PREFLIGHT",
                    &extra_exit_l, &extra_exit_r));
             if (!extra_safe)
@@ -4585,7 +4601,7 @@ int main(int argc, char** argv)
             trajectory_msgs::msg::JointTrajectory segment;
             if (!planCommonCartesian(node, pusher_group, pusher.groupName(),
                   compactor.groupName(), segment_start, pusher_partner_start,
-                  pushPose(seated_cube.position.x - kPushCupOffsetX, segment_y,
+                  rearPoseForTask(seated_cube.position.x - kPushCupOffsetX, segment_y,
                     seated_cube.position.z),
                   stage_prefix + " SIDE_BACKSTOP_Y_" + std::to_string(index + 1) +
                     "_SEGMENT_" + std::to_string(segment_index),
@@ -5761,22 +5777,22 @@ int main(int argc, char** argv)
           const bool extra_planned = push_left
             ? (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(inner_press_left), finalPositions(inner_press_right),
-                 pushPose(push_cell_x, extra_y, push_cube_z), helper_park,
+                 rearPoseForTask(push_cell_x, extra_y, push_cube_z), helper_park,
                  world_after_remove, std::string(task.id) + " INNER_EXTRA_TRIM",
                  &extra_left, &extra_right) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(extra_left), finalPositions(extra_right),
-                 pushPose(push_entry_x, extra_y, push_cube_z), helper_park,
+                 rearPoseForTask(push_entry_x, extra_y, push_cube_z), helper_park,
                  world_after_remove, std::string(task.id) + " INNER_EXTRA_EXIT",
                  &extra_exit_left, &extra_exit_right))
             : (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(inner_press_left), finalPositions(inner_press_right),
-                 helper_park, pushPose(push_cell_x, extra_y, push_cube_z),
+                 helper_park, rearPoseForTask(push_cell_x, extra_y, push_cube_z),
                  world_after_remove, std::string(task.id) + " INNER_EXTRA_TRIM",
                  &extra_left, &extra_right) &&
                planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(extra_left), finalPositions(extra_right),
-                 helper_park, pushPose(push_entry_x, extra_y, push_cube_z),
+                 helper_park, rearPoseForTask(push_entry_x, extra_y, push_cube_z),
                  world_after_remove, std::string(task.id) + " INNER_EXTRA_EXIT",
                  &extra_exit_left, &extra_exit_right));
           if (!extra_planned || !executeSync(left, extra_left, right, extra_right))
