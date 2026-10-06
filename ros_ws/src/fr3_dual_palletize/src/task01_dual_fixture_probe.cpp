@@ -6,6 +6,7 @@
 #define main task01_unexecuted_controller_main
 #include "task26_truck_box_push_in.cpp"
 #undef main
+#include <iomanip>
 
 namespace
 {
@@ -47,6 +48,10 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>("task01_dual_fixture_probe");
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
+  // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
+  const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
+  if (!std::isfinite(side_roll_world_y_deg) || std::abs(side_roll_world_y_deg) > 30.0)
+    { rclcpp::shutdown(); return 1; }
   if (!copyRobotDescriptions(node) || !copyProbeKinematics(node))
     { rclcpp::shutdown(); return 1; }
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -95,6 +100,15 @@ int main(int argc, char** argv)
       auto side_pose = sidePose(initial.position.x,
         initial.position.y - direction * (kCubeHalf + kSideContactCommandGap),
         initial.position.z, side_left);
+      const Eigen::Quaterniond original_side(side_pose.orientation.w, side_pose.orientation.x,
+        side_pose.orientation.y, side_pose.orientation.z);
+      const Eigen::Quaterniond rolled_side = Eigen::Quaterniond(Eigen::AngleAxisd(
+        side_roll_world_y_deg * kPi / 180.0, Eigen::Vector3d::UnitY())) * original_side;
+      // TCP +X 是杯面法向。世界 +/-Y 法向下，此转角仅在杯面平面内旋转阵列。
+      if ((rolled_side * Eigen::Vector3d::UnitX() - original_side * Eigen::Vector3d::UnitX()).norm() > 1e-10)
+        throw std::runtime_error("Probe roll changed cup normal");
+      side_pose.orientation.w = rolled_side.w(); side_pose.orientation.x = rolled_side.x();
+      side_pose.orientation.y = rolled_side.y(); side_pose.orientation.z = rolled_side.z();
       auto world = boxWallObjects(); world.push_back(tableObject());
       for (std::size_t previous = 0; previous < index; ++previous)
         world.push_back(cubeObject("task26_cube_" + std::to_string(previous + 1), kTasks[previous].cell));
@@ -141,6 +155,28 @@ int main(int argc, char** argv)
         RCLCPP_INFO(node->get_logger(),
           "%s NO_COMMAND_CONTACT_X_Y PASS: seed_attempt=%d; current Cube included at contact, intentional moving Cube excluded during wall push. NOT_EXECUTED.",
           task.id, attempt + 1);
+        // [ENGINEERING] 导出选中轨迹的全部关节节点/腕部FK，供原Isaac网格离线复核。
+        // 不包含任何 Arm、joint/suction/feed/rail publisher 或远程场景写入。
+        const auto audit = [&](const char* stage,
+          const trajectory_msgs::msg::JointTrajectory& lp,
+          const trajectory_msgs::msg::JointTrajectory& rp)
+        {
+          for (std::size_t point = 0; point < lp.points.size(); ++point)
+          {
+            state.setVariablePositions(lp.joint_names, lp.points.at(point).positions);
+            state.setVariablePositions(rp.joint_names, rp.points.at(point).positions); state.update();
+            for (const auto& arm : {std::string("left"), std::string("right")})
+            {
+              const auto& transform = state.getGlobalLinkTransform(arm + "_fr3_link7");
+              const Eigen::Quaterniond q(transform.rotation());
+              std::cout << std::setprecision(17) << "HELD_HULL_AUDIT " << task.id << ' '
+                << stage << ' ' << point << ' ' << arm << ' ' << transform.translation().x()+g_world_shift_x
+                << ' ' << transform.translation().y() << ' ' << transform.translation().z()
+                << ' ' << q.x() << ' ' << q.y() << ' ' << q.z() << ' ' << q.w() << '\n';
+            }
+          }
+        };
+        audit("CONTACT", ls, rs); audit("X", lx, rx); audit("Y", ly, ry);
         found = true; break;
       }
       if (!found)
