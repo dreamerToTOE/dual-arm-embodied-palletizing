@@ -2054,6 +2054,38 @@ bool planCommonCartesian(
         break;
       }
       *output = candidate.joint_trajectory;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      if (label.find("DUAL_SIDE_CONTACT") != std::string::npos)
+      {
+        // Humble GetCartesianPath.srv无velocity/acceleration scaling字段。
+        // 仅新Task01侧臂接触下降显式按现有配置计时，不能靠慢播放掩盖跟踪。
+        // IPTP保留每个q路点；之后仍对同一完整双臂路径严格FCL检查。
+        moveit_msgs::msg::MotionPlanRequest settings;
+        group.constructMotionPlanRequest(settings);
+        const double v = settings.max_velocity_scaling_factor;
+        const double a = settings.max_acceleration_scaling_factor;
+        if (!std::isfinite(v) || !std::isfinite(a) || v <= 0.0 || v > 1.0 ||
+            a <= 0.0 || a > 1.0) return false;
+        robot_trajectory::RobotTrajectory timed(model, own_group);
+        timed.setRobotTrajectoryMsg(*state, candidate);
+        trajectory_processing::IterativeParabolicTimeParameterization timing;
+        if (!timing.computeTimeStamps(timed, v, a)) return false;
+        moveit_msgs::msg::RobotTrajectory result;
+        timed.getRobotTrajectoryMsg(result);
+        const auto& path = result.joint_trajectory;
+        bool unchanged = path.joint_names == output->joint_names &&
+          path.points.size() == output->points.size();
+        for (std::size_t i = 0; unchanged && i < path.points.size(); ++i)
+          unchanged = path.points[i].positions == output->points[i].positions;
+        if (!unchanged || path.points.empty()) return false;
+        RCLCPP_INFO(node->get_logger(),
+          "%s IPTP same-q timing: velocity_scale=%.3f acceleration_scale=%.3f "
+          "raw_duration=%.3f s planned_duration=%.3f s points=%zu; playback remains100%%.",
+          label.c_str(), v, a, pointTime(output->points.back()),
+          pointTime(path.points.back()), path.points.size());
+        *output = path;
+      }
+#endif
       ensureTiming(*output);
       return true;
     }
