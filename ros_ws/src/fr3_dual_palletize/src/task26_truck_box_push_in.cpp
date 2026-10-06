@@ -5654,6 +5654,16 @@ int main(int argc, char** argv)
           break;
         }
       }
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      if (fr3_dual_palletize::dualFixtureRequired(task.cube_index) &&
+          !refineOpenRearFixture(node, left_group, right_group, scene, left, right,
+            pusher, fixture_geometry, task, &left_regrasp))
+      {
+        openBothAndConfirm("safe abort during rear OPEN XYZ refinement");
+        all_complete=false;
+        break;
+      }
+#endif
       std::thread pusher_on([&]() { pusher.suction(true); });
       pusher_on.join();
       if (!pusher.waitSuction(true, 3.0))

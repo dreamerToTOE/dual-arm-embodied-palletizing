@@ -83,8 +83,75 @@ struct DualFixtureMotion
   trajectory_msgs::msg::JointTrajectory left_end, right_end, left_exit, right_exit;
 };
 
-// [EXPERIMENTAL] 只读探针候选：后杯面TCP+X始终指世界+X，绕该法向翻腕。
-// +Y件向中央(-Y)让腕，-Y件镜像(+Y)；未在执行器中启用。
+// [ENGINEERING] 复用既有XYZ残差累加/1mm限步/FK微解算，只在后杯OPEN时精调。
+// RRT允许的毫米级到位残差不能直接带入双D6闭环；不放宽2.5mm原验收门限。
+bool refineOpenRearFixture(const rclcpp::Node::SharedPtr& node,
+  moveit::planning_interface::MoveGroupInterface& lg,
+  moveit::planning_interface::MoveGroupInterface& rg,
+  moveit::planning_interface::PlanningSceneInterface& scene,
+  const Arm& left, const Arm& right, const Arm& rear,
+  const FixtureGeometryBuffer& feedback, const OfflineTask& task,
+  trajectory_msgs::msg::JointTrajectory* rear_command)
+{
+  if (!rear_command || rear_command->points.empty() || left.isClosed() || right.isClosed()) return false;
+  const auto model = lg.getRobotModel();
+  const auto* own = model->getJointModelGroup(rear.groupName());
+  const auto* other = model->getJointModelGroup(rear.isLeft() ? rg.getName() : lg.getName());
+  if (!own || !other) return false;
+  for (int correction = 0; correction <= kRetries; ++correction)
+  {
+    std::this_thread::sleep_for(250ms);
+    geometry_msgs::msg::Pose cube, lt, rt;
+    std::int64_t stamp;
+    if (left.isClosed() || right.isClosed() ||
+        !feedback.get(task.cube_index, &cube, &lt, &rt, &stamp)) return false;
+    const auto& actual = rear.isLeft() ? lt : rt;
+    const fr3_dual_palletize::PrecloseVector3 desired{
+      cube.position.x-kPushCupOffsetX, cube.position.y, cube.position.z};
+    const fr3_dual_palletize::PrecloseVector3 measured{
+      actual.position.x, actual.position.y, actual.position.z};
+    const double error = std::hypot(std::hypot(desired[0]-measured[0], desired[1]-measured[1]),
+                                   desired[2]-measured[2]);
+    RCLCPP_INFO(node->get_logger(),
+      "%s REAR_OPEN_XYZ check=%d/%d residual_mm=(%+.3f,%+.3f,%+.3f) norm=%.3f mm physics_stamp_ns=%lld.",
+      task.id, correction+1, kRetries+1, (desired[0]-measured[0])*1000.,
+      (desired[1]-measured[1])*1000., (desired[2]-measured[2])*1000., error*1000.,
+      static_cast<long long>(stamp));
+    // 0.3mm是吸附前目标精度，不替代原2.5mm加载验收；最多3次1mm修正。
+    if (!std::isfinite(error)) return false;
+    if (error <= .0003) return true;
+    if (correction == kRetries) return false;
+    const auto delta = fr3_dual_palletize::precloseAlignmentDeltaXYZ(desired, measured);
+    auto target = linkPose(model, rear.eefLink(), *rear_command);
+    target.position.x += delta[0]; target.position.y += delta[1]; target.position.z += delta[2];
+    auto state = lg.getCurrentState(2.0);
+    if (!state) return false;
+    state->update();
+    trajectory_msgs::msg::JointTrajectory move, hold;
+    if (!planFinePreclose(node, *state, own, rear.eefLink(), target,
+          std::string(task.id)+" REAR_OPEN_PRE_CLOSE_REACQUIRE_XYZ", &move)) return false;
+    std::vector<double> other_q; state->copyJointGroupPositions(other, other_q);
+    hold.joint_names=other->getVariableNames();
+    hold=holdTrajectory(hold, other_q, pointTime(move.points.back()));
+    auto world=staticWorld(scene);
+    const auto id="task26_cube_"+std::to_string(task.cube_index+1);
+    world.erase(std::remove_if(world.begin(), world.end(), [&](const auto& o) { return o.id==id; }), world.end());
+    world.push_back(cubeObject(id, cube));  // 自由Cube仍严格参与FCL，不能删掉规避。
+    const auto& lp=rear.isLeft() ? move : hold;
+    const auto& rp=rear.isLeft() ? hold : move;
+    if (!validateSync(node, model, world, lp, rp,
+          std::string(task.id)+" REAR_OPEN_XYZ_CURRENT_CUBE_INCLUDED") ||
+        left.isClosed() || right.isClosed() ||
+        !executeSync(left, lp, right, rp, [&] {
+          return rclcpp::ok() && feedback.fresh() && !left.isClosed() && !right.isClosed();
+        })) return false;
+    *rear_command=move;
+  }
+  return false;
+}
+
+// [EXPERIMENTAL] 探针与独立3+2执行器共用：后杯面TCP+X始终指世界+X。
+// 仅OPEN重抓绕该法向翻腕；+Y件向中央(-Y)让腕，-Y件镜像(+Y)。
 geometry_msgs::msg::Pose dualRearFixturePose(double x, double y, double z,
   std::size_t cube_index, double roll_magnitude_deg)
 {
