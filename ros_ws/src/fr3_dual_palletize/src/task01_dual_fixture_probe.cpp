@@ -50,6 +50,7 @@ int main(int argc, char** argv)
   auto node = std::make_shared<rclcpp::Node>("task01_dual_fixture_probe");
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
   const bool diagnose_side_high = node->declare_parameter<bool>("diagnose_side_high", false);
+  const bool diagnose_rear_search = node->declare_parameter<bool>("diagnose_rear_search", false);
   const auto diagnostic_left_q = node->declare_parameter<std::vector<double>>("diagnostic_left_q", std::vector<double>{});
   const auto diagnostic_right_q = node->declare_parameter<std::vector<double>>("diagnostic_right_q", std::vector<double>{});
   const auto diagnostic_cube = node->declare_parameter<std::vector<double>>("diagnostic_cube", std::vector<double>{});
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
   const double rear_roll_magnitude_deg = node->declare_parameter<double>("rear_roll_magnitude_deg", 0.0);
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
-  if ((diagnose_released_state && diagnose_side_high) ||
+  if ((diagnose_released_state && diagnose_side_high) || (diagnose_rear_search && !diagnose_side_high) ||
       !fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
       !fr3_dual_palletize::validRearFixtureRoll(rear_roll_magnitude_deg))
     { rclcpp::shutdown(); return 1; }
@@ -157,6 +158,56 @@ int main(int argc, char** argv)
           pair.first.first.c_str(),pair.first.second.c_str(),pair.second);
       RCLCPP_INFO(node->get_logger(),"SIDE_HIGH_DIAGNOSTIC samples=60 IK_solved=%d collision_free=%d; zero free is NOT an infeasibility proof.",solved,free);
       passed=free>0;
+      if (diagnose_rear_search)
+      {
+        // [EXPERIMENTAL] 保持同一rear TCP位姿，寻找空载重抓可选冗余构型。
+        // 仅本地RobotState假设，不移动实物，不在CLOSED时变更任何关节。
+        const auto* rear=side_left ? rj:lj;
+        const auto& rear_eef=side_left ? re:le;
+        const auto rear_goal=original.getGlobalLinkTransform(rear_eef);
+        int paired_free=0,rear_solved=0;
+        for (int attempt=0;attempt<40 && paired_free<3;++attempt)
+        {
+          moveit::core::RobotState candidate(original);
+          auto q=side_left ? diagnostic_right_q:diagnostic_left_q;
+          const auto& names=rear->getVariableNames();
+          for (std::size_t j=0;j<q.size();++j)
+          {
+            const auto& bound=model->getVariableBounds(names[j]);
+            const double fraction=.01+.98*((attempt*17+static_cast<int>(j)*7)%101)/100.;
+            q[j]=bound.min_position_+fraction*(bound.max_position_-bound.min_position_);
+          }
+          candidate.setJointGroupPositions(rear,q); candidate.update();
+          if (!candidate.setFromIK(rear,rear_goal,rear_eef,.05)) continue;
+          candidate.update();
+          if (!candidate.satisfiesBounds()) continue;
+          ++rear_solved;
+          collision_detection::CollisionResult rear_at_park;
+          collision_scene.checkCollision(request,rear_at_park,candidate);
+          if (rear_at_park.collision) continue;
+          auto at_high=candidate;
+          if (!at_high.setFromIK(own,fixturePoseTransform(goal),eef,.05)) continue;
+          at_high.update();
+          collision_detection::CollisionResult high_collision;
+          collision_scene.checkCollision(request,high_collision,at_high);
+          if (high_collision.collision || !at_high.satisfiesBounds()) continue;
+          auto at_contact=at_high;
+          auto contact=goal; contact.position.z=cube.position.z;
+          if (!at_contact.setFromIK(own,fixturePoseTransform(contact),eef,.05)) continue;
+          at_contact.update();
+          collision_detection::CollisionResult contact_collision;
+          collision_scene.checkCollision(request,contact_collision,at_contact);
+          if (contact_collision.collision || !at_contact.satisfiesBounds()) continue;
+          ++paired_free;
+          candidate.copyJointGroupPositions(rear,q);
+          std::ostringstream exact; exact<<std::setprecision(17)<<'[';
+          for (std::size_t j=0;j<q.size();++j) exact<<(j ? ",":"")<<q[j];
+          exact<<']';
+          RCLCPP_INFO(node->get_logger(),"REAR_REDUNDANCY_DIAGNOSTIC FREE attempt=%d rear_q=%s; same rear TCP, side HIGH+CONTACT full FCL; NOT_EXECUTED.",attempt,exact.str().c_str());
+        }
+        RCLCPP_INFO(node->get_logger(),"REAR_REDUNDANCY_DIAGNOSTIC rear_solved=%d paired_free=%d/3 within40seeds; endpoint-only, no connection or physics proof.",rear_solved,paired_free);
+        passed=paired_free>0;
+      }
     }
     else if (diagnose_released_state)
     {
