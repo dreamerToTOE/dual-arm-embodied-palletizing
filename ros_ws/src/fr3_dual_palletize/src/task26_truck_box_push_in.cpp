@@ -2986,7 +2986,23 @@ int main(int argc, char** argv)
   // 再在同一 Isaac 场景中只执行 first_batch=5/max=1 的中心插入阶段。
   const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  // [ENGINEERING] 用户要求正常倍率播放：1.0 = 规划时间的100%，5.0 = 20%。
+  // 只改新Task01节点的默认倍率，保留MoveIt速度/加速度限制与原接触保护。
+  const double time_scale = node->declare_parameter<double>("execution_time_scale", 1.0);
+  if (!std::isfinite(time_scale) || time_scale < 1.0)
+  {
+    RCLCPP_ERROR(node->get_logger(), "execution_time_scale必须有限且>=1.0；1.0为正常规划轨迹倍率。");
+    rclcpp::shutdown();
+    return 1;
+  }
+  RCLCPP_INFO(node->get_logger(),
+    "Task01 trajectory playback = %.1f%% (execution_time_scale=%.2f); "
+    "MoveIt RRT velocity/acceleration limits remain 12%%; not 100%% joint-limit speed.",
+    100.0 / time_scale, time_scale);
+#else
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
+#endif
 #ifdef TASK01_DUAL_SUCTION_FIXTURE
   // [ENGINEERING] 只影响新3+2前三件side重抓；旧节点/双臂搬运/后两精准单推不变。
   // 原Isaac mesh审计候选，保留0deg供旧姿态诊断。无效参数在任何Arm/命令前拒绝。

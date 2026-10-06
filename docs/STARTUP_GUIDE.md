@@ -4,6 +4,38 @@
 
 > 为避免 Bash 复制换行问题，ROS 命令优先写成单行。
 
+## 当前Task01复现节点GUI运行约定（2026-10-06）
+
+用户要求后续仿真使用可见 Isaac Sim GUI；不再启动 headless。保留历史无界面
+脚本/日志作为证据，不代表仍推荐用它们启动实验。每次重新打开 GUI 都必须加载
+原场景、物理 Bridge 与 Task01 原子反馈，不能只启动 ROS 控制器。
+
+1. 在 Isaac Sim 4.5 GUI 中停止 Timeline，Script Editor 执行场景入口：
+
+   ```python
+   exec(open('/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py', encoding='utf-8').read())
+   ```
+
+2. 点击 Play，等待机器人初始化，再在 Script Editor 加载原物理 Bridge：
+
+   ```python
+   exec(open('/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_bridge.py', encoding='utf-8').read())
+   ```
+
+3. 加载新 Task01 的同物理步几何反馈：
+
+   ```python
+   exec(open('/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-reproduction/platforms/isaac_ros2/probes/task01_fixture_geometry_bridge.py', encoding='utf-8').read())
+   ```
+
+当前 `task01_dual_suction_fixture` 默认 `execution_time_scale=1.0`，也可显式传
+`-p execution_time_scale:=1.0`。含义是100%规划轨迹播放倍率：`2.0` 才是50%，
+此前测试 `5.0` 是20%。这与 MoveIt RRT 速度/加速度限制12%是两个独立设置，
+没有改成关节极限速度，也没有放宽接触/碰撞保护。不要复制历史 `5.0` 命令后
+认为默认值会覆盖它；显式参数优先。新倍率尚需 GUI 物理验收。
+
+该段是复现仓库新3+2节点的最新约定，不覆盖下面历史 Task01 二指抓取实验。
+
 ## 0. 工程路径
 
 ```text
