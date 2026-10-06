@@ -2983,6 +2983,17 @@ int main(int argc, char** argv)
   const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  // [ENGINEERING] 只影响新3+2前三件side重抓；旧节点/双臂搬运/后两精准单推不变。
+  // 原Isaac mesh审计候选，保留0deg供旧姿态诊断。无效参数在任何Arm/命令前拒绝。
+  const double side_fixture_roll = node->declare_parameter<double>(
+    "dual_fixture_side_roll_world_y_deg", -15.0);
+  if (!fr3_dual_palletize::validSideFixtureRoll(side_fixture_roll))
+  {
+    RCLCPP_ERROR(node->get_logger(), "dual_fixture_side_roll_world_y_deg 必须有限且在[-30,30]deg。");
+    rclcpp::shutdown(); return 1;
+  }
+#endif
 #ifdef TASK01_CUBE04_PRECISION_INSERT
   // [ENGINEERING] 只读实验阶段标记；默认不插入额外等待、不改变旧节点行为。
   const auto release_phase_pub = node->create_publisher<std_msgs::msg::String>(

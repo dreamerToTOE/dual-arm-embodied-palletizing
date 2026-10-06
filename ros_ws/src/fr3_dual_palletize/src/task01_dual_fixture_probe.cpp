@@ -52,7 +52,7 @@ int main(int argc, char** argv)
   // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
-  if (!std::isfinite(side_roll_world_y_deg) || std::abs(side_roll_world_y_deg) > 30.0)
+  if (!fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg))
     { rclcpp::shutdown(); return 1; }
   std::ofstream audit_file;
   if (!wrist_audit_path.empty())
@@ -107,18 +107,9 @@ int main(int argc, char** argv)
       const auto initial = task.pre_push;
       auto rear_pose = pushPose(initial.position.x - kPushCupOffsetX,
         initial.position.y, initial.position.z);
-      auto side_pose = sidePose(initial.position.x,
+      auto side_pose = dualSideFixturePose(initial.position.x,
         initial.position.y - direction * (kCubeHalf + kSideContactCommandGap),
-        initial.position.z, side_left);
-      const Eigen::Quaterniond original_side(side_pose.orientation.w, side_pose.orientation.x,
-        side_pose.orientation.y, side_pose.orientation.z);
-      const Eigen::Quaterniond rolled_side = Eigen::Quaterniond(Eigen::AngleAxisd(
-        side_roll_world_y_deg * kPi / 180.0, Eigen::Vector3d::UnitY())) * original_side;
-      // TCP +X 是杯面法向。世界 +/-Y 法向下，此转角仅在杯面平面内旋转阵列。
-      if ((rolled_side * Eigen::Vector3d::UnitX() - original_side * Eigen::Vector3d::UnitX()).norm() > 1e-10)
-        throw std::runtime_error("Probe roll changed cup normal");
-      side_pose.orientation.w = rolled_side.w(); side_pose.orientation.x = rolled_side.x();
-      side_pose.orientation.y = rolled_side.y(); side_pose.orientation.z = rolled_side.z();
+        initial.position.z, side_left, side_roll_world_y_deg);
       auto world = boxWallObjects(); world.push_back(tableObject());
       for (std::size_t previous = 0; previous < index; ++previous)
         world.push_back(cubeObject("task26_cube_" + std::to_string(previous + 1), kTasks[previous].cell));

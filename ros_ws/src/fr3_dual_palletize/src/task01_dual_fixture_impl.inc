@@ -1,6 +1,26 @@
 // [ADAPTATION]/[ENGINEERING] 仅新独立目标包含；复用同一规划/同步/FCL实现。
 namespace
 {
+geometry_msgs::msg::Pose dualSideFixturePose(double x, double y, double z, bool left,
+  double world_y_roll_deg)
+{
+  if (!fr3_dual_palletize::validSideFixtureRoll(world_y_roll_deg))
+    throw std::runtime_error("Invalid cup-normal wrist roll");
+  auto pose = sidePose(x, y, z, left);
+  if (world_y_roll_deg == 0.0) return pose;  // 原始姿态精确保留为诊断参数。
+  const Eigen::Quaterniond original(pose.orientation.w, pose.orientation.x,
+    pose.orientation.y, pose.orientation.z);
+  const Eigen::Quaterniond rotated = Eigen::Quaterniond(Eigen::AngleAxisd(
+    world_y_roll_deg * kPi / 180.0, Eigen::Vector3d::UnitY())) * original;
+  // [ENGINEERING] TCP+X仍为世界+/-Y；杯面中心和法向不变，仅在面内转动阵列。
+  // 姿态在OPEN重抓时建立；双杯CLOSED后的X/Y推压不执行任何腕部旋转。
+  if ((rotated * Eigen::Vector3d::UnitX() - original * Eigen::Vector3d::UnitX()).norm() > 1e-10)
+    throw std::runtime_error("Wrist roll changed cup normal");
+  pose.orientation.w = rotated.w(); pose.orientation.x = rotated.x();
+  pose.orientation.y = rotated.y(); pose.orientation.z = rotated.z();
+  return pose;
+}
+
 struct DualFixtureMotion
 {
   trajectory_msgs::msg::JointTrajectory left_end, right_end, left_exit, right_exit;
@@ -226,9 +246,13 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   if (!scene.applyCollisionObject(cubeObject(id, initial))) return false;
   const auto world_contact = staticWorld(scene);
   const double contact_y = initial.position.y - direction * (kCubeHalf + kSideContactCommandGap);
-  const auto high = sidePose(initial.position.x, contact_y,
-    initial.position.z + kRegraspLiftHeight, side_left);
-  const auto contact = sidePose(initial.position.x, contact_y, initial.position.z, side_left);
+  const double side_roll = node->get_parameter("dual_fixture_side_roll_world_y_deg").as_double();
+  RCLCPP_INFO(node->get_logger(), "%s DUAL_SIDE_WRIST_ROLL worldY=%.3f deg; original cup center/normal, OPEN regrasp only.",
+    task.id, side_roll);
+  const auto high = dualSideFixturePose(initial.position.x, contact_y,
+    initial.position.z + kRegraspLiftHeight, side_left, side_roll);
+  const auto contact = dualSideFixturePose(initial.position.x, contact_y, initial.position.z,
+    side_left, side_roll);
   std::vector<trajectory_msgs::msg::JointTrajectory> candidates;
   if (!side.planPoseCandidatesFrom(sg, side_left ? finalPositions(ls) : finalPositions(rs),
         high, std::string(task.id) + " DUAL_SIDE_HIGH", &candidates)) return false;

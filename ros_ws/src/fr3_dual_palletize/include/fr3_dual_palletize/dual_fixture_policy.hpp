@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <cmath>
 
 namespace fr3_dual_palletize
 {
@@ -10,4 +11,7 @@ constexpr bool preciseSingleFixtureRequired(std::size_t index)
 { return index == 3 || index == 4; }
 constexpr bool validDualFixtureContactState(std::size_t index, bool rear, bool side)
 { return dualFixtureRequired(index) && rear && side; }
+// [ENGINEERING] 有限姿态参数范围，不是放宽物理/碰撞/力矩验收门限。
+inline bool validSideFixtureRoll(double degrees)
+{ return std::isfinite(degrees) && std::abs(degrees) <= 30.0; }
 }  // namespace fr3_dual_palletize
