@@ -152,6 +152,20 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
       !rear.isClosed() || side.isClosed()) return false;
   const auto model = lg.getRobotModel();
   const bool side_left = side.isLeft();
+  // [ENGINEERING] 专用异步阶段标签，仅供只读post-step记录；不改变控制律。
+  const auto phase_pub = node->create_publisher<std_msgs::msg::String>(
+    "/task01/fixture_phase", rclcpp::QoS(10).transient_local());
+  const auto mark_phase = [&](const std::string& phase) {
+    std_msgs::msg::String message; message.data = std::string(task.id) + ":" + phase;
+    phase_pub->publish(message);
+  };
+  struct PhaseExit
+  {
+    std::function<void(const std::string&)> mark;
+    bool success{false};
+    ~PhaseExit() { mark(success ? "COMPLETE" : "ABORT"); }
+  } phase_exit{mark_phase};
+  mark_phase("CONTACT");
   const double direction = side_left ? 1.0 : -1.0;
   auto& sg = side_left ? lg : rg;
   const std::string id = "task26_cube_" + std::to_string(task.cube_index + 1);
@@ -286,6 +300,7 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
     const double duration = pointTime(l.points.back());
     for (int slice = 1; slice <= kPushSlices; ++slice)
     {
+      mark_phase(std::string(pushing_x ? "X_" : "Y_") + std::to_string(slice));
       trajectory_msgs::msg::JointTrajectory lpart, rpart;
       if (!sliceTrajectory(l, duration * (slice-1) / kPushSlices, duration * slice / kPushSlices, &lpart) ||
           !sliceTrajectory(r, duration * (slice-1) / kPushSlices, duration * slice / kPushSlices, &rpart) ||
@@ -320,6 +335,7 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   if (!run(lx, rx, "DUAL_REAR_PRIMARY_X", true)) return false;
   const auto [seated, revision] = cubes.get(task.cube_index); (void)revision;
   if (!validDeepWallSeat(node, task, seated)) return false;
+  mark_phase("ROLE_SWAP");
   // [ENGINEERING] 推到实体深墙后不能从命令终点继续：微小伺服残差在两个D6
   // 闭环下会变成额外顶墙命令。重新读取一份双臂实测状态，不改几何/力矩门限。
   trajectory_msgs::msg::JointTrajectory measured_l, measured_r;
@@ -351,6 +367,7 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   const auto [pressed, pressed_revision] = cubes.get(task.cube_index); (void)pressed_revision;
   if (!validCellPlacement(node, task, pressed, cubes)) return false;
   output->left_end = ly; output->right_end = ry;
+  phase_exit.success = true;
   return true;  // 清障包络已在负载推入之前预检；真正执行仍等待双OPEN。
 }
 }  // namespace
