@@ -30,6 +30,9 @@ int main(int argc, char** argv)
   const bool diagnose_side_high = node->declare_parameter<bool>("diagnose_side_high", false);
   const bool diagnose_rear_search = node->declare_parameter<bool>("diagnose_rear_search", false);
   const bool diagnose_fixture_chain = node->declare_parameter<bool>("diagnose_fixture_chain", false);
+  const bool diagnose_handoff = node->declare_parameter<bool>("diagnose_handoff", false);
+  node->declare_parameter<bool>("empty_handoff_audit_totg",diagnose_handoff);
+  const auto diagnostic_placed_cubes = node->declare_parameter<std::vector<double>>("diagnostic_placed_cubes", std::vector<double>{});
   const auto diagnostic_left_q = node->declare_parameter<std::vector<double>>("diagnostic_left_q", std::vector<double>{});
   const auto diagnostic_right_q = node->declare_parameter<std::vector<double>>("diagnostic_right_q", std::vector<double>{});
   const auto diagnostic_cube = node->declare_parameter<std::vector<double>>("diagnostic_cube", std::vector<double>{});
@@ -41,6 +44,7 @@ int main(int argc, char** argv)
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
   if ((diagnose_released_state && diagnose_side_high) || (diagnose_rear_search && !diagnose_side_high) ||
       (diagnose_fixture_chain && !diagnose_rear_search) ||
+      (diagnose_handoff && (diagnose_side_high || diagnose_released_state || diagnose_rear_search || diagnose_fixture_chain)) ||
       !fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
       !fr3_dual_palletize::validRearFixtureRoll(rear_roll_magnitude_deg))
     { rclcpp::shutdown(); return 1; }
@@ -52,7 +56,7 @@ int main(int argc, char** argv)
     audit_file.open(wrist_audit_path);
     if (!audit_file) { rclcpp::shutdown(); return 1; }
   }
-  if (!copyRobotDescriptions(node) || !copyFixtureKinematics(node))
+  if (!copyRobotDescriptions(node) || !copyFixtureKinematics(node) || !copyFixtureEmptyPlannerConfig(node))
     { rclcpp::shutdown(); return 1; }
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
@@ -68,7 +72,70 @@ int main(int argc, char** argv)
     lg.setEndEffectorLink(le); rg.setEndEffectorLink(re);
     lg.setPoseReferenceFrame("world"); rg.setPoseReferenceFrame("world");
     g_world_shift_x = .100;  // 原推入阶段的双轨站位，不移动任何物理基座。
-    if (diagnose_side_high)
+    if (diagnose_handoff)
+    {
+      // 实测释放后同一步14关节/落位Cube，无Arm，不写远程世界或ACM。
+      if (diagnostic_index<0 || diagnostic_index>=4 ||
+          diagnostic_placed_cubes.size()!=7*static_cast<std::size_t>(diagnostic_index+1) ||
+          !fr3_dual_palletize::validMeasuredJointSeed(diagnostic_left_q,lj->getVariableCount()) ||
+          !fr3_dual_palletize::validMeasuredJointSeed(diagnostic_right_q,rj->getVariableCount()))
+        throw std::runtime_error("Invalid exact handoff snapshot");
+      moveit::core::RobotState state(model); state.setToDefaultValues();
+      state.setJointGroupPositions(lj,diagnostic_left_q);
+      state.setJointGroupPositions(rj,diagnostic_right_q); state.update();
+      moveit::planning_interface::PlanningSceneInterface remote;
+      const auto original_world=remote.getObjects();
+      auto world=staticWorld(remote);
+      world.erase(std::remove_if(world.begin(),world.end(),[](const auto& o) {
+        return o.id.rfind("task26_cube_",0)==0; }),world.end());
+      for (int index=0;index<=diagnostic_index;++index)
+      {
+        const auto offset=7*index;
+        geometry_msgs::msg::Pose p;
+        p.position.x=diagnostic_placed_cubes[offset]; p.position.y=diagnostic_placed_cubes[offset+1];
+        p.position.z=diagnostic_placed_cubes[offset+2]; p.orientation.x=diagnostic_placed_cubes[offset+3];
+        p.orientation.y=diagnostic_placed_cubes[offset+4]; p.orientation.z=diagnostic_placed_cubes[offset+5];
+        p.orientation.w=diagnostic_placed_cubes[offset+6];
+        if (!fr3_dual_palletize::validFixturePose({p.position.x,p.position.y,p.position.z,
+            p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w}))
+          throw std::runtime_error("Invalid diagnostic placed Cube pose");
+        auto object=cubeObject("task26_cube_"+std::to_string(index+1),p);
+        if (index==diagnostic_index) for (auto& dim:object.primitives.front().dimensions) dim+=.006;
+        world.push_back(std::move(object));
+      }
+      // 与执行器的槽位lambda相同：复用原A/B常量，不改供料几何。
+      const auto source=(diagnostic_index+1)%2==0 ? worldPose(kSlotAx,kSlotAy,kBottomZ) :
+        worldPose(kSlotBx,kSlotBy,kBottomZ);
+      world.push_back(cubeObject("task26_cube_"+std::to_string(diagnostic_index+2),source));
+      const double z=source.position.z+kSideContactCommandZOffset+kLiftHeight+.030;
+      const auto lt=sidePose(source.position.x,source.position.y-kCubeHalf-kSideContactCommandGap-kPreContactOffsetY,z,true);
+      const auto rt=sidePose(source.position.x,source.position.y+kCubeHalf+kSideContactCommandGap+kRightPreContactOffsetY,z,false);
+      trajectory_msgs::msg::JointTrajectory lpath,rpath;
+      const bool closed_rejected=!planFixtureEmptyHandoff(node,lg,rg,state,true,false,lt,rt,world,
+        "HANDOFF_CLOSED_NEGATIVE",&lpath,&rpath);
+      auto obstruction=lt; const auto physical=state.getGlobalLinkTransform(le).translation();
+      obstruction.position.x=physical.x()+g_world_shift_x;
+      obstruction.position.y=physical.y(); obstruction.position.z=physical.z();
+      obstruction.orientation.x=obstruction.orientation.y=obstruction.orientation.z=0.; obstruction.orientation.w=1.;
+      auto blocked=world; blocked.push_back(cubeObject("HANDOFF_START_OBSTRUCTION",obstruction));
+      const bool collision_rejected=!planFixtureEmptyHandoff(node,lg,rg,state,false,false,lt,rt,blocked,
+        "HANDOFF_COLLISION_NEGATIVE",&lpath,&rpath);
+      const bool safe=planFixtureEmptyHandoff(node,lg,rg,state,false,false,lt,rt,world,
+        "EXACT_CUBE03_HANDOFF",&lpath,&rpath);
+      const auto final_world=remote.getObjects();
+      bool unchanged=original_world.size()==final_world.size();
+      for (const auto& [id,object]:original_world)
+      {
+        const auto found=final_world.find(id);
+        unchanged=unchanged && found!=final_world.end();
+        if (found!=final_world.end()) unchanged=unchanged &&
+          moveit_msgs::msg::to_yaml(object)==moveit_msgs::msg::to_yaml(found->second);
+      }
+      RCLCPP_INFO(node->get_logger(),"HANDOFF_REPLAY safe_pair=%s CLOSED_rejected=%s collision_start_rejected=%s remote_world_unchanged=%s; NOT_EXECUTED.",
+        safe ? "PASS":"FAIL",closed_rejected ? "PASS":"FAIL",collision_rejected ? "PASS":"FAIL",unchanged ? "PASS":"FAIL");
+      passed=safe && closed_rejected && collision_rejected && unchanged;
+    }
+    else if (diagnose_side_high)
     {
       // [ENGINEERING] 实测后抓固定、侧臂不同IK种子的只读终点诊断。
       // 不发任何机器人命令；当前Cube仍在本地FCL，不扩大ACM。
@@ -322,8 +389,8 @@ int main(int argc, char** argv)
     passed = false;
   }
   RCLCPP_INFO(node->get_logger(), "NO_COMMAND %s %s; no physical benchmark PASS implied.",
-    diagnose_side_high ? "measured side-high goal diagnostic" :
-      (diagnose_released_state ? "released static-state diagnostic" : "three nominal contact chains"),
+    diagnose_handoff ? "exact OPEN empty handoff replay" : (diagnose_side_high ? "measured side-high goal diagnostic" :
+      (diagnose_released_state ? "released static-state diagnostic" : "three nominal contact chains")),
     passed ? "PASS" : "FAIL");
   executor.cancel(); spin.join(); rclcpp::shutdown();
   return passed ? 0 : 1;

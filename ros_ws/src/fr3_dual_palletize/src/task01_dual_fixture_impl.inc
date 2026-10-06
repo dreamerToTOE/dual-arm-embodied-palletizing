@@ -113,6 +113,25 @@ bool copyFixtureKinematics(const rclcpp::Node::SharedPtr& node)
   return true;
 }
 
+// 只读复制本机OMPL配置；仅本节点副本用于OPEN转场，不写/move_group参数。
+bool copyFixtureEmptyPlannerConfig(const rclcpp::Node::SharedPtr& node)
+{
+  auto client=std::make_shared<rclcpp::AsyncParametersClient>(node,"/move_group");
+  if (!client->wait_for_service(3s)) return false;
+  auto listed=client->list_parameters({"move_group"},10);
+  if (rclcpp::spin_until_future_complete(node,listed,10s)!=rclcpp::FutureReturnCode::SUCCESS) return false;
+  const auto names=listed.get().names;
+  if (names.empty()) return false;
+  auto fetched=client->get_parameters(names);
+  if (rclcpp::spin_until_future_complete(node,fetched,10s)!=rclcpp::FutureReturnCode::SUCCESS) return false;
+  for (const auto& p:fetched.get())
+  {
+    if (p.get_type()==rclcpp::ParameterType::PARAMETER_NOT_SET) return false;
+    if (!node->has_parameter(p.get_name())) node->declare_parameter(p.get_name(),p.get_parameter_value());
+  }
+  return true;
+}
+
 // [ENGINEERING] 复用既有XYZ残差累加/1mm限步/FK微解算，只在后杯OPEN时精调。
 // RRT允许的毫米级到位残差不能直接带入双D6闭环；不放宽2.5mm原验收门限。
 bool refineOpenRearFixture(const rclcpp::Node::SharedPtr& node,
@@ -678,5 +697,166 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   output->left_end = ly; output->right_end = ry;
   phase_exit.success = true;
   return true;  // 清障包络已在负载推入之前预检；真正执行仍等待双OPEN。
+}
+// [ENGINEERING] 仅OPEN空载转场，直接复用本机MoveIt OMPL插件的局部场景。
+// 不启动额外move_group/后台沙箱，也不写远程Scene/参数。加密碰撞检查，
+// 使用不改变关节路点的IPTP计时；持件链/全局MoveIt默认计时保持不变。
+// 第一臂最多3候选；每个已通过联合FCL的第一臂终点，第二臂最多3候选。
+// 不再先选最短后丢弃整池，不改变RRTConnect、目标、ACM或清障距离。
+bool planFixtureEmptyHandoff(const rclcpp::Node::SharedPtr& node,
+  moveit::planning_interface::MoveGroupInterface& lg,
+  moveit::planning_interface::MoveGroupInterface& rg,
+  const moveit::core::RobotState& start, bool left_closed, bool right_closed,
+  const geometry_msgs::msg::Pose& left_target, const geometry_msgs::msg::Pose& right_target,
+  const std::vector<moveit_msgs::msg::CollisionObject>& world, const std::string& label,
+  trajectory_msgs::msg::JointTrajectory* left_out,
+  trajectory_msgs::msg::JointTrajectory* right_out)
+{
+  const auto model = start.getRobotModel();
+  const auto* lj = model->getJointModelGroup(lg.getName());
+  const auto* rj = model->getJointModelGroup(rg.getName());
+  const auto valid_pose = [](const geometry_msgs::msg::Pose& p) {
+    return fr3_dual_palletize::validFixturePose({p.position.x,p.position.y,p.position.z,
+      p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w});
+  };
+  std::vector<const moveit::core::AttachedBody*> attached;
+  start.getAttachedBodies(attached);
+  if (!left_out || !right_out || !lj || !rj || left_closed || right_closed ||
+      !attached.empty() || !valid_pose(left_target) || !valid_pose(right_target)) return false;
+  std::vector<double> lq,rq;
+  start.copyJointGroupPositions(lj,lq); start.copyJointGroupPositions(rj,rq);
+  if (!fr3_dual_palletize::validEmptyRetreatSeed(false,false,lq,rq,
+        lj->getVariableCount(),rj->getVariableCount()) || !start.satisfiesBounds()) return false;
+  trajectory_msgs::msg::JointTrajectory lp,rp;
+  lp.joint_names=lj->getVariableNames(); rp.joint_names=rj->getVariableNames();
+  if (!validateSync(node,model,world,holdTrajectory(lp,lq,.1),holdTrajectory(rp,rq,.1),
+      label+" SAME_MEASURED_START_CUBE_INCLUDED")) return false;
+  planning_pipeline::PlanningPipeline pipeline(model,node,"move_group",
+    "ompl_interface/OMPLPlanner",std::vector<std::string>{});
+  pipeline.displayComputedMotionPlans(false); pipeline.publishReceivedRequests(false);
+  auto configs=pipeline.getPlannerManager()->getPlannerConfigurations();
+  for (auto& [name,config]:configs)
+  {
+    (void)name;
+    config.config["longest_valid_segment_fraction"]="0.0005";
+  }
+  pipeline.getPlannerManager()->setPlannerConfigurations(configs);
+  const auto candidates = [&](moveit::planning_interface::MoveGroupInterface& group,
+      const moveit::core::RobotState& state, const geometry_msgs::msg::Pose& target)
+  {
+    std::vector<std::pair<double,trajectory_msgs::msg::JointTrajectory>> ranked;
+    const auto* own=model->getJointModelGroup(group.getName());
+    std::vector<double> seed; state.copyJointGroupPositions(own,seed);
+    group.setPlannerId("RRTConnectkConfigDefault");
+    group.setPlanningTime(3.0); group.setNumPlanningAttempts(1);
+    group.setMaxVelocityScalingFactor(.12); group.setMaxAccelerationScalingFactor(.12);
+    group.setPoseReferenceFrame("world"); group.setStartState(state);
+    const std::string eef=group.getName()==lg.getName() ? "left_fr3_side_suction_tcp" : "right_fr3_side_suction_tcp";
+    group.setEndEffectorLink(eef); group.clearPoseTargets();
+    if (!group.setPoseTarget(target,eef)) return ranked;
+    moveit_msgs::msg::MotionPlanRequest request;
+    group.constructMotionPlanRequest(request);
+    moveit::core::robotStateToRobotStateMsg(state,request.start_state);
+    request.start_state.is_diff=false;
+    auto local=std::make_shared<planning_scene::PlanningScene>(model);
+    local->setCurrentState(state);
+    for (const auto& object:world)
+      if (!local->processCollisionObjectMsg(object)) throw std::runtime_error("Invalid handoff scene object");
+    for (int attempt=1;attempt<=3;++attempt)
+    {
+      planning_interface::MotionPlanResponse response;
+      if (!pipeline.generatePlan(local,request,response) || !response.trajectory_ ||
+          response.error_code_.val!=moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
+      {
+        RCLCPP_WARN(node->get_logger(),"%s %s LOCAL_SCENE RRT failed attempt=%d/3.",
+          label.c_str(),group.getName().c_str(),attempt); continue;
+      }
+      moveit_msgs::msg::RobotTrajectory raw;
+      response.trajectory_->getRobotTrajectoryMsg(raw);
+      bool geometry_preserved=true;
+      trajectory_processing::IterativeParabolicTimeParameterization timing;
+      if (!timing.computeTimeStamps(*response.trajectory_,.12,.12)) continue;
+      moveit_msgs::msg::RobotTrajectory timed;
+      response.trajectory_->getRobotTrajectoryMsg(timed);
+      auto path=timed.joint_trajectory;
+      geometry_preserved=path.points.size()==raw.joint_trajectory.points.size();
+      for (std::size_t i=0;geometry_preserved && i<path.points.size();++i)
+        geometry_preserved=path.points[i].positions==raw.joint_trajectory.points[i].positions;
+      bool audit=false; node->get_parameter_or("empty_handoff_audit_totg",audit,false);
+      if (audit)
+      {
+        auto raw_path=raw.joint_trajectory; ensureTiming(raw_path);
+        trajectory_msgs::msg::JointTrajectory held; held.joint_names=(group.getName()==lg.getName() ? rj:lj)->getVariableNames();
+        std::vector<double> hq; state.copyJointGroupPositions(group.getName()==lg.getName() ? rj:lj,hq);
+        const auto check=[&](const auto& motion,const std::string& tag) {
+          return group.getName()==lg.getName() ?
+            validateSync(node,model,world,motion,holdTrajectory(held,hq,pointTime(motion.points.back())),tag) :
+            validateSync(node,model,world,holdTrajectory(held,hq,pointTime(motion.points.back())),motion,tag);
+        };
+        const bool raw_safe=check(raw_path,label+" RAW_GEOMETRIC_AB");
+        robot_trajectory::RobotTrajectory rounded(*response.trajectory_,true);
+        trajectory_processing::TimeOptimalTrajectoryGeneration totg;
+        bool rounded_safe=false;
+        if (totg.computeTimeStamps(rounded,.12,.12))
+        {
+          moveit_msgs::msg::RobotTrajectory output; rounded.getRobotTrajectoryMsg(output);
+          rounded_safe=check(output.joint_trajectory,label+" TOTG_AB_NOT_EXECUTED");
+        }
+        RCLCPP_INFO(node->get_logger(),"%s %s SAME_RAW_PATH_AB raw_safe=%s default_TOTG_safe=%s IPTP_geometry_exact=%s; NO_PHYSICS.",
+          label.c_str(),group.getName().c_str(),raw_safe ? "PASS":"FAIL",rounded_safe ? "PASS":"FAIL",geometry_preserved ? "PASS":"FAIL");
+      }
+      bool valid=geometry_preserved && path.joint_names==own->getVariableNames() && path.points.size()>=2;
+      double travel=0.,previous=-1.;
+      auto checked=state;
+      for (std::size_t i=0;valid && i<path.points.size();++i)
+      {
+        const auto& q=path.points[i].positions; const auto time=pointTime(path.points[i]);
+        valid=fr3_dual_palletize::validMeasuredJointSeed(q,seed.size()) &&
+          std::isfinite(time) && time>=0. && time>previous;
+        if (!valid) break;
+        for (std::size_t j=0;j<q.size();++j)
+        {
+          if (i==0 && std::abs(q[j]-seed[j])>1e-6) valid=false;
+          if (i) travel+=std::abs(q[j]-path.points[i-1].positions[j]);
+        }
+        checked.setJointGroupPositions(own,q); checked.update();
+        valid=valid && checked.satisfiesBounds(); previous=time;
+      }
+      bool goal_met=false;
+      if (valid) for (const auto& constraint:request.goal_constraints)
+      {
+        kinematic_constraints::KinematicConstraintSet set(model);
+        if (set.add(constraint,local->getTransforms()) && set.decide(checked).satisfied) goal_met=true;
+      }
+      valid=valid && goal_met;
+      RCLCPP_INFO(node->get_logger(),"%s %s LOCAL_SCENE RRT attempt=%d/3 numeric_start_goal=%s travel=%.3f.",
+        label.c_str(),group.getName().c_str(),attempt,valid ? "PASS":"FAIL",travel);
+      if (valid) { ensureTiming(path); ranked.emplace_back(travel,std::move(path)); }
+    }
+    group.clearPoseTargets(); group.setStartStateToCurrentState();
+    std::sort(ranked.begin(),ranked.end(),[](const auto& a,const auto& b) { return a.first<b.first; });
+    return ranked;
+  };
+  const auto left_paths=candidates(lg,start,left_target);
+  for (const auto& [left_cost,left_path]:left_paths)
+  {
+    (void)left_cost;
+    if (!validateSync(node,model,world,left_path,
+        holdTrajectory(rp,rq,pointTime(left_path.points.back())),label+" LEFT_POOL_FCL")) continue;
+    auto second_start=start;
+    second_start.setJointGroupPositions(lj,finalPositions(left_path)); second_start.update();
+    const auto right_paths=candidates(rg,second_start,right_target);
+    for (const auto& [right_cost,right_path]:right_paths)
+    {
+      (void)right_cost;
+      if (!validateSync(node,model,world,
+          holdTrajectory(lp,finalPositions(left_path),pointTime(right_path.points.back())),
+          right_path,label+" RIGHT_PREDICTED_PARTNER_FCL")) continue;
+      *left_out=left_path; *right_out=right_path;
+      RCLCPP_INFO(node->get_logger(),"%s SAFE_EMPTY_HANDOFF_PAIR_READY: sequential left/right, both OPEN, current Cube included; NOT_YET_EXECUTED.",label.c_str());
+      return true;
+    }
+  }
+  return false;
 }
 }  // namespace

@@ -15,6 +15,10 @@
 #include <algorithm>
 #ifdef TASK01_DUAL_SUCTION_FIXTURE
 #include "fr3_dual_palletize/dual_fixture_policy.hpp"
+#include <moveit/robot_state/conversions.h>
+#include <moveit/planning_pipeline/planning_pipeline.h>
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
+#include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
 #endif
 #ifdef TASK01_CUBE04_PRECISION_INSERT
 #include "fr3_dual_palletize/cube04_precision_policy.hpp"
@@ -3069,7 +3073,7 @@ int main(int argc, char** argv)
     return 1;
   }
 #ifdef TASK01_DUAL_SUCTION_FIXTURE
-  if (!copyFixtureKinematics(node))
+  if (!copyFixtureKinematics(node) || !copyFixtureEmptyPlannerConfig(node))
   {
     RCLCPP_ERROR(node->get_logger(), "TASK01 local paired candidate IK configuration unavailable; no commands.");
     rclcpp::shutdown();
@@ -5911,6 +5915,20 @@ int main(int argc, char** argv)
         const double staging_z = handoff_next_source.position.z +
           kSideContactCommandZOffset + kLiftHeight + 0.030;
         trajectory_msgs::msg::JointTrajectory next_left, next_right;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+        // 同一实测完整起点；先验第一臂候选，再按其终点规划第二臂。
+        // 请求局部场景与完整FCL一致，不忽略已放Cube，也不修改远程ACM。
+        const auto measured = left_group.getCurrentState(2.0);
+        const bool safe = measured && planFixtureEmptyHandoff(node, left_group, right_group,
+          *measured, left.isClosed(), right.isClosed(),
+          sidePose(handoff_next_source.position.x,
+            handoff_next_source.position.y - kCubeHalf - kSideContactCommandGap -
+              kPreContactOffsetY, staging_z, true),
+          sidePose(handoff_next_source.position.x,
+            handoff_next_source.position.y + kCubeHalf + kSideContactCommandGap +
+              kRightPreContactOffsetY, staging_z, false),
+          world, std::string(task.id) + " EARLY_HANDOFF", &next_left, &next_right);
+#else
         const bool safe =
           left.planPose(left_group,
             sidePose(handoff_next_source.position.x,
@@ -5931,6 +5949,7 @@ int main(int argc, char** argv)
             holdTrajectory(next_left, finalPositions(next_left),
               pointTime(next_right.points.back())), next_right,
             "Task27 EARLY_HANDOFF right -> next Cube");
+#endif
         if (!safe)
         {
           scene.removeCollisionObjects({object_id, handoff_next_id});
@@ -5941,9 +5960,34 @@ int main(int argc, char** argv)
             task.id, handoff_next_index + 1);
           return 0;
         }
-        if (!left.executeAt(next_left, std::chrono::steady_clock::now()) ||
-            !left.waitAtTarget(next_left, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
-            !right.executeAt(next_right, std::chrono::steady_clock::now()) ||
+        bool executed = left.executeAt(next_left, std::chrono::steady_clock::now()) &&
+          left.waitAtTarget(next_left, kJointSettleToleranceRad, kJointSettleTimeoutSec);
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+        // 左臂到位后再以其实际关节复验右段；预测终点不替代实测碰撞检查。
+        if (executed)
+        {
+          const auto actual = left_group.getCurrentState(2.0);
+          std::vector<double> actual_l, actual_r;
+          if (actual)
+          {
+            actual->copyJointGroupPositions(left_group.getRobotModel()->getJointModelGroup("left_arm"), actual_l);
+            actual->copyJointGroupPositions(left_group.getRobotModel()->getJointModelGroup("right_arm"), actual_r);
+          }
+          const auto near = [](const auto& actual_q, const auto& planned_q) {
+            if (!fr3_dual_palletize::validMeasuredJointSeed(actual_q, planned_q.size())) return false;
+            for (std::size_t j=0;j<actual_q.size();++j)
+              if (std::abs(actual_q[j]-planned_q[j])>kJointSettleToleranceRad) return false;
+            return true;
+          };
+          executed = actual && !left.isClosed() && !right.isClosed() &&
+            near(actual_l,finalPositions(next_left)) &&
+            near(actual_r,next_right.points.front().positions) &&
+            validateSync(node,left_group.getRobotModel(),world,
+              holdTrajectory(next_left,actual_l,pointTime(next_right.points.back())),next_right,
+              "Task01 EARLY_HANDOFF right actual partner FCL");
+        }
+#endif
+        if (!executed || !right.executeAt(next_right, std::chrono::steady_clock::now()) ||
             !right.waitAtTarget(next_right, kJointSettleToleranceRad, kJointSettleTimeoutSec))
         {
           RCLCPP_ERROR(node->get_logger(),

@@ -8,6 +8,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(moveit_ros_planning REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -712,6 +713,7 @@ target_link_libraries(task01_dual_suction_fixture yaml-cpp)
 ament_target_dependencies(task01_dual_suction_fixture
   ament_index_cpp rclcpp sensor_msgs std_msgs geometry_msgs shape_msgs
   trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
+  moveit_ros_planning
 )
 
 add_executable(task01_dual_fixture_probe src/task01_dual_fixture_probe.cpp)
@@ -720,6 +722,7 @@ target_link_libraries(task01_dual_fixture_probe yaml-cpp)
 ament_target_dependencies(task01_dual_fixture_probe
   ament_index_cpp rclcpp sensor_msgs std_msgs geometry_msgs shape_msgs
   trajectory_msgs moveit_msgs moveit_core moveit_ros_planning_interface
+  moveit_ros_planning
 )
 
 # 只读回归探针，与真实执行器共用实现，不构造 Arm 命令发布器。
