@@ -1,6 +1,63 @@
 // [ADAPTATION]/[ENGINEERING] 仅新独立目标包含；复用同一规划/同步/FCL实现。
 namespace
 {
+// [ENGINEERING] 单消息内的Cube/双TCP来自一个live PhysX步，不拼三个latest话题。
+// 旧Task26/27及精确单rear流程保持原样；新3+2节点缺消息时拒绝启动/继续。
+class FixtureGeometryBuffer
+{
+public:
+  FixtureGeometryBuffer(const rclcpp::Node::SharedPtr& node, std::size_t cube_count)
+    : count_(cube_count)
+  {
+    subscription_ = node->create_subscription<geometry_msgs::msg::PoseArray>(
+      "/task01/physics/fixture_geometry", 10,
+      [this](const geometry_msgs::msg::PoseArray::SharedPtr message) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        const std::int64_t stamp = static_cast<std::int64_t>(message->header.stamp.sec)*1000000000LL +
+          message->header.stamp.nanosec;
+        bool valid = message->header.frame_id == "world" && message->poses.size() == count_+2 &&
+          fr3_dual_palletize::validFixtureStamp(stamp, stamp_);
+        for (const auto& p : message->poses)
+          valid = valid && fr3_dual_palletize::validFixturePose({p.position.x, p.position.y,
+            p.position.z, p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w});
+        ready_ = valid;
+        if (valid) {
+          poses_ = message->poses; stamp_ = stamp;
+          received_ = std::chrono::steady_clock::now();
+        }
+        condition_.notify_all();
+      });
+  }
+  bool wait(double timeout_sec) const
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return condition_.wait_for(lock, std::chrono::duration<double>(timeout_sec),
+      [this] { return freshLocked(); });
+  }
+  bool fresh() const
+  { std::lock_guard<std::mutex> lock(mutex_); return freshLocked(); }
+  bool get(std::size_t index, geometry_msgs::msg::Pose* cube,
+    geometry_msgs::msg::Pose* left, geometry_msgs::msg::Pose* right, std::int64_t* stamp) const
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!freshLocked() || index >= count_ || !cube || !left || !right || !stamp) return false;
+    *cube = poses_.at(index); *left = poses_.at(count_); *right = poses_.at(count_+1);
+    *stamp = stamp_; return true;
+  }
+private:
+  bool freshLocked() const
+  { return ready_ && fr3_dual_palletize::freshFixtureReceipt(std::chrono::duration<double>(
+      std::chrono::steady_clock::now()-received_).count()); }
+  std::size_t count_;
+  mutable std::mutex mutex_;
+  mutable std::condition_variable condition_;
+  bool ready_{false};
+  std::int64_t stamp_{0};
+  std::chrono::steady_clock::time_point received_{};
+  std::vector<geometry_msgs::msg::Pose> poses_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
+};
+
 geometry_msgs::msg::Pose dualSideFixturePose(double x, double y, double z, bool left,
   double world_y_roll_deg)
 {
@@ -164,7 +221,8 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   moveit::planning_interface::MoveGroupInterface& rg,
   moveit::planning_interface::PlanningSceneInterface& scene,
   const Arm& left, const Arm& right, const Arm& rear, const Arm& side,
-  const CubeBuffer& cubes, const TcpBuffer& lt, const TcpBuffer& rt,
+  const CubeBuffer& cubes,
+  const FixtureGeometryBuffer& fixture_geometry,
   const ForceBuffer& lf, const ForceBuffer& rf, const OfflineTask& task,
   DualFixtureMotion* output)
 {
@@ -218,9 +276,15 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
   };
   const auto geometry = [&](bool require_closed, const std::string& label)
   {
-    const auto [cube, revision] = cubes.get(task.cube_index); (void)revision;
-    const auto rear_tcp = rear.isLeft() ? lt.get() : rt.get();
-    const auto side_tcp = side_left ? lt.get() : rt.get();
+    geometry_msgs::msg::Pose cube, left_tcp, right_tcp;
+    std::int64_t stamp;
+    if (!fixture_geometry.get(task.cube_index, &cube, &left_tcp, &right_tcp, &stamp)) {
+      RCLCPP_ERROR(node->get_logger(), "%s %s atomic physics feedback missing/invalid/stale; no legacy fallback.",
+        task.id, label.c_str());
+      return false;
+    }
+    const auto& rear_tcp = rear.isLeft() ? left_tcp : right_tcp;
+    const auto& side_tcp = side_left ? left_tcp : right_tcp;
     const double rear_gap = cube.position.x - rear_tcp.position.x - kCubeHalf;
     const double side_gap = direction * (cube.position.y - side_tcp.position.y) - kCubeHalf;
     const double alignment = std::max({std::abs(rear_tcp.position.y - cube.position.y),
@@ -231,9 +295,9 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
     const bool closed = fr3_dual_palletize::validDualFixtureContactState(
       task.cube_index, rear.isClosed(), side.isClosed());
     RCLCPP_INFO(node->get_logger(),
-      "%s %s rear=%s side=%s rear_gap=%.3f mm side_gap=%.3f mm alignment=%.3f mm tilt=%.3f deg.",
+      "%s %s rear=%s side=%s rear_gap=%.3f mm side_gap=%.3f mm alignment=%.3f mm tilt=%.3f deg. physics_stamp_ns=%lld",
       task.id, label.c_str(), rear.isClosed() ? "CLOSED" : "OPEN", side.isClosed() ? "CLOSED" : "OPEN",
-      rear_gap * 1000.0, side_gap * 1000.0, alignment * 1000.0, tilt);
+      rear_gap * 1000.0, side_gap * 1000.0, alignment * 1000.0, tilt, static_cast<long long>(stamp));
     return std::isfinite(alignment) && std::isfinite(rear_gap) && std::isfinite(side_gap) &&
       std::isfinite(tilt) && rear_gap >= kMinAttachmentGap && side_gap >= kMinAttachmentGap &&
       rear_gap <= kMaxAttachmentGap && side_gap <= kMaxAttachmentGap &&
@@ -330,14 +394,16 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
           !sliceTrajectory(r, duration * (slice-1) / kPushSlices, duration * slice / kPushSlices, &rpart) ||
           !executeSync(left, lpart, right, rpart, [&] {
             const double left_torque = lf.peak(), right_torque = rf.peak();
-            const bool safe = rclcpp::ok() && rear.isClosed() && side.isClosed() &&
+            const bool fresh_feedback = fixture_geometry.fresh();
+            const bool safe = rclcpp::ok() && fresh_feedback && rear.isClosed() && side.isClosed() &&
               std::isfinite(left_torque) && std::isfinite(right_torque) &&
               std::max(left_torque, right_torque) <= kPushTorqueLimit;
             if (!safe)
               RCLCPP_ERROR(node->get_logger(),
-                "%s %s slice=%d active interlock: rear=%s side=%s left_peak=%.3f Nm right_peak=%.3f Nm (limit=%.3f); no later command.",
+                "%s %s slice=%d active interlock: rear=%s side=%s left_peak=%.3f Nm right_peak=%.3f Nm (limit=%.3f) atomic_feedback=%s; no later command.",
                 task.id, label.c_str(), slice, rear.isClosed() ? "CLOSED" : "OPEN",
-                side.isClosed() ? "CLOSED" : "OPEN", left_torque, right_torque, kPushTorqueLimit);
+                side.isClosed() ? "CLOSED" : "OPEN", left_torque, right_torque, kPushTorqueLimit,
+                fresh_feedback ? "FRESH" : "STALE_OR_INVALID");
             return safe;
           }) || !geometry(true, label + " slice " + std::to_string(slice))) return false;
       const auto [actual, revision] = cubes.get(task.cube_index); (void)revision;

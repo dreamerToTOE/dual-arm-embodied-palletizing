@@ -3073,6 +3073,9 @@ int main(int argc, char** argv)
   ForceBuffer right_forces(node, taskTopic("/right/measured_joint_forces"));
   TcpBuffer left_tcp(node, taskTopic("/left/side_suction_tcp_pose"));
   TcpBuffer right_tcp(node, taskTopic("/right/side_suction_tcp_pose"));
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  FixtureGeometryBuffer fixture_geometry(node, cube_count);
+#endif
   auto feed_command_pub = node->create_publisher<std_msgs::msg::Int32>(taskTopic("/feed_command"), 10);
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 4);
   executor.add_node(node);
@@ -3099,6 +3102,14 @@ int main(int argc, char** argv)
       RCLCPP_ERROR(node->get_logger(), "Task26 等待侧吸盘 TCP Ground Truth 超时。");
       break;
     }
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+    if (!fixture_geometry.wait(10.0))
+    {
+      RCLCPP_ERROR(node->get_logger(),
+        "TASK01 requires /task01/physics/fixture_geometry: load the atomic PhysX adapter before running; no Arm/robot command started.");
+      break;
+    }
+#endif
     Arm left(node, true, time_scale);
     Arm right(node, false, time_scale);
     if (!left.waitBridge() || !right.waitBridge())
@@ -5648,7 +5659,7 @@ int main(int argc, char** argv)
       if (dual_fixture)
       {
         if (!runDualFixture(node, left_group, right_group, scene, left, right,
-              pusher, helper, cubes, left_tcp, right_tcp, left_forces, right_forces,
+              pusher, helper, cubes, fixture_geometry, left_forces, right_forces,
               task, &dual_motion))
         {
           openBothAndConfirm("safe abort during dual fixture contact/push");
