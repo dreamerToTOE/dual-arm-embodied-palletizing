@@ -20,28 +20,6 @@ Eigen::Isometry3d fixturePoseTransform(const geometry_msgs::msg::Pose& pose)
   return transform;
 }
 
-bool copyProbeKinematics(const rclcpp::Node::SharedPtr& node)
-{
-  // 探针需要本地 IK；原执行器 computeCartesianPath 是远端 MoveIt 服务。
-  // 读取当前运行 MoveIt 的参数，不硬编码插件，也不修改 MoveIt 参数。
-  auto client = std::make_shared<rclcpp::AsyncParametersClient>(node, "/move_group");
-  const auto listed = client->list_parameters({}, 10);
-  if (rclcpp::spin_until_future_complete(node, listed, 10s) != rclcpp::FutureReturnCode::SUCCESS)
-    return false;
-  std::vector<std::string> names;
-  for (const auto& name : listed.get().names)
-    if (name.find("kinematics_solver") != std::string::npos) names.push_back(name);
-  if (names.empty()) return false;
-  const auto values = client->get_parameters(names);
-  if (rclcpp::spin_until_future_complete(node, values, 10s) != rclcpp::FutureReturnCode::SUCCESS)
-    return false;
-  for (const auto& value : values.get())
-  {
-    if (value.get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET) return false;
-    node->declare_parameter(value.get_name(), value.get_parameter_value());
-  }
-  return true;
-}
 }
 
 int main(int argc, char** argv)
@@ -51,6 +29,7 @@ int main(int argc, char** argv)
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
   const bool diagnose_side_high = node->declare_parameter<bool>("diagnose_side_high", false);
   const bool diagnose_rear_search = node->declare_parameter<bool>("diagnose_rear_search", false);
+  const bool diagnose_fixture_chain = node->declare_parameter<bool>("diagnose_fixture_chain", false);
   const auto diagnostic_left_q = node->declare_parameter<std::vector<double>>("diagnostic_left_q", std::vector<double>{});
   const auto diagnostic_right_q = node->declare_parameter<std::vector<double>>("diagnostic_right_q", std::vector<double>{});
   const auto diagnostic_cube = node->declare_parameter<std::vector<double>>("diagnostic_cube", std::vector<double>{});
@@ -58,8 +37,10 @@ int main(int argc, char** argv)
   // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
   const double rear_roll_magnitude_deg = node->declare_parameter<double>("rear_roll_magnitude_deg", 0.0);
+  node->declare_parameter<double>("dual_fixture_side_roll_world_y_deg", side_roll_world_y_deg);
   const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
   if ((diagnose_released_state && diagnose_side_high) || (diagnose_rear_search && !diagnose_side_high) ||
+      (diagnose_fixture_chain && !diagnose_rear_search) ||
       !fr3_dual_palletize::validSideFixtureRoll(side_roll_world_y_deg) ||
       !fr3_dual_palletize::validRearFixtureRoll(rear_roll_magnitude_deg))
     { rclcpp::shutdown(); return 1; }
@@ -71,7 +52,7 @@ int main(int argc, char** argv)
     audit_file.open(wrist_audit_path);
     if (!audit_file) { rclcpp::shutdown(); return 1; }
   }
-  if (!copyRobotDescriptions(node) || !copyProbeKinematics(node))
+  if (!copyRobotDescriptions(node) || !copyFixtureKinematics(node))
     { rclcpp::shutdown(); return 1; }
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
@@ -160,6 +141,18 @@ int main(int argc, char** argv)
       passed=free>0;
       if (diagnose_rear_search)
       {
+        const auto check_chain=[&](const moveit::core::RobotState& state,const std::string& label)
+        {
+          std::vector<double> lq,rq;
+          state.copyJointGroupPositions(lj,lq); state.copyJointGroupPositions(rj,rq);
+          trajectory_msgs::msg::JointTrajectory ls,rs,lx,rx,le_path,re_path;
+          ls.joint_names=lj->getVariableNames(); rs.joint_names=rj->getVariableNames();
+          ls=holdTrajectory(ls,lq,.1); rs=holdTrajectory(rs,rq,.1);
+          return preflightDualFixtureRearCandidate(node,lg,rg,ls,rs,cube,kTasks.at(diagnostic_index),
+            world,label,&lx,&rx,&le_path,&re_path);
+        };
+        if (diagnose_fixture_chain && check_chain(original,"RECORDED_BLOCKED_REAR"))
+          throw std::runtime_error("Recorded blocked rear unexpectedly passed coupled gate");
         // [EXPERIMENTAL] 保持同一rear TCP位姿，寻找空载重抓可选冗余构型。
         // 仅本地RobotState假设，不移动实物，不在CLOSED时变更任何关节。
         const auto* rear=side_left ? rj:lj;
@@ -198,6 +191,7 @@ int main(int argc, char** argv)
           collision_detection::CollisionResult contact_collision;
           collision_scene.checkCollision(request,contact_collision,at_contact);
           if (contact_collision.collision || !at_contact.satisfiesBounds()) continue;
+          if (diagnose_fixture_chain && !check_chain(candidate,"ALTERNATIVE_REAR attempt="+std::to_string(attempt))) continue;
           ++paired_free;
           candidate.copyJointGroupPositions(rear,q);
           std::ostringstream exact; exact<<std::setprecision(17)<<'[';
@@ -205,7 +199,8 @@ int main(int argc, char** argv)
           exact<<']';
           RCLCPP_INFO(node->get_logger(),"REAR_REDUNDANCY_DIAGNOSTIC FREE attempt=%d rear_q=%s; same rear TCP, side HIGH+CONTACT full FCL; NOT_EXECUTED.",attempt,exact.str().c_str());
         }
-        RCLCPP_INFO(node->get_logger(),"REAR_REDUNDANCY_DIAGNOSTIC rear_solved=%d paired_free=%d/3 within40seeds; endpoint-only, no connection or physics proof.",rear_solved,paired_free);
+        RCLCPP_INFO(node->get_logger(),"REAR_REDUNDANCY_DIAGNOSTIC rear_solved=%d paired_free=%d/3 within40seeds; %s, no HIGH RRT connection or physics proof.",
+          rear_solved,paired_free,diagnose_fixture_chain ? "continuous CONTACT/X/Y/short exit checked":"endpoint-only");
         passed=paired_free>0;
       }
     }

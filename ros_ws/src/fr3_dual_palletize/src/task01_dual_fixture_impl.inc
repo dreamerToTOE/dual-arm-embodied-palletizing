@@ -83,6 +83,36 @@ struct DualFixtureMotion
   trajectory_msgs::msg::JointTrajectory left_end, right_end, left_exit, right_exit;
 };
 
+bool copyFixtureKinematics(const rclcpp::Node::SharedPtr& node)
+{
+  // [ENGINEERING] 新节点的本地候选IK读取正在使用的MoveIt插件；旧节点不启用。
+  // 在加入工作executor前、有界异步读取；缺配置就拒绝，不改远端参数。
+  auto client = std::make_shared<rclcpp::AsyncParametersClient>(node, "/move_group");
+  const auto listed = client->list_parameters({}, 10);
+  if (rclcpp::spin_until_future_complete(node, listed, 10s) != rclcpp::FutureReturnCode::SUCCESS)
+    return false;
+  std::vector<std::string> names;
+  for (const auto& name : listed.get().names)
+    if ((name.find("robot_description_kinematics.") == 0 ||
+         name.find("left_arm.") == 0 || name.find("right_arm.") == 0) &&
+        name.find("kinematics_solver") != std::string::npos) names.push_back(name);
+  if (names.empty())
+  {
+    RCLCPP_ERROR(node->get_logger(), "No current MoveIt arm kinematics parameters found.");
+    return false;
+  }
+  const auto values = client->get_parameters(names);
+  if (rclcpp::spin_until_future_complete(node, values, 10s) != rclcpp::FutureReturnCode::SUCCESS)
+    return false;
+  for (const auto& value : values.get())
+  {
+    if (value.get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET) return false;
+    if (!node->has_parameter(value.get_name()))
+      node->declare_parameter(value.get_name(), value.get_parameter_value());
+  }
+  return true;
+}
+
 // [ENGINEERING] 复用既有XYZ残差累加/1mm限步/FK微解算，只在后杯OPEN时精调。
 // RRT允许的毫米级到位残差不能直接带入双D6闭环；不放宽2.5mm原验收门限。
 bool refineOpenRearFixture(const rclcpp::Node::SharedPtr& node,
@@ -302,6 +332,107 @@ double dualFixturePressY(const OfflineTask& task, double actual_y, double direct
   // [ADAPTATION] 双杯闭环持件时以既有贴墙格位为终点，不沿用旧未吸附侧压的
   // 4 mm 穿墙命令；场景、格位、验收门限和旧节点的参数/行为全部保持不变。
   return task.cube_index < 2 ? task.cell.position.y : actual_y + direction * kInnerLateralTrim;
+}
+
+// [ENGINEERING] rear候选不能只通过旧solo推入；必须给新rear+side链留下空间。
+// 全部为本地假设/无命令预检：HIGH终点、连续下降、同进度X/Y及短退出。
+// 不声称HIGH的RRT连接已验证；现场runDualFixture仍从实测状态完整检查再执行。
+bool preflightDualFixtureRearCandidate(const rclcpp::Node::SharedPtr& node,
+  moveit::planning_interface::MoveGroupInterface& lg,
+  moveit::planning_interface::MoveGroupInterface& rg,
+  const trajectory_msgs::msg::JointTrajectory& ls,
+  const trajectory_msgs::msg::JointTrajectory& rs,
+  const geometry_msgs::msg::Pose& cube, const OfflineTask& task,
+  const std::vector<moveit_msgs::msg::CollisionObject>& contact_world,
+  const std::string& label, trajectory_msgs::msg::JointTrajectory* xleft,
+  trajectory_msgs::msg::JointTrajectory* xright,
+  trajectory_msgs::msg::JointTrajectory* exit_left,
+  trajectory_msgs::msg::JointTrajectory* exit_right)
+{
+  if (!fr3_dual_palletize::dualFixtureRequired(task.cube_index) || ls.points.empty() ||
+      rs.points.empty() || !xleft || !xright || !exit_left || !exit_right) return false;
+  const auto model=lg.getRobotModel();
+  const auto* lj=model->getJointModelGroup("left_arm");
+  const auto* rj=model->getJointModelGroup("right_arm");
+  const bool side_left=task.cube_index!=1;
+  const auto* side=side_left ? lj:rj;
+  const std::string eef=side_left ? "left_fr3_side_suction_tcp":"right_fr3_side_suction_tcp";
+  if (!lj || !rj || !model->hasLinkModel(eef) || !side->getSolverInstance()) return false;
+  moveit::core::RobotState original(model);
+  original.setToDefaultValues();
+  original.setVariablePositions(ls.joint_names, finalPositions(ls));
+  original.setVariablePositions(rs.joint_names, finalPositions(rs)); original.update();
+  if (!original.satisfiesBounds()) return false;
+  planning_scene::PlanningScene collision_scene(model);
+  for (const auto& object:contact_world)
+    if (!collision_scene.processCollisionObjectMsg(object)) return false;
+  const auto roll=node->get_parameter("dual_fixture_side_roll_world_y_deg").as_double();
+  const double direction=side_left ? 1.:-1.;
+  const auto high=dualSideFixturePose(cube.position.x,
+    cube.position.y-direction*(kCubeHalf+kSideContactCommandGap),
+    cube.position.z+kRegraspLiftHeight,side_left,roll);
+  auto contact=high; contact.position.z=cube.position.z;
+  Eigen::Isometry3d high_tf=Eigen::Isometry3d::Identity();
+  high_tf.translation()=Eigen::Vector3d(high.position.x,high.position.y,high.position.z);
+  high_tf.linear()=Eigen::Quaterniond(high.orientation.w,high.orientation.x,
+    high.orientation.y,high.orientation.z).normalized().toRotationMatrix();
+  auto moving_world=contact_world;
+  const auto id="task26_cube_"+std::to_string(task.cube_index+1);
+  // 与原合法接触推入一致，仅运动中的当前Cube不作为静态障碍；不改远端Scene/ACM。
+  moving_world.erase(std::remove_if(moving_world.begin(),moving_world.end(),
+    [&](const auto& object) { return object.id==id; }),moving_world.end());
+  int solved=0,high_free=0;
+  for (int sample=0;sample<60 && rclcpp::ok();++sample)
+  {
+    auto state=original;
+    if (sample)
+    {
+      std::vector<double> q; original.copyJointGroupPositions(side,q);
+      const auto& names=side->getVariableNames();
+      for (std::size_t joint=0;joint<q.size();++joint)
+      {
+        const auto& bound=model->getVariableBounds(names[joint]);
+        const double fraction=.01+.98*((sample*17+static_cast<int>(joint)*7)%101)/100.;
+        q[joint]=bound.min_position_+fraction*(bound.max_position_-bound.min_position_);
+      }
+      state.setJointGroupPositions(side,q); state.update();
+    }
+    if (!state.setFromIK(side,high_tf,eef,.05)) continue;
+    state.update();
+    if (!state.satisfiesBounds()) continue;
+    ++solved;
+    if (collision_scene.isStateColliding(state)) continue;
+    ++high_free;
+    trajectory_msgs::msg::JointTrajectory approach;
+    if (!planSeededEmptyCartesian(node,state,side,eef,contact,
+          label+" SIDE_DESCENT seed="+std::to_string(sample),&approach)) continue;
+    std::vector<double> lq,rq;
+    state.copyJointGroupPositions(lj,lq); state.copyJointGroupPositions(rj,rq);
+    trajectory_msgs::msg::JointTrajectory lc,rc;
+    lc.joint_names=lj->getVariableNames(); rc.joint_names=rj->getVariableNames();
+    const double duration=pointTime(approach.points.back());
+    lc=side_left ? approach:holdTrajectory(lc,lq,duration);
+    rc=side_left ? holdTrajectory(rc,rq,duration):approach;
+    if (!validateSync(node,model,contact_world,lc,rc,label+" SIDE_DESCENT_WITH_FREE_CUBE")) continue;
+    trajectory_msgs::msg::JointTrajectory lx,rx,ly,ry,le,re;
+    const double press_y=dualFixturePressY(task,cube.position.y,direction);
+    if (!planDualFixtureTranslation(node,lg,rg,lc,rc,task.cell.position.x-cube.position.x,0.,
+          moving_world,label+" DUAL_X",&lx,&rx) ||
+        !planDualFixtureTranslation(node,lg,rg,lx,rx,0.,press_y-cube.position.y,
+          moving_world,label+" DUAL_Y",&ly,&ry) ||
+        !planDualFixtureReleaseExit(node,model,ly,ry,side_left,moving_world,
+          label+" DUAL_SHORT_EXIT",&le,&re)) continue;
+    *xleft=std::move(lx); *xright=std::move(rx);
+    *exit_left=std::move(le); *exit_right=std::move(re);
+    RCLCPP_INFO(node->get_logger(),
+      "%s COUPLED_REAR_PREFLIGHT PASS seed=%d: HIGH/continuous CONTACT/X/Y/short exit; no commands, HIGH RRT connection still required.",
+      label.c_str(),sample);
+    return true;
+  }
+  RCLCPP_WARN(node->get_logger(),
+    "%s COUPLED_REAR_PREFLIGHT rejected: IK_solved=%d HIGH_free=%d /60; reject before rear CLOSE, not global infeasibility proof.",
+    label.c_str(),solved,high_free);
+  return false;
 }
 
 bool runDualFixture(const rclcpp::Node::SharedPtr& node,

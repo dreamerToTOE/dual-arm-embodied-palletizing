@@ -3068,6 +3068,14 @@ int main(int argc, char** argv)
     rclcpp::shutdown();
     return 1;
   }
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  if (!copyFixtureKinematics(node))
+  {
+    RCLCPP_ERROR(node->get_logger(), "TASK01 local paired candidate IK configuration unavailable; no commands.");
+    rclcpp::shutdown();
+    return 1;
+  }
+#endif
 
   const std::size_t cube_count = kTasks.size();
   CubeBuffer cubes(node, cube_count);
@@ -4224,7 +4232,21 @@ int main(int argc, char** argv)
           }
           auto regrasp_candidate = candidates[index];
           trajectory_msgs::msg::JointTrajectory push_l, push_r, ret_l, ret_r;
-          const bool chain_ok = push_left
+          bool chain_ok = false;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+          if (fr3_dual_palletize::dualFixtureRequired(task.cube_index))
+          {
+            // 仅新前三件：不能让旧solo-safe rear构型挡住随后进入的side工具。
+            chain_ok=preflightDualFixtureRearCandidate(node,left_group,right_group,
+              push_left ? regrasp_candidate:hold_right,
+              push_left ? hold_right:regrasp_candidate,regrasp_cube,task,
+              world_with_regrasp_cube,
+              stage_prefix+" REGRASP_CANDIDATE_"+std::to_string(index+1),
+              &push_l,&push_r,&ret_l,&ret_r);
+          }
+          else
+#endif
+          chain_ok = push_left
             ? (planAndCheckCommon(node, left_group, right_group, left, right,
                  finalPositions(regrasp_candidate), finalPositions(hold_right),
                  rearPoseForTask(push_cell_x, push_cube_y, push_cube_z), helper_park,
