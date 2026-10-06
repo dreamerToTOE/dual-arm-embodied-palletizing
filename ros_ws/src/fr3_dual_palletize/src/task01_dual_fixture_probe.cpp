@@ -7,6 +7,7 @@
 #include "task26_truck_box_push_in.cpp"
 #undef main
 #include <iomanip>
+#include <filesystem>
 
 namespace
 {
@@ -50,8 +51,17 @@ int main(int argc, char** argv)
   const bool diagnose_released_state = node->declare_parameter<bool>("diagnose_released_state", false);
   // [EXPERIMENTAL] 只读检查绕杯面法向的腕部转角；不改变中心吸点/法向或执行器。
   const double side_roll_world_y_deg = node->declare_parameter<double>("side_roll_world_y_deg", 0.0);
+  const auto wrist_audit_path = node->declare_parameter<std::string>("wrist_audit_path", "");
   if (!std::isfinite(side_roll_world_y_deg) || std::abs(side_roll_world_y_deg) > 30.0)
     { rclcpp::shutdown(); return 1; }
+  std::ofstream audit_file;
+  if (!wrist_audit_path.empty())
+  {
+    // 不覆盖已有记录；机器可读数据不能与多线程rosout/stdout日志混写。
+    if (std::filesystem::exists(wrist_audit_path)) { rclcpp::shutdown(); return 1; }
+    audit_file.open(wrist_audit_path);
+    if (!audit_file) { rclcpp::shutdown(); return 1; }
+  }
   if (!copyRobotDescriptions(node) || !copyProbeKinematics(node))
     { rclcpp::shutdown(); return 1; }
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -161,6 +171,7 @@ int main(int argc, char** argv)
           const trajectory_msgs::msg::JointTrajectory& lp,
           const trajectory_msgs::msg::JointTrajectory& rp)
         {
+          if (!audit_file.is_open()) return;
           for (std::size_t point = 0; point < lp.points.size(); ++point)
           {
             state.setVariablePositions(lp.joint_names, lp.points.at(point).positions);
@@ -169,12 +180,14 @@ int main(int argc, char** argv)
             {
               const auto& transform = state.getGlobalLinkTransform(arm + "_fr3_link7");
               const Eigen::Quaterniond q(transform.rotation());
-              std::cout << std::setprecision(17) << "HELD_HULL_AUDIT " << task.id << ' '
+              audit_file << std::setprecision(17) << "HELD_HULL_AUDIT " << task.id << ' '
                 << stage << ' ' << point << ' ' << arm << ' ' << transform.translation().x()+g_world_shift_x
                 << ' ' << transform.translation().y() << ' ' << transform.translation().z()
                 << ' ' << q.x() << ' ' << q.y() << ' ' << q.z() << ' ' << q.w() << '\n';
             }
           }
+          audit_file.flush();
+          if (!audit_file) throw std::runtime_error("Wrist audit write failed");
         };
         audit("CONTACT", ls, rs); audit("X", lx, rx); audit("Y", ly, ry);
         found = true; break;
