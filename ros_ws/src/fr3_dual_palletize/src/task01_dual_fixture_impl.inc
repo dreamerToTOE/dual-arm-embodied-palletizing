@@ -7,7 +7,7 @@ class FixtureGeometryBuffer
 {
 public:
   FixtureGeometryBuffer(const rclcpp::Node::SharedPtr& node, std::size_t cube_count)
-    : count_(cube_count)
+    : count_(cube_count), node_(node)
   {
     subscription_ = node->create_subscription<geometry_msgs::msg::PoseArray>(
       "/task01/physics/fixture_geometry", 10,
@@ -15,6 +15,7 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         const std::int64_t stamp = static_cast<std::int64_t>(message->header.stamp.sec)*1000000000LL +
           message->header.stamp.nanosec;
+        incoming_stamp_ = stamp;
         bool valid = message->header.frame_id == "world" && message->poses.size() == count_+2 &&
           fr3_dual_palletize::validFixtureStamp(stamp, stamp_);
         for (const auto& p : message->poses)
@@ -36,6 +37,21 @@ public:
   }
   bool fresh() const
   { std::lock_guard<std::mutex> lock(mutex_); return freshLocked(); }
+  bool playbackStamp(std::int64_t* stamp) const
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!stamp || !freshLocked()) {
+      RCLCPP_ERROR(node_->get_logger(),
+        "PhysX playback feedback rejection: ready=%s age_ms=%.3f accepted_stamp_ns=%lld "
+        "last_incoming_stamp_ns=%lld; original250ms gate unchanged.",
+        ready_ ? "true" : "false", 1000.0*std::chrono::duration<double>(
+          std::chrono::steady_clock::now()-received_).count(),
+        static_cast<long long>(stamp_), static_cast<long long>(incoming_stamp_));
+      return false;
+    }
+    *stamp = stamp_;
+    return true;
+  }
   bool get(std::size_t index, geometry_msgs::msg::Pose* cube,
     geometry_msgs::msg::Pose* left, geometry_msgs::msg::Pose* right, std::int64_t* stamp) const
   {
@@ -49,10 +65,12 @@ private:
   { return ready_ && fr3_dual_palletize::freshFixtureReceipt(std::chrono::duration<double>(
       std::chrono::steady_clock::now()-received_).count()); }
   std::size_t count_;
+  rclcpp::Node::SharedPtr node_;
   mutable std::mutex mutex_;
   mutable std::condition_variable condition_;
   bool ready_{false};
   std::int64_t stamp_{0};
+  std::int64_t incoming_stamp_{0};
   std::chrono::steady_clock::time_point received_{};
   std::vector<geometry_msgs::msg::Pose> poses_;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
@@ -592,8 +610,15 @@ bool runDualFixture(const rclcpp::Node::SharedPtr& node,
     if (preview) { found = true; break; }
   }
   const auto approaching_guard = [&] {
-    return rclcpp::ok() && rear.isClosed() && !side.isClosed() &&
-      std::max(lf.peak(), rf.peak()) <= kPushTorqueLimit;
+    const double lp = lf.peak(), rp = rf.peak();
+    const bool safe = rclcpp::ok() && rear.isClosed() && !side.isClosed() &&
+      std::max(lp, rp) <= kPushTorqueLimit;
+    if (!safe) RCLCPP_ERROR(node->get_logger(),
+      "%s DUAL_SIDE_APPROACH active interlock: rear=%s side=%s left_peak=%.3f Nm "
+      "right_peak=%.3f Nm limit=%.3f Nm; no later command.", task.id,
+      rear.isClosed() ? "CLOSED" : "OPEN", side.isClosed() ? "CLOSED" : "OPEN",
+      lp, rp, kPushTorqueLimit);
+    return safe;
   };
   if (!found || !executeSync(left, la, right, ra, approaching_guard) ||
       !executeSync(left, lc, right, rc, approaching_guard)) return false;

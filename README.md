@@ -17,7 +17,9 @@
 GUI，不再由助手启动 headless。新 `task01_dual_suction_fixture` 默认
 `execution_time_scale=1.0`（按规划时间正常播放）；此前实测 `5.0` 是20%播放，
 不是50%。MoveIt RRT 的速度/加速度限制仍为12%，正常播放不等于关节极限速度。
-正常倍率的物理验收尚未完成，旧慢速结果不能替代。完整 GUI 场景/Bridge 加载步骤见
+当前Task01以已有原子PhysX时间戳计轨迹进度，GUI低于实时不会把规划秒变成
+隐性加速；缺失/回退/原250ms过期即停止，无现实墙钟兜底。正常倍率GUI首测
+侧下降跟踪/接触保护失败，修复候选仍待复测，旧慢速结果不能替代。完整 GUI 场景/Bridge 加载步骤见
 [当前运行约定](docs/STARTUP_GUIDE.md#当前task01复现节点gui运行约定2026-10-06)。
 
 - [总体项目规划](docs/PROJECT_PLAN.md)

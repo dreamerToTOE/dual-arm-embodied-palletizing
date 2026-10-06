@@ -29,4 +29,13 @@ inline bool validFixtureStamp(std::int64_t stamp, std::int64_t previous)
 { return stamp > 0 && stamp > previous; }
 inline bool freshFixtureReceipt(double age_sec)
 { return std::isfinite(age_sec) && age_sec >= 0.0 && age_sec <= 0.25; }
+// [ENGINEERING] GUI可能低于实时；规划秒应对应真实PhysX秒，不是现实墙钟。
+// 调用者先验证原250ms收件新鲜度；同一个stamp轮询时保持进度，回退则拒绝。
+inline bool fixturePlaybackElapsed(std::int64_t origin, std::int64_t previous,
+  std::int64_t current, double* elapsed)
+{
+  if (!elapsed || origin <= 0 || previous < origin || current < previous) return false;
+  *elapsed = static_cast<double>(current - origin) * 1e-9;
+  return std::isfinite(*elapsed);
+}
 }  // namespace fr3_dual_palletize

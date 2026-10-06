@@ -229,6 +229,10 @@ std::string taskTopic(const std::string& suffix)
 // 偏移集中在这三个构造函数里：模型侧的目标一律减去它，而 worldPose() 保持不动
 // （task.pre_push / task.cell 仍按仿真世界坐标用于 Ground Truth 复核）。
 double g_world_shift_x = 0.0;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+// 仅Task01使用已有原子PhysX反馈计时；不新增/拼接时钟或改旧Task26/27。
+std::function<bool(std::int64_t*)> g_fixture_playback_stamp;
+#endif
 
 geometry_msgs::msg::Pose worldPose(double x, double y, double z)
 {
@@ -1129,10 +1133,24 @@ public:
     };
     std::size_t segment = 0;
     const double duration = pointTime(trajectory.points.back());
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+    std::int64_t physics_start = 0, physics_previous = 0;
+    if (!playbackStamp(&physics_start)) return false;
+    physics_previous = physics_start;
+#endif
     while (true)
     {
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      std::int64_t stamp = 0;
+      double physical_elapsed = 0.0;
+      if (!playbackStamp(&stamp) || !fr3_dual_palletize::fixturePlaybackElapsed(
+            physics_start, physics_previous, stamp, &physical_elapsed)) return false;
+      physics_previous = stamp;
+      const double logical_time = physical_elapsed / time_scale_;
+#else
       const double logical_time = std::chrono::duration<double>(
         std::chrono::steady_clock::now() - start).count() / time_scale_;
+#endif
       if (logical_time > duration)
       {
         break;
@@ -1147,6 +1165,10 @@ public:
     }
     for (int repeat = 0; repeat < kFinalCommandHold; ++repeat)
     {
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+      std::int64_t stamp = 0;
+      if (!playbackStamp(&stamp)) return false;
+#endif
       publish(trajectory.points.back().positions);
       std::this_thread::sleep_for(10ms);
     }
@@ -1186,6 +1208,16 @@ public:
   {
     return time_scale_;
   }
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  bool playbackStamp(std::int64_t* stamp) const
+  {
+    if (stamp && g_fixture_playback_stamp && g_fixture_playback_stamp(stamp)) return true;
+    RCLCPP_ERROR(node_->get_logger(),
+      "%s playback clock rejected: atomic PhysX feedback missing/invalid/stale; "
+      "no wall-clock fallback and no later trajectory command.", side_.c_str());
+    return false;
+  }
+#endif
 
   bool waitAtTarget(const trajectory_msgs::msg::JointTrajectory& trajectory,
                     double tolerance_rad, double timeout_sec) const
@@ -1370,12 +1402,25 @@ bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& l
   // 使用 0..1 的三次平滑时间律 3u^2-2u^3：起止速度为零，两个 Articulation
   // 共享同一 phase 与总时长。Task26 实测它的连续倾角小于五次时间律，故保留。
   const double physical_duration = common_duration * left.timeScale();
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+  std::int64_t physics_start = 0, physics_previous = 0;
+  if (!left.playbackStamp(&physics_start)) return false;
+  physics_previous = physics_start;
+#endif
   std::size_t tick = 0;
   while (true)
   {
     if (active_guard && !active_guard()) return false;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+    std::int64_t physics_now = 0;
+    double elapsed = 0.0;
+    if (!left.playbackStamp(&physics_now) || !fr3_dual_palletize::fixturePlaybackElapsed(
+          physics_start, physics_previous, physics_now, &elapsed)) return false;
+    physics_previous = physics_now;
+#else
     const auto now = std::chrono::steady_clock::now();
     const double elapsed = std::chrono::duration<double>(now - start).count();
+#endif
     const double linear_phase = std::clamp(elapsed / physical_duration, 0.0, 1.0);
     const double smooth_phase = linear_phase * linear_phase * (3.0 - 2.0 * linear_phase);
     const auto stamp = left.nowMsg();
@@ -1392,6 +1437,10 @@ bool executeSync(const Arm& left, const trajectory_msgs::msg::JointTrajectory& l
   for (int repeat = 0; repeat < kFinalCommandHold; ++repeat)
   {
     if (active_guard && !active_guard()) return false;
+#ifdef TASK01_DUAL_SUCTION_FIXTURE
+    std::int64_t held_physics_stamp = 0;
+    if (!left.playbackStamp(&held_physics_stamp)) return false;
+#endif
     const auto stamp = left.nowMsg();
     left.publishAt(left_command, left_duration, stamp);
     right.publishAt(right_command, right_duration, stamp);
@@ -2998,7 +3047,8 @@ int main(int argc, char** argv)
   }
   RCLCPP_INFO(node->get_logger(),
     "Task01 trajectory playback = %.1f%% (execution_time_scale=%.2f); "
-    "MoveIt RRT velocity/acceleration limits remain 12%%; not 100%% joint-limit speed.",
+    "timeline=atomic PhysX seconds; MoveIt RRT velocity/acceleration limits remain 12%%; "
+    "not 100%% joint-limit speed.",
     100.0 / time_scale, time_scale);
 #else
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
@@ -3106,6 +3156,9 @@ int main(int argc, char** argv)
   TcpBuffer right_tcp(node, taskTopic("/right/side_suction_tcp_pose"));
 #ifdef TASK01_DUAL_SUCTION_FIXTURE
   FixtureGeometryBuffer fixture_geometry(node, cube_count);
+  g_fixture_playback_stamp = [&fixture_geometry](std::int64_t* stamp) {
+    return fixture_geometry.playbackStamp(stamp);
+  };
 #endif
   auto feed_command_pub = node->create_publisher<std_msgs::msg::Int32>(taskTopic("/feed_command"), 10);
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 4);
