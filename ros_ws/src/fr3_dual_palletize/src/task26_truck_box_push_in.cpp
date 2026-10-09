@@ -1499,7 +1499,9 @@ double cartesianLineDeviation(
   {
     return std::numeric_limits<double>::infinity();
   }
-  const auto poseAt = [&](const std::vector<double>& positions) {
+  // translation() 是引用 RobotState 内部数据的 Eigen 视图；返回独立数值，
+  // 避免局部 state 析构后，调用方才读取已失效的视图。
+  const auto poseAt = [&](const std::vector<double>& positions) -> Eigen::Vector3d {
     moveit::core::RobotState state(model);
     state.setToDefaultValues();
     state.setVariablePositions(trajectory.joint_names, positions);
@@ -3541,8 +3543,9 @@ int main(int argc, char** argv)
       trajectory_msgs::msg::JointTrajectory inner_press_left, inner_press_right;
 #endif
 
-      // Task27 外侧件的重抓候选还必须允许后续侧压。此回调在下方定义好
-      // planSideCompaction 后赋值；Task26 和 Task27 内侧/中央件不改变筛选链。
+      // 复用 Task27 已验证的后续侧压整链筛选：Task26 的后抓候选也必须
+      // 能从同一 PUSH 末端完成侧压。Task27 内侧/中央件仍保持原排除规则。
+      // 此回调在下方定义好 planSideCompaction 后赋值。
       std::function<bool(
         const trajectory_msgs::msg::JointTrajectory&,
         const trajectory_msgs::msg::JointTrajectory&,
@@ -3813,6 +3816,7 @@ int main(int argc, char** argv)
             ret_l = std::move(trim_exit_l);
             ret_r = std::move(trim_exit_r);
           }
+#endif
           if ((lift_already_done || planning_only) && !isStraightInsertTask(task) && side_preflight)
           {
             // 在真正吸住 -X 面之前，用同一候选的 PUSH 末端预演侧压。
@@ -3837,7 +3841,6 @@ int main(int argc, char** argv)
               "%s REGRASP_CANDIDATE_%zu PREPUSH_SIDE_PREFLIGHT PASS: "
               "推入前已从同一 PUSH 末端验证侧压整链。", task.id, index + 1);
           }
-#endif
           *left_regrasp_out = std::move(regrasp_candidate);
           *left_push_out = std::move(push_l);
           *right_hold_push_out = std::move(push_r);
@@ -4100,7 +4103,6 @@ int main(int argc, char** argv)
         return selected;
       };
 
-#ifdef TASK27_FIVE_CUBE
       side_preflight = [&](const trajectory_msgs::msg::JointTrajectory& left_push,
                            const trajectory_msgs::msg::JointTrajectory& right_push,
                            const geometry_msgs::msg::Pose& predicted_seat,
@@ -4110,7 +4112,6 @@ int main(int argc, char** argv)
         return planSideCompaction(left_push, right_push, predicted_seat,
           label + " PREPUSH_SIDE_PREFLIGHT", &plan);
       };
-#endif
 
       if (planning_only)
       {
