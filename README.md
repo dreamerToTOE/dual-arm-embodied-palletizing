@@ -2,6 +2,8 @@
 
 面向混合尺寸箱体码垛的双机械臂协调规划与控制项目。
 
+> 🔬 **当前研发路线（2026-10-25）**：本分支以 **Task24–27 已验收的 L 型阵列侧吸 + 双 FR3 + 车厢推入工艺**为研究起点，按 [Task28：P1–P5 方法迁移与分阶段门禁路线](docs/tasks/TASK28_PAPER_TO_MAIN_RESEARCH_ROADMAP.md) 逐关验证 P4-NR、P5-QP、P2 有限吸附/内力和 B 阶段混合状态机。下方 2026-09-15 的夹爪切换声明、Task04–22 顶吸冻结均是**历史路线记录，保留不删除，但不是本分支当前的实验选择**。RL 的具体学习目标与优劣比较延后，未给出结论。
+
 > 🧊 **路线冻结（2026-09-15）**：Task04–Task22-D 的顶部吸盘实现、场景和验收记录已作为可复现实验基线冻结并保留。根据教师要求，后续末端执行器主线切换为 FR3 二指夹爪；在新的夹爪抓取与规划策略确定前，不再扩展吸盘功能。
 
 当前工程采用 **Isaac Sim 4.5 + ROS 2 Humble + MoveIt 2 / OMPL + Franka FR3**，主线目标是完成：
@@ -53,6 +55,7 @@
 - [Task 25 — 分批到料的侧面吸盘紧协调码垛](docs/tasks/TASK25_BATCHED_FEED_PALLETIZING.md)
 - [Task 26 — 车厢三面围墙 + 预推入位](docs/tasks/TASK26_TRUCK_BOX_PUSH_IN.md)
 - [Task 27 — 五 Cube 第一层：边侧基准 + 中心插入](docs/tasks/TASK27_FIVE_CUBE_CENTER_INSERT.md)
+- [Task 28 — P1–P5 融合启发与后续逐关验收路线](docs/tasks/TASK28_PAPER_TO_MAIN_RESEARCH_ROADMAP.md)
 - [吸盘路线冻结记录（Task04–Task22-D）](docs/tasks/SUCTION_BASELINE_FREEZE.md)
 - [项目 Skill — 松协调独立物体码垛](ros_ws/src/fr3_dual_palletize/skills/loose_coordination_palletizing.yaml)
 - [项目 Skill — 紧协调共同物体搬运](ros_ws/src/fr3_dual_palletize/skills/tight_coordination_shared_object.yaml)
@@ -103,6 +106,7 @@ exec(open("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task
 | 25 | 分批到料的侧面吸盘紧协调码垛 | 🟡 场景、bridge 与执行器均已实现并通过编译与冒烟检查（休眠区瞬移、批 1 自动到料、到料判定 `feed_state`、批间共同 HOME 退出）；Isaac 物理验收待执行 |
 | 26 | 车厢三面围墙 + 预推入位（两件 `+Y` 行基线） | ✅ 已完成两件 Isaac 物理闭环，并完成独立重复复测。深位/浅位 Cube 均完成紧协调搬运、`+X` 推入、`+Y` 侧压贴墙、安全退出与共同 HOME；最新复测的最差位置误差 `1.101 mm`，最差支撑/侧墙间隙 `1.088 mm`。重抓阶段采用三批 RRTConnect 候选并以“重抓→推入→退出”整链 FCL 筛选，避免随机腕部冗余分支造成后续 Cartesian 推入失效。 |
 | 27 | 五 Cube 第一层：边侧基准 + 中心插入 | ✅ 2026-09-29 Task27 专用 `606 mm` 内宽、动态实测通道居中版在 Isaac Sim 4.5 + MoveIt2 中**单进程连续实体完成五件**，exit 0、双臂回 HOME。第 3/4 件短侧压后邻件间隙 `0.898/1.147 mm`，中央件两侧 `1.569/1.310 mm`（差 `0.259 mm`），五件格位误差最大 `1.434 mm`。双臂同步退出，三次安全跳过批间 HOME；一次 FCL 拒绝则回退 HOME。单轮约 `21 min 16 s`；随机规划/物理残差仍需同配置多轮统计。详见 [Task27 记录](docs/tasks/TASK27_FIVE_CUBE_CENTER_INSERT.md)。 |
+| 28 | P1–P5 启发：P4-NR → P5-QP → P2 限力/内力 → B 接触混合自动机；RL 仅预留接口 | 📝 DESIGN，G0 只读审计待启动；后续逐关批准 |
 
 ## 已冻结的吸盘基线结论
 
