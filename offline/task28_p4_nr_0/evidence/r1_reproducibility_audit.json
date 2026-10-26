@@ -1,0 +1,1303 @@
+{
+  "schema": "task28.g1_p4_nr_0_r1.audit.v1",
+  "status": "G1_P4_NR_0_R1_PARTIAL",
+  "audit_mode": "historical_read_only_audit_then_user_authorized_two_file_archival",
+  "expected_head": "94118e2984810e3251e04e5fce93d3a77226c7c0",
+  "local_head": "94118e2984810e3251e04e5fce93d3a77226c7c0",
+  "remote_head": "94118e2984810e3251e04e5fce93d3a77226c7c0",
+  "branch": "side-suction-palletizing",
+  "worktree_clean": true,
+  "commit_integrity": {
+    "object_type": "commit",
+    "parent": "5417da1a76a2a496f2e14993cc765a45f2133aff",
+    "fsck_exit_code": 0,
+    "missing_or_corrupt_objects": [],
+    "dangling_objects_count": 16,
+    "dangling_object_types": {
+      "blob": 16
+    },
+    "dangling_object_impact": "unreferenced local blobs only; HEAD integrity unaffected",
+    "dangling_object_ids_recorded": false
+  },
+  "artifact_integrity": {
+    "protected_original_files": 369,
+    "artifact_manifest_files_excluding_self": 52,
+    "protected_files_rechecked": true,
+    "manifest_sha256": "f463fdb041620343a46d83d6332c04d4475536d7ec9fead837a090f5edb5b87a"
+  },
+  "algorithm_static_audit": {
+    "status": "PASS",
+    "p4_correspondence": "PASS",
+    "genuine_search": "PASS",
+    "parent_edge_reconstruction": "PASS",
+    "frozen_validator_reuse": "PASS",
+    "limitations": [
+      "fixed-object 12x14 adaptation",
+      "2D redundancy fibre not explicitly explored",
+      "finite sampled B0/RBS",
+      "B1 continuous collision and moving closed-chain inconclusive"
+    ]
+  },
+  "tests": {
+    "status": "PASS",
+    "passed": 466,
+    "fresh_runtime_s": 83.65,
+    "fresh_log": "/tmp/task28_g1_p4_nr_0_r1_tests2/regression_466.txt",
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1 python3 -m pytest offline/task28_g1_1/tests offline/task28_g1_2a/tests offline/task28_g1_2b_0/tests offline/task28_g1_2b_1/tests offline/task28_p4_nr_0/tests -q -p no:cacheprovider",
+    "exit_code": 0,
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONPATH": "offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1"
+    }
+  },
+  "fresh_experiment": {
+    "registered_output": "offline/task28_p4_nr_0/evidence/experiments_v1",
+    "fresh_output": "/tmp/task28_g1_p4_nr_0_r1_exp2",
+    "exit_code": 0,
+    "scientific_fields_exclude_timing": [
+      "CPU_wall_s",
+      "computation_time_s",
+      "control_wall_s",
+      "peak_main_RSS_KiB",
+      "planning_time_s",
+      "runtime_s"
+    ],
+    "synthetic_temporal_evidence_retained": "time_s, evidence identities and event ordering were compared; only measured performance fields were excluded",
+    "all_three_seeds_scientific_equal": true,
+    "rows": [
+      {
+        "seed": 28,
+        "summary_scientific_equal": true,
+        "result_scientific_equal": true,
+        "search_events_scientific_equal": true,
+        "old_event_count": 691,
+        "fresh_event_count": 691,
+        "old_planning_time_s": 87.33307143399725,
+        "fresh_planning_time_s": 86.29394920900086,
+        "metrics": {
+          "sampled_nodes": 7,
+          "accepted_tree_nodes": 7,
+          "ik_attempts": 226,
+          "ik_failures": 0,
+          "candidate_connection_attempts": 440,
+          "collision_rejections": 0,
+          "closure_rejections": 0,
+          "joint_limit_rejections": 0,
+          "other_gate_rejections": 0,
+          "leaf_edges_checked": 224,
+          "full_candidate_attempts": 1,
+          "path_translation_length_m": 0.4720281303353699,
+          "path_rotation_length_rad": 0.024151800188084674,
+          "path_joint_length_rad": 2.4729813666843445,
+          "path_waypoints": 209,
+          "maximum_sampled_closure_translation_m": 4.634665369651974e-06,
+          "maximum_sampled_closure_rotation_rad": 5.877241847613556e-06,
+          "minimum_joint_limit_margin_rad": 0.26321142637442074
+        }
+      },
+      {
+        "seed": 29,
+        "summary_scientific_equal": true,
+        "result_scientific_equal": true,
+        "search_events_scientific_equal": true,
+        "old_event_count": 605,
+        "fresh_event_count": 605,
+        "old_planning_time_s": 58.91103320699767,
+        "fresh_planning_time_s": 58.989598684995144,
+        "metrics": {
+          "sampled_nodes": 12,
+          "accepted_tree_nodes": 12,
+          "ik_attempts": 194,
+          "ik_failures": 0,
+          "candidate_connection_attempts": 371,
+          "collision_rejections": 0,
+          "closure_rejections": 0,
+          "joint_limit_rejections": 0,
+          "other_gate_rejections": 0,
+          "leaf_edges_checked": 192,
+          "full_candidate_attempts": 1,
+          "path_translation_length_m": 0.3020338282963839,
+          "path_rotation_length_rad": 0.028978201019587133,
+          "path_joint_length_rad": 1.7007279047212287,
+          "path_waypoints": 137,
+          "maximum_sampled_closure_translation_m": 5.519578015373797e-06,
+          "maximum_sampled_closure_rotation_rad": 1.3403479834817372e-05,
+          "minimum_joint_limit_margin_rad": 0.2692227147503692
+        }
+      },
+      {
+        "seed": 30,
+        "summary_scientific_equal": true,
+        "result_scientific_equal": true,
+        "search_events_scientific_equal": true,
+        "old_event_count": 825,
+        "fresh_event_count": 825,
+        "old_planning_time_s": 69.77944600099727,
+        "fresh_planning_time_s": 69.44204942400393,
+        "metrics": {
+          "sampled_nodes": 14,
+          "accepted_tree_nodes": 14,
+          "ik_attempts": 266,
+          "ik_failures": 0,
+          "candidate_connection_attempts": 513,
+          "collision_rejections": 0,
+          "closure_rejections": 0,
+          "joint_limit_rejections": 0,
+          "other_gate_rejections": 0,
+          "leaf_edges_checked": 264,
+          "full_candidate_attempts": 1,
+          "path_translation_length_m": 0.3196088666049041,
+          "path_rotation_length_rad": 0.02048533493759453,
+          "path_joint_length_rad": 1.7834877716675606,
+          "path_waypoints": 153,
+          "maximum_sampled_closure_translation_m": 6.437022047521627e-06,
+          "maximum_sampled_closure_rotation_rad": 7.291396729661878e-06,
+          "minimum_joint_limit_margin_rad": 0.26783150829506264
+        }
+      }
+    ],
+    "old_cpu_wall_s": 228.38314482299756,
+    "fresh_cpu_wall_s": 226.9609538520017,
+    "old_peak_rss_kib": 254392,
+    "fresh_peak_rss_kib": 268016,
+    "negative_controls_scientific_equal": true,
+    "command": "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 timeout --signal=TERM --kill-after=10s 900s python3 -u offline/task28_p4_nr_0/run_experiments.py --output /tmp/task28_g1_p4_nr_0_r1_exp2",
+    "environment": {
+      "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+      "numpy": "1.24.4",
+      "scipy": "1.8.0",
+      "fcl_version": "0.7.0",
+      "fcl_library_sha256": "0bb493f432f0a38ff605198937a037e1c41f1d5fb6dfc36473988da973b5dc05",
+      "CPU_only": true,
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "raw_outputs_archived": false,
+    "raw_outputs_note": "Fresh raw gzip/JSON files remain temporary and are not included in the two-file archival commit. Raw hashes and matching canonical scientific fingerprints are recorded in archival.comparison.file_receipts; the corresponding full scientific content remains in committed NR-0 archives.",
+    "environment_provenance": {
+      "python_and_platform": "Recorded directly in fresh summary, embedded under archival.fresh_summary_record.",
+      "package_versions_and_FCL_hash": "Committed NR-0 dependency identities, matching current metadata-only recheck; no new environment-installation or numerical experiment.",
+      "thread_environment": "Exact R1 command retained in this record and task execution history."
+    }
+  },
+  "negative_controls": {
+    "seed128": "planner-level necessary-reach precondition rejection; 0 samples/NR/edges, not a full sampled-path failure",
+    "seed129": "single-state NR + original gate; wrong grasp rotation ~0.2 rad and 4 tool/Cube FCL pairs; complete planning attempt false",
+    "seed130": "single-state NR + original gate; closure valid, Cube/table 4 contacts with 20 mm penetration; complete planning attempt false"
+  },
+  "nr1_preregistration": {
+    "implemented": false,
+    "executed": false,
+    "queries": 2,
+    "seeds": [
+      131,
+      132,
+      133
+    ],
+    "baseline": "128-point SE(3) geodesic object interpolation with q14 linear interpolation, original G1/B0 gates",
+    "qualification": "case counts only if baseline has a recorded first failure; otherwise marked non-hard and not tuned",
+    "planner_budget": "existing bounded planner configuration, fixed before run; no fixture/ACM/model change",
+    "acceptance": "planner finds sampled+R1 candidate for a qualified case; B1 remains separate INCONCLUSIVE",
+    "status_note": "Historical proposal only, not an implemented or finalized executable protocol; archival does not revise or authorize it."
+  },
+  "limitations": [
+    "three fixed seeds only",
+    "open single-Cube scene yielded zero primary rejection events",
+    "continuous collision and moving closed-chain certification unresolved",
+    "absolute source_result paths are host-specific",
+    "runner summary uses any(run.found) for PASS; this batch had all three seeds found, but NR-1 should require per-seed accounting"
+  ],
+  "no_execution": true,
+  "stop_after": "G1-P4-NR-0-R1",
+  "durable_evidence_references": [
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiment_manifest.json",
+      "sha256": "c296fc6eaf48da04556f8322ad5cfbc0bef3abbe82981cec3cd707f2f2a092ee"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/dependency_identities.json",
+      "sha256": "6e03ca62018e5a5948da16a37ae26583b5ec9d0d5505555f45e4cd2eb85f3815"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/protected_baseline.json",
+      "sha256": "58e21225ad5fbc4da172d5edd142757286bb5dad9772e7dd791db33cabdfe3ec"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/artifact_manifest.json",
+      "sha256": "f463fdb041620343a46d83d6332c04d4475536d7ec9fead837a090f5edb5b87a"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/acceptance.json",
+      "sha256": "988f3f58f58ff3bd0b6f0325846073b8bbe9fcb14616d2e762f34acd0e600794"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/final_review.json",
+      "sha256": "43fc23c7ba07a37da8b4ac39fda983834371e351ec871321f14c44d7b0535730"
+    }
+  ],
+  "durable_evidence_references_note": "The manifest, dependency identity, protected baseline, artifact inventory, acceptance and prior review files are committed NR-0 evidence; their hashes bind this audit without treating temporary /tmp files as archived.",
+  "worktree_clean_scope": "Historical audit start, before creating its two untracked reports; archival staging and delivery state are verified separately.",
+  "archival": {
+    "kind": "DOCUMENTATION_EVIDENCE_ONLY",
+    "starting_commit": "94118e2984810e3251e04e5fce93d3a77226c7c0",
+    "authorized_files": [
+      "docs/tasks/TASK28_G1_P4_NR_0_R1_REPRODUCIBILITY_AUDIT.md",
+      "offline/task28_p4_nr_0/evidence/r1_reproducibility_audit.json"
+    ],
+    "historical_audit_status_unchanged": "G1_P4_NR_0_R1_PARTIAL",
+    "NR0_offline_sampled_status": "G1_P4_NR_0_PASS",
+    "R1_reproducibility_status": "PASS_WITH_SAME_ENVIRONMENT_SCOPE",
+    "remaining_research_validity_status": "PARTIAL",
+    "continuous_safety": "OFFLINE_CANDIDATE_UNCERTIFIED; moving closed-chain and collision certificates remain inconclusive; execution_authorized=false",
+    "no_new_planning_or_tests": true,
+    "scope": "Read existing R1 files, hash/compare saved artifacts, and archive only these two audit documents; no planner/fixture/validator/ACM/acceptance changes.",
+    "raw_output_preservation": "No fresh raw gzip archive is added; /tmp is not permanent. Full scientific data identical to committed NR-0 archives remains retrievable from that commit; timing summaries and small execution receipts are embedded below.",
+    "same_environment_limit": "Fresh output replay and independent field comparison on the same host/dependencies; not a third-party-personnel or cross-platform reproduction.",
+    "current_environment_metadata_recheck": {
+      "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+      "numpy": "1.24.4",
+      "scipy": "1.8.0",
+      "fcl_library_sha256": "0bb493f432f0a38ff605198937a037e1c41f1d5fb6dfc36473988da973b5dc05"
+    },
+    "comparison": {
+      "excluded_exact_dictionary_keys": [
+        "CPU_wall_s",
+        "computation_time_s",
+        "control_wall_s",
+        "peak_main_RSS_KiB",
+        "planning_time_s",
+        "runtime_s"
+      ],
+      "protected_fields": "time_s, timestamps, IDs, observation provenance, array order, NR values, poses, q14, reasons, all acceptance gates, all proof statuses remain included.",
+      "canonical_format": "UTF-8 json.dumps(sort_keys=True,separators=(comma,colon),ensure_ascii=True,allow_nan=False); JSONL hashes concatenate each canonical event plus LF, preserving event order.",
+      "reproduction_python": "import collections, gzip, hashlib, json, pathlib, sys\nEXCLUDED = frozenset(('CPU_wall_s','computation_time_s','control_wall_s','peak_main_RSS_KiB','planning_time_s','runtime_s'))\ndef normalize(value):\n    if isinstance(value, dict):\n        return {k:normalize(v) for k,v in value.items() if k not in EXCLUDED}\n    if isinstance(value, list):\n        return [normalize(v) for v in value]\n    return value\ndef canonical(value):\n    return json.dumps(normalize(value),sort_keys=True,separators=(',',':'),ensure_ascii=True,allow_nan=False).encode('utf-8')\ndef fingerprint(path):\n    digest=hashlib.sha256(); records=0\n    if path.name.endswith('.jsonl.gz'):\n        with gzip.open(path,'rt',encoding='utf-8') as stream:\n            for line in stream:\n                digest.update(canonical(json.loads(line))+b'\\n'); records+=1\n    else:\n        with (gzip.open(path,'rt',encoding='utf-8') if path.suffix=='.gz' else path.open(encoding='utf-8')) as stream:\n            digest.update(canonical(json.load(stream))); records=1\n    data=path.read_bytes()\n    return {'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'scientific_sha256':digest.hexdigest(),'canonical_record_count':records}\ndef compare_outputs(archived,fresh):\n    names=['summary.json','negative_controls.json.gz']+[f'seed_{seed}/{name}' for seed in (28,29,30) for name in ('summary.json','result.json.gz','search_events.jsonl.gz')]\n    rows=[]\n    for name in names:\n        old=fingerprint(archived/name); new=fingerprint(fresh/name)\n        equal=old['scientific_sha256']==new['scientific_sha256'] and old['canonical_record_count']==new['canonical_record_count']\n        rows.append({'relative_path':name,'archived':old,'fresh':new,'scientific_equal':equal})\n        if not equal:raise AssertionError('SCIENTIFIC_MISMATCH:'+name)\n    return rows\nif __name__=='__main__':\n    archived=pathlib.Path('offline/task28_p4_nr_0/evidence/experiments_v1')\n    fresh=pathlib.Path(sys.argv[1])\n    print(json.dumps(compare_outputs(archived,fresh),indent=2))\n",
+      "code_sha256": "4fce11af21d87058c58346add98c14eb86c21cd6fca280d73c2d7018dc95b6b4",
+      "file_receipts": [
+        {
+          "relative_path": "summary.json",
+          "archived": {
+            "bytes": 27484,
+            "sha256": "552554332b2924767b3eff766bc23d95ebf2ff3853de31b1cf2509f67ee34c82",
+            "scientific_sha256": "7d99d51582f82f74cbba7f5bdad5426de73e30977de2cd7b142e86bcb820aafb",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 27484,
+            "sha256": "e7aab06d3ecec18a5b0e73524c4e880725b499250ecc91432c7db8399cfdb01e",
+            "scientific_sha256": "7d99d51582f82f74cbba7f5bdad5426de73e30977de2cd7b142e86bcb820aafb",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "negative_controls.json.gz",
+          "archived": {
+            "bytes": 34204,
+            "sha256": "c60b5937f5ab085978a261f42d7f245db513a8474abc4413b89064ca30a97c16",
+            "scientific_sha256": "dcf1a3a93549944db099e7794ea5ae7ab8aeee790b195566c16c0e2bf3de3edf",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 34202,
+            "sha256": "19495ebec765daa45666ba9b0c0dfa07c0bcef71969cf8401e1686a1d26177b6",
+            "scientific_sha256": "dcf1a3a93549944db099e7794ea5ae7ab8aeee790b195566c16c0e2bf3de3edf",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_28/summary.json",
+          "archived": {
+            "bytes": 7664,
+            "sha256": "677fadfc6eebf6b1d4f00f089119e4d09ef0582bbf7bc517a00a84123bf6951a",
+            "scientific_sha256": "15e53d3f3fa200658402e9a4e44b7eaaf1ffb47593529e55c0b4bb2f36fa59db",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 7665,
+            "sha256": "5131eb7e46c0103e0ac0cb0e4dcd169ec1d080b7ccffcac0b0338b26f0dc94dc",
+            "scientific_sha256": "15e53d3f3fa200658402e9a4e44b7eaaf1ffb47593529e55c0b4bb2f36fa59db",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_28/result.json.gz",
+          "archived": {
+            "bytes": 5504208,
+            "sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+            "scientific_sha256": "8975f23ad544e81aa6f77a99bec7a6c5031232694746828a0773e83dbb3a05a4",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 5504187,
+            "sha256": "1df10d7531334b8d1fc2865d5ef7df1ac1d4c66551b7f9aba285eeedff3fe300",
+            "scientific_sha256": "8975f23ad544e81aa6f77a99bec7a6c5031232694746828a0773e83dbb3a05a4",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_28/search_events.jsonl.gz",
+          "archived": {
+            "bytes": 7233418,
+            "sha256": "8fa83aca772d9dafee1769925a07980c6ff2700ba3c45520228c342d8cb7d4fb",
+            "scientific_sha256": "0d03e8bc1d799ac3503a39d3da4f3bc2e887052e5adf16cb676509cb2a97482a",
+            "canonical_record_count": 691
+          },
+          "fresh": {
+            "bytes": 7233324,
+            "sha256": "971c96ffbbecbd7f8612d4c1a38d2e82587abe3e6b94312e22bd27162a9f42f9",
+            "scientific_sha256": "0d03e8bc1d799ac3503a39d3da4f3bc2e887052e5adf16cb676509cb2a97482a",
+            "canonical_record_count": 691
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_29/summary.json",
+          "archived": {
+            "bytes": 7662,
+            "sha256": "fe9564429cebbeada9df490c4fecff8bbf36a6695dcbeaa2d9f54d93754f113a",
+            "scientific_sha256": "93b28e40b4dc2f74db347aed33800045de2f37b9d0404c31857aa7d46e7b7a4b",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 7662,
+            "sha256": "dbdc42ceced78047f9206a3048de135fb3e371d9bf8682ac16cfda89996ef33e",
+            "scientific_sha256": "93b28e40b4dc2f74db347aed33800045de2f37b9d0404c31857aa7d46e7b7a4b",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_29/result.json.gz",
+          "archived": {
+            "bytes": 3734005,
+            "sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711",
+            "scientific_sha256": "3eeed32eeae2c8b49e17aa260169a110e85b5c7dc9a79a18c0898ef89615f7d2",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 3734005,
+            "sha256": "729073e24071ec66c5b34ad0bca3d29e4d7c5cda930f94edc01e530248337b30",
+            "scientific_sha256": "3eeed32eeae2c8b49e17aa260169a110e85b5c7dc9a79a18c0898ef89615f7d2",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_29/search_events.jsonl.gz",
+          "archived": {
+            "bytes": 5321302,
+            "sha256": "dd5530cfd41933dc7c3b8784e13062a3712d31cbe09fb11a70db78ed966977c7",
+            "scientific_sha256": "a6e2d8ae68754d2efee0b6ec5db0ff3c152374b67240528c165b7efb0aed23c1",
+            "canonical_record_count": 605
+          },
+          "fresh": {
+            "bytes": 5321320,
+            "sha256": "27be7d67bd55d476fe1d5bf54173b38c1cd390b20b7e9b4ffab3629a39dd6ace",
+            "scientific_sha256": "a6e2d8ae68754d2efee0b6ec5db0ff3c152374b67240528c165b7efb0aed23c1",
+            "canonical_record_count": 605
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_30/summary.json",
+          "archived": {
+            "bytes": 7664,
+            "sha256": "93edcc81ccd85c9e51e76e5443c5f54ef539d3c066e4dc1321e4435fe741403a",
+            "scientific_sha256": "8d1e2dd241290d9878cf22908a69b322f5840f93b539e171769486c696b7d43d",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 7664,
+            "sha256": "751ef6bb0fcdd0810b94dafeddb76602aa72f939ff5d6047a358066149672fbc",
+            "scientific_sha256": "8d1e2dd241290d9878cf22908a69b322f5840f93b539e171769486c696b7d43d",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_30/result.json.gz",
+          "archived": {
+            "bytes": 4033418,
+            "sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857",
+            "scientific_sha256": "e70cea81973e59370cd6a2f171bcd7d3e3b0d831211a8656e0dfba558fa101f8",
+            "canonical_record_count": 1
+          },
+          "fresh": {
+            "bytes": 4033488,
+            "sha256": "edb672a1e5bf71fb3769ddf261e7b9c87775582232aea66a089e03eb17942e0c",
+            "scientific_sha256": "e70cea81973e59370cd6a2f171bcd7d3e3b0d831211a8656e0dfba558fa101f8",
+            "canonical_record_count": 1
+          },
+          "scientific_equal": true
+        },
+        {
+          "relative_path": "seed_30/search_events.jsonl.gz",
+          "archived": {
+            "bytes": 6159963,
+            "sha256": "a49d08b021bac0de33d5b7162c65b4441325a4589da84ec47602231f6b4a42e9",
+            "scientific_sha256": "4e9748c4a2ba7ac68368ed0bcb71cdcf313eb5635e9f866b32caca9720cb682e",
+            "canonical_record_count": 825
+          },
+          "fresh": {
+            "bytes": 6159923,
+            "sha256": "c3d2e4b611720fa9fb8665c09788ae3583bbe21c9b97077abc29843378341f36",
+            "scientific_sha256": "4e9748c4a2ba7ac68368ed0bcb71cdcf313eb5635e9f866b32caca9720cb682e",
+            "canonical_record_count": 825
+          },
+          "scientific_equal": true
+        }
+      ],
+      "all_11_scientific_equal": true
+    },
+    "tests_log_record": {
+      "historical_source_path": "/tmp/task28_g1_p4_nr_0_r1_tests2/regression_466.txt",
+      "bytes": 591,
+      "sha256": "525c2cca0ec594faff00efcb36ed9a146d899e664b84d397ffb8ea2da43b813f",
+      "content_utf8": "........................................................................ [ 15%]\n........................................................................ [ 30%]\n........................................................................ [ 46%]\n........................................................................ [ 61%]\n........................................................................ [ 77%]\n........................................................................ [ 92%]\n..................................                                       [100%]\n466 passed in 83.65s (0:01:23)\n"
+    },
+    "tests_exit_record": {
+      "historical_source_path": "/tmp/task28_g1_p4_nr_0_r1_tests2/exit_code",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "content_utf8": "0\n"
+    },
+    "experiment_exit_record": {
+      "historical_source_path": "/tmp/task28_g1_p4_nr_0_r1_exp2_exit.json",
+      "bytes": 66,
+      "sha256": "86a1db8ca410c51b6a0ca229a4480ad3db0b3dddb84c7891201a5c1e2368ffdd",
+      "content_utf8": "{\n  \"exit_code\": 0,\n  \"output\": \"/tmp/task28_g1_p4_nr_0_r1_exp2\"\n}"
+    },
+    "experiment_console_record": {
+      "historical_source_path": "/tmp/task28_g1_p4_nr_0_r1_exp2_console.txt",
+      "bytes": 2361,
+      "sha256": "e2317d619062235094eb99f0cbbabf4b92e65b13d3feebf5695da75952feebe6",
+      "content_utf8": "NR_RUN 28 True ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE {'sampled_nodes': 7, 'accepted_tree_nodes': 7, 'ik_attempts': 226, 'ik_failures': 0, 'candidate_connection_attempts': 440, 'collision_rejections': 0, 'closure_rejections': 0, 'joint_limit_rejections': 0, 'other_gate_rejections': 0, 'leaf_edges_checked': 224, 'full_candidate_attempts': 1, 'rejection_reasons': {}, 'path_translation_length_m': 0.4720281303353699, 'path_rotation_length_rad': 0.024151800188084674, 'path_joint_length_rad': 2.4729813666843445, 'path_waypoints': 209, 'maximum_sampled_closure_translation_m': 4.634665369651974e-06, 'maximum_sampled_closure_rotation_rad': 5.877241847613556e-06, 'minimum_joint_limit_margin_rad': 0.26321142637442074, 'planning_time_s': 86.29394920900086}\nNR_RUN 29 True ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE {'sampled_nodes': 12, 'accepted_tree_nodes': 12, 'ik_attempts': 194, 'ik_failures': 0, 'candidate_connection_attempts': 371, 'collision_rejections': 0, 'closure_rejections': 0, 'joint_limit_rejections': 0, 'other_gate_rejections': 0, 'leaf_edges_checked': 192, 'full_candidate_attempts': 1, 'rejection_reasons': {}, 'path_translation_length_m': 0.3020338282963839, 'path_rotation_length_rad': 0.028978201019587133, 'path_joint_length_rad': 1.7007279047212287, 'path_waypoints': 137, 'maximum_sampled_closure_translation_m': 5.519578015373797e-06, 'maximum_sampled_closure_rotation_rad': 1.3403479834817372e-05, 'minimum_joint_limit_margin_rad': 0.2692227147503692, 'planning_time_s': 58.989598684995144}\nNR_RUN 30 True ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE {'sampled_nodes': 14, 'accepted_tree_nodes': 14, 'ik_attempts': 266, 'ik_failures': 0, 'candidate_connection_attempts': 513, 'collision_rejections': 0, 'closure_rejections': 0, 'joint_limit_rejections': 0, 'other_gate_rejections': 0, 'leaf_edges_checked': 264, 'full_candidate_attempts': 1, 'rejection_reasons': {}, 'path_translation_length_m': 0.3196088666049041, 'path_rotation_length_rad': 0.02048533493759453, 'path_joint_length_rad': 1.7834877716675606, 'path_waypoints': 153, 'maximum_sampled_closure_translation_m': 6.437022047521627e-06, 'maximum_sampled_closure_rotation_rad': 7.291396729661878e-06, 'minimum_joint_limit_margin_rad': 0.26783150829506264, 'planning_time_s': 69.44204942400393}\nFINAL_STATUS G1_P4_NR_0_PASS\n"
+    },
+    "fresh_summary_record": {
+      "status": "G1_P4_NR_0_PASS",
+      "runs": [
+        {
+          "found": true,
+          "reason": "ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE",
+          "seed": 28,
+          "start": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.65
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "goal": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.82
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              -0.075
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "statistics": {
+            "sampled_nodes": 7,
+            "accepted_tree_nodes": 7,
+            "ik_attempts": 226,
+            "ik_failures": 0,
+            "candidate_connection_attempts": 440,
+            "collision_rejections": 0,
+            "closure_rejections": 0,
+            "joint_limit_rejections": 0,
+            "other_gate_rejections": 0,
+            "leaf_edges_checked": 224,
+            "full_candidate_attempts": 1,
+            "rejection_reasons": {},
+            "path_translation_length_m": 0.4720281303353699,
+            "path_rotation_length_rad": 0.024151800188084674,
+            "path_joint_length_rad": 2.4729813666843445,
+            "path_waypoints": 209,
+            "maximum_sampled_closure_translation_m": 4.634665369651974e-06,
+            "maximum_sampled_closure_rotation_rad": 5.877241847613556e-06,
+            "minimum_joint_limit_margin_rad": 0.26321142637442074,
+            "planning_time_s": 86.29394920900086
+          },
+          "execution_authorized": false,
+          "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+          "continuous": {
+            "grasp_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.2602909350025584
+            },
+            "attachment_confirmation": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.40998828600277193
+            },
+            "vertical_lift": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 11.026722814996901
+            },
+            "bilateral_transport": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 12.947189354003058
+            },
+            "vertical_placement_and_support_hold": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 11.21301864200359
+            },
+            "release_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.39771176800422836
+            }
+          },
+          "sampled": {
+            "grasp_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": null,
+                "max_closure_rotation_rad": null,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 5,
+              "reasons": []
+            },
+            "attachment_confirmation": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 4.2537665955872e-09,
+                "max_closure_rotation_rad": 9.243902344338254e-09,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            },
+            "vertical_lift": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 4.634665369651974e-06,
+                "max_closure_rotation_rad": 5.877241847613556e-06,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 265,
+              "reasons": []
+            },
+            "bilateral_transport": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 4.4724540217760125e-06,
+                "max_closure_rotation_rad": 5.490636421654033e-06,
+                "minimum_joint_limit_margin_rad": 0.49324339714496723
+              },
+              "evaluated_sample_count": 323,
+              "reasons": []
+            },
+            "vertical_placement_and_support_hold": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 3.948744853571593e-06,
+                "max_closure_rotation_rad": 5.006993726174491e-06,
+                "minimum_joint_limit_margin_rad": 0.26321142637442074
+              },
+              "evaluated_sample_count": 265,
+              "reasons": []
+            },
+            "release_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 5.903229774480731e-11,
+                "max_closure_rotation_rad": 1.6888062108634448e-10,
+                "minimum_joint_limit_margin_rad": 0.26321142637442074
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            }
+          },
+          "temporal_session": {
+            "valid": true,
+            "reasons": [],
+            "explicit_observation_count": 19,
+            "dense_path_nodes_used_as_observations": 0,
+            "interpolated_points_used_as_observations": 0,
+            "clock": "independent_fixed_20ms_synthetic_not_execution_time",
+            "scope": "phase_boundaries_and_explicit_three_frame_holds_only"
+          }
+        },
+        {
+          "found": true,
+          "reason": "ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE",
+          "seed": 29,
+          "start": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.65
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "goal": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.82
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              -0.075
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "statistics": {
+            "sampled_nodes": 12,
+            "accepted_tree_nodes": 12,
+            "ik_attempts": 194,
+            "ik_failures": 0,
+            "candidate_connection_attempts": 371,
+            "collision_rejections": 0,
+            "closure_rejections": 0,
+            "joint_limit_rejections": 0,
+            "other_gate_rejections": 0,
+            "leaf_edges_checked": 192,
+            "full_candidate_attempts": 1,
+            "rejection_reasons": {},
+            "path_translation_length_m": 0.3020338282963839,
+            "path_rotation_length_rad": 0.028978201019587133,
+            "path_joint_length_rad": 1.7007279047212287,
+            "path_waypoints": 137,
+            "maximum_sampled_closure_translation_m": 5.519578015373797e-06,
+            "maximum_sampled_closure_rotation_rad": 1.3403479834817372e-05,
+            "minimum_joint_limit_margin_rad": 0.2692227147503692,
+            "planning_time_s": 58.989598684995144
+          },
+          "execution_authorized": false,
+          "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+          "continuous": {
+            "grasp_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.2507020789998933
+            },
+            "attachment_confirmation": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.4098126190001494
+            },
+            "vertical_lift": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 2.5582276889981586
+            },
+            "bilateral_transport": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 16.84197671400034
+            },
+            "vertical_placement_and_support_hold": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 2.519546754003386
+            },
+            "release_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.4011829969967948
+            }
+          },
+          "sampled": {
+            "grasp_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": null,
+                "max_closure_rotation_rad": null,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 5,
+              "reasons": []
+            },
+            "attachment_confirmation": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 4.2537665955872e-09,
+                "max_closure_rotation_rad": 9.243902344338254e-09,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            },
+            "vertical_lift": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 2.7861276984509e-06,
+                "max_closure_rotation_rad": 2.3472977990941474e-06,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 41,
+              "reasons": []
+            },
+            "bilateral_transport": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 5.519578015373797e-06,
+                "max_closure_rotation_rad": 1.3403479834817372e-05,
+                "minimum_joint_limit_margin_rad": 0.3040830117379185
+              },
+              "evaluated_sample_count": 403,
+              "reasons": []
+            },
+            "vertical_placement_and_support_hold": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 2.5275685531680944e-06,
+                "max_closure_rotation_rad": 1.9630135603827007e-06,
+                "minimum_joint_limit_margin_rad": 0.2692227147503692
+              },
+              "evaluated_sample_count": 41,
+              "reasons": []
+            },
+            "release_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 1.1917476172393455e-10,
+                "max_closure_rotation_rad": 2.9422959255382565e-10,
+                "minimum_joint_limit_margin_rad": 0.2692227147503692
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            }
+          },
+          "temporal_session": {
+            "valid": true,
+            "reasons": [],
+            "explicit_observation_count": 19,
+            "dense_path_nodes_used_as_observations": 0,
+            "interpolated_points_used_as_observations": 0,
+            "clock": "independent_fixed_20ms_synthetic_not_execution_time",
+            "scope": "phase_boundaries_and_explicit_three_frame_holds_only"
+          }
+        },
+        {
+          "found": true,
+          "reason": "ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE",
+          "seed": 30,
+          "start": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.65
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "goal": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.82
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              -0.075
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.26
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "statistics": {
+            "sampled_nodes": 14,
+            "accepted_tree_nodes": 14,
+            "ik_attempts": 266,
+            "ik_failures": 0,
+            "candidate_connection_attempts": 513,
+            "collision_rejections": 0,
+            "closure_rejections": 0,
+            "joint_limit_rejections": 0,
+            "other_gate_rejections": 0,
+            "leaf_edges_checked": 264,
+            "full_candidate_attempts": 1,
+            "rejection_reasons": {},
+            "path_translation_length_m": 0.3196088666049041,
+            "path_rotation_length_rad": 0.02048533493759453,
+            "path_joint_length_rad": 1.7834877716675606,
+            "path_waypoints": 153,
+            "maximum_sampled_closure_translation_m": 6.437022047521627e-06,
+            "maximum_sampled_closure_rotation_rad": 7.291396729661878e-06,
+            "minimum_joint_limit_margin_rad": 0.26783150829506264,
+            "planning_time_s": 69.44204942400393
+          },
+          "execution_authorized": false,
+          "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+          "continuous": {
+            "grasp_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.2527941730004386
+            },
+            "attachment_confirmation": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.40750294699682854
+            },
+            "vertical_lift": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 4.528912227993715
+            },
+            "bilateral_transport": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 14.091136274000746
+            },
+            "vertical_placement_and_support_hold": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 4.5437293680006405
+            },
+            "release_boundary": {
+              "joint_limits": {
+                "status": "CONTINUOUSLY_VERIFIED"
+              },
+              "closed_chain": {
+                "status": "CONTINUOUSLY_VERIFIED",
+                "rotation_scope": "constant normalized endpoint quaternion only"
+              },
+              "collision": {
+                "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+                "checked_pairs": 414,
+                "skipped_acm_pairs": 40,
+                "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+              },
+              "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+              "runtime_s": 0.3981778640008997
+            }
+          },
+          "sampled": {
+            "grasp_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": null,
+                "max_closure_rotation_rad": null,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 5,
+              "reasons": []
+            },
+            "attachment_confirmation": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 4.2537665955872e-09,
+                "max_closure_rotation_rad": 9.243902344338254e-09,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            },
+            "vertical_lift": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 2.6852531945743233e-06,
+                "max_closure_rotation_rad": 2.5701931884743912e-06,
+                "minimum_joint_limit_margin_rad": 0.38350793691486196
+              },
+              "evaluated_sample_count": 73,
+              "reasons": []
+            },
+            "bilateral_transport": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 6.437022047521627e-06,
+                "max_closure_rotation_rad": 7.291396729661878e-06,
+                "minimum_joint_limit_margin_rad": 0.34303093294375264
+              },
+              "evaluated_sample_count": 339,
+              "reasons": []
+            },
+            "vertical_placement_and_support_hold": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 2.3729829866813473e-06,
+                "max_closure_rotation_rad": 4.207879471987881e-06,
+                "minimum_joint_limit_margin_rad": 0.26783150829506264
+              },
+              "evaluated_sample_count": 73,
+              "reasons": []
+            },
+            "release_boundary": {
+              "status": "sampled_edge_valid",
+              "maxima": {
+                "max_closure_translation_m": 7.101411209037869e-07,
+                "max_closure_rotation_rad": 4.207879471987881e-06,
+                "minimum_joint_limit_margin_rad": 0.26783150829506264
+              },
+              "evaluated_sample_count": 7,
+              "reasons": []
+            }
+          },
+          "temporal_session": {
+            "valid": true,
+            "reasons": [],
+            "explicit_observation_count": 19,
+            "dense_path_nodes_used_as_observations": 0,
+            "interpolated_points_used_as_observations": 0,
+            "clock": "independent_fixed_20ms_synthetic_not_execution_time",
+            "scope": "phase_boundaries_and_explicit_three_frame_holds_only"
+          }
+        }
+      ],
+      "negative_controls": [
+        {
+          "case": "unreachable_goal",
+          "scope": "necessary geometric reach sphere",
+          "rejected": true,
+          "reasons": [
+            "GOAL_OUTSIDE_NECESSARY_REACH_BOUND"
+          ]
+        },
+        {
+          "case": "wrong_grasp_orientation",
+          "scope": "actual frozen FK and unchanged q; observed shared object rotated .2rad",
+          "rejected": true,
+          "reasons": [
+            "LEFT_GRASP_ROTATION_MISMATCH",
+            "RIGHT_GRASP_ROTATION_MISMATCH",
+            "COLLISION:left_fr3_side_suction/3|Cube_01/box",
+            "COLLISION:left_fr3_side_suction/5|Cube_01/box",
+            "COLLISION:right_fr3_side_suction/4|Cube_01/box",
+            "COLLISION:right_fr3_side_suction/6|Cube_01/box"
+          ]
+        },
+        {
+          "case": "payload_table_collision",
+          "scope": "actual NR-reconstructed bilateral point, payload penetrates table20mm",
+          "rejected": true,
+          "reasons": [
+            "COLLISION:Cube_01/box|task28_table/box",
+            "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+            "CLEARANCE_TABLE_PENETRATION"
+          ]
+        }
+      ],
+      "CPU_wall_s": 226.9609538520017,
+      "peak_main_RSS_KiB": 268016,
+      "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+      "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+      "sampled_acceptance_does_not_imply_continuous": true,
+      "execution_authorized": false,
+      "stop_after": "G1-P4-NR-0"
+    },
+    "protected_original_files_rechecked": 369,
+    "NR0_inventory_files_rechecked": 52,
+    "critical_reproducibility_gap_found": false,
+    "markdown_record": {
+      "path": "docs/tasks/TASK28_G1_P4_NR_0_R1_REPRODUCIBILITY_AUDIT.md",
+      "bytes": 15764,
+      "sha256": "83fddea2ac74959d9f4ca348f661d35293bdc9f8d2157e217218cd8603e71bb0"
+    }
+  },
+  "no_execution_scope": "No simulator, ROS/MoveIt, robot, suction or physical execution; historical CPU tests/replay are explicitly recorded."
+}
