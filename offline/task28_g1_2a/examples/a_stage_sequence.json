@@ -1,0 +1,238 @@
+{
+  "schema": "task28.g1_2a.synthetic_examples.v1",
+  "starting_commit": "4b5806e4250c468865b1f217f5afbcba15e61b2a",
+  "scope": "Synthetic independent feedback flags are explicitly specified; no measured sensor or actual attachment evidence.",
+  "configuration_provenance": "G1-1 frozen supported/lifted controls and deterministic bounded TRF IK for target-airborne; no model changes.",
+  "configurations": {
+    "supply_supported": {
+      "label": "initial_pose_world_m",
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.5997304912877195,
+        -0.6294890132969836,
+        0.9951455115815576,
+        -2.6737548986432706,
+        0.6492970964187127,
+        2.185774303691025,
+        1.0812570376227162
+      ],
+      "right_q": [
+        -0.20729063932022013,
+        -1.2944249624696378,
+        -1.2507170365803917,
+        -2.6021092098681504,
+        -1.158055631507331,
+        1.6494942140804967,
+        -0.7183671763621784
+      ]
+    },
+    "supply_airborne": {
+      "label": "lifted_symmetric",
+      "object_position_m": [
+        0.65,
+        0,
+        0.4
+      ],
+      "object_yaw_rad": 0,
+      "left_q": [
+        0.557603796757615,
+        -0.8373343370059545,
+        0.8055893994340318,
+        -2.4377445222332517,
+        0.5756862779482265,
+        1.749089169682287,
+        1.0517412724712967
+      ],
+      "right_q": [
+        -0.40297088307662937,
+        -0.9687784449078064,
+        -0.8855669904966926,
+        -2.420668666202972,
+        -0.694839561861571,
+        1.6520010279977793,
+        -0.9413810544011763
+      ]
+    },
+    "target_airborne": {
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.4
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4351349999060606,
+        -0.7577025890216504,
+        0.5191292388865757,
+        -2.5372562861726373,
+        0.36075332974658064,
+        1.8324655962200878,
+        0.73128523001212
+      ],
+      "right_q": [
+        -0.024777974934078427,
+        -0.4615953156602906,
+        -1.0468629523151787,
+        -2.1572598302815633,
+        -0.41763887097805696,
+        1.8858993586362525,
+        -0.885820061888622
+      ]
+    },
+    "target_supported": {
+      "label": "target_pose_world_m",
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.26
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4786206866082518,
+        -0.5657801470519708,
+        0.6292644137689463,
+        -2.7870423512933034,
+        0.4237187576088258,
+        2.266862715461496,
+        0.7481399337087025
+      ],
+      "right_q": [
+        0.054928388072218094,
+        -0.1613384208267438,
+        -1.2645303516832707,
+        -2.378501836138092,
+        -0.2104022421057387,
+        2.3183446056830284,
+        -1.0616422583558776
+      ]
+    }
+  },
+  "snapshots": [
+    {
+      "label": "A_detached_supply",
+      "configuration": "supply_supported",
+      "mode": "detached_supported",
+      "site": "supply",
+      "now_s": 10.0,
+      "intent": {
+        "request_id": "initial-released",
+        "issued_at_s": 9.98,
+        "left": false,
+        "right": false
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-A",
+        "request_id": "initial-released",
+        "left": false,
+        "right": false
+      }
+    },
+    {
+      "label": "B_attached_supply",
+      "configuration": "supply_supported",
+      "mode": "bilateral_supported",
+      "site": "supply",
+      "now_s": 10.01,
+      "intent": {
+        "request_id": "attach-1",
+        "issued_at_s": 10.0,
+        "left": true,
+        "right": true
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-B",
+        "request_id": "attach-1",
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "label": "C_lifted_supply",
+      "configuration": "supply_airborne",
+      "mode": "bilateral_airborne",
+      "site": null,
+      "now_s": 10.02,
+      "intent": {
+        "request_id": "attach-1",
+        "issued_at_s": 10.0,
+        "left": true,
+        "right": true
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-C1",
+        "request_id": "attach-1",
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "label": "C_transport_target",
+      "configuration": "target_airborne",
+      "mode": "bilateral_airborne",
+      "site": null,
+      "now_s": 10.03,
+      "intent": {
+        "request_id": "attach-1",
+        "issued_at_s": 10.0,
+        "left": true,
+        "right": true
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-C2",
+        "request_id": "attach-1",
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "label": "B_supported_target",
+      "configuration": "target_supported",
+      "mode": "bilateral_supported",
+      "site": "target",
+      "now_s": 10.04,
+      "intent": {
+        "request_id": "attach-1",
+        "issued_at_s": 10.0,
+        "left": true,
+        "right": true
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-B2",
+        "request_id": "attach-1",
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "label": "D_released_target",
+      "configuration": "target_supported",
+      "mode": "released_supported",
+      "site": "target",
+      "now_s": 10.05,
+      "intent": {
+        "request_id": "release-1",
+        "issued_at_s": 10.04,
+        "left": false,
+        "right": false
+      },
+      "observed": {
+        "evidence_id": "independent-synthetic-D",
+        "request_id": "release-1",
+        "left": false,
+        "right": false
+      }
+    }
+  ],
+  "events": [
+    "attach",
+    "lift",
+    "transport_snapshot",
+    "place",
+    "release"
+  ]
+}

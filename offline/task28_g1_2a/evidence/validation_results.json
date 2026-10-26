@@ -1,0 +1,415 @@
+{
+  "schema": "task28.g1_2a.offline_evidence.v1",
+  "status": "G1_2A_PASS",
+  "scope": "Offline phase mode and single-state endpoint transition validation; no continuous path safety.",
+  "starting_commit": "4b5806e4250c468865b1f217f5afbcba15e61b2a",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "fixture_commit_unchanged": true,
+  "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+  "g1_1_regression_tests_passed": 71,
+  "g1_2a_tests_passed": 117,
+  "total_tests_passed": 188,
+  "environment": {
+    "python": "3.10.12",
+    "numpy": "1.24.4",
+    "scipy": "1.8.0",
+    "fcl": "0.7.0"
+  },
+  "support_policy": {
+    "plane_tolerance_m": 1e-06,
+    "depth_tolerance_m": 1e-06,
+    "footprint_tolerance_m": 1e-06,
+    "normal_angle_tolerance_rad": 1e-06,
+    "max_contact_count": 128,
+    "mode_local_no_acm_change": true,
+    "near_zero_is_geometric_classification_not_physical_evidence": true
+  },
+  "mode_definitions": {
+    "detached_supported": "No bilateral closure; exact supply support geometry and detached independent feedback.",
+    "bilateral_supported": "Bilateral closure plus exact local support geometry and independent bilateral feedback.",
+    "bilateral_airborne": "Bilateral closure, no support site, Cube/table clearance strictly above numerical-zero band.",
+    "released_supported": "Released independent feedback plus exact target support geometry; no bilateral closure."
+  },
+  "a_stage_snapshots": [
+    {
+      "label": "A_detached_supply",
+      "mode": "detached_supported",
+      "support_site": "supply",
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": null,
+      "support": {
+        "valid": true,
+        "reasons": [],
+        "site": "supply",
+        "bottom_gap_m": 0.0,
+        "bottom_gap_range_m": [
+          0.0,
+          0.0
+        ],
+        "bottom_normal_angle_rad": 0.0,
+        "max_penetration_m": 0.0,
+        "max_site_overhang_m": 0.0,
+        "max_table_overhang_m": 0.0,
+        "bottom_corners_world_m": [
+          [
+            0.5900000000000001,
+            -0.06,
+            0.2
+          ],
+          [
+            0.5900000000000001,
+            0.06,
+            0.2
+          ],
+          [
+            0.71,
+            -0.06,
+            0.2
+          ],
+          [
+            0.71,
+            0.06,
+            0.2
+          ]
+        ],
+        "numerical_near_zero_support": true,
+        "physical_support_observed": false
+      },
+      "accepted_support_contact_count": 1,
+      "collision_reference_valid": false,
+      "collision_reference_reasons": [
+        "COLLISION:Cube_01/box|task28_table/box"
+      ],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": null
+    },
+    {
+      "label": "B_attached_supply",
+      "mode": "bilateral_supported",
+      "support_site": "supply",
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": {
+        "valid": true,
+        "translation_error_m": 8.495823086444002e-09,
+        "rotation_error_rad": 7.859187645914423e-08,
+        "reasons": []
+      },
+      "support": {
+        "valid": true,
+        "reasons": [],
+        "site": "supply",
+        "bottom_gap_m": 0.0,
+        "bottom_gap_range_m": [
+          0.0,
+          0.0
+        ],
+        "bottom_normal_angle_rad": 0.0,
+        "max_penetration_m": 0.0,
+        "max_site_overhang_m": 0.0,
+        "max_table_overhang_m": 0.0,
+        "bottom_corners_world_m": [
+          [
+            0.5900000000000001,
+            -0.06,
+            0.2
+          ],
+          [
+            0.5900000000000001,
+            0.06,
+            0.2
+          ],
+          [
+            0.71,
+            -0.06,
+            0.2
+          ],
+          [
+            0.71,
+            0.06,
+            0.2
+          ]
+        ],
+        "numerical_near_zero_support": true,
+        "physical_support_observed": false
+      },
+      "accepted_support_contact_count": 1,
+      "collision_reference_valid": false,
+      "collision_reference_reasons": [
+        "COLLISION:Cube_01/box|task28_table/box"
+      ],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": null
+    },
+    {
+      "label": "C_lifted_supply",
+      "mode": "bilateral_airborne",
+      "support_site": null,
+      "object_position_m": [
+        0.65,
+        0,
+        0.4
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": {
+        "valid": true,
+        "translation_error_m": 1.8669382763819707e-09,
+        "rotation_error_rad": 2.0571767268920496e-08,
+        "reasons": []
+      },
+      "support": null,
+      "accepted_support_contact_count": 0,
+      "collision_reference_valid": true,
+      "collision_reference_reasons": [],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": 0.14
+    },
+    {
+      "label": "C_transport_target",
+      "mode": "bilateral_airborne",
+      "support_site": null,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.4
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": {
+        "valid": true,
+        "translation_error_m": 8.210885393463185e-09,
+        "rotation_error_rad": 2.437863788764649e-08,
+        "reasons": []
+      },
+      "support": null,
+      "accepted_support_contact_count": 0,
+      "collision_reference_valid": true,
+      "collision_reference_reasons": [],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": 0.14
+    },
+    {
+      "label": "B_supported_target",
+      "mode": "bilateral_supported",
+      "support_site": "target",
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.26
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": {
+        "valid": true,
+        "translation_error_m": 2.976595290883523e-08,
+        "rotation_error_rad": 2.4595839435384956e-07,
+        "reasons": []
+      },
+      "support": {
+        "valid": true,
+        "reasons": [],
+        "site": "target",
+        "bottom_gap_m": 0.0,
+        "bottom_gap_range_m": [
+          0.0,
+          0.0
+        ],
+        "bottom_normal_angle_rad": 0.0,
+        "max_penetration_m": 0.0,
+        "max_site_overhang_m": 0.0,
+        "max_table_overhang_m": 0.0,
+        "bottom_corners_world_m": [
+          [
+            0.76,
+            -0.135,
+            0.2
+          ],
+          [
+            0.76,
+            -0.015,
+            0.2
+          ],
+          [
+            0.8799999999999999,
+            -0.135,
+            0.2
+          ],
+          [
+            0.8799999999999999,
+            -0.015,
+            0.2
+          ]
+        ],
+        "numerical_near_zero_support": true,
+        "physical_support_observed": false
+      },
+      "accepted_support_contact_count": 1,
+      "collision_reference_valid": false,
+      "collision_reference_reasons": [
+        "COLLISION:Cube_01/box|task28_table/box"
+      ],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": null
+    },
+    {
+      "label": "D_released_target",
+      "mode": "released_supported",
+      "support_site": "target",
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.26
+      ],
+      "valid": true,
+      "reasons": [],
+      "closure": null,
+      "support": {
+        "valid": true,
+        "reasons": [],
+        "site": "target",
+        "bottom_gap_m": 0.0,
+        "bottom_gap_range_m": [
+          0.0,
+          0.0
+        ],
+        "bottom_normal_angle_rad": 0.0,
+        "max_penetration_m": 0.0,
+        "max_site_overhang_m": 0.0,
+        "max_table_overhang_m": 0.0,
+        "bottom_corners_world_m": [
+          [
+            0.76,
+            -0.135,
+            0.2
+          ],
+          [
+            0.76,
+            -0.015,
+            0.2
+          ],
+          [
+            0.8799999999999999,
+            -0.135,
+            0.2
+          ],
+          [
+            0.8799999999999999,
+            -0.015,
+            0.2
+          ]
+        ],
+        "numerical_near_zero_support": true,
+        "physical_support_observed": false
+      },
+      "accepted_support_contact_count": 1,
+      "collision_reference_valid": false,
+      "collision_reference_reasons": [
+        "COLLISION:Cube_01/box|task28_table/box"
+      ],
+      "remaining_collisions": 0,
+      "checked_shape_pairs": 414,
+      "skipped_acm_shape_pairs": 40,
+      "airborne_clearance_m": null
+    }
+  ],
+  "a_stage_transitions": [
+    {
+      "from": "A_detached_supply",
+      "to": "B_attached_supply",
+      "event": "attach",
+      "valid": true,
+      "reasons": [],
+      "scope": "MODE_AND_ENDPOINT_GUARDS_ONLY_NO_EDGE_SAFETY"
+    },
+    {
+      "from": "B_attached_supply",
+      "to": "C_lifted_supply",
+      "event": "lift",
+      "valid": true,
+      "reasons": [],
+      "scope": "MODE_AND_ENDPOINT_GUARDS_ONLY_NO_EDGE_SAFETY"
+    },
+    {
+      "from": "C_lifted_supply",
+      "to": "C_transport_target",
+      "event": "transport_snapshot",
+      "valid": true,
+      "reasons": [],
+      "scope": "MODE_AND_ENDPOINT_GUARDS_ONLY_NO_EDGE_SAFETY"
+    },
+    {
+      "from": "C_transport_target",
+      "to": "B_supported_target",
+      "event": "place",
+      "valid": true,
+      "reasons": [],
+      "scope": "MODE_AND_ENDPOINT_GUARDS_ONLY_NO_EDGE_SAFETY"
+    },
+    {
+      "from": "B_supported_target",
+      "to": "D_released_target",
+      "event": "release",
+      "valid": true,
+      "reasons": [],
+      "scope": "MODE_AND_ENDPOINT_GUARDS_ONLY_NO_EDGE_SAFETY"
+    }
+  ],
+  "negative_control_reason_catalog": {
+    "support_penetration": "SUPPORT_TABLE_PENETRATION",
+    "support_wrong_site": "SUPPORT_OUTSIDE_DESIGNATED_FOOTPRINT",
+    "airborne_table_intersection": "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+    "invalid_feedback_or_flags": "INCONSISTENT_ATTACHMENT_MODE",
+    "stale_or_async": "STALE_ATTACHMENT_FEEDBACK/ASYNCHRONOUS_ATTACHMENT_FEEDBACK",
+    "closure_mismatch": "LEFT_GRASP_TRANSLATION_MISMATCH",
+    "illegal_transition": "ILLEGAL_MODE_TRANSITION",
+    "backend_failure": "COLLISION_BACKEND_FAILURE"
+  },
+  "independent_fcl_audit": "evidence/independent_fcl_support_audit.json",
+  "source_sha256": {
+    "offline/task28_g1_2a/task28_contact/__init__.py": "1fa9fc2d950f63b16535746df66672e15991d81496ece3741de865f1bf9aa043",
+    "offline/task28_g1_2a/task28_contact/collision.py": "8dd2da351e09e32448846e0c5b08ca57d86dc45fab5ba7845c55eaccb85bf5ab",
+    "offline/task28_g1_2a/task28_contact/examples.py": "5dbc1f7de96359ef59510569b9370e2224930f85943026792946e8f8fb78759d",
+    "offline/task28_g1_2a/task28_contact/modes.py": "be12cc2c052b162469604b36bcb9e018cc14abc11d784a97077263ca55af74a0",
+    "offline/task28_g1_2a/task28_contact/support.py": "e64fc8135a716185a773c1bc96dd78c816c7ed96c3a8ebe7f4e0802711cfab3c",
+    "offline/task28_g1_2a/task28_contact/validator.py": "448529a848bb5272c3997af5695c40435a1060e71c1886e567f9dd007f337b51",
+    "offline/task28_g1_2a/tests/test_contact_metadata.py": "959c9192c5792175cb599110ebefc08d3905606bd69970baa9a84964625554f9",
+    "offline/task28_g1_2a/tests/test_contact_pipeline.py": "ba8ce1eeb9d487221a9da279d35b3d2d3a06a32c90649d0c82782f4a6998858a",
+    "offline/task28_g1_2a/tests/test_contact_support.py": "ced7430722b6d6ae906d2e2a4aee6cde92017e3841a5293174ba96105927b1fc",
+    "offline/task28_g1_2a/tests/test_contact_transitions.py": "df395e8c326c37686fc248732f18e0d43a89287622aabf6713436530a3a2cfdc",
+    "offline/task28_g1_2a/examples/a_stage_sequence.json": "5d313883d6af5979fe0948019ff2cee4615f9d1687d9511c03f6e4be10ffb707",
+    "offline/task28_g1_2a/README.md": "b9e64ddfc05c99080be5822de878f2a4774ddde88ab9e54fcb94a6d9b721d66b",
+    "offline/task28_g1_2a/requirements.txt": "eb237f23cc5f1afd86091bcc8afbd77dc15f6f594e01f5f0896a30a524ffdb11",
+    "offline/task28_g1_2a/run_validation.py": "f5bb7a30f0f11dc5cbb77c5199e258f999d907505d117857baf9ab95f367e494",
+    "offline/task28_g1_1/tests/control_states.json": "f51c4e6d0aff6a774f0212b3532bc7583c877bd71e5fc588eef27c45c104ccf8"
+  },
+  "not_performed": [
+    "Isaac/ROS execution",
+    "suction/robot commands",
+    "path planning",
+    "trajectory-edge or swept validation",
+    "NR/QP/force/RL",
+    "physical attachment/support measurement"
+  ]
+}
