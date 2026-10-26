@@ -72,7 +72,9 @@ class ContactModeValidator:
             if pos>self.closure_policy.translation_tolerance_m or rot>self.closure_policy.rotation_tolerance_rad:
                 reasons.append(side.upper()+'_FK_OBSERVATION_MISMATCH')
         closure=None
-        if snapshot.mode in (OperationMode.BILATERAL_SUPPORTED,OperationMode.BILATERAL_AIRBORNE):
+        if snapshot.mode in (OperationMode.BILATERAL_SUPPORTED,
+                             OperationMode.BILATERAL_TRANSITIONING,
+                             OperationMode.BILATERAL_AIRBORNE):
             closure=evaluate_closure(obj,frames['left_fr3_side_suction_tcp'],frames['right_fr3_side_suction_tcp'],policy=self.closure_policy)
             reasons.extend(closure.reasons)
         collision=self.collision.validate(frames,obj,snapshot.mode,snapshot.support_site)

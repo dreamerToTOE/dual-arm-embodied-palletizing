@@ -37,15 +37,21 @@ class PhaseCollisionValidator:
     def validate(self,frames,object_pose,mode,site):
         if type(mode) is not OperationMode or (site is not None and type(site) is not SupportSite):
             raise ValueError('INVALID_PHASE_COLLISION_MODE_OR_SITE')
-        bilateral=mode in (OperationMode.BILATERAL_SUPPORTED,OperationMode.BILATERAL_AIRBORNE)
+        bilateral=mode in (OperationMode.BILATERAL_SUPPORTED, OperationMode.BILATERAL_TRANSITIONING,
+                            OperationMode.BILATERAL_AIRBORNE)
         raw=self.reference.validate(frames,object_pose,attachment_mode='bilateral' if bilateral else 'detached')
         reasons=list(raw.reasons)
         if not self.support._configuration_intact():
             return PhaseCollisionResult(False,tuple(reasons+['SUPPORT_POLICY_CONFIGURATION_CHANGED']),raw,remaining_collisions=raw.collisions)
         if not raw.valid and not raw.collisions and not reasons:
             reasons.append('REFERENCE_REJECTED_WITHOUT_REASON')
-        if mode is OperationMode.BILATERAL_AIRBORNE:
+        if mode in (OperationMode.BILATERAL_TRANSITIONING, OperationMode.BILATERAL_AIRBORNE):
             if site is not None:reasons.append('AIRBORNE_SUPPORT_SITE_PRESENT')
+            # Transitional observations deliberately receive no Cube/table
+            # support exception.  A positive geometric gap may be below the
+            # d_high confirmation threshold, but it is never reclassified as
+            # physical support. Both modes retain the same strict numerical
+            # separation gate, independent of millimetre phase thresholds.
             try:
                 pose=checked_transform(object_pose)
                 vertices=np.array(list(itertools.product(*[(-h,h) for h in self.support.half_size])))

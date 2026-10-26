@@ -38,3 +38,30 @@ PYTHONPATH=offline/task28_g1_1:offline/task28_g1_2a \
 `DETACHED_SUPPORTED -> BILATERAL_SUPPORTED -> BILATERAL_AIRBORNE -> BILATERAL_SUPPORTED -> RELEASED_SUPPORTED`。
 
 因此它不提供连续轨迹安全、边级碰撞安全或真实 attachment 成功证明；这些属于后续工单。
+
+## G1-2A-R1：几何间隙与时序确认
+
+R1 增加 `BILATERAL_TRANSITIONING` 单帧模式，以及独立的
+`TemporalClearanceConfirmer`。0.5/1/2 mm 的 Cube 都是几何分离；只有三帧高阈值观测
+才确认 airborne。接近桌面的三帧低阈值只确认 near-table，目标的三帧严格几何支撑和
+显式释放事件仍是释放的前置条件。没有力传感器证据，输出
+`physical_support_observed` 始终为 false。
+
+默认 `d_low=0.001 m`、`d_high=0.003 m`，是可配置研究参数，独立于原有 `1e-6 m`
+接触/穿透容差。参数在会话内固定；无效观测清零计数并撤销授权。Cube pose 与 attachment
+feedback 均需要独立 evidence ID，六类时间戳必须严格递增；输入来源不得在会话内混合。
+
+```bash
+PYTHONPATH=offline/task28_g1_1:offline/task28_g1_2a \
+  python3 -u offline/task28_g1_2a/run_r1_validation.py
+```
+
+这会分别运行原有 188 项回归及 R1 测试，保存
+[evidence/r1_validation_results.json](evidence/r1_validation_results.json)，包括完整端点序列、
+负例、15 组确定性阈值/噪声敏感性序列和 Cube-only 观测噪声控制。单状态关节配置与独立
+USD/URDF FK 核验在 [examples/r1_configurations.json](examples/r1_configurations.json)；
+可选离线重生成脚本为 `examples/build_r1_configurations.py`，不运行规划器。
+原 G1-2A evidence 文件仍保留其历史内容。
+
+详细语义、数学条件与边界见
+[TASK28_G1_2A_R1_CLEARANCE_HYSTERESIS.md](../../docs/tasks/TASK28_G1_2A_R1_CLEARANCE_HYSTERESIS.md)。

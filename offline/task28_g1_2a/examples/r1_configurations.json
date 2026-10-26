@@ -1,0 +1,2280 @@
+{
+  "schema": "task28.g1_2a_r1.synthetic_kinematic_configurations.v1",
+  "starting_commit": "7c7116a09315e2bebdad7bc2d1a12b2de0ca30af",
+  "source": "INDEPENDENT_SYNTHETIC",
+  "scope": "Synthetic single-state object poses and bounded deterministic IK; no sensor data, force evidence, commands, temporal or path validation.",
+  "generator": "offline/task28_g1_2a/examples/build_r1_configurations.py",
+  "generator_sha256": "c41bf44ae5ee19f98b41db5d469aea8953acbf466492b1001cd5101a1d6f44cc",
+  "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+  "a_stage_seed_source_sha256": "5d313883d6af5979fe0948019ff2cee4615f9d1687d9511c03f6e4be10ffb707",
+  "numerical_environment": {
+    "numpy": "1.24.4",
+    "scipy": "1.8.0",
+    "fcl": "0.7.0"
+  },
+  "solve_budget": {
+    "max_attempts": 1,
+    "max_nfev": 300,
+    "seed": "site-specific frozen A-stage supported configuration"
+  },
+  "configurations": {
+    "supply_gap_0000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.5997304912877195,
+        -0.6294890132969836,
+        0.9951455115815576,
+        -2.6737548986432706,
+        0.6492970964187127,
+        2.185774303691025,
+        1.0812570376227162
+      ],
+      "right_q": [
+        -0.20729063932022013,
+        -1.2944249624696378,
+        -1.2507170365803917,
+        -2.6021092098681504,
+        -1.158055631507331,
+        1.6494942140804967,
+        -0.7183671763621784
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_supported",
+        "minimum_clearance_m_all_8_corners": 0.0,
+        "minimum_clearance_error_m": 0.0,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 9.55556445857449e-09,
+            "rotation_error_rad": 7.849414040631223e-08,
+            "reason": "PRESERVED_G1_2A_SUPPORTED_CONTROL",
+            "attempts": 0,
+            "function_evaluations": 0
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 1.0737096537529681e-11,
+            "rotation_error_rad": 9.970141556779167e-11,
+            "reason": "PRESERVED_G1_2A_SUPPORTED_CONTROL",
+            "attempts": 0,
+            "function_evaluations": 0
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8287651050642078e-08,
+            "rotation_error_rad": 4.896066560082795e-12
+          },
+          "right": {
+            "translation_error_m": 1.7350993331592123e-08,
+            "rotation_error_rad": 4.8962921733171875e-12
+          }
+        },
+        "closure_translation_error_m": 8.495823086444002e-09,
+        "closure_rotation_error_rad": 7.859187645914423e-08,
+        "left_object_translation_error_m": 8.487274015430108e-09,
+        "left_object_rotation_error_rad": 7.849414040631223e-08,
+        "right_object_translation_error_m": 8.572942965319758e-12,
+        "right_object_rotation_error_rad": 9.970141556779167e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 1,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_0500um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0005,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2605
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6005337455672627,
+        -0.6302725194917544,
+        0.9936747717918534,
+        -2.6732443403282975,
+        0.6485836579463722,
+        2.184272066723093,
+        1.0815351195103482
+      ],
+      "right_q": [
+        -0.20747726788306525,
+        -1.2939078286979002,
+        -1.249375148111779,
+        -2.6016618999078025,
+        -1.1566402945044827,
+        1.6491340599477704,
+        -0.7187066878003331
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0005000000000000004,
+        "minimum_clearance_error_m": 4.336808689942018e-19,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.4924641919937847e-10,
+            "rotation_error_rad": 3.192158432255642e-09,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 1.4407991718786337e-11,
+            "rotation_error_rad": 1.9019060382448652e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 25,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.829067075050114e-08,
+            "rotation_error_rad": 4.896123587640526e-12
+          },
+          "right": {
+            "translation_error_m": 1.7356040617192234e-08,
+            "rotation_error_rad": 4.896219084218279e-12
+          }
+        },
+        "closure_translation_error_m": 6.590721228461508e-11,
+        "closure_rotation_error_rad": 3.0030791649195354e-09,
+        "left_object_translation_error_m": 6.4241054393483e-11,
+        "left_object_rotation_error_rad": 3.192158432255642e-09,
+        "right_object_translation_error_m": 6.085794224406101e-12,
+        "right_object_rotation_error_rad": 1.9019060382448652e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_0900um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0009,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2609
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6011730430768442,
+        -0.6308969510811757,
+        0.9925012292606938,
+        -2.6728342086895442,
+        0.6480125583545868,
+        2.1830714987410857,
+        1.0817576518523844
+      ],
+      "right_q": [
+        -0.20762794751599714,
+        -1.2934896144547707,
+        -1.2483023603917225,
+        -2.601302873793652,
+        -1.1555066256053916,
+        1.648849231008313,
+        -0.7189800340724314
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0009000000000000119,
+        "minimum_clearance_error_m": 1.1926223897340549e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 4.0714338388159074e-10,
+            "rotation_error_rad": 6.210992591511197e-09,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 8.824826119655e-12,
+            "rotation_error_rad": 1.1415037080769563e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 39,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.829309289549781e-08,
+            "rotation_error_rad": 4.895948905279383e-12
+          },
+          "right": {
+            "translation_error_m": 1.7360091501534326e-08,
+            "rotation_error_rad": 4.896300776225028e-12
+          }
+        },
+        "closure_translation_error_m": 7.78529696911035e-11,
+        "closure_rotation_error_rad": 6.3203806831964804e-09,
+        "left_object_translation_error_m": 7.981334701359838e-11,
+        "left_object_rotation_error_rad": 6.210992591511197e-09,
+        "right_object_translation_error_m": 4.669357993083618e-12,
+        "right_object_rotation_error_rad": 1.1415037080769563e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_1000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.001,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.261
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6013323810808238,
+        -0.6310527608987593,
+        0.992208298005319,
+        -2.6727314473751895,
+        0.6478697813477232,
+        2.182771519167555,
+        1.0818132621775574
+      ],
+      "right_q": [
+        -0.2081147622520672,
+        -1.29217065327742,
+        -1.2479777051051693,
+        -2.6013063090023776,
+        -1.1545863426059733,
+        1.6498480978105199,
+        -0.7194468464177078
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0010000000000000009,
+        "minimum_clearance_error_m": 8.673617379884035e-19,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 4.570297236234827e-10,
+            "rotation_error_rad": 6.974845396494796e-09,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.4409940111813565e-11,
+            "rotation_error_rad": 2.2380715466819844e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 44,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.829369908291627e-08,
+            "rotation_error_rad": 4.8960275781756206e-12
+          },
+          "right": {
+            "translation_error_m": 1.7363607960385675e-08,
+            "rotation_error_rad": 4.8963251999119825e-12
+          }
+        },
+        "closure_translation_error_m": 1.0180721745362979e-10,
+        "closure_rotation_error_rad": 6.765876510768321e-09,
+        "left_object_translation_error_m": 8.94419354785158e-11,
+        "left_object_rotation_error_rad": 6.974845396494796e-09,
+        "right_object_translation_error_m": 1.970802051893377e-11,
+        "right_object_rotation_error_rad": 2.2380715466819844e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_1100um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0011,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2611
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6014915185987653,
+        -0.6312084569319398,
+        0.9919155541546327,
+        -2.6726285939378105,
+        0.6477270102241485,
+        2.1824716006605,
+        1.081868858432069
+      ],
+      "right_q": [
+        -0.20808472805512387,
+        -1.292249884328035,
+        -1.2477182042058443,
+        -2.601202161664223,
+        -1.1543994403174769,
+        1.6496147937785992,
+        -0.7194551437373482
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0010999999999999899,
+        "minimum_clearance_error_m": -1.0191500421363742e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 5.050660479700369e-10,
+            "rotation_error_rad": 7.711027775473803e-09,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 5.500817358917127e-11,
+            "rotation_error_rad": 5.015415504918954e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 39,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8294305326064002e-08,
+            "rotation_error_rad": 4.8957970683895394e-12
+          },
+          "right": {
+            "translation_error_m": 1.7364242019336773e-08,
+            "rotation_error_rad": 4.896412354067804e-12
+          }
+        },
+        "closure_translation_error_m": 1.289072247593644e-10,
+        "closure_rotation_error_rad": 7.245917843541154e-09,
+        "left_object_translation_error_m": 9.867465050246324e-11,
+        "left_object_rotation_error_rad": 7.711027775473803e-09,
+        "right_object_translation_error_m": 4.4673471696840044e-11,
+        "right_object_rotation_error_rad": 5.015415504918954e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_2000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.002,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.262
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6029151706274013,
+        -0.6326042688496776,
+        0.9892888913343795,
+        -2.671698818199047,
+        0.6464419447652523,
+        2.179775309881079,
+        1.0823688925890314
+      ],
+      "right_q": [
+        -0.20806673917519775,
+        -1.2922706690966173,
+        -1.245353210738649,
+        -2.6003139001298874,
+        -1.152357279101582,
+        1.6481234931846789,
+        -0.7197557001743033
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0020000000000000018,
+        "minimum_clearance_error_m": 1.734723475976807e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 9.399477792872905e-10,
+            "rotation_error_rad": 1.4401765205952632e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.1789100064047855e-11,
+            "rotation_error_rad": 2.104016063026198e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 37,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8299778982274036e-08,
+            "rotation_error_rad": 4.895718600168724e-12
+          },
+          "right": {
+            "translation_error_m": 1.7371387445419493e-08,
+            "rotation_error_rad": 4.896287345482767e-12
+          }
+        },
+        "closure_translation_error_m": 1.902437289391456e-10,
+        "closure_rotation_error_rad": 1.4203296023837008e-08,
+        "left_object_translation_error_m": 1.8087316755829203e-10,
+        "left_object_rotation_error_rad": 1.4401765205952632e-08,
+        "right_object_translation_error_m": 1.650883483812775e-11,
+        "right_object_rotation_error_rad": 2.104016063026198e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_2500um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0025,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2625
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6036992227760124,
+        -0.6333756745770108,
+        0.9878360649611345,
+        -2.6711790668639956,
+        0.6457281717750352,
+        2.178279542600699,
+        1.0826462506062056
+      ],
+      "right_q": [
+        -0.20821155803772917,
+        -1.291861164303683,
+        -1.2440216205166952,
+        -2.5998497959586957,
+        -1.1510038852856375,
+        1.6476647239909323,
+        -0.7200610681956939
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0025000000000000022,
+        "minimum_clearance_error_m": 2.168404344971009e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.3750354158333369e-09,
+            "rotation_error_rad": 1.699595457079039e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 1.2021020012923385e-11,
+            "rotation_error_rad": 1.1493762086168479e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 33,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.830283044840962e-08,
+            "rotation_error_rad": 4.8960506136451684e-12
+          },
+          "right": {
+            "translation_error_m": 1.7376232015576827e-08,
+            "rotation_error_rad": 4.896195037215946e-12
+          }
+        },
+        "closure_translation_error_m": 3.5910915207268047e-10,
+        "closure_rotation_error_rad": 1.6887067703240005e-08,
+        "left_object_translation_error_m": 3.5970122429420363e-10,
+        "left_object_rotation_error_rad": 1.699595457079039e-08,
+        "right_object_translation_error_m": 9.216696656658928e-12,
+        "right_object_rotation_error_rad": 1.1493762086168479e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_2900um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0029,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2629
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6043242754420337,
+        -0.633989617490486,
+        0.9866758619762295,
+        -2.670761773633845,
+        0.645155903633877,
+        2.1770848125858127,
+        1.0828689185516087
+      ],
+      "right_q": [
+        -0.20842962014775343,
+        -1.2912603614577118,
+        -1.2429442203506815,
+        -2.5994981974638605,
+        -1.1497784374895474,
+        1.647537698723966,
+        -0.7203962404914914
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0029000000000000137,
+        "minimum_clearance_error_m": 1.3877787807814457e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.6856388115849284e-09,
+            "rotation_error_rad": 2.1842340580901403e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 7.007466189126036e-11,
+            "rotation_error_rad": 6.337220156351965e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 35,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.830527810284128e-08,
+            "rotation_error_rad": 4.895868932823189e-12
+          },
+          "right": {
+            "translation_error_m": 1.7380672170003175e-08,
+            "rotation_error_rad": 4.8963529735182e-12
+          }
+        },
+        "closure_translation_error_m": 4.2775465868958096e-10,
+        "closure_rotation_error_rad": 2.125223914526944e-08,
+        "left_object_translation_error_m": 4.229198164000049e-10,
+        "left_object_rotation_error_rad": 2.1842340580901403e-08,
+        "right_object_translation_error_m": 5.7301326004722266e-11,
+        "right_object_rotation_error_rad": 6.337220156351965e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_3000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.003,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.263
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6044774475033808,
+        -0.6341449967586295,
+        0.986388701004323,
+        -2.670656911299721,
+        0.6450154973870318,
+        2.176784759843028,
+        1.082922554977573
+      ],
+      "right_q": [
+        -0.20838994212962011,
+        -1.2913604599049477,
+        -1.2426870500748657,
+        -2.5993906228350587,
+        -1.149603956089863,
+        1.6472853612686238,
+        -0.7203968626138729
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030000000000000027,
+        "minimum_clearance_error_m": 2.6020852139652106e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.47570247330929e-09,
+            "rotation_error_rad": 1.8268645112807433e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 1.937116396048702e-12,
+            "rotation_error_rad": 1.7162651183825767e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 33,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.830588912450069e-08,
+            "rotation_error_rad": 4.895786087009601e-12
+          },
+          "right": {
+            "translation_error_m": 1.738126869651509e-08,
+            "rotation_error_rad": 4.8961864144750116e-12
+          }
+        },
+        "closure_translation_error_m": 3.846380613731352e-10,
+        "closure_rotation_error_rad": 1.8252833311186873e-08,
+        "left_object_translation_error_m": 3.848963464994512e-10,
+        "left_object_rotation_error_rad": 1.8268645112807433e-08,
+        "right_object_translation_error_m": 1.6149174125304828e-12,
+        "right_object_rotation_error_rad": 1.7162651183825767e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_3100um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0031,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2631
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6046347273213559,
+        -0.6342966601173626,
+        0.9860977043178429,
+        -2.670552468930116,
+        0.6448707273829605,
+        2.176487284247484,
+        1.0829794768241734
+      ],
+      "right_q": [
+        -0.208308637803148,
+        -1.2915706620999743,
+        -1.2424352466614628,
+        -2.5992743784262684,
+        -1.149487515588859,
+        1.6469359959292535,
+        -0.720360783783147
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030999999999999917,
+        "minimum_clearance_error_m": -8.239936510889834e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.4909029663755962e-09,
+            "rotation_error_rad": 2.2939861629900906e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.914419234369533e-12,
+            "rotation_error_rad": 3.8241713243588084e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 40,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.830650342790108e-08,
+            "rotation_error_rad": 4.895844607660953e-12
+          },
+          "right": {
+            "translation_error_m": 1.7381639263742393e-08,
+            "rotation_error_rad": 4.896299849998208e-12
+          }
+        },
+        "closure_translation_error_m": 2.8114897118618095e-10,
+        "closure_rotation_error_rad": 2.297709061451609e-08,
+        "left_object_translation_error_m": 2.817000891126657e-10,
+        "left_object_rotation_error_rad": 2.2939861629900906e-08,
+        "right_object_translation_error_m": 1.373576401745884e-12,
+        "right_object_rotation_error_rad": 3.8241713243588084e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_3500um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.0035,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.2635
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6052544254680868,
+        -0.6349084298316201,
+        0.9849425280200022,
+        -2.670132894267584,
+        0.644299311512544,
+        2.175293615330733,
+        1.0832012921830545
+      ],
+      "right_q": [
+        -0.21061968716597138,
+        -1.285440960678282,
+        -1.2410820334702388,
+        -2.599353366170766,
+        -1.1453443820976907,
+        1.6516754324997087,
+        -0.7225480354534268
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.003500000000000003,
+        "minimum_clearance_error_m": 3.0357660829594124e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.6623549894932154e-09,
+            "rotation_error_rad": 2.561613792846198e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 3.386198216587053e-12,
+            "rotation_error_rad": 4.479817850147127e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 41,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8308958286677436e-08,
+            "rotation_error_rad": 4.8957108484141635e-12
+          },
+          "right": {
+            "translation_error_m": 1.739740621964368e-08,
+            "rotation_error_rad": 4.896200344706016e-12
+          }
+        },
+        "closure_translation_error_m": 3.1140993049288675e-10,
+        "closure_rotation_error_rad": 2.56607559706623e-08,
+        "left_object_translation_error_m": 3.1205019053628667e-10,
+        "left_object_rotation_error_rad": 2.561613792846198e-08,
+        "right_object_translation_error_m": 1.3594068489560177e-12,
+        "right_object_rotation_error_rad": 4.479817850147127e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_gap_4000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.004,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.264
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6060237813443173,
+        -0.6356713317999854,
+        0.9835035048780594,
+        -2.669606261432867,
+        0.6435861310172537,
+        2.173802368842693,
+        1.0834775453884042
+      ],
+      "right_q": [
+        -0.21040655739260483,
+        -1.28598992335401,
+        -1.2398019783362726,
+        -2.598808637546428,
+        -1.144500021291146,
+        1.6503699892631147,
+        -0.7225370534955972
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0040000000000000036,
+        "minimum_clearance_error_m": 3.469446951953614e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.483054145082002e-09,
+            "rotation_error_rad": 3.083469708328815e-08,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 300,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 5.1712916776176325e-11,
+            "rotation_error_rad": 4.5780434979756916e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 34,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.831203283253233e-08,
+            "rotation_error_rad": 4.8959965178216125e-12
+          },
+          "right": {
+            "translation_error_m": 1.7400297446246552e-08,
+            "rotation_error_rad": 4.896278774095828e-12
+          }
+        },
+        "closure_translation_error_m": 6.374891734076807e-10,
+        "closure_rotation_error_rad": 3.041317029722024e-08,
+        "left_object_translation_error_m": 6.440432468131936e-10,
+        "left_object_rotation_error_rad": 3.083469708328815e-08,
+        "right_object_translation_error_m": 4.3129706815636476e-11,
+        "right_object_rotation_error_rad": 4.5780434979756916e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_0000um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.26
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4786206866082518,
+        -0.5657801470519708,
+        0.6292644137689463,
+        -2.7870423512933034,
+        0.4237187576088258,
+        2.266862715461496,
+        0.7481399337087025
+      ],
+      "right_q": [
+        0.054928388072218094,
+        -0.1613384208267438,
+        -1.2645303516832707,
+        -2.378501836138092,
+        -0.2104022421057387,
+        2.3183446056830284,
+        -1.0616422583558776
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_supported",
+        "minimum_clearance_m_all_8_corners": 0.0,
+        "minimum_clearance_error_m": 0.0,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.7731642448725982e-08,
+            "rotation_error_rad": 2.459537426148677e-07,
+            "reason": "PRESERVED_G1_2A_SUPPORTED_CONTROL",
+            "attempts": 0,
+            "function_evaluations": 0
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.292543485962993e-12,
+            "rotation_error_rad": 4.943246978992107e-12,
+            "reason": "PRESERVED_G1_2A_SUPPORTED_CONTROL",
+            "attempts": 0,
+            "function_evaluations": 0
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8008927513228776e-08,
+            "rotation_error_rad": 4.895788423924258e-12
+          },
+          "right": {
+            "translation_error_m": 1.9474965907139798e-08,
+            "rotation_error_rad": 4.896522852888923e-12
+          }
+        },
+        "closure_translation_error_m": 2.976595290883523e-08,
+        "closure_rotation_error_rad": 2.4595839435384956e-07,
+        "left_object_translation_error_m": 2.9764302753746682e-08,
+        "left_object_rotation_error_rad": 2.459537426148677e-07,
+        "right_object_translation_error_m": 2.4286962376500083e-12,
+        "right_object_rotation_error_rad": 4.943246978992107e-12,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 1,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_0500um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0005,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2605
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4789758523652144,
+        -0.5668836911291917,
+        0.6284291351585789,
+        -2.786443507009956,
+        0.4233334975187275,
+        2.265133971429602,
+        0.7482260911626141
+      ],
+      "right_q": [
+        0.05293394555000177,
+        -0.16302520069395376,
+        -1.262295638980911,
+        -2.3779572874299255,
+        -0.2121437405555175,
+        2.3167455672483688,
+        -1.0603321962381222
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0005000000000000004,
+        "minimum_clearance_error_m": 4.336808689942018e-19,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.0808230184701866e-11,
+            "rotation_error_rad": 2.5158181492097943e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 144,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 8.344480860521001e-11,
+            "rotation_error_rad": 1.5591594342740777e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 32,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8012139567613822e-08,
+            "rotation_error_rad": 4.895891726456262e-12
+          },
+          "right": {
+            "translation_error_m": 1.947831684399295e-08,
+            "rotation_error_rad": 4.896574738847379e-12
+          }
+        },
+        "closure_translation_error_m": 9.11879351303078e-11,
+        "closure_rotation_error_rad": 3.9464984986440223e-10,
+        "left_object_translation_error_m": 5.673740343391192e-12,
+        "left_object_rotation_error_rad": 2.5158181492097943e-10,
+        "right_object_translation_error_m": 8.75358314252972e-11,
+        "right_object_rotation_error_rad": 1.5591594342740777e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_0900um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0009,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2609
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.47925831731781376,
+        -0.5677631895008382,
+        0.6277620277843563,
+        -2.785962615945706,
+        0.4230240009226958,
+        2.2637523410167524,
+        0.7482956801346577
+      ],
+      "right_q": [
+        0.05342939802181196,
+        -0.165384142661915,
+        -1.262537177498768,
+        -2.377462084260122,
+        -0.21494908879003036,
+        2.3152533168072535,
+        -1.0582497974819756
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0009000000000000119,
+        "minimum_clearance_error_m": 1.1926223897340549e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.9254370664797394e-11,
+            "rotation_error_rad": 2.3347606281632926e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 142,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.6192839506837123e-11,
+            "rotation_error_rad": 5.013101892444358e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 33,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8014715190049075e-08,
+            "rotation_error_rad": 4.895800342783638e-12
+          },
+          "right": {
+            "translation_error_m": 1.948094002596406e-08,
+            "rotation_error_rad": 4.896708782827335e-12
+          }
+        },
+        "closure_translation_error_m": 2.428852264691765e-11,
+        "closure_rotation_error_rad": 2.0140890161650959e-10,
+        "left_object_translation_error_m": 5.212029516151272e-12,
+        "left_object_rotation_error_rad": 2.3347606281632926e-10,
+        "right_object_translation_error_m": 2.706012610990767e-11,
+        "right_object_rotation_error_rad": 5.013101892444358e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_1000um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.001,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.261
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4793287155640522,
+        -0.5679826124291651,
+        0.6275954013371394,
+        -2.7858421695220565,
+        0.4229464741323039,
+        2.2634071600465018,
+        0.7483131631033526
+      ],
+      "right_q": [
+        0.0531208329812601,
+        -0.16575893961572288,
+        -1.2621771006531821,
+        -2.3773502721394264,
+        -0.21534802783738394,
+        2.31492469362229,
+        -1.0579505067237316
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0010000000000000009,
+        "minimum_clearance_error_m": 8.673617379884035e-19,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.4925916773334818e-11,
+            "rotation_error_rad": 2.834243380556416e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 130,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 9.128934598898159e-11,
+            "rotation_error_rad": 2.735809040905039e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 31,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.801535953887707e-08,
+            "rotation_error_rad": 4.89589754338742e-12
+          },
+          "right": {
+            "translation_error_m": 1.94816079931143e-08,
+            "rotation_error_rad": 4.8965802059879005e-12
+          }
+        },
+        "closure_translation_error_m": 9.355220922940374e-11,
+        "closure_rotation_error_rad": 1.8476320963730195e-10,
+        "left_object_translation_error_m": 9.043412064378833e-12,
+        "left_object_rotation_error_rad": 2.834243380556416e-10,
+        "right_object_translation_error_m": 9.597282178681426e-11,
+        "right_object_rotation_error_rad": 2.735809040905039e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_1100um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0011,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2611
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.47939902930847156,
+        -0.5682018539839375,
+        0.6274288324520908,
+        -2.7857216337903536,
+        0.4228688846238573,
+        2.263062070139349,
+        0.7483306817540745
+      ],
+      "right_q": [
+        0.054717161495117225,
+        -0.16708406798154854,
+        -1.2636652632406442,
+        -2.377183443109834,
+        -0.21707764455438083,
+        2.314394922328173,
+        -1.0566769313045796
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0010999999999999899,
+        "minimum_clearance_error_m": -1.0191500421363742e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.2224175629593836e-11,
+            "rotation_error_rad": 2.6983629611066607e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 146,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 6.434846631116955e-11,
+            "rotation_error_rad": 1.0166253943537899e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 36,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8016004436625955e-08,
+            "rotation_error_rad": 4.895851039631607e-12
+          },
+          "right": {
+            "translation_error_m": 1.9482220397125835e-08,
+            "rotation_error_rad": 4.8967813225229e-12
+          }
+        },
+        "closure_translation_error_m": 7.111661225599353e-11,
+        "closure_rotation_error_rad": 3.6257771124991513e-10,
+        "left_object_translation_error_m": 6.0055515502754145e-12,
+        "left_object_rotation_error_rad": 2.6983629611066607e-10,
+        "right_object_translation_error_m": 6.708963363654266e-11,
+        "right_object_rotation_error_rad": 1.0166253943537899e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_2000um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.002,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.262
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.48002784904772594,
+        -0.5701669544137474,
+        0.6259325293427339,
+        -2.784632783277614,
+        0.4221679693166834,
+        2.259960300168911,
+        0.7484898014099259
+      ],
+      "right_q": [
+        0.04692171310588255,
+        -0.16790579564035474,
+        -1.2555531082787885,
+        -2.3763198084146016,
+        -0.2170842944710114,
+        2.311974492231952,
+        -1.056606315230528
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0020000000000000018,
+        "minimum_clearance_error_m": 1.734723475976807e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 1.695498819401611e-11,
+            "rotation_error_rad": 1.651894745338375e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 147,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 5.7705768848491364e-11,
+            "rotation_error_rad": 1.8126324821411334e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 33,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.80218198114176e-08,
+            "rotation_error_rad": 4.89606829128383e-12
+          },
+          "right": {
+            "translation_error_m": 1.948838044149332e-08,
+            "rotation_error_rad": 4.8964277253582175e-12
+          }
+        },
+        "closure_translation_error_m": 6.300316408264257e-11,
+        "closure_rotation_error_rad": 3.2362361115257663e-10,
+        "left_object_translation_error_m": 8.023177069682152e-12,
+        "left_object_rotation_error_rad": 1.651894745338375e-10,
+        "right_object_translation_error_m": 6.078248328895059e-11,
+        "right_object_rotation_error_rad": 1.8126324821411334e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_2500um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0025,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2625
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.480374051337477,
+        -0.5712524260047115,
+        0.6251034873513154,
+        -2.784024733003943,
+        0.4217766149038022,
+        2.258240217158069,
+        0.7485792839735009
+      ],
+      "right_q": [
+        0.04628928250127559,
+        -0.17015731324147845,
+        -1.25463128298971,
+        -2.3757328184075157,
+        -0.21959439048563795,
+        2.310246358038837,
+        -1.0547308146523802
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0025000000000000022,
+        "minimum_clearance_error_m": 2.168404344971009e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.890461014389394e-11,
+            "rotation_error_rad": 2.9759862448958884e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 153,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 2.8036258888887962e-11,
+            "rotation_error_rad": 5.489295020443498e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 34,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8025060244614516e-08,
+            "rotation_error_rad": 4.895806131558284e-12
+          },
+          "right": {
+            "translation_error_m": 1.9491696493449624e-08,
+            "rotation_error_rad": 4.896491902903507e-12
+          }
+        },
+        "closure_translation_error_m": 3.595163509902583e-11,
+        "closure_rotation_error_rad": 3.4748803836434346e-10,
+        "left_object_translation_error_m": 1.2894538643469645e-11,
+        "left_object_rotation_error_rad": 2.9759862448958884e-10,
+        "right_object_translation_error_m": 2.9564666503094374e-11,
+        "right_object_rotation_error_rad": 5.489295020443498e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_2900um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0029,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2629
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.480649381001452,
+        -0.5721176058047125,
+        0.6244414320386339,
+        -2.783536681338696,
+        0.4214625683689667,
+        2.256865744576361,
+        0.748651399331096
+      ],
+      "right_q": [
+        0.043657449439576675,
+        -0.17088891570821874,
+        -1.2518330560565325,
+        -2.3753240667078135,
+        -0.22010331204088968,
+        2.3090921833802827,
+        -1.0543281655836694
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0029000000000000137,
+        "minimum_clearance_error_m": 1.3877787807814457e-17,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.434151285305611e-11,
+            "rotation_error_rad": 2.7941781898973807e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 154,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 3.995261740069885e-11,
+            "rotation_error_rad": 1.21643595453967e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 37,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8027657598321023e-08,
+            "rotation_error_rad": 4.8957319421257896e-12
+          },
+          "right": {
+            "translation_error_m": 1.949441568930287e-08,
+            "rotation_error_rad": 4.896656977617323e-12
+          }
+        },
+        "closure_translation_error_m": 3.700654714983917e-11,
+        "closure_rotation_error_rad": 1.9920579895313741e-10,
+        "left_object_translation_error_m": 7.726199267945335e-12,
+        "left_object_rotation_error_rad": 2.7941781898973807e-10,
+        "right_object_translation_error_m": 4.2041833213222065e-11,
+        "right_object_rotation_error_rad": 1.21643595453967e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_3000um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.003,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.263
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4807179865058028,
+        -0.5723334576017829,
+        0.6242760829085765,
+        -2.783414444696324,
+        0.4213839255130022,
+        2.2565223471908005,
+        0.7486695001700727
+      ],
+      "right_q": [
+        0.04335691917268771,
+        -0.17124605085329198,
+        -1.2514795561593393,
+        -2.375211451322711,
+        -0.2204736229397729,
+        2.3087659934796405,
+        -1.054049373628924
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030000000000000027,
+        "minimum_clearance_error_m": 2.6020852139652106e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.2110337881687268e-11,
+            "rotation_error_rad": 2.7458097500115495e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 146,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 4.7307263691776535e-11,
+            "rotation_error_rad": 1.4311686101699844e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 34,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.802830734377485e-08,
+            "rotation_error_rad": 4.8958817124633505e-12
+          },
+          "right": {
+            "translation_error_m": 1.949508474033439e-08,
+            "rotation_error_rad": 4.896580990653885e-12
+          }
+        },
+        "closure_translation_error_m": 4.63951327581977e-11,
+        "closure_rotation_error_rad": 1.8645339526760532e-10,
+        "left_object_translation_error_m": 5.685449891412958e-12,
+        "left_object_rotation_error_rad": 2.7458097500115495e-10,
+        "right_object_translation_error_m": 4.977660453029065e-11,
+        "right_object_rotation_error_rad": 1.4311686101699844e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_3100um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0031,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2631
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.4807864987547798,
+        -0.5725491332871264,
+        0.6241108024209782,
+        -2.7832921183195185,
+        0.4213052325769827,
+        2.2561790370727324,
+        0.7486876281116672
+      ],
+      "right_q": [
+        0.04287775314529045,
+        -0.17151390919153364,
+        -1.2509530555031363,
+        -2.3751039906878884,
+        -0.22071902272514551,
+        2.3084590367050346,
+        -1.0538620767282176
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030999999999999917,
+        "minimum_clearance_error_m": -8.239936510889834e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 8.832420377155483e-12,
+            "rotation_error_rad": 1.1631310964469601e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 144,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 4.898023429704888e-11,
+            "rotation_error_rad": 1.632987255614602e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 40,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8028958051739722e-08,
+            "rotation_error_rad": 4.89578069739264e-12
+          },
+          "right": {
+            "translation_error_m": 1.9495759186622786e-08,
+            "rotation_error_rad": 4.896577405359312e-12
+          }
+        },
+        "closure_translation_error_m": 5.108948065540032e-11,
+        "closure_rotation_error_rad": 1.0300651714882258e-10,
+        "left_object_translation_error_m": 1.9588761260326013e-12,
+        "left_object_rotation_error_rad": 1.1631310964469601e-10,
+        "right_object_translation_error_m": 5.169727749618168e-11,
+        "right_object_rotation_error_rad": 1.632987255614602e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_3500um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.0035,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.2635
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.48105952274230634,
+        -0.5734101103694634,
+        0.6234504652789783,
+        -2.7828019115169167,
+        0.4209900424368575,
+        2.2548066475343824,
+        0.7487603483993579
+      ],
+      "right_q": [
+        0.04667898974477485,
+        -0.17544650896665936,
+        -1.254374706180236,
+        -2.3745031309548548,
+        -0.22568652661115804,
+        2.3066035835476697,
+        -1.0501921120921551
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.003500000000000003,
+        "minimum_clearance_error_m": 3.0357660829594124e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.7026205975598514e-11,
+            "rotation_error_rad": 2.7935732785685253e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 153,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 5.265678676171479e-11,
+            "rotation_error_rad": 1.8223680264428404e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 35,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.8031561832717056e-08,
+            "rotation_error_rad": 4.895803258890634e-12
+          },
+          "right": {
+            "translation_error_m": 1.9498270732845075e-08,
+            "rotation_error_rad": 4.896753787935796e-12
+          }
+        },
+        "closure_translation_error_m": 5.42742485186659e-11,
+        "closure_rotation_error_rad": 1.85689369339478e-10,
+        "left_object_translation_error_m": 1.204649623816476e-11,
+        "left_object_rotation_error_rad": 2.7935732785685253e-10,
+        "right_object_translation_error_m": 5.562382544842287e-11,
+        "right_object_rotation_error_rad": 1.8223680264428404e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "target_gap_4000um": {
+      "site": "target",
+      "requested_minimum_clearance_m": 0.004,
+      "object_position_m": [
+        0.82,
+        -0.075,
+        0.264
+      ],
+      "object_quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "object_rotation_rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.48139877738458614,
+        -0.5744823543412236,
+        0.6226265240399581,
+        -2.7821871423392124,
+        0.4205949053662699,
+        2.2530931402962047,
+        0.7488518809057995
+      ],
+      "right_q": [
+        0.04691148194396978,
+        -0.17809803493891446,
+        -1.254274042860172,
+        -2.373882815849325,
+        -0.22872771265306202,
+        2.3047709573700206,
+        -1.04792505646733
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0040000000000000036,
+        "minimum_clearance_error_m": 3.469446951953614e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 2.1991869378074075e-11,
+            "rotation_error_rad": 2.7166161712788617e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 156,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 1.8859156344586845e-11,
+            "rotation_error_rad": 4.132634622639704e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 36,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.803482266564519e-08,
+            "rotation_error_rad": 4.895856823863737e-12
+          },
+          "right": {
+            "translation_error_m": 1.9501551215880737e-08,
+            "rotation_error_rad": 4.896598103497165e-12
+          }
+        },
+        "closure_translation_error_m": 1.6814377144161245e-11,
+        "closure_rotation_error_rad": 2.3427227405752546e-10,
+        "left_object_translation_error_m": 5.719358495495478e-12,
+        "left_object_rotation_error_rad": 2.7166161712788617e-10,
+        "right_object_translation_error_m": 1.9999458077702073e-11,
+        "right_object_rotation_error_rad": 4.132634622639704e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_roll_0p01_gap_3000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.003,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26359699002504994
+      ],
+      "object_quaternion_xyzw": [
+        0.004999979166692708,
+        0.0,
+        0.0,
+        0.9999875000260416
+      ],
+      "object_rotation_rpy_rad": [
+        0.01,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6071240940601997,
+        -0.6354269355566321,
+        0.988559165466264,
+        -2.677938517235882,
+        0.6559702410826709,
+        2.190857807555187,
+        1.0774163068422584
+      ],
+      "right_q": [
+        -0.20578713579320596,
+        -1.2824854314939034,
+        -1.236446457106068,
+        -2.591149656587215,
+        -1.1319002212319227,
+        1.6420200248424643,
+        -0.7248725682625519
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030000000000000027,
+        "minimum_clearance_error_m": 2.6020852139652106e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 9.228918864962743e-11,
+            "rotation_error_rad": 7.494453407386007e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 207,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 4.6185856058331455e-12,
+            "rotation_error_rad": 6.05651449614233e-11,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 32,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.826914851690643e-08,
+            "rotation_error_rad": 4.895924354971245e-12
+          },
+          "right": {
+            "translation_error_m": 1.744442551350374e-08,
+            "rotation_error_rad": 4.8963141208374645e-12
+          }
+        },
+        "closure_translation_error_m": 7.998799024106999e-11,
+        "closure_rotation_error_rad": 6.910856609610111e-10,
+        "left_object_translation_error_m": 8.189268021630747e-11,
+        "left_object_rotation_error_rad": 7.494453407386007e-10,
+        "right_object_translation_error_m": 2.1018788389364137e-12,
+        "right_object_rotation_error_rad": 6.05651449614233e-11,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    },
+    "supply_roll_0p1_gap_3000um": {
+      "site": "supply",
+      "requested_minimum_clearance_m": 0.003,
+      "object_position_m": [
+        0.65,
+        0.0,
+        0.26869025491549126
+      ],
+      "object_quaternion_xyzw": [
+        0.04997916927067833,
+        0.0,
+        0.0,
+        0.9987502603949662
+      ],
+      "object_rotation_rpy_rad": [
+        0.10000000000000002,
+        0.0,
+        0.0
+      ],
+      "object_yaw_rad": 0.0,
+      "left_q": [
+        0.6322898900268737,
+        -0.6286709237706569,
+        1.011108481336737,
+        -2.7380708032028673,
+        0.7551411409986786,
+        2.327880867480713,
+        1.0276633621076792
+      ],
+      "right_q": [
+        -0.1938545277902818,
+        -1.1736601273617395,
+        -1.189099078757335,
+        -2.5138713788081515,
+        -0.9660535015744243,
+        1.6121816875459056,
+        -0.7798232247266949
+      ],
+      "verification": {
+        "within_joint_limits": true,
+        "mode": "bilateral_transitioning",
+        "minimum_clearance_m_all_8_corners": 0.0030000000000000027,
+        "minimum_clearance_error_m": 2.6020852139652106e-18,
+        "ik": {
+          "left": {
+            "success": true,
+            "translation_error_m": 5.375493790273141e-11,
+            "rotation_error_rad": 5.335336211629359e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 263,
+            "reach_bound_excess_m": null
+          },
+          "right": {
+            "success": true,
+            "translation_error_m": 4.546866625667957e-11,
+            "rotation_error_rad": 3.969647895523093e-10,
+            "reason": "IK_VERIFIED",
+            "attempts": 1,
+            "function_evaluations": 34,
+            "reach_bound_excess_m": null
+          }
+        },
+        "independent_usd_vs_urdf_fk": {
+          "left": {
+            "translation_error_m": 1.7974565718447834e-08,
+            "rotation_error_rad": 4.895733659088419e-12
+          },
+          "right": {
+            "translation_error_m": 1.806725090671575e-08,
+            "rotation_error_rad": 4.896521131781159e-12
+          }
+        },
+        "closure_translation_error_m": 8.918720866904998e-11,
+        "closure_rotation_error_rad": 9.283358477087917e-10,
+        "left_object_translation_error_m": 5.277122784144467e-11,
+        "left_object_rotation_error_rad": 5.335336211629359e-10,
+        "right_object_translation_error_m": 3.689478663946051e-11,
+        "right_object_rotation_error_rad": 3.969647895523093e-10,
+        "collision_valid": true,
+        "collision_reasons": [],
+        "remaining_collisions": 0,
+        "accepted_strict_support_records": 0,
+        "checked_shape_pairs": 414,
+        "skipped_unchanged_acm_shape_pairs": 40
+      }
+    }
+  }
+}

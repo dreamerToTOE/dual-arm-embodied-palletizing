@@ -30,6 +30,10 @@ from task28_validator.state import (
 class OperationMode(str, Enum):
     DETACHED_SUPPORTED = "detached_supported"
     BILATERAL_SUPPORTED = "bilateral_supported"
+    # A geometrically separated bilateral snapshot, including lift/place
+    # observations before temporal confirmation. The R1 confirmer determines
+    # the operation phase separately; this enum never asserts physical support.
+    BILATERAL_TRANSITIONING = "bilateral_transitioning"
     BILATERAL_AIRBORNE = "bilateral_airborne"
     RELEASED_SUPPORTED = "released_supported"
 
@@ -128,7 +132,7 @@ def validate_snapshot_metadata(
             OperationMode.DETACHED_SUPPORTED: SupportSite.SUPPLY,
             OperationMode.RELEASED_SUPPORTED: SupportSite.TARGET,
         }.get(mode)
-        if mode is OperationMode.BILATERAL_AIRBORNE:
+        if mode in (OperationMode.BILATERAL_TRANSITIONING, OperationMode.BILATERAL_AIRBORNE):
             if site is not None:
                 reasons.append("AIRBORNE_SUPPORT_SITE_PRESENT")
         elif mode is OperationMode.BILATERAL_SUPPORTED:
@@ -138,7 +142,8 @@ def validate_snapshot_metadata(
             reasons.append("INCORRECT_SUPPORT_SITE")
 
     expected_attached = (
-        mode in (OperationMode.BILATERAL_SUPPORTED, OperationMode.BILATERAL_AIRBORNE)
+        mode in (OperationMode.BILATERAL_SUPPORTED, OperationMode.BILATERAL_TRANSITIONING,
+                 OperationMode.BILATERAL_AIRBORNE)
         if mode_valid else None
     )
     if isinstance(state, InputState) and expected_attached is not None:
