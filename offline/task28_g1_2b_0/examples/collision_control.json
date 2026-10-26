@@ -1,0 +1,634 @@
+{
+  "schema": "task28.g1_2b_0.real_collision_control.v1",
+  "starting_commit": "bd519c47d226c1fb66bd6e36ed273194dd4ebb8b",
+  "generator": "offline/task28_g1_2b_0/examples/build_collision_control.py",
+  "generator_sha256": "a2648489ded0890cf94c0d572ff4ea181037b0d05f860629321bac407511d025",
+  "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+  "source_configurations_sha256": "5e173d5465da08058510cfd682a0bd0dc98374702e7df2223af77120891c3093",
+  "scope": "Explicit unsafe interior waypoint. Both external endpoints pass full frozen single-state gates; interior independently passes joint limits, USD-vs-URDF FK and bilateral closure, but fails real frozen FCL payload/table gate. No physical reachability or continuous safety claim.",
+  "numerical_environment": {
+    "numpy": "1.24.4",
+    "scipy": "1.8.0",
+    "fcl": "0.7.0"
+  },
+  "solve_budget": {
+    "max_attempts": 1,
+    "max_nfev": 300,
+    "random_seed": null,
+    "seed_source": "preserved supply_gap_0000um configuration"
+  },
+  "interior_ik": {
+    "left": {
+      "success": true,
+      "q": [
+        0.5775646580707562,
+        -0.582804410796426,
+        1.043838876078064,
+        -2.6941361416772303,
+        0.6617078092252917,
+        2.2561772890050547,
+        1.08171586231103
+      ],
+      "translation_error_m": 3.789078485315766e-10,
+      "rotation_error_rad": 2.3028984931128437e-09,
+      "reason": "IK_VERIFIED",
+      "attempts": 1,
+      "function_evaluations": 300,
+      "reach_bound_excess_m": null
+    },
+    "right": {
+      "success": true,
+      "q": [
+        -0.20994436106543962,
+        -1.2806138469025403,
+        -1.3042216803917024,
+        -2.6206035136543213,
+        -1.1981447048628717,
+        1.6936341660968206,
+        -0.7149394225467968
+      ],
+      "translation_error_m": 5.440908446862301e-11,
+      "rotation_error_rad": 3.683326663250991e-10,
+      "reason": "IK_VERIFIED",
+      "attempts": 1,
+      "function_evaluations": 235,
+      "reach_bound_excess_m": null
+    }
+  },
+  "waypoints": [
+    {
+      "label": "collision_endpoint_start",
+      "time_s": 0.0,
+      "source": "INDEPENDENT_SYNTHETIC_TEST_INPUT",
+      "scope": "REAL_FROZEN_KINEMATICS_AND_FCL_POINT_CONTROL",
+      "mode": "bilateral_transitioning",
+      "support_site": null,
+      "configuration": {
+        "object_position_m": [
+          0.65,
+          0.0,
+          0.264
+        ],
+        "object_quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "object_yaw_rad": 0.0,
+        "left_q": [
+          0.6060237813443173,
+          -0.6356713317999854,
+          0.9835035048780594,
+          -2.669606261432867,
+          0.6435861310172537,
+          2.173802368842693,
+          1.0834775453884042
+        ],
+        "right_q": [
+          -0.21040655739260483,
+          -1.28598992335401,
+          -1.2398019783362726,
+          -2.598808637546428,
+          -1.144500021291146,
+          1.6503699892631147,
+          -0.7225370534955972
+        ]
+      },
+      "observation_stamp_s": 50.0,
+      "now_s": 50.005,
+      "evidence_id": "independent-synthetic-0",
+      "full_single_state_gate_valid": true,
+      "reasons": [],
+      "within_joint_limits": true,
+      "minimum_joint_limit_margin_rad": 0.372493623308765,
+      "independent_usd_vs_urdf_fk": {
+        "left": {
+          "translation_error_m": 1.831203283253233e-08,
+          "rotation_error_rad": 4.8959965178216125e-12
+        },
+        "right": {
+          "translation_error_m": 1.7400297446246552e-08,
+          "rotation_error_rad": 4.896278774095828e-12
+        }
+      },
+      "closure": {
+        "valid": true,
+        "reasons": [],
+        "translation_error_m": 6.374891734076807e-10,
+        "rotation_error_rad": 3.041317029722024e-08,
+        "left_object_translation_error_m": 6.440432468131936e-10,
+        "left_object_rotation_error_rad": 3.083469708328815e-08,
+        "right_object_translation_error_m": 4.3129706815636476e-11,
+        "right_object_rotation_error_rad": 4.5780434979756916e-10,
+        "implied_left_object": [
+          [
+            1.0,
+            -1.0801399855414767e-08,
+            3.72571004984661e-09,
+            0.6500000003982926
+          ],
+          [
+            1.0801399841495188e-08,
+            0.9999999999999997,
+            -2.8639612217912456e-08,
+            -9.077962687120689e-11
+          ],
+          [
+            -3.725709814155295e-09,
+            2.8639612324133326e-08,
+            0.9999999999999999,
+            0.26399999950209063
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "implied_right_object": [
+          [
+            1.0,
+            1.8289633040497678e-11,
+            5.717678460754954e-11,
+            0.6500000000039395
+          ],
+          [
+            -1.8289452396958343e-11,
+            1.0000000000000002,
+            -4.538514425446996e-10,
+            -4.2944051092952407e-11
+          ],
+          [
+            -5.717684222722029e-11,
+            4.538514324714556e-10,
+            0.9999999999999998,
+            0.26400000000067847
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "fk_observation_errors": [
+        [
+          "left",
+          1.831203283253233e-08,
+          4.8958987430327585e-12
+        ],
+        [
+          "right",
+          1.740029747897277e-08,
+          4.896299584233522e-12
+        ]
+      ],
+      "collision": {
+        "valid": true,
+        "reasons": [],
+        "reference": {
+          "valid": true,
+          "collisions": [],
+          "accepted_attachment_contacts": [],
+          "reasons": [],
+          "checked_shape_pairs": 414,
+          "skipped_acm_shape_pairs": 40,
+          "backend": "FCL-0.7.0"
+        },
+        "support": null,
+        "accepted_support_contacts": [],
+        "remaining_collisions": [],
+        "airborne_clearance_m": 0.0040000000000000036
+      }
+    },
+    {
+      "label": "deliberate_payload_table_intrusion",
+      "time_s": 1.0,
+      "source": "INDEPENDENT_SYNTHETIC_TEST_INPUT",
+      "scope": "REAL_FROZEN_KINEMATICS_AND_FCL_POINT_CONTROL",
+      "mode": "bilateral_transitioning",
+      "support_site": null,
+      "configuration": {
+        "object_position_m": [
+          0.65,
+          0.0,
+          0.24
+        ],
+        "object_quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "object_yaw_rad": 0.0,
+        "left_q": [
+          0.5775646580707562,
+          -0.582804410796426,
+          1.043838876078064,
+          -2.6941361416772303,
+          0.6617078092252917,
+          2.2561772890050547,
+          1.08171586231103
+        ],
+        "right_q": [
+          -0.20994436106543962,
+          -1.2806138469025403,
+          -1.3042216803917024,
+          -2.6206035136543213,
+          -1.1981447048628717,
+          1.6936341660968206,
+          -0.7149394225467968
+        ]
+      },
+      "observation_stamp_s": 51.0,
+      "now_s": 51.005,
+      "evidence_id": "independent-synthetic-1",
+      "full_single_state_gate_valid": false,
+      "reasons": [
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED"
+      ],
+      "within_joint_limits": true,
+      "minimum_joint_limit_margin_rad": 0.3479637430644016,
+      "independent_usd_vs_urdf_fk": {
+        "left": {
+          "translation_error_m": 1.8180493547549665e-08,
+          "rotation_error_rad": 4.895864250877249e-12
+        },
+        "right": {
+          "translation_error_m": 1.7226230839807176e-08,
+          "rotation_error_rad": 4.8962948366479574e-12
+        }
+      },
+      "closure": {
+        "valid": true,
+        "reasons": [],
+        "translation_error_m": 4.533784680314667e-10,
+        "rotation_error_rad": 2.6659988801912885e-09,
+        "left_object_translation_error_m": 4.2412992388890214e-10,
+        "left_object_rotation_error_rad": 2.3028984931128437e-09,
+        "right_object_translation_error_m": 4.701492653725942e-11,
+        "right_object_rotation_error_rad": 3.683326663250991e-10,
+        "implied_left_object": [
+          [
+            1.0,
+            -5.296622472792738e-10,
+            -9.735089040169915e-11,
+            0.6499999996397027
+          ],
+          [
+            5.296621730158793e-10,
+            1.0,
+            2.239044966933371e-09,
+            1.889820799849673e-10
+          ],
+          [
+            9.735094473647307e-11,
+            -2.239044898878367e-09,
+            1.0000000000000002,
+            0.239999999880176
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "implied_right_object": [
+          [
+            1.0,
+            1.9247108916453588e-11,
+            6.2358337670716425e-12,
+            0.6500000000065773
+          ],
+          [
+            -1.924698628343169e-11,
+            1.0,
+            -3.6777659086006115e-10,
+            -4.626993233003418e-11
+          ],
+          [
+            -6.235824933237191e-12,
+            3.677765851188291e-10,
+            0.9999999999999999,
+            0.2400000000051221
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "fk_observation_errors": [
+        [
+          "left",
+          1.8180493571525307e-08,
+          4.896020923841948e-12
+        ],
+        [
+          "right",
+          1.722623084162018e-08,
+          4.8961954746074324e-12
+        ]
+      ],
+      "collision": {
+        "valid": false,
+        "reasons": [
+          "COLLISION:Cube_01/box|task28_table/box",
+          "AIRBORNE_CLEARANCE_NOT_ESTABLISHED"
+        ],
+        "reference": {
+          "valid": false,
+          "collisions": [
+            {
+              "shape_a": "Cube_01/box",
+              "shape_b": "task28_table/box",
+              "owner_a": "Cube_01",
+              "owner_b": "task28_table",
+              "contacts": [
+                {
+                  "depth_m": 0.020000000000000018,
+                  "normal_world": [
+                    0,
+                    0,
+                    -1
+                  ],
+                  "position_world_m": [
+                    0.71,
+                    0.06,
+                    0.19
+                  ]
+                },
+                {
+                  "depth_m": 0.020000000000000018,
+                  "normal_world": [
+                    0,
+                    0,
+                    -1
+                  ],
+                  "position_world_m": [
+                    0.71,
+                    -0.06,
+                    0.19
+                  ]
+                },
+                {
+                  "depth_m": 0.020000000000000018,
+                  "normal_world": [
+                    0,
+                    0,
+                    -1
+                  ],
+                  "position_world_m": [
+                    0.5900000000000001,
+                    -0.06,
+                    0.19
+                  ]
+                },
+                {
+                  "depth_m": 0.020000000000000018,
+                  "normal_world": [
+                    0,
+                    0,
+                    -1
+                  ],
+                  "position_world_m": [
+                    0.5900000000000001,
+                    0.06,
+                    0.19
+                  ]
+                }
+              ]
+            }
+          ],
+          "accepted_attachment_contacts": [],
+          "reasons": [
+            "COLLISION:Cube_01/box|task28_table/box"
+          ],
+          "checked_shape_pairs": 414,
+          "skipped_acm_shape_pairs": 40,
+          "backend": "FCL-0.7.0"
+        },
+        "support": null,
+        "accepted_support_contacts": [],
+        "remaining_collisions": [
+          {
+            "shape_a": "Cube_01/box",
+            "shape_b": "task28_table/box",
+            "owner_a": "Cube_01",
+            "owner_b": "task28_table",
+            "contacts": [
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.71,
+                  0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.71,
+                  -0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.5900000000000001,
+                  -0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.5900000000000001,
+                  0.06,
+                  0.19
+                ]
+              }
+            ]
+          }
+        ],
+        "airborne_clearance_m": -0.020000000000000018
+      }
+    },
+    {
+      "label": "collision_endpoint_finish",
+      "time_s": 2.0,
+      "source": "INDEPENDENT_SYNTHETIC_TEST_INPUT",
+      "scope": "REAL_FROZEN_KINEMATICS_AND_FCL_POINT_CONTROL",
+      "mode": "bilateral_transitioning",
+      "support_site": null,
+      "configuration": {
+        "object_position_m": [
+          0.65,
+          0.0,
+          0.264
+        ],
+        "object_quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "object_yaw_rad": 0.0,
+        "left_q": [
+          0.6060237813443173,
+          -0.6356713317999854,
+          0.9835035048780594,
+          -2.669606261432867,
+          0.6435861310172537,
+          2.173802368842693,
+          1.0834775453884042
+        ],
+        "right_q": [
+          -0.21040655739260483,
+          -1.28598992335401,
+          -1.2398019783362726,
+          -2.598808637546428,
+          -1.144500021291146,
+          1.6503699892631147,
+          -0.7225370534955972
+        ]
+      },
+      "observation_stamp_s": 52.0,
+      "now_s": 52.005,
+      "evidence_id": "independent-synthetic-2",
+      "full_single_state_gate_valid": true,
+      "reasons": [],
+      "within_joint_limits": true,
+      "minimum_joint_limit_margin_rad": 0.372493623308765,
+      "independent_usd_vs_urdf_fk": {
+        "left": {
+          "translation_error_m": 1.831203283253233e-08,
+          "rotation_error_rad": 4.8959965178216125e-12
+        },
+        "right": {
+          "translation_error_m": 1.7400297446246552e-08,
+          "rotation_error_rad": 4.896278774095828e-12
+        }
+      },
+      "closure": {
+        "valid": true,
+        "reasons": [],
+        "translation_error_m": 6.374891734076807e-10,
+        "rotation_error_rad": 3.041317029722024e-08,
+        "left_object_translation_error_m": 6.440432468131936e-10,
+        "left_object_rotation_error_rad": 3.083469708328815e-08,
+        "right_object_translation_error_m": 4.3129706815636476e-11,
+        "right_object_rotation_error_rad": 4.5780434979756916e-10,
+        "implied_left_object": [
+          [
+            1.0,
+            -1.0801399855414767e-08,
+            3.72571004984661e-09,
+            0.6500000003982926
+          ],
+          [
+            1.0801399841495188e-08,
+            0.9999999999999997,
+            -2.8639612217912456e-08,
+            -9.077962687120689e-11
+          ],
+          [
+            -3.725709814155295e-09,
+            2.8639612324133326e-08,
+            0.9999999999999999,
+            0.26399999950209063
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "implied_right_object": [
+          [
+            1.0,
+            1.8289633040497678e-11,
+            5.717678460754954e-11,
+            0.6500000000039395
+          ],
+          [
+            -1.8289452396958343e-11,
+            1.0000000000000002,
+            -4.538514425446996e-10,
+            -4.2944051092952407e-11
+          ],
+          [
+            -5.717684222722029e-11,
+            4.538514324714556e-10,
+            0.9999999999999998,
+            0.26400000000067847
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "fk_observation_errors": [
+        [
+          "left",
+          1.831203283253233e-08,
+          4.8958987430327585e-12
+        ],
+        [
+          "right",
+          1.740029747897277e-08,
+          4.896299584233522e-12
+        ]
+      ],
+      "collision": {
+        "valid": true,
+        "reasons": [],
+        "reference": {
+          "valid": true,
+          "collisions": [],
+          "accepted_attachment_contacts": [],
+          "reasons": [],
+          "checked_shape_pairs": 414,
+          "skipped_acm_shape_pairs": 40,
+          "backend": "FCL-0.7.0"
+        },
+        "support": null,
+        "accepted_support_contacts": [],
+        "remaining_collisions": [],
+        "airborne_clearance_m": 0.0040000000000000036
+      }
+    }
+  ]
+}
