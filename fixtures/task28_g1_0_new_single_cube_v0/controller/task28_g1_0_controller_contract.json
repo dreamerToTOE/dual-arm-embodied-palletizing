@@ -1,0 +1,85 @@
+{
+  "schema": "task28.g1_0.controller_contract.v1",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+  "world_frame": "world",
+  "task_index_map": [
+    {
+      "task_index": 0,
+      "cube_id": "Cube_01",
+      "cube_index": 0,
+      "target_pose_world_m": [
+        0.82,
+        -0.075,
+        0.26
+      ]
+    }
+  ],
+  "cube_count": 1,
+  "source_pose_world_m": [
+    0.65,
+    0.0,
+    0.26
+  ],
+  "home_q_rad": [
+    0.0,
+    -0.7853981634,
+    0.0,
+    -2.3561944902,
+    0.0,
+    1.5707963268,
+    0.7853981634
+  ],
+  "tcp_contract": {
+    "left_link8_translation_m": [
+      0.0,
+      -0.155,
+      0.08
+    ],
+    "right_link8_translation_m": [
+      0.0,
+      0.155,
+      0.08
+    ],
+    "left_world_quaternion_xyzw": [
+      0.7071067812,
+      0.7071067812,
+      0.0,
+      0.0
+    ],
+    "right_world_quaternion_xyzw": [
+      0.7071067812,
+      -0.7071067812,
+      0.0,
+      0.0
+    ],
+    "left_link8_rpy_rad": [
+      0.0,
+      0.0,
+      -1.5707963267948966
+    ],
+    "right_link8_rpy_rad": [
+      0.0,
+      0.0,
+      1.5707963267948966
+    ],
+    "world_quaternions_semantics": "Desired world grasp orientations; distinct from link8-to-TCP local rotations."
+  },
+  "suction_contract_ref": "../bridge/task28_g1_0_bridge_contract.json",
+  "execution": {
+    "connected_to_existing_task24_controller": false,
+    "future_task28_controller_required": false,
+    "physical_execution_allowed_in_g1_0b": false,
+    "future_motion_executor_required": true,
+    "reason": "This fixture supplies the controller input and exact one-task mapping; motion algorithms/execution remain outside G1-0B."
+  },
+  "implementation": {
+    "task_specification_module": "controller/task28_single_cube_task.py",
+    "interface": "load_task(cube_ids, pose_count, task_index, cube_index) -> immutable SingleCubeTask",
+    "planning_or_commands_implemented": false
+  },
+  "pose_array_order": [
+    "Cube_01"
+  ],
+  "joint_limits_ref": "controller/fr3_joint_limits.yaml"
+}

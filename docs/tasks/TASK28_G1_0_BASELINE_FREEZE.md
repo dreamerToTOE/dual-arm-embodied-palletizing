@@ -1,23 +1,28 @@
-# Task28 G1-0｜Task24-H 单 Cube 侧吸基线恢复与冻结审计
+# Task28 G1-0 / G1-0B｜单 Cube 侧吸基线审计与 NEW fixture 冻结
 
 审计日期：2026-10-26（Asia/Seoul）
 仓库：`dreamerToTOE/dual-arm-embodied-palletizing`
 分支：`side-suction-palletizing`
-起始提交：`b2bf8abc42fa88b8f8e590af00c4d6fedf236942`
+G1-0 起始提交：`b2bf8abc42fa88b8f8e590af00c4d6fedf236942`
+G1-0B 起始提交：`2ef2edaa0eca86684a0d045f90cdfe35317565f4`
 
-## 最终判定
+## 当前判定（G1-0B）
 
-**`HISTORICAL_FIXTURE_NOT_RECOVERED`**
-**最终状态：`G1_0_BLOCKED`**
+**`G1_0B_CONDITIONALLY_READY`**
+**fixture：`task28_g1_0_new_single_cube_v0`**
+**标签：`NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED`**
 
-历史 Task24-H 的最终报告、早期单件实现和后续八件实现都能在 Git 中找到，但没有一个提交同时包含：
+研究者已明确批准第 5 节 NEW baseline；本工单不再尝试重建 Task24-H 历史执行。
+现已在独立 checkout 中实现并冻结 Task28 的场景、桥接、controller 单任务输入、
+MoveIt 描述包、生成 URDF、保守碰撞网格、manifest 和静态测试。静态正例通过，
+34 个负例均按预期拒绝，25 个外部模型文件 hash 匹配，离线 xacro 再生成与冻结
+URDF 一致。`OmniPBR.mdl` 视觉材质 hash 仍为 `UNKNOWN`，所以保留条件就绪状态。
+此状态仅表示静态基线就绪，不代表构建、运行时接口、吸附或物理执行成功。
 
-1. 报告所述成功运行的全部源码和配置；
-2. 精确的单 Cube scene/bridge/controller/MoveIt 输入；
-3. Isaac FR3 USD、外部 `franka_description`、ROS/MoveIt overlay 和运行命令的 hash 绑定；
-4. 对应两次 `0.184 / 0.115 mm` 结果的原始完整日志。
-
-因此不能把某一个历史提交冒称为 Task24-H 的精确可执行复现，也不能在本任务中静默采用新 fixture。下文给出可审阅的新 fixture 提案；它没有写入源码，没有冻结，也没有生成机器可执行 manifest。需要研究者批准后才能采用。
+历史审计结论仍为 **`HISTORICAL_FIXTURE_NOT_RECOVERED`**；原 G1-0 的
+`G1_0_BLOCKED` 是批准前的历史状态。Task24-H `0.184 / 0.115 mm` 数值保留为
+历史报告证据，未转移到 NEW fixture，也未作为新基线实验结果。下面第 1–4 节
+保留原 G1-0 的证据和边界；第 5–9 节记录本次已批准的实现及停止点。
 
 ## 1. 工作区、起始点与只读边界
 
@@ -149,89 +154,155 @@ G0-A 已检查仓库 tracked 文件、原工作区 artifacts、Task27/Task26 本
 
 这些检查证明文本/源码内部的静态不一致；它们不证明任一配置已经物理通过。
 
-## 5. 未冻结的新 fixture 提案（需要批准）
+## 5. 已批准并建立的 NEW fixture
 
-下面是一个**NEW baseline proposal**，不是 Task24-H reproduction，也没有写入 repository。它的目的是为后续 G1-1 提供一个可独立审阅的起点；批准前不得把它作为实验命令或成功基线使用。
+G1-0B 独立检出目录为
+`/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1-0b-fixture`，
+起始 branch/HEAD/remote 均为 `side-suction-palletizing` /
+`2ef2edaa0eca86684a0d045f90cdfe35317565f4`。原用户工作目录未切换、清理或覆盖。
+本次交付只新增 `fixtures/task28_g1_0_new_single_cube_v0/` 并更新本文档；既有
+Task24/26/27 源文件、CMake 目标、launch、ACM 和吸附参数均保持原样。
 
-```json
-{
-  "fixture_id": "task28_g1_0_new_single_cube_v0",
-  "status": "PROPOSED_NOT_FROZEN",
-  "provenance": "NEW_BASELINE; NOT_TASK24_H_REPRODUCTION",
-  "source_commit": "b2bf8abc42fa88b8f8e590af00c4d6fedf236942",
-  "scene_namespace": "/World/Task28G10SingleCube",
-  "cube": {
-    "id": "Cube_01",
-    "pose_world_m": [0.650, 0.000, 0.260],
-    "size_m": [0.120, 0.120, 0.120],
-    "mass_kg": 0.800,
-    "pose_array_order": ["Cube_01"]
-  },
-  "target_world_m": [0.820, -0.075, 0.260],
-  "bases_world_m": {
-    "left": [0.650, -0.600, 0.000],
-    "right": [0.650, 0.600, 0.000]
-  },
-  "table": {
-    "center_world_m": [0.550, 0.000, 0.100],
-    "size_m": [1.200, 0.800, 0.200],
-    "top_z_m": 0.200
-  },
-  "home_q_rad": [0.0, -0.7853981634, 0.0, -2.3561944902, 0.0, 1.5707963268, 0.7853981634],
-  "side_tcp": {
-    "left_link8_translation_m": [0.0, -0.155, 0.080],
-    "right_link8_translation_m": [0.0, 0.155, 0.080],
-    "left_world_quaternion_xyzw": [0.7071067812, 0.7071067812, 0.0, 0.0],
-    "right_world_quaternion_xyzw": [0.7071067812, -0.7071067812, 0.0, 0.0]
-  },
-  "suction": {
-    "one_surface_gripper_per_arm": true,
-    "grip_threshold_m": 0.003,
-    "force_break_N": 1000000.0,
-    "torque_break_Nm": 1000000.0,
-    "bend_angle_rad": 0.0,
-    "stiffness": 10000.0,
-    "damping": 1000.0,
-    "disable_gravity": false
-  },
-  "collision_policy": {
-    "acm_changes": false,
-    "payload_must_remain_in_validator": true,
-    "historical_current_path_payload_gap": true
-  },
-  "environment": {
-    "isaac_family": "4.5",
-    "ros": "humble",
-    "moveit_ompl": "record_at_freeze_time",
-    "isaac_usd_hash": null,
-    "external_franka_description_hash": null,
-    "moveit_overlay_hash": null
-  },
-  "approval_required": true
-}
+| 交付 | 路径与作用 |
+|---|---|
+| 入口说明 | [fixture README](../../fixtures/task28_g1_0_new_single_cube_v0/README.md) |
+| 机器清单 | [fixture_manifest.json](../../fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json)，记录 source/config/fixture hashes、原始资产身份、frame、环境依赖、UNKNOWN 和限制 |
+| Isaac scene | [task28_single_cube_scene.py](../../fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py)，独立根、单 Cube、基座/HOME/工具/桌面/物理设置 |
+| bridge | [task28_single_cube_bridge.py](../../fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py)，严格 count/ID/order/asset 检查，默认仅遥测 |
+| controller 输入 | [task28_single_cube_task.py](../../fixtures/task28_g1_0_new_single_cube_v0/controller/task28_single_cube_task.py)，不可变单任务规格，拒绝错误 ID/count/task index/Cube index，不实现规划或机器人命令 |
+| MoveIt 独立包 | [task28_single_cube_description](../../fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/README.md)，包位于 `ros_ws/src` 外，独立 CMake/launch/state merger/environment publisher |
+| 冻结规划模型 | [task28_single_cube_frozen.urdf](../../fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf)，launch 直接读取，避免运行时加载另一版模型 |
+| 原始资产核验 | [fr3_offline_asset_inspection.json](../../fixtures/task28_g1_0_new_single_cube_v0/assets/fr3_offline_asset_inspection.json)，离线 pxr 解析，未启动 Kit/Isaac/ROS |
+| 未来启动协议 | [launch_protocol.md](../../fixtures/task28_g1_0_new_single_cube_v0/launch_protocol.md)，明确静态再生成、独立 build/install、场景/桥接/MoveIt 顺序，未在本任务执行启动步骤 |
+
+### 5.1 单对象和参数冻结
+
+| 参数 | 冻结值 |
+|---|---|
+| 场景根 | `/World/Task28G10SingleCube`，机器人、桌面、physicsScene、ROSGraph 均在该根下 |
+| 唯一 Cube | `/World/Task28G10SingleCube/Supply/Cube_01`；count=1，task index=0，Cube index=0 |
+| ROS / MoveIt identity | namespace `/task28_g1_0`；PoseArray `world/[Cube_01]`；CollisionObject ID=`Cube_01`；table ID=`task28_table` |
+| Cube | 边长 `[.120,.120,.120] m`，质量 `.800 kg`，dynamic，xyzw=`[0,0,0,1]` |
+| 初始 / 目标 | `[.650,0,.260]` / `[.820,-.075,.260] m` |
+| 基座 | left `[.650,-.600,0]`，right `[.650,.600,0] m`；基座旋转 identity |
+| 桌面 | center `[.550,0,.100]`，size `[1.200,.800,.200] m`，顶面 `.200 m` |
+| HOME | `[0,-.7853981634,0,-2.3561944902,0,1.5707963268,.7853981634] rad`；两臂相同 |
+| link8→TCP 平移 | left `[0,-.155,.080]`，right `[0,.155,.080] m` |
+| link8→TCP 局部旋转 | left `Rz(-π/2)`，right `Rz(+π/2)`；与世界抓取姿态分开记录 |
+| 世界抓取姿态 xyzw | left `[√½,√½,0,0]`，right `[√½,-√½,0,0]` |
+| 吸附 | 每侧一个 Surface Gripper；capture `.003 m`，force/torque break `1e6`，bend=0，stiffness=`1e4`，damping=`1e3`，gravity 不禁用，retry=true；门限未改变 |
+| 工具几何 | current 70×70 mm manifold、四个 radius/length=10 mm Cup、80 mm 竖杆、130 mm 横杆；tool xacro 保持原字节 |
+| NEW 场景构造设置 | metre/Z-up，gravity `(0,0,-9.81) m/s²`，60 physics steps/s，TGS、CCD、stabilization；这是明确的新构造设置，不是历史运行参数恢复 |
+
+场景拒绝外部任务、物理、碰撞或 ActionGraph 根，不清理其他任务。
+bridge 只接受精确的 scene 标记和 `Supply/Cube_01` 子项；默认不构造 gripper、
+不创建关节/吸附命令订阅，也不写 ArticulationAction。MoveIt launch 关闭轨迹执行，
+RViz 默认关闭，不启动 controller 或机器人驱动。只有 controller 的任务输入接口被
+实现；运动算法/执行器不属于本工单。
+
+### 5.2 资产身份与 hash 绑定
+
+主 Isaac FR3 USD 已通过 HTTPS 只读获取并离线解析：
+
+- 身份：`https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Robots/Franka/FR3/fr3.usd`
+- 大小：17,462,793 bytes。
+- SHA256：`3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f`。
+- defaultPrim=`fr3`，metre/Z-up；无 sublayer/reference/payload，碰撞点和物理 joint 数据嵌入主文件。
+- 唯一外部资产 `OmniPBR.mdl` 为视觉材质，身份/hash=`UNKNOWN`；未填造值或换模型。
+
+scene/bridge 要求显式本地 `TASK28_FR3_USD` 及与上述冻结值相等的 SHA256，
+并核对文件内容；任一缺失或不匹配即拒绝，不搜索 fallback。
+外部 `franka_description` 2.8.1 的公共 xacro、FR3 YAML、link0–7 STL/DAE 共
+25 个相关文件均已记录并校验 hash；原始 joint-limits YAML 另存字节一致快照。
+manifest 记录 Isaac/ROS/MoveIt/OMPL/FCL、Python/xacro 和离线生成器依赖。
+运行 overlay、DDS/ROS domain、未来随机算法 seed/时间预算尚无运行记录，明确为
+`UNKNOWN` 或 future per-run 必填项。
+
+## 6. Isaac / MoveIt 物理与几何核对及保守处理
+
+离线 USD joint frame 与 FR3 YAML 的 joint1–8 运动学原点/轴在 `1e-6 m/rad`
+内一致；base、HOME、table、Cube、link8 工具安装和 TCP 也已在 scene/bridge/
+controller/MoveIt 源文件间核对。两项原始模型差异没有被隐藏：
+
+1. **joint limits 不完全相同。** USD 的若干限位比 2.8.1 YAML 更窄。
+   两套原始值、USD drive 和限速均保存在资产审计及 manifest。新规划 URDF
+   使用 lower 的 max、upper 的 min，以及 velocity/effort 的 min。
+   `render_robot_description.py` 验证 14 个关节完整，拒绝任何扩大原始范围的值。
+   HOME 在交集内；未修改原 USD、外部 YAML 或旧实验限位。
+2. **原始碰撞网格不完全相同。** link0–7 的 USD 点云与原 STL 的 AABB 最大差
+   约 `0.335–5.528 mm`；不能宣称字节相同或相互包含。新 Task28 规划网格是
+   两方点集的凸包，再外扩约 `1 µm` 以抵消 float32 输出舍入。
+   输出后逐面复核：所有源点至少位于面内 `0.5 µm`，实际最差约 `0.997 µm`；
+   8 个网格均封闭、正体积，8 个外部点负例被拒绝。此模型是保守规划包络，
+   既包含 USD authored convexHull 源点，也包含原 STL 全部三角形顶点。
+   它没有替换物理 USD，也不冒称 PhysX cooking/contact 与 FCL 已实测等价。
+
+[碰撞来源与包含证明](../../fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/meshes/conservative_collision_provenance.json)
+保留 source point snapshot、两方源 hash、frame identity 证据、生成算法与环境。
+[生成器](../../fixtures/task28_g1_0_new_single_cube_v0/assets/generate_conservative_envelopes.py)
+可从冻结点云临时再生成并逐字节比对；现有文件不被覆盖。
+renderer 只对预期的 16 个 arm collision URI 作替换，要求原 origin/scale 为 identity。
+工具碰撞保持原样，SRDF hash 与旧文件完全相同：
+`473c380d9c8468c4f356ae556c3d7870bc78b307e92cab38cce467c7853bded1`。
+**没有新增 allowed collision pair，没有删除 payload，没有关闭 FCL。**
+
+Isaac 原 USD 自带的隐藏 hand/finger rigid body 惯性仍保留；场景只按现有侧吸方式
+禁用其视觉/碰撞。MoveIt `hand=false` 是运动学/碰撞描述，不能由此声称动力学
+质量相同。此差异已记录，后续动力学/物理实验需要单独评估。
+
+环境发布器初始添加 `task28_table` 和 `Cube_01`，随后将有效的单 entry PoseArray
+更新为同一个 world collision object。它保留载荷几何，但不是闭链/AttachedBody
+validator；未来 validator 可以且必须在候选 Cube 状态下包含该 payload。
+当前 state adapter 会保留初始/上次有效状态，尚无 freshness/两臂同步时间门禁，
+所以不能把其存在当成可执行路径安全证明。
+
+## 7. 有界静态一致性和负例结果
+
+主要检查命令：
+
+```bash
+python3 fixtures/task28_g1_0_new_single_cube_v0/tests/static_check.py
 ```
 
-提案选择 current 侧吸 URDF/bridge 的已读参数、一个真实 Cube、current 官方 HOME 和报告目标 `(0.820,-0.075,0.260)`，但它**不继承**历史 PASS 的真实性，也不声称 current source/asset 已经在该 fixture 上执行过。`isaac_usd_hash`、外部 Franka 描述、MoveIt overlay 和运行命令必须在批准后的单独冻结步骤中填写；本任务不写入 manifest，因为该 fixture 尚未成功恢复或获批。
+结果：**PASS**。同一 checker 还以 `--asset-file` 核对已获取的原 USD，
+并以 `--xacro /opt/ros/humble/bin/xacro` 离线再生成完整规划 URDF；结果与冻结
+文件一致。`xacro` 只展开 XML，没有启动 ROS node/launch 或 MoveIt。
+碰撞生成器的 `--check` 临时再生成 8 个 STL，逐字节一致。
 
-## 6. G1-1 开始前的最低验收条件
+| 检查 | 结果 |
+|---|---|
+| 正例 | scene/bridge/controller/MoveIt 单 Cube、pose/order/frame、geometry/mass、bases/HOME、局部/世界 TCP、suction、joint limit 交集一致 |
+| source/config hash | fixture 文件、旧路径来源、25 个外部模型文件与主 USD hash 匹配 |
+| ACM / payload | 原 SRDF/tool/kinematics 字节一致；无新增豁免，Cube world object 持续保留 |
+| bundle 负例 17 个 | 错 Cube ID、task index、Cube index、count、TCP 平移/局部旋转、缺 config、缺 asset identity/hash、错 frame/mass、扩大 ACM、新 allowed pair、遗漏 payload、放宽位置/速度/吸附门限均拒绝 |
+| task 输入负例 4 个 | 错 ID、count、task index、Cube index 均拒绝 |
+| renderer 负例 5 个 | 扩大位置/速度/力矩、NaN、错误碰撞源文件均拒绝 |
+| mesh 负例 8 个 | 每个 link 的外部点均拒绝；独立 stdlib 重算法向、闭合和包含关系通过 |
+| 非执行边界 | 未 build/install，未启动 Isaac/Kit/ROS/MoveIt，未发机器人或吸附命令，未做物理实验 |
 
-在开发闭链/IK validator 前，需要先由研究者批准“恢复历史”还是“采用 NEW baseline”。无论选择哪条路线，至少满足：
+manifest 不做循环自 hash；其身份由本次 Git commit 绑定。文件 hash 列表覆盖
+fixture 源码、配置、审计、测试与网格；提交前检查 diff/branch，推送后核验远端 SHA。
+本任务未实现 P4-NR、QP、P2、RL 或 B1。
 
-1. **单一对象契约**：Isaac stage、bridge PoseArray、controller index、MoveIt CollisionObject 的数量均为 1，唯一 ID 和顺序均为 `Cube_01/index=0`；无 `Cube_07` 隐式索引。
-2. **完整参数 manifest**：scene、bridge、controller、URDF/SRDF、launch、kinematics、外部 Franka 描述、Isaac FR3 USD、ROS/MoveIt overlay、命令、环境变量和 hash 全部记录。
-3. **frame 一致**：world、base、link8、side_suction、TCP、Cube object frame、PoseArray frame_id 和规划 world shift 明确；两 TCP 的平移/旋转从同一版本 scene/URDF 派生。
-4. **固定吸附条件**：一侧一个 Surface Gripper；capture、D6 break、bend、stiffness、damping、gravity、retry 和 release 语义预先冻结，不在 validator 开发中调参。
-5. **碰撞静态门禁**：保留现有 ACM 和 joint limits；离线 validator 必须把 Cube payload 放入候选对象状态，覆盖 robot/tool/object/table，且至少能拒绝错误 ID、错误法向、错误 count、故意碰撞和不可达目标。
-6. **规划/执行分离**：G1-1 只做离线/静态 IK、FK、闭链残差和 FCL 接口；不复用历史 PASS 作为新算法成功，不启动 Isaac，不写 joint/suction 命令。
-7. **版本停止条件**：若无法填写任一 asset/source/environment hash，继续标为 `UNKNOWN` 并停止历史复现主张，不把报告数值复制到新 fixture 的结果栏。
+## 8. G1-1 仍需满足的最低前置条件
 
-## 7. 停止点与后续请求
+1. 取得 G1-1 单独授权；使用本次冻结的 manifest/URDF/保守网格/有效限位，
+   不沿用旧 Task24 持件 FCL 删除 payload 的路径。
+2. 实现离线 FK/IK、闭链残差与 payload-preserving FCL 接口；覆盖双臂、工具、
+   Cube 和 table，保持 joint/suction/ACM 门限，并能拒绝错误 ID、法向、count、
+   碰撞和不可达目标。此项是 G1-1 的工作，本任务没有提前实现。
+3. 在任何未来规划/执行前补充缺失、陈旧、无效和不同步的 Cube/TCP/joint state
+   拒绝门禁；不能使用当前 adapter 保留的旧位姿作为实时有效输入。
+4. 任何后续 runtime 检查都要另行授权并记录构建/overlay、DDS/ROS domain、
+   命令、seed/时间预算、fixture commit 与 loaded asset hashes；未知项继续标
+   `UNKNOWN`。视觉 MDL 可单独补 hash，不得借此更换机器人或碰撞模型。
+5. 运行时 namespace/scene 插入、PhysX cooking/contact、隐藏手爪惯性、吸附和
+   物理误差尚未验证；物理实验必须晚于 validator 门禁，不能由静态 PASS 推断。
 
-G1-0 已完成历史搜索和静态核对，但**没有冻结任何 fixture**。目前不能安全地提交机器可执行的“Task24-H 精确 baseline manifest”，也不能在未批准的情况下采用上面的 NEW baseline。
+## 9. 停止点
 
-需要研究者先选择并批准：
+**最终状态：`G1_0B_CONDITIONALLY_READY`。** 新 fixture 的静态规格和实现已冻结，
+仅视觉材质 hash 为非关键 UNKNOWN；运行验证与上述后续门禁均保留明确边界。
+历史 Task24-H 结果继续作为历史报告证据保存。
 
-- **恢复路径**：提供/确认缺失的 Task24-H 运行源码、scene/bridge、Isaac USD、MoveIt overlay 和原始日志，使其可以完成 hash 闭合；或
-- **新基线路径**：批准 `task28_g1_0_new_single_cube_v0` 提案，并允许另一个明确工单创建独立 fixture、manifest 和静态验证。
-
-在该选择和批准到达前，停止 G1-0，不开始 G1-1。
+本任务在 G1-0B 结束；不自动开始 G1-1，不执行启动协议，等待后续授权。

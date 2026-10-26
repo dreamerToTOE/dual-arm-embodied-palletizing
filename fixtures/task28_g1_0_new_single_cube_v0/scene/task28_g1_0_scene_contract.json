@@ -1,0 +1,123 @@
+{
+  "schema": "task28.g1_0.scene_contract.v1",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+  "world_frame": "world",
+  "scene_namespace": "/World/Task28G10SingleCube",
+  "active_cube_count": 1,
+  "cube_ids": [
+    "Cube_01"
+  ],
+  "cube_paths": [
+    "/World/Task28G10SingleCube/Supply/Cube_01"
+  ],
+  "pose_array_order": [
+    "Cube_01"
+  ],
+  "cube": {
+    "id": "Cube_01",
+    "index": 0,
+    "initial_pose_world_m": [
+      0.65,
+      0.0,
+      0.26
+    ],
+    "target_pose_world_m": [
+      0.82,
+      -0.075,
+      0.26
+    ],
+    "orientation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "size_m": [
+      0.12,
+      0.12,
+      0.12
+    ],
+    "mass_kg": 0.8,
+    "dynamic": true
+  },
+  "table": {
+    "id": "task28_table",
+    "center_world_m": [
+      0.55,
+      0.0,
+      0.1
+    ],
+    "size_m": [
+      1.2,
+      0.8,
+      0.2
+    ],
+    "top_z_m": 0.2
+  },
+  "bases_world_m": {
+    "left": [
+      0.65,
+      -0.6,
+      0.0
+    ],
+    "right": [
+      0.65,
+      0.6,
+      0.0
+    ]
+  },
+  "home_q_rad": [
+    0.0,
+    -0.7853981634,
+    0.0,
+    -2.3561944902,
+    0.0,
+    1.5707963268,
+    0.7853981634
+  ],
+  "target_marker_path": "/World/Task28G10SingleCube/TargetMarkers/Target_01",
+  "physical_execution": {
+    "enabled": false,
+    "launch_protocol": "../launch_protocol.md"
+  },
+  "implementation": {
+    "path": "task28_single_cube_scene.py",
+    "entry_point": "build_scene",
+    "legacy_scene_modified": false,
+    "requires_stopped_timeline": true,
+    "foreign_task_or_physics_roots": "REJECT_WITHOUT_REMOVAL",
+    "asset_path_env": "TASK28_FR3_USD",
+    "asset_sha256_env": "TASK28_FR3_USD_SHA256",
+    "asset_fallback_allowed": false
+  },
+  "robot_paths": {
+    "left": "/World/Task28G10SingleCube/left_fr3",
+    "right": "/World/Task28G10SingleCube/right_fr3"
+  },
+  "clock_topic": "/task28_g1_0/clock",
+  "joint_state_topics": {
+    "left": "/task28_g1_0/left/joint_states",
+    "right": "/task28_g1_0/right/joint_states"
+  },
+  "stage_requirements": {
+    "meters_per_unit": 1.0,
+    "up_axis": "Z",
+    "global_metadata_mutation": false,
+    "mismatch_policy": "FAIL_CLOSED"
+  },
+  "physics": {
+    "path": "/World/Task28G10SingleCube/physicsScene",
+    "gravity_direction": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "gravity_magnitude_m_s2": 9.81,
+    "steps_per_second": 60,
+    "solver_type": "TGS",
+    "enable_ccd": true,
+    "enable_stabilization": true,
+    "provenance": "Explicit NEW fixture construction defaults; not recovered historical runtime settings."
+  }
+}

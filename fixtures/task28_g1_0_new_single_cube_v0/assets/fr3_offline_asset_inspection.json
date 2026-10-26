@@ -1,0 +1,1212 @@
+{
+  "schema": "task28.fr3.offline_asset_inspection.v1",
+  "methods": {
+    "launched_kit_isaac_ros": false,
+    "python": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3",
+    "PYTHONPATH": "/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.usd.libs-1.0.1+d02c707b.lx64.r.cp310",
+    "LD_LIBRARY_PATH": "/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.usd.libs-1.0.1+d02c707b.lx64.r.cp310/bin",
+    "usd_version": [
+      0,
+      22,
+      11
+    ],
+    "apis": [
+      "Sdf.Layer.FindOrOpen",
+      "Sdf.Layer.GetExternalReferences",
+      "UsdUtils.ExtractExternalReferences",
+      "Usd.Stage.Open",
+      "UsdGeom.Xformable.GetLocalTransformation"
+    ],
+    "quat_order": "wxyz",
+    "limit_conversion": "USD angular degrees multiplied by pi/180; MoveIt YAML radian source preserved",
+    "kinematic_comparison": "T_body0_body1(q=0)=T_local0 * inverse(T_local1); child joint axis transformed by localRot1",
+    "geometry_comparison": "Collision mesh authored points compared to original STL triangle vertices rounded to 1e-6 m; AABBs also compared. No claim of PhysX cooked convexHull equality to FCL triangle mesh."
+  },
+  "asset": {
+    "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Robots/Franka/FR3/fr3.usd",
+    "bytes": 17462793,
+    "sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+    "meters_per_unit": 1.0,
+    "up_axis": "Z",
+    "default_prim": "fr3",
+    "sublayers": [],
+    "composition_references": [],
+    "external_asset_dependencies_api": [],
+    "usdutils_external_references": [
+      [],
+      [
+        "OmniPBR.mdl"
+      ],
+      []
+    ]
+  },
+  "source_root": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/franka_description",
+  "source_hashes": {
+    "package.xml": {
+      "sha256": "328813744c48c16e5eb9e033e7785313512067049a9c4340dafc780192c951d3",
+      "bytes": 909
+    },
+    "robots/common/franka_arm.srdf.xacro": {
+      "sha256": "74d34e067f0decbff52792d37e2c7d57d3f099efbb34b81057c65117e09e7d29",
+      "bytes": 3506
+    },
+    "robots/common/franka_arm.xacro": {
+      "sha256": "e7dfedf0cea67266048c90f8c0bc104390cd27de9b1c2122483a7e7fb4da4d75",
+      "bytes": 8709
+    },
+    "robots/common/franka_robot.xacro": {
+      "sha256": "63c9f483ffaa922f29d33b076ab06d5f11521740c3a0042df57a689e143adbfe",
+      "bytes": 7368
+    },
+    "robots/common/group_definition.xacro": {
+      "sha256": "5a8c3957a2a9622df0c6116126450e69f3b769a336392a226049196ab19173ca",
+      "bytes": 1191
+    },
+    "robots/common/utils.xacro": {
+      "sha256": "20c9670a47e3ac0541b7e101e3afdd1a6585152c45a569abe19a0b637d73f7ef",
+      "bytes": 17322
+    },
+    "robots/fr3/accelerometers.yaml": {
+      "sha256": "40fb78a7082e4fb7fc565b5ee3f3be15a4db4a07895cdbadda46c251980320ab",
+      "bytes": 1597
+    },
+    "robots/fr3/dynamics.yaml": {
+      "sha256": "e65e145114b431bd17cdebc58b88c43505f0658472cca6ffbc9c32b7a198f79b",
+      "bytes": 1283
+    },
+    "robots/fr3/inertials.yaml": {
+      "sha256": "02a39046b36303f748c9755b48610b7600fb819d54828475514c36915ae54a89",
+      "bytes": 2212
+    },
+    "robots/fr3/joint_limits.yaml": {
+      "sha256": "42e999184f37689568b58f320d062859053f03c62c8b49bf00a00d69f20d7a65",
+      "bytes": 1374
+    },
+    "robots/fr3/kinematics.yaml": {
+      "sha256": "44326830a6773dd6611cdf9947045eeb3276ea4e3ca47a05272816c862c8e386",
+      "bytes": 831
+    },
+    "meshes/robots/fr3/collision/link0.stl": {
+      "sha256": "56990396d712b2ebb89f7d29083973c823babd3bfa605f2d2863bd1069d29788",
+      "bytes": 18784
+    },
+    "meshes/robots/fr3/collision/link1.stl": {
+      "sha256": "e023cf1db282e07f38597d4e7f9edae03cd0dc338974677b31639f677411dc18",
+      "bytes": 11884
+    },
+    "meshes/robots/fr3/collision/link2.stl": {
+      "sha256": "3117fd3aea238c07fc1bf678784d38497bfdd603a7760bf36b7fb31b15f0624e",
+      "bytes": 11484
+    },
+    "meshes/robots/fr3/collision/link3.stl": {
+      "sha256": "1f21215bdb62892271a263969c92dc1be15c409ec8fc96b6bdec3c28d77f0e6e",
+      "bytes": 13584
+    },
+    "meshes/robots/fr3/collision/link4.stl": {
+      "sha256": "b9574ef02cdf234dff9f12359e00f6c11a4b062cf73d1db20894c57f5a9d716a",
+      "bytes": 13184
+    },
+    "meshes/robots/fr3/collision/link5.stl": {
+      "sha256": "c174872b06547dc6acdd027679e476d4cddffe0224cb048763bdbf4f68fe7542",
+      "bytes": 13384
+    },
+    "meshes/robots/fr3/collision/link6.stl": {
+      "sha256": "9ad5c4698aed204cd505e74356adfbb955196913d0b75a616c3865b319d39e6b",
+      "bytes": 16234
+    },
+    "meshes/robots/fr3/collision/link7.stl": {
+      "sha256": "c48646a72ed0264e5f90b221327fd2b72163935ec7bc1cde9612ac1dcf23eabf",
+      "bytes": 15784
+    },
+    "meshes/robots/fr3/visual/link0.dae": {
+      "sha256": "3c52a112d1610d645934945b80ea8d9bb3d1635f345098480a33a537bd43224e",
+      "bytes": 7079719
+    },
+    "meshes/robots/fr3/visual/link1.dae": {
+      "sha256": "5c5846eabc714aefc82ef051a4d09c4fc1c092bca6258b1290227345dd217fcb",
+      "bytes": 906843
+    },
+    "meshes/robots/fr3/visual/link2.dae": {
+      "sha256": "90a1bd38abdc53d0141719cd8e040f788db337b768a845bb6d53c5c52590498f",
+      "bytes": 921715
+    },
+    "meshes/robots/fr3/visual/link3.dae": {
+      "sha256": "1c7a2a8124e39ad07096c0cce8461b0e650f6752900cfd777bf87c181e81749b",
+      "bytes": 2475274
+    },
+    "meshes/robots/fr3/visual/link4.dae": {
+      "sha256": "dd134cf13cdaced2b67739e4d9fe2ca011cc533936397d9f6303fc740424e2a2",
+      "bytes": 2533228
+    },
+    "meshes/robots/fr3/visual/link5.dae": {
+      "sha256": "cbcabd369e044eba3f1c2cab84b9ed2ebc1b2f424c6104ad9c5d7410e92fabfe",
+      "bytes": 3259292
+    },
+    "meshes/robots/fr3/visual/link6.dae": {
+      "sha256": "907b16fea84931f4881174234065bb647700abf105b432c3ff65360e0ad5cf8b",
+      "bytes": 5252660
+    },
+    "meshes/robots/fr3/visual/link7.dae": {
+      "sha256": "b9d05ac502ff269b1323705de811d07a8eb9920ce711b32ee0497bf16b74989b",
+      "bytes": 4243523
+    }
+  },
+  "joint_comparison": {
+    "joint1": {
+      "path": "/fr3/fr3_link0/fr3_joint1",
+      "body0": [
+        "/fr3/fr3_link0"
+      ],
+      "body1": [
+        "/fr3/fr3_link1"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.0,
+        0.0,
+        0.3330000042915344
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.0,
+        0.0,
+        0.3330000042915344
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "usd_position_limits_deg": [
+        -157.20242309570312,
+        157.20242309570312
+      ],
+      "usd_position_limits_rad": [
+        -2.7436998751331965,
+        2.7436998751331965
+      ],
+      "usd_max_joint_velocity_deg_s": 150.11492919921875,
+      "usd_max_joint_velocity_rad_s": 2.619999770924542,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 87.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -2.9007,
+          "upper": 2.9007,
+          "velocity": 2.62,
+          "effort": 87.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.652,
+          "deceleration_limit": 6.0
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0,
+        "y": 0,
+        "z": 0.333,
+        "roll": 0,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 4.291534405620467e-09,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -2.7436998751331965,
+        2.7436998751331965
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint2": {
+      "path": "/fr3/fr3_link1/fr3_joint2",
+      "body0": [
+        "/fr3/fr3_link1"
+      ],
+      "body1": [
+        "/fr3/fr3_link2"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        -0.7071067811865475,
+        5.551115123125783e-17,
+        -5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        -102.19847869873047,
+        102.19847869873047
+      ],
+      "usd_position_limits_rad": [
+        -1.7836999438221368,
+        1.7836999438221368
+      ],
+      "usd_max_joint_velocity_deg_s": 150.11492919921875,
+      "usd_max_joint_velocity_rad_s": 2.619999770924542,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 87.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -1.8361,
+          "upper": 1.8361,
+          "velocity": 2.62,
+          "effort": 87.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.25,
+          "deceleration_limit": 2.585
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "roll": -1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 0.0,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -1.7836999438221368,
+        1.7836999438221368
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint3": {
+      "path": "/fr3/fr3_link2/fr3_joint3",
+      "body0": [
+        "/fr3/fr3_link2"
+      ],
+      "body1": [
+        "/fr3/fr3_link3"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.0,
+        -0.3160000145435333,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        0.5,
+        -0.5,
+        -0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.0,
+        -0.3160000145435333,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5.551115123125783e-17,
+        5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        -166.19786071777344,
+        166.19786071777344
+      ],
+      "usd_position_limits_rad": [
+        -2.9006998792960927,
+        2.9006998792960927
+      ],
+      "usd_max_joint_velocity_deg_s": 150.11492919921875,
+      "usd_max_joint_velocity_rad_s": 2.619999770924542,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 87.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -2.9007,
+          "upper": 2.9007,
+          "velocity": 2.62,
+          "effort": 87.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.2005,
+          "deceleration_limit": 3.5
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0,
+        "y": -0.316,
+        "z": 0,
+        "roll": 1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 1.4543533322086688e-08,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -2.9006998792960927,
+        2.9006998792960927
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint4": {
+      "path": "/fr3/fr3_link3/fr3_joint4",
+      "body0": [
+        "/fr3/fr3_link3"
+      ],
+      "body1": [
+        "/fr3/fr3_link4"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.08250000327825546,
+        0.0,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        0.5,
+        -0.5,
+        -0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.08250000327825546,
+        0.0,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5.551115123125783e-17,
+        5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        -174.2994842529297,
+        -8.69749927520752
+      ],
+      "usd_position_limits_rad": [
+        -3.042099884741632,
+        -0.15179999904219163
+      ],
+      "usd_max_joint_velocity_deg_s": 150.11492919921875,
+      "usd_max_joint_velocity_rad_s": 2.619999770924542,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 87.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -3.077,
+          "upper": -0.1169,
+          "velocity": 2.62,
+          "effort": 87.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.3542,
+          "deceleration_limit": 4.0
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0.0825,
+        "y": 0,
+        "z": 0,
+        "roll": 1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 3.2782554587607038e-09,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -3.042099884741632,
+        -0.15179999904219163
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint5": {
+      "path": "/fr3/fr3_link4/fr3_joint5",
+      "body0": [
+        "/fr3/fr3_link4"
+      ],
+      "body1": [
+        "/fr3/fr3_link5"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        -0.08250000327825546,
+        0.3840000033378601,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        -0.08250000327825546,
+        0.3840000033378601,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        -0.7071067811865475,
+        5.551115123125783e-17,
+        -5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        -160.80059814453125,
+        160.80059814453125
+      ],
+      "usd_position_limits_rad": [
+        -2.806499876798355,
+        2.806499876798355
+      ],
+      "usd_max_joint_velocity_deg_s": 301.3758239746094,
+      "usd_max_joint_velocity_rad_s": 5.260000414267797,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 12.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -2.8763,
+          "upper": 2.8763,
+          "velocity": 5.26,
+          "effort": 12.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.5738,
+          "deceleration_limit": 17.0
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": -0.0825,
+        "y": 0.384,
+        "z": 0,
+        "roll": -1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 3.3378600994282692e-09,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -2.806499876798355,
+        2.806499876798355
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint6": {
+      "path": "/fr3/fr3_link5/fr3_joint6",
+      "body0": [
+        "/fr3/fr3_link5"
+      ],
+      "body1": [
+        "/fr3/fr3_link6"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        0.5,
+        -0.5,
+        -0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5.551115123125783e-17,
+        5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        31.19754981994629,
+        258.7992858886719
+      ],
+      "usd_position_limits_rad": [
+        0.5444999629130268,
+        4.5168996405674235
+      ],
+      "usd_max_joint_velocity_deg_s": 239.49635314941406,
+      "usd_max_joint_velocity_rad_s": 4.179999908976367,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 12.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": 0.4398,
+          "upper": 4.6216,
+          "velocity": 4.18,
+          "effort": 12.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.4885,
+          "deceleration_limit": 5.5
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "roll": 1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 0.0,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        0.5444999629130268,
+        4.5168996405674235
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    },
+    "joint7": {
+      "path": "/fr3/fr3_link6/fr3_joint7",
+      "body0": [
+        "/fr3/fr3_link6"
+      ],
+      "body1": [
+        "/fr3/fr3_link7"
+      ],
+      "axis": "X",
+      "local_pos0_m": [
+        0.08799999952316284,
+        0.0,
+        0.0
+      ],
+      "local_pos1_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_rot0_wxyz": [
+        0.5,
+        0.5,
+        -0.5,
+        -0.5
+      ],
+      "local_rot1_wxyz": [
+        0.7071067811865475,
+        0.0,
+        -0.7071067811865476,
+        0.0
+      ],
+      "zero_q_body0_to_body1_translation_m": [
+        0.08799999952316284,
+        0.0,
+        0.0
+      ],
+      "zero_q_body0_to_body1_rotation_wxyz": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5.551115123125783e-17,
+        5.551115123125783e-17
+      ],
+      "usd_position_limits_deg": [
+        -172.79832458496094,
+        172.79832458496094
+      ],
+      "usd_position_limits_rad": [
+        -3.015899705937432,
+        3.015899705937432
+      ],
+      "usd_max_joint_velocity_deg_s": 301.3758239746094,
+      "usd_max_joint_velocity_rad_s": 5.260000414267797,
+      "usd_drive": {
+        "drive:angular:physics:stiffness": 60000.0,
+        "drive:angular:physics:damping": 6000.0,
+        "drive:angular:physics:maxForce": 12.0,
+        "drive:angular:physics:type": "force",
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:targetVelocity": 0.0
+      },
+      "moveit_joint_limit_source": {
+        "limit": {
+          "lower": -3.0508,
+          "upper": 3.0508,
+          "velocity": 5.26,
+          "effort": 12.0
+        },
+        "position_based_velocity_limits": {
+          "velocity_offset": 0.4592,
+          "deceleration_limit": 17.0
+        }
+      },
+      "moveit_kinematic_origin": {
+        "x": 0.088,
+        "y": 0,
+        "z": 0,
+        "roll": 1.570796326794897,
+        "pitch": 0,
+        "yaw": 0
+      },
+      "origin_translation_max_abs_error_m": 4.768371530960991e-10,
+      "origin_rotation_error_rad": 0.0,
+      "canonical_child_axis_xyz": [
+        -2.220446049250313e-16,
+        0.0,
+        1.0
+      ],
+      "proposed_future_effective_intersection_rad": [
+        -3.015899705937432,
+        3.015899705937432
+      ],
+      "kinematic_origin_matches_within_tolerance": true
+    }
+  },
+  "collision_geometry_comparison": {
+    "link0": {
+      "usd_prim_path": "/fr3/fr3_link0/collisions",
+      "usd_point_count": 600,
+      "stl_vertex_count": 1122,
+      "usd_unique_points_1e_6_m": 102,
+      "stl_unique_points_1e_6_m": 193,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0014518052339553833,
+      "usd_aabb_m": [
+        [
+          -0.15407869219779968,
+          -0.09461374580860138,
+          -3.249277506256476e-05
+        ],
+        [
+          0.07156699150800705,
+          0.09467043727636337,
+          0.14000283181667328
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.15284602344036102,
+          -0.09442070126533508,
+          -9.591394700692035e-06
+        ],
+        [
+          0.07011518627405167,
+          0.09379471838474274,
+          0.14002195000648499
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "56990396d712b2ebb89f7d29083973c823babd3bfa605f2d2863bd1069d29788"
+    },
+    "link1": {
+      "usd_prim_path": "/fr3/fr3_link1/collisions",
+      "usd_point_count": 900,
+      "stl_vertex_count": 708,
+      "usd_unique_points_1e_6_m": 152,
+      "stl_unique_points_1e_6_m": 120,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.00033535808324813843,
+      "usd_aabb_m": [
+        [
+          -0.05498699098825455,
+          -0.12937313318252563,
+          -0.19200406968593597
+        ],
+        [
+          0.05516122654080391,
+          0.0551922544836998,
+          0.054973091930150986
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.055048488080501556,
+          -0.1295335739850998,
+          -0.19202402234077454
+        ],
+        [
+          0.05531303957104683,
+          0.055047497153282166,
+          0.055308450013399124
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "e023cf1db282e07f38597d4e7f9edae03cd0dc338974677b31639f677411dc18"
+    },
+    "link2": {
+      "usd_prim_path": "/fr3/fr3_link2/collisions",
+      "usd_point_count": 900,
+      "stl_vertex_count": 684,
+      "usd_unique_points_1e_6_m": 152,
+      "stl_unique_points_1e_6_m": 116,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0009715892374515533,
+      "usd_aabb_m": [
+        [
+          -0.055153440684080124,
+          -0.19400957226753235,
+          -0.055096644908189774
+        ],
+        [
+          0.054984934628009796,
+          0.05522003769874573,
+          0.12948937714099884
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.05490269511938095,
+          -0.1940387636423111,
+          -0.0547369122505188
+        ],
+        [
+          0.0559193454682827,
+          0.05619162693619728,
+          0.1285688728094101
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "3117fd3aea238c07fc1bf678784d38497bfdd603a7760bf36b7fb31b15f0624e"
+    },
+    "link3": {
+      "usd_prim_path": "/fr3/fr3_link3/collisions",
+      "usd_point_count": 900,
+      "stl_vertex_count": 810,
+      "usd_unique_points_1e_6_m": 152,
+      "stl_unique_points_1e_6_m": 137,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0020006969571113586,
+      "usd_aabb_m": [
+        [
+          -0.054645780473947525,
+          -0.05491721257567406,
+          -0.12101753056049347
+        ],
+        [
+          0.13756124675273895,
+          0.11120302975177765,
+          0.05515643209218979
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.05592770501971245,
+          -0.05506880208849907,
+          -0.12301822751760483
+        ],
+        [
+          0.13760411739349365,
+          0.11173930764198303,
+          0.05388648808002472
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "1f21215bdb62892271a263969c92dc1be15c409ec8fc96b6bdec3c28d77f0e6e"
+    },
+    "link4": {
+      "usd_prim_path": "/fr3/fr3_link4/collisions",
+      "usd_point_count": 900,
+      "stl_vertex_count": 786,
+      "usd_unique_points_1e_6_m": 152,
+      "stl_unique_points_1e_6_m": 133,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0007983818650245667,
+      "usd_aabb_m": [
+        [
+          -0.13760687410831451,
+          -0.05514972284436226,
+          -0.05520660802721977
+        ],
+        [
+          0.055139537900686264,
+          0.12400948256254196,
+          0.11105209589004517
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.1375061273574829,
+          -0.05490853264927864,
+          -0.05473724380135536
+        ],
+        [
+          0.05500274896621704,
+          0.12418539077043533,
+          0.1102537140250206
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "b9574ef02cdf234dff9f12359e00f6c11a4b062cf73d1db20894c57f5a9d716a"
+    },
+    "link5": {
+      "usd_prim_path": "/fr3/fr3_link5/collisions",
+      "usd_point_count": 900,
+      "stl_vertex_count": 798,
+      "usd_unique_points_1e_6_m": 152,
+      "stl_unique_points_1e_6_m": 135,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0055280327796936035,
+      "usd_aabb_m": [
+        [
+          -0.055016547441482544,
+          -0.05512791872024536,
+          -0.26455438137054443
+        ],
+        [
+          0.05508343130350113,
+          0.12990427017211914,
+          0.052168332040309906
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.05476672202348709,
+          -0.05400887131690979,
+          -0.25902634859085083
+        ],
+        [
+          0.0554763488471508,
+          0.13231098651885986,
+          0.051560793071985245
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "c174872b06547dc6acdd027679e476d4cddffe0224cb048763bdbf4f68fe7542"
+    },
+    "link6": {
+      "usd_prim_path": "/fr3/fr3_link6/collisions",
+      "usd_point_count": 600,
+      "stl_vertex_count": 969,
+      "usd_unique_points_1e_6_m": 102,
+      "stl_unique_points_1e_6_m": 164,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0019975490868091583,
+      "usd_aabb_m": [
+        [
+          -0.04800514504313469,
+          -0.05138847231864929,
+          -0.04398505762219429
+        ],
+        [
+          0.13220776617527008,
+          0.08168089389801025,
+          0.05630863085389137
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.04844902455806732,
+          -0.05126696079969406,
+          -0.04598260670900345
+        ],
+        [
+          0.13249829411506653,
+          0.08115825057029724,
+          0.055588897317647934
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "9ad5c4698aed204cd505e74356adfbb955196913d0b75a616c3865b319d39e6b"
+    },
+    "link7": {
+      "usd_prim_path": "/fr3/fr3_link7/collisions",
+      "usd_point_count": 600,
+      "stl_vertex_count": 942,
+      "usd_unique_points_1e_6_m": 102,
+      "stl_unique_points_1e_6_m": 159,
+      "point_sets_equal_rounded_1e_6_m": false,
+      "aabb_max_abs_error_m": 0.0017863959074020386,
+      "usd_aabb_m": [
+        [
+          -0.04403458908200264,
+          -0.044029612094163895,
+          0.051990531384944916
+        ],
+        [
+          0.08130612969398499,
+          0.08118730783462524,
+          0.10683722794055939
+        ]
+      ],
+      "stl_aabb_m": [
+        [
+          -0.043860264122486115,
+          -0.04444156959652901,
+          0.05040937662124634
+        ],
+        [
+          0.08102095127105713,
+          0.0810941532254219,
+          0.10505083203315735
+        ]
+      ],
+      "usd_collision_approximation": "convexHull",
+      "usd_local_transform_identity": true,
+      "stl_sha256": "c48646a72ed0264e5f90b221327fd2b72163935ec7bc1cde9612ac1dcf23eabf"
+    }
+  },
+  "unresolved_dependencies": [
+    {
+      "asset": "OmniPBR.mdl",
+      "role": "visual_material_only",
+      "status": "UNKNOWN",
+      "physics_collision_geometry_dependency": false,
+      "evidence": "All external asset paths in authored primary USD are MDL sourceAsset attributes in Material/Shader prims. No sublayers/references/payloads; arm collision Mesh point arrays and physics joint attributes are embedded."
+    }
+  ],
+  "link8_fixed_joint": {
+    "path": "/fr3/fr3_link7/fr3_joint8",
+    "body0": [
+      "/fr3/fr3_link7"
+    ],
+    "body1": [
+      "/fr3/fr3_link8"
+    ],
+    "axis": null,
+    "local_pos0_m": [
+      0.0,
+      0.0,
+      0.10700000077486038
+    ],
+    "local_pos1_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "local_rot0_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "local_rot1_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "zero_q_body0_to_body1_translation_m": [
+      0.0,
+      0.0,
+      0.10700000077486038
+    ],
+    "zero_q_body0_to_body1_rotation_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "moveit_kinematic_origin": {
+      "x": 0,
+      "y": 0,
+      "z": 0.107,
+      "roll": 0,
+      "pitch": 0,
+      "yaw": 0
+    },
+    "translation_matches_within_1e_6_m": true,
+    "rotation_matches_within_1e_6_rad": true
+  },
+  "hand_mount_fixed_joint": {
+    "path": "/fr3/fr3_link8/fr3_hand_joint",
+    "body0": [
+      "/fr3/fr3_link8"
+    ],
+    "body1": [
+      "/fr3/fr3_hand"
+    ],
+    "axis": null,
+    "local_pos0_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "local_pos1_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "local_rot0_wxyz": [
+      0.9238795200293247,
+      0.0,
+      0.0,
+      -0.38268346249921037
+    ],
+    "local_rot1_wxyz": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "zero_q_body0_to_body1_translation_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "zero_q_body0_to_body1_rotation_wxyz": [
+      0.9238795200293247,
+      0.0,
+      0.0,
+      -0.38268346249921037
+    ]
+  },
+  "conclusion": {
+    "primary_physics_geometry_asset_closure": "PRIMARY_USD_SELF_CONTAINED",
+    "position_limits_identical": false,
+    "kinematic_origins_match_1e_6": true,
+    "collision_mesh_source_points_match_1e_6": false,
+    "collision_backend_representation_identical": false,
+    "collision_backend_note": "Raw USD and franka_description STL point clouds differ. Isaac authors convexHull collision approximation; legacy MoveIt FCL consumes original STL triangle meshes. The new Task28 conservative union envelopes are specified in moveit/task28_single_cube_description/meshes/conservative_collision_provenance.json. This report does not certify runtime PhysX cooking, contacts, or FCL execution. No collision allowances changed.",
+    "effective_intersection_status": "PROPOSAL_ONLY_DOES_NOT_MODIFY_SOURCE_LIMITS",
+    "physical_validation": false
+  }
+}

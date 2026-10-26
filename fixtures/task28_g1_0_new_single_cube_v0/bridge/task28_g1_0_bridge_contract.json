@@ -1,0 +1,94 @@
+{
+  "schema": "task28.g1_0.bridge_contract.v1",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+  "namespace": "/task28_g1_0",
+  "world_frame": "world",
+  "cube_pose_topic": "/task28_g1_0/cube_poses",
+  "cube_pose_type": "geometry_msgs/msg/PoseArray",
+  "pose_array_order": [
+    "Cube_01"
+  ],
+  "active_cube_count": 1,
+  "cube_ids": [
+    "Cube_01"
+  ],
+  "tcp_topics": {
+    "left": "/task28_g1_0/left/side_suction_tcp_pose",
+    "right": "/task28_g1_0/right/side_suction_tcp_pose"
+  },
+  "suction_topics": {
+    "left_command": "/task28_g1_0/left/suction_command",
+    "right_command": "/task28_g1_0/right/suction_command",
+    "left_state": "/task28_g1_0/left/suction_state",
+    "right_state": "/task28_g1_0/right/suction_state"
+  },
+  "tcp_contract": {
+    "left_link8_translation_m": [
+      0.0,
+      -0.155,
+      0.08
+    ],
+    "right_link8_translation_m": [
+      0.0,
+      0.155,
+      0.08
+    ],
+    "left_world_quaternion_xyzw": [
+      0.7071067812,
+      0.7071067812,
+      0.0,
+      0.0
+    ],
+    "right_world_quaternion_xyzw": [
+      0.7071067812,
+      -0.7071067812,
+      0.0,
+      0.0
+    ],
+    "left_link8_rpy_rad": [
+      0.0,
+      0.0,
+      -1.5707963267948966
+    ],
+    "right_link8_rpy_rad": [
+      0.0,
+      0.0,
+      1.5707963267948966
+    ],
+    "world_quaternions_semantics": "Desired world grasp orientations; distinct from link8-to-TCP local rotations."
+  },
+  "suction_contract": {
+    "one_surface_gripper_per_arm": true,
+    "grip_threshold_m": 0.003,
+    "force_break_N": 1000000.0,
+    "torque_break_Nm": 1000000.0,
+    "bend_angle_rad": 0.0,
+    "stiffness": 10000.0,
+    "damping": 1000.0,
+    "disable_gravity": false,
+    "retry_close": true
+  },
+  "implementation": {
+    "path": "task28_single_cube_bridge.py",
+    "entry_point": "start_bridge(enable_robot_commands=False)",
+    "connected_to_existing_task24_bridge": false,
+    "future_task28_bridge_required": false,
+    "default_robot_command_processing": false,
+    "explicit_opt_in": "start_bridge(enable_robot_commands=True), only after separate execution authorization",
+    "legacy_bridge_shutdown_or_cleanup": false,
+    "asset_path_env": "TASK28_FR3_USD",
+    "asset_sha256_env": "TASK28_FR3_USD_SHA256",
+    "asset_fallback_allowed": false
+  },
+  "tcp_local_rz_degrees": {
+    "left": -90.0,
+    "right": 90.0
+  },
+  "clock_topic": "/task28_g1_0/clock",
+  "joint_command_topics": {
+    "left": "/task28_g1_0/left/joint_command",
+    "right": "/task28_g1_0/right/joint_command"
+  },
+  "dual_sync_frame_id": "task28_g1_0_dual_sync"
+}

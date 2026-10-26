@@ -1,0 +1,607 @@
+{
+  "schema": "task28.g1_0.fixture_manifest.v1",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+  "approved_new_baseline": true,
+  "physical_validation": false,
+  "historical_task24_h": {
+    "status": "HISTORICAL_ONLY",
+    "claim_not_transferred": true,
+    "reported_position_errors_mm": [
+      0.184,
+      0.115
+    ],
+    "reported_results_are_not_this_fixture": true
+  },
+  "provenance": {
+    "starting_commit": "2ef2edaa0eca86684a0d045f90cdfe35317565f4",
+    "source_branch": "side-suction-palletizing",
+    "fixture_commit_self_hash": {
+      "status": "NOT_SELF_HASHED",
+      "reason": "The manifest is part of the commit whose identity is verified separately."
+    }
+  },
+  "contracts": {
+    "scene": "scene/task28_g1_0_scene_contract.json",
+    "bridge": "bridge/task28_g1_0_bridge_contract.json",
+    "controller": "controller/task28_g1_0_controller_contract.json",
+    "moveit": "moveit/task28_g1_0_moveit_contract.json",
+    "launch_protocol": "launch_protocol.md",
+    "static_checker": "tests/static_check.py"
+  },
+  "frames": {
+    "world": "world",
+    "left_base": "left_fr3_link0",
+    "right_base": "right_fr3_link0",
+    "left_link8": "left_fr3_link8",
+    "right_link8": "right_fr3_link8",
+    "left_tcp": "left_fr3_side_suction_tcp",
+    "right_tcp": "right_fr3_side_suction_tcp",
+    "cube_object": "Cube_01",
+    "planning_world_shift_m": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "cube": {
+    "id": "Cube_01",
+    "index": 0,
+    "count": 1,
+    "initial_pose_world_m": [
+      0.65,
+      0.0,
+      0.26
+    ],
+    "target_pose_world_m": [
+      0.82,
+      -0.075,
+      0.26
+    ],
+    "orientation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "size_m": [
+      0.12,
+      0.12,
+      0.12
+    ],
+    "mass_kg": 0.8,
+    "dynamic": true
+  },
+  "table": {
+    "id": "task28_table",
+    "center_world_m": [
+      0.55,
+      0.0,
+      0.1
+    ],
+    "size_m": [
+      1.2,
+      0.8,
+      0.2
+    ],
+    "top_z_m": 0.2
+  },
+  "bases_world_m": {
+    "left": [
+      0.65,
+      -0.6,
+      0.0
+    ],
+    "right": [
+      0.65,
+      0.6,
+      0.0
+    ]
+  },
+  "home_q_rad": [
+    0.0,
+    -0.7853981634,
+    0.0,
+    -2.3561944902,
+    0.0,
+    1.5707963268,
+    0.7853981634
+  ],
+  "tcp": {
+    "left_link8_translation_m": [
+      0.0,
+      -0.155,
+      0.08
+    ],
+    "right_link8_translation_m": [
+      0.0,
+      0.155,
+      0.08
+    ],
+    "left_world_quaternion_xyzw": [
+      0.7071067812,
+      0.7071067812,
+      0.0,
+      0.0
+    ],
+    "right_world_quaternion_xyzw": [
+      0.7071067812,
+      -0.7071067812,
+      0.0,
+      0.0
+    ],
+    "left_link8_rpy_rad": [
+      0.0,
+      0.0,
+      -1.5707963267948966
+    ],
+    "right_link8_rpy_rad": [
+      0.0,
+      0.0,
+      1.5707963267948966
+    ],
+    "world_quaternions_semantics": "Desired world grasp orientations; distinct from link8-to-TCP local rotations."
+  },
+  "suction": {
+    "one_surface_gripper_per_arm": true,
+    "grip_threshold_m": 0.003,
+    "force_break_N": 1000000.0,
+    "torque_break_Nm": 1000000.0,
+    "bend_angle_rad": 0.0,
+    "stiffness": 10000.0,
+    "damping": 1000.0,
+    "disable_gravity": false,
+    "retry_close": true
+  },
+  "collision_policy": {
+    "acm_changes": false,
+    "existing_srdf_preserved": true,
+    "additional_allowed_collision_pairs": [],
+    "allowed_collision_source": "ros_ws/src/fr3_dual_side_suction_description/srdf/dual_fr3_side_suction.srdf.xacro",
+    "payload_must_remain_in_future_validator": true,
+    "current_task24_payload_gap_is_not_reused": true,
+    "planning_envelope": "moveit/task28_single_cube_description/meshes/fr3_link{0..7}_conservative_union.stl",
+    "planning_envelope_policy": "CONSERVATIVE_CONVEX_UNION_OF_USD_AND_ORIGINAL_STL_NO_ACM_EXPANSION",
+    "planning_envelope_provenance": "moveit/task28_single_cube_description/meshes/conservative_collision_provenance.json",
+    "planning_envelope_containment": "Both source point sets enclosed with at least 0.5 micrometre interior margin after float32 export; stdlib recheck and outlier negatives required."
+  },
+  "repo_source_hashes": {
+    "isaac/scripts/task24_side_suction_tight_scene.py": {
+      "sha256": "f7b36d44120d2bb810492414d569750a39e0d0fc44518eca8779fdffe4f94a90",
+      "git_blob": "18f84afd9ea3e4fe9c7c42abe7e752040f428f7c"
+    },
+    "isaac/scripts/task24_side_suction_tight_bridge.py": {
+      "sha256": "1995d3c397748500130f7f58009b7e989123b52b574b20a39bfbb18f8a690542",
+      "git_blob": "4694b0669d380c6b1abed1d24603f01d705c7276"
+    },
+    "ros_ws/src/fr3_dual_palletize/src/task24_side_suction_tight.cpp": {
+      "sha256": "7fedae345d86884e2f9fbf56b256ceb3d7c30ba1581dffa6dd6337f030bbfde2",
+      "git_blob": "1bc1ce203a3e3e2ef39d12765e9a077f43974222"
+    },
+    "ros_ws/src/fr3_dual_side_suction_description/urdf/dual_fr3_side_suction.urdf.xacro": {
+      "sha256": "3f72a4d6d14967bfa98db5ee3e6c31c1e03927abbd12f0d7c0f26bfbdc3bfea6",
+      "git_blob": "8ed583b1f001fca8adbcc4709e7221d091b5d08e"
+    },
+    "ros_ws/src/fr3_dual_side_suction_description/urdf/dual_side_suction.xacro": {
+      "sha256": "a0630156df03502e6624f593041db3e5f281f52958512672049b60b31ed49f1d",
+      "git_blob": "035a05f1a5b9d63cb22bc260c8fde3256e188605"
+    },
+    "ros_ws/src/fr3_dual_side_suction_description/srdf/dual_fr3_side_suction.srdf.xacro": {
+      "sha256": "473c380d9c8468c4f356ae556c3d7870bc78b307e92cab38cce467c7853bded1",
+      "git_blob": "677ab3bb5ab215d89fb6a9babd81d8f01afc6cd6"
+    },
+    "ros_ws/src/fr3_dual_side_suction_description/launch/moveit_dual_side_suction.launch.py": {
+      "sha256": "6551d448f0a52f1a04cf662f8a6e3c65cd5baf16b139af446381ae05bf625a80",
+      "git_blob": "55c90a5182e3b68f574360331516dd27cd0a8cc1"
+    },
+    "ros_ws/src/fr3_dual_side_suction_description/config/kinematics.yaml": {
+      "sha256": "80c77389765b8bb2e401fdfaa4a3d1bdd97aa85d90472a16d39d7ba403d70654",
+      "git_blob": "e65c7feb4899e61788302bf14673bc6c591d4c71"
+    }
+  },
+  "legacy_execution_path_hashes": {
+    "isaac/scripts/task24_side_suction_tight_scene.py": "f7b36d44120d2bb810492414d569750a39e0d0fc44518eca8779fdffe4f94a90",
+    "isaac/scripts/task24_side_suction_tight_bridge.py": "1995d3c397748500130f7f58009b7e989123b52b574b20a39bfbb18f8a690542",
+    "ros_ws/src/fr3_dual_palletize/src/task24_side_suction_tight.cpp": "7fedae345d86884e2f9fbf56b256ceb3d7c30ba1581dffa6dd6337f030bbfde2"
+  },
+  "legacy_execution_path_hashes_purpose": "Detect accidental edits to existing Task24 path while this isolated fixture is reviewed.",
+  "external_dependencies": {
+    "isaac_sim": {
+      "version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+      "version_file_sha256": "ae03a4157cfcbea2052862857e805daf1d4ab73c3ef5fa8bda59c90b84522f9d",
+      "asset_identity": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Robots/Franka/FR3/fr3.usd",
+      "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+      "asset_status": "VERIFIED_PRIMARY_FILE",
+      "asset_reason": "Primary USD streamed and parsed offline using pxr (not Kit/Isaac/ROS); no composition references or payloads. Only external dependency is visual OmniPBR.mdl.",
+      "asset_size_bytes": 17462793,
+      "recursive_dependency_closure_status": "PHYSICS_GEOMETRY_EMBEDDED_PRIMARY_USD",
+      "runtime_selection": "Explicit local TASK28_FR3_USD plus matching TASK28_FR3_USD_SHA256; no model fallback.",
+      "visual_material_dependency": {
+        "identity": "OmniPBR.mdl",
+        "status": "UNKNOWN",
+        "required_for_collision_or_kinematics": false
+      },
+      "offline_inspection": "assets/fr3_offline_asset_inspection.json"
+    },
+    "ros": {
+      "distribution": "humble",
+      "status": "VERIFIED_HOST_ENVIRONMENT"
+    },
+    "moveit": {
+      "version": "2.5.9",
+      "status": "VERIFIED_HOST_PACKAGE_DATABASE"
+    },
+    "ompl": {
+      "version": "1.7.0",
+      "status": "VERIFIED_HOST_PACKAGE_DATABASE"
+    },
+    "fcl": {
+      "version": "0.7.0",
+      "status": "VERIFIED_HOST_PACKAGE_DATABASE"
+    },
+    "franka_description": {
+      "version": "2.8.1",
+      "package_xml_sha256": "328813744c48c16e5eb9e033e7785313512067049a9c4340dafc780192c951d3",
+      "joint_limits_sha256": "42e999184f37689568b58f320d062859053f03c62c8b49bf00a00d69f20d7a65",
+      "kinematics_sha256": "44326830a6773dd6611cdf9947045eeb3276ea4e3ca47a05272816c862c8e386",
+      "status": "VERIFIED_HOST_LOCAL_EXTERNAL_SOURCE",
+      "portability": "Absolute host source is outside this repository; hash is recorded, not vendored.",
+      "source_root_at_audit": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/franka_description",
+      "files": {
+        "package.xml": {
+          "sha256": "328813744c48c16e5eb9e033e7785313512067049a9c4340dafc780192c951d3",
+          "size_bytes": 909
+        },
+        "robots/common/franka_robot.xacro": {
+          "sha256": "63c9f483ffaa922f29d33b076ab06d5f11521740c3a0042df57a689e143adbfe",
+          "size_bytes": 7368
+        },
+        "robots/common/franka_arm.xacro": {
+          "sha256": "e7dfedf0cea67266048c90f8c0bc104390cd27de9b1c2122483a7e7fb4da4d75",
+          "size_bytes": 8709
+        },
+        "robots/common/utils.xacro": {
+          "sha256": "20c9670a47e3ac0541b7e101e3afdd1a6585152c45a569abe19a0b637d73f7ef",
+          "size_bytes": 17322
+        },
+        "robots/fr3/accelerometers.yaml": {
+          "sha256": "40fb78a7082e4fb7fc565b5ee3f3be15a4db4a07895cdbadda46c251980320ab",
+          "size_bytes": 1597
+        },
+        "robots/fr3/dynamics.yaml": {
+          "sha256": "e65e145114b431bd17cdebc58b88c43505f0658472cca6ffbc9c32b7a198f79b",
+          "size_bytes": 1283
+        },
+        "robots/fr3/inertials.yaml": {
+          "sha256": "02a39046b36303f748c9755b48610b7600fb819d54828475514c36915ae54a89",
+          "size_bytes": 2212
+        },
+        "robots/fr3/joint_limits.yaml": {
+          "sha256": "42e999184f37689568b58f320d062859053f03c62c8b49bf00a00d69f20d7a65",
+          "size_bytes": 1374
+        },
+        "robots/fr3/kinematics.yaml": {
+          "sha256": "44326830a6773dd6611cdf9947045eeb3276ea4e3ca47a05272816c862c8e386",
+          "size_bytes": 831
+        },
+        "meshes/robots/fr3/collision/link0.stl": {
+          "sha256": "56990396d712b2ebb89f7d29083973c823babd3bfa605f2d2863bd1069d29788",
+          "size_bytes": 18784
+        },
+        "meshes/robots/fr3/collision/link1.stl": {
+          "sha256": "e023cf1db282e07f38597d4e7f9edae03cd0dc338974677b31639f677411dc18",
+          "size_bytes": 11884
+        },
+        "meshes/robots/fr3/collision/link2.stl": {
+          "sha256": "3117fd3aea238c07fc1bf678784d38497bfdd603a7760bf36b7fb31b15f0624e",
+          "size_bytes": 11484
+        },
+        "meshes/robots/fr3/collision/link3.stl": {
+          "sha256": "1f21215bdb62892271a263969c92dc1be15c409ec8fc96b6bdec3c28d77f0e6e",
+          "size_bytes": 13584
+        },
+        "meshes/robots/fr3/collision/link4.stl": {
+          "sha256": "b9574ef02cdf234dff9f12359e00f6c11a4b062cf73d1db20894c57f5a9d716a",
+          "size_bytes": 13184
+        },
+        "meshes/robots/fr3/collision/link5.stl": {
+          "sha256": "c174872b06547dc6acdd027679e476d4cddffe0224cb048763bdbf4f68fe7542",
+          "size_bytes": 13384
+        },
+        "meshes/robots/fr3/collision/link6.stl": {
+          "sha256": "9ad5c4698aed204cd505e74356adfbb955196913d0b75a616c3865b319d39e6b",
+          "size_bytes": 16234
+        },
+        "meshes/robots/fr3/collision/link7.stl": {
+          "sha256": "c48646a72ed0264e5f90b221327fd2b72163935ec7bc1cde9612ac1dcf23eabf",
+          "size_bytes": 15784
+        },
+        "meshes/robots/fr3/visual/link0.dae": {
+          "sha256": "3c52a112d1610d645934945b80ea8d9bb3d1635f345098480a33a537bd43224e",
+          "size_bytes": 7079719
+        },
+        "meshes/robots/fr3/visual/link1.dae": {
+          "sha256": "5c5846eabc714aefc82ef051a4d09c4fc1c092bca6258b1290227345dd217fcb",
+          "size_bytes": 906843
+        },
+        "meshes/robots/fr3/visual/link2.dae": {
+          "sha256": "90a1bd38abdc53d0141719cd8e040f788db337b768a845bb6d53c5c52590498f",
+          "size_bytes": 921715
+        },
+        "meshes/robots/fr3/visual/link3.dae": {
+          "sha256": "1c7a2a8124e39ad07096c0cce8461b0e650f6752900cfd777bf87c181e81749b",
+          "size_bytes": 2475274
+        },
+        "meshes/robots/fr3/visual/link4.dae": {
+          "sha256": "dd134cf13cdaced2b67739e4d9fe2ca011cc533936397d9f6303fc740424e2a2",
+          "size_bytes": 2533228
+        },
+        "meshes/robots/fr3/visual/link5.dae": {
+          "sha256": "cbcabd369e044eba3f1c2cab84b9ed2ebc1b2f424c6104ad9c5d7410e92fabfe",
+          "size_bytes": 3259292
+        },
+        "meshes/robots/fr3/visual/link6.dae": {
+          "sha256": "907b16fea84931f4881174234065bb647700abf105b432c3ff65360e0ad5cf8b",
+          "size_bytes": 5252660
+        },
+        "meshes/robots/fr3/visual/link7.dae": {
+          "sha256": "b9d05ac502ff269b1323705de811d07a8eb9920ce711b32ee0497bf16b74989b",
+          "size_bytes": 4243523
+        }
+      },
+      "with_sc": false,
+      "collision_geometry": "meshes/robots/fr3/collision/link0.stl .. link7.stl"
+    },
+    "franka_fr3_moveit_config": {
+      "version": "2.7.1",
+      "package_xml_sha256": "23f51df836cfd1128c86b983487dab6cdb49d02233c4e82580fc02e52eeeb9e1",
+      "status": "VERIFIED_HOST_LOCAL_EXTERNAL_SOURCE"
+    },
+    "offline_tools": {
+      "python": "3.10.12",
+      "xacro_debian_package": "2.1.1-1jammy.20260304.195513",
+      "numpy_generator": "1.24.4",
+      "scipy_generator": "1.8.0",
+      "usd_offline_parser": [
+        0,
+        22,
+        11
+      ],
+      "runtime_nodes_not_executed": true
+    }
+  },
+  "future_g1_1_prerequisites": [
+    "Authorize G1-1 separately; consume frozen effective limits and conservative meshes.",
+    "Implement offline FK/IK/closed-chain and payload-preserving FCL validation; cover robot/tool/Cube/table, without widening ACM.",
+    "Reject absent, stale, invalid or unsynchronized Cube/TCP/joint states before any future planning/execution. Current state-only adapters are not freshness gates.",
+    "Record commands, environment/overlay, seeds, loaded assets and fixture commit in a run manifest before any separately authorized runtime check.",
+    "Do not interpret source-level baseline readiness as build/ABI, PhysX cooked-contact, physical, suction or robot execution success."
+  ],
+  "joint_limits": {
+    "source": "franka_description/robots/fr3/joint_limits.yaml",
+    "snapshot": "controller/fr3_joint_limits.yaml",
+    "source_sha256": "42e999184f37689568b58f320d062859053f03c62c8b49bf00a00d69f20d7a65",
+    "joint_order": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "joint7"
+    ],
+    "position_lower_rad": [
+      -2.9007,
+      -1.8361,
+      -2.9007,
+      -3.077,
+      -2.8763,
+      0.4398,
+      -3.0508
+    ],
+    "position_upper_rad": [
+      2.9007,
+      1.8361,
+      2.9007,
+      -0.1169,
+      2.8763,
+      4.6216,
+      3.0508
+    ],
+    "velocity_max_rad_s": [
+      2.62,
+      2.62,
+      2.62,
+      2.62,
+      5.26,
+      4.18,
+      5.26
+    ],
+    "effort_max_Nm": [
+      87.0,
+      87.0,
+      87.0,
+      87.0,
+      12.0,
+      12.0,
+      12.0
+    ],
+    "position_based_velocity_offset_rad_s": [
+      0.652,
+      0.25,
+      0.2005,
+      0.3542,
+      0.5738,
+      0.4885,
+      0.4592
+    ],
+    "position_based_deceleration_limit_rad_s2": [
+      6.0,
+      2.585,
+      3.5,
+      4.0,
+      17.0,
+      5.5,
+      17.0
+    ],
+    "changes_from_source": false,
+    "isaac_usd_joint_limits_crosscheck": "DIFFERENT_ORIGINALS_PRESERVED_EFFECTIVE_INTERSECTION_REQUIRED",
+    "isaac_position_lower_rad": [
+      -2.7436998751331965,
+      -1.7836999438221368,
+      -2.9006998792960927,
+      -3.042099884741632,
+      -2.806499876798355,
+      0.5444999629130268,
+      -3.015899705937432
+    ],
+    "isaac_position_upper_rad": [
+      2.7436998751331965,
+      1.7836999438221368,
+      2.9006998792960927,
+      -0.15179999904219163,
+      2.806499876798355,
+      4.5168996405674235,
+      3.015899705937432
+    ],
+    "isaac_velocity_max_rad_s": [
+      2.619999770924542,
+      2.619999770924542,
+      2.619999770924542,
+      2.619999770924542,
+      5.260000414267797,
+      4.179999908976367,
+      5.260000414267797
+    ],
+    "isaac_effort_max_Nm": [
+      87.0,
+      87.0,
+      87.0,
+      87.0,
+      12.0,
+      12.0,
+      12.0
+    ],
+    "effective_config": "moveit/task28_single_cube_description/config/effective_joint_limits.json",
+    "effective_policy": "Position intersection; velocity/effort minimum. No raw source or USD limits modified; rendered Task28 planning model only tightens."
+  },
+  "physics": {
+    "path": "/World/Task28G10SingleCube/physicsScene",
+    "gravity_direction": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "gravity_magnitude_m_s2": 9.81,
+    "steps_per_second": 60,
+    "solver_type": "TGS",
+    "enable_ccd": true,
+    "enable_stabilization": true,
+    "provenance": "Explicit NEW fixture construction defaults; not recovered historical runtime settings."
+  },
+  "stage_requirements": {
+    "meters_per_unit": 1.0,
+    "up_axis": "Z",
+    "global_metadata_mutation": false,
+    "mismatch_policy": "FAIL_CLOSED"
+  },
+  "robot_model_consistency": {
+    "kinematic_origins": "USD versus external YAML joint1..8 match within 1e-6 m/rad",
+    "raw_position_limits_identical": false,
+    "raw_collision_meshes_identical": false,
+    "planning_limit_policy": "strict intersection of both frozen originals",
+    "planning_collision_policy": "Convex hull containing both source collision point sets, with outward rounding margin; conservative planning envelope, not physical mesh identity",
+    "physical_model": "Exact primary USD; no replacement",
+    "hidden_hand_and_fingers": "USD bodies/inertia retained, visuals and colliders disabled as in current side tool setup. MoveIt hand=false is a kinematic/collision description, not a dynamics equivalence claim."
+  },
+  "determinism_scope": "Fixed source/configuration/geometry/task ordering and explicit scene construction settings. No stochastic planner was run or supplied by G1-0B; future experiments must freeze seeds/time budget.",
+  "fixture_file_hashes": {
+    "README.md": "7dd6287be3eefe120a783f21cac5b59d6dd8d84fc0ec83ec78b265ff32f6e35c",
+    "assets/fr3_offline_asset_inspection.json": "9c0dc052cd7514368457aa0094c69dc8ed94e2568024b311bd6416e4bf836f82",
+    "assets/generate_conservative_envelopes.py": "937d59f4be6fd2fe2581cb3e41ed64591f3c7b0b4dd15cdd2a6173a4d6ee0604",
+    "bridge/task28_g1_0_bridge_contract.json": "5d51cb13eaa16247ad38b391242c0f3fda7f7444d7e428ddcc72130dbdb85bfe",
+    "bridge/task28_single_cube_bridge.py": "15759cde17b389dd4ae29c90c1c2b107d76f67ccaffee14e2cbb8876445e108b",
+    "controller/fr3_joint_limits.yaml": "42e999184f37689568b58f320d062859053f03c62c8b49bf00a00d69f20d7a65",
+    "controller/task28_g1_0_controller_contract.json": "33fa2d90be42f0b493b5e521daf8af8ec4a0b7b027dd84f6ddfb7019296579d4",
+    "controller/task28_single_cube_task.py": "6c6ae903c4f25921f1b1e979b1bd7992a46fe742f9df284c5cab85a90a6bbdf3",
+    "launch_protocol.md": "a02136791f124481cc8acbe08d33eb0055488770925364839f1d4fcc55a401b2",
+    "moveit/task28_g1_0_moveit_contract.json": "83d7decd9de508f91bec9f9313727fa423a0f4619cba063c47f0857048d4e9bf",
+    "moveit/task28_single_cube_description/CMakeLists.txt": "595dd8350fa084a24a6399a706e1569baca31d77e9dc9452323d085c34b8280a",
+    "moveit/task28_single_cube_description/README.md": "38660913ecda75973c4328ba573de9dcee7507a4814dafc57b5bddd3f16bee64",
+    "moveit/task28_single_cube_description/config/effective_joint_limits.json": "3d7351678824422a4d900c9a827c6129e3ae9ab68d17602e7703c57c2304d1df",
+    "moveit/task28_single_cube_description/config/fixture_geometry.json": "f2621949b6e61199050ccc489e817db20c2307c88e28ede179fa3b817977b984",
+    "moveit/task28_single_cube_description/config/kinematics.yaml": "80c77389765b8bb2e401fdfaa4a3d1bdd97aa85d90472a16d39d7ba403d70654",
+    "moveit/task28_single_cube_description/config/ompl_planning.yaml": "2272d23cfcf212dd4957a059c8f51db29a3c99efc523668f3fe6e8b1fc746d48",
+    "moveit/task28_single_cube_description/launch/task28_single_cube_moveit.launch.py": "c1fe2fc664565a91548d0536912557f9ac7285f397fe28c5275d4e6ba726897c",
+    "moveit/task28_single_cube_description/meshes/conservative_collision_provenance.json": "98040e2ef7c187c490b9d2c53c7e0bc4289331c1282cb98dfd10c7067fad6e57",
+    "moveit/task28_single_cube_description/meshes/fr3_link0_conservative_union.stl": "440ec7780a3255e964f839411f5f7af95d1bc6d7451a73b0608042175d103f59",
+    "moveit/task28_single_cube_description/meshes/fr3_link1_conservative_union.stl": "410c7611f6b0660cc4001a222c9c138a9181c75c958d62fe7bcd5a3b6523cfc1",
+    "moveit/task28_single_cube_description/meshes/fr3_link2_conservative_union.stl": "5ca113fde215dddf2c76710b8590beec2f1cc39130058f77956c45451e7c3e41",
+    "moveit/task28_single_cube_description/meshes/fr3_link3_conservative_union.stl": "cb891d4133f76458f8316b8ce69482a0296158c8da122619fe72352f37ff1bd6",
+    "moveit/task28_single_cube_description/meshes/fr3_link4_conservative_union.stl": "9cc46590b226f4981a286f681917cf8750f020e4870f6a90fdef279b0adf078a",
+    "moveit/task28_single_cube_description/meshes/fr3_link5_conservative_union.stl": "0cdcca53ae09d07ba448555a3a14889a27dce30f6dc1c25e8e25d947fc265805",
+    "moveit/task28_single_cube_description/meshes/fr3_link6_conservative_union.stl": "caec7484710cac0e4b2dd7bfd70fd23153b6014281c7d4101e93891deb023dbb",
+    "moveit/task28_single_cube_description/meshes/fr3_link7_conservative_union.stl": "afc432fbe86bd51dcfddd23cbbc38b2848cccc6b0d8500fb43e952eca1021037",
+    "moveit/task28_single_cube_description/meshes/source_collision_points.json": "131c98ca386c0b5dd8ce4c8a365e8ebc0ba354be25db0f7804a40649c1069546",
+    "moveit/task28_single_cube_description/package.xml": "84671ade9c0c7a9d6e8d7b67a816a624948b9f767a4a4ded74ed442b6f640e0e",
+    "moveit/task28_single_cube_description/scripts/render_robot_description.py": "42599f2936bc74564b8308cab52dee614285772e85fd80a62d81723f5700e691",
+    "moveit/task28_single_cube_description/scripts/task28_environment_publisher.py": "8996376dc22ebb411761e9c838b9480cc773d98baaf50078fccce0c20854b19a",
+    "moveit/task28_single_cube_description/scripts/task28_joint_state_bridge.py": "51e79f7e7fb006554850a2417c263c5e4bdac05f70529ce4fafc7ddcfc227f34",
+    "moveit/task28_single_cube_description/source_provenance.json": "def3c6caab003f3739e01935529993c73ebbf434ab9b5780e3945c36bfc28514",
+    "moveit/task28_single_cube_description/srdf/dual_fr3_side_suction.srdf.xacro": "473c380d9c8468c4f356ae556c3d7870bc78b307e92cab38cce467c7853bded1",
+    "moveit/task28_single_cube_description/urdf/dual_fr3_side_suction.urdf.xacro": "cbb5a7492dd0d524d6c00fd28502e0fe097b9cc82526d3c9f316d9da5fcf1092",
+    "moveit/task28_single_cube_description/urdf/dual_side_suction.xacro": "a0630156df03502e6624f593041db3e5f281f52958512672049b60b31ed49f1d",
+    "moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+    "scene/task28_g1_0_scene_contract.json": "239c00e3ad82ae86313bcb841fbcecddfd4925d2f08b7b7ed96cfab3a888c5a9",
+    "scene/task28_single_cube_scene.py": "acb5ba60138685ce37351fde4da338183dcb15c8012d4d25c01d04b2adb37c87",
+    "tests/check_collision_envelopes.py": "62e8c6bee80e1bc2ac68a208cecbf4d1f484a162ffd24fef6a63bf4e987d4427",
+    "tests/static_check.py": "9c0fdad71429e9a8a6b7759349d7a565b82e518c04a826b977b9c55f6d9ef737"
+  },
+  "generated_robot_description": "moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+  "robot_description_generation": "Offline xacro followed by checked joint-limit intersection and conservative collision-envelope URI replacement; generated URDF is the selected launch input.",
+  "acceptance_status": "G1_0B_CONDITIONALLY_READY",
+  "remaining_unknowns": [
+    {
+      "dependency": "OmniPBR.mdl",
+      "role": "visual only",
+      "status": "UNKNOWN",
+      "blocking_for_static_kinematics_collision": false
+    }
+  ],
+  "frame_conventions": {
+    "length_unit": "m",
+    "angle_unit": "rad",
+    "up_axis": "Z",
+    "quaternion_order": "xyzw",
+    "bases_rotation_rpy_rad": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "tcp_local_rotation": "Rz(-pi/2) left, Rz(+pi/2) right; +X suction normal",
+    "desired_world_grasp_quaternions": "Separate from local installation; left +X points world +Y, right +X points world -Y"
+  },
+  "environment_protocol": {
+    "ROS_DOMAIN_ID": "UNKNOWN_SELECT_AND_RECORD_PER_AUTHORIZED_RUN",
+    "RMW_IMPLEMENTATION": "UNKNOWN_RECORD_PER_AUTHORIZED_RUN",
+    "ROS_LOCALHOST_ONLY": "0 from existing documented deployment; record actual future run setting",
+    "runtime_overlay_hash": "UNKNOWN_NO_BUILD_OR_LAUNCH_PERFORMED",
+    "seed_policy": "No stochastic planner run or implemented; future experimental run must freeze seed/time budget"
+  },
+  "reproducibility": {
+    "status": "STATIC_SOURCES_AND_ASSETS_BOUND_RUNTIME_UNEXECUTED",
+    "fixture_manifest_hash_binding": "Git commit; manifest does not hash itself",
+    "asset_acquisition": "Exact primary URI and hash; no fallback",
+    "source_ordering": "Exactly Cube_01, task/index0, deterministic source/target/scene construction"
+  },
+  "static_checks": {
+    "bundle_negative_cases": 17,
+    "task_input_negative_cases": 4,
+    "renderer_negative_cases": 5,
+    "envelope_outlier_cases": 8,
+    "external_model_hashes": 25,
+    "xacro_regeneration": "BYTE_IDENTICAL",
+    "primary_usd_hash_verified": true,
+    "runtime_execution": false
+  }
+}

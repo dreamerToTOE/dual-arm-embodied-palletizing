@@ -1,0 +1,301 @@
+{
+  "schema": "task28.conservative_collision_envelopes.v1",
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+  "role": "CONSERVATIVE_MOVEIT_PLANNING_ENVELOPES",
+  "units": "m",
+  "frame_convention": "Each fr3_linkN local frame; same mesh reused for left and right arms.",
+  "physical_isaac_model_changed": false,
+  "legacy_models_changed": false,
+  "acm_expanded": false,
+  "claim": "Each planning mesh contains both raw USD authored collision point cloud and the original franka_description 2.8.1 STL collision vertices. No runtime PhysX cooking, contact, or FCL execution equivalence is claimed.",
+  "construction": {
+    "algorithm": "scipy.spatial.ConvexHull of lexicographically sorted unique union of both point clouds, followed by homothety about mean hull-vertex interior point",
+    "numpy": "1.24.4",
+    "scipy": "1.8.0",
+    "minimum_requested_face_outward_padding_m": 1e-06,
+    "scale_formula": "1 + 1e-6 / min(-(normal dot centroid + offset)) over original unit-normal hull facet equations",
+    "export": "binary STL float32; outward triangle winding; canonical cyclic vertex order and sorted triangles",
+    "containment_check": "Recompute unit outward triangle normals from exported float32 STL vertices; for every triangle and every source point require signed distance <= -5e-7 m. All source surface triangles lie in envelope because each original triangle is convex hull of its vertices.",
+    "minimum_required_interior_margin_m": 5e-07,
+    "independent_recheck": "Stdlib can parse STL triangles and verify all stored source points lie behind every outward triangle face. An outlier formed by adding [1,0,0] m to the first source point must have a positive face distance."
+  },
+  "source_primary_usd": {
+    "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Robots/Franka/FR3/fr3.usd",
+    "sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+    "bytes": 17462793,
+    "default_prim": "fr3",
+    "meters_per_unit": 1.0,
+    "up_axis": "Z"
+  },
+  "transform_proof": {
+    "usd_mesh_local_transform_identity": true,
+    "usd_mesh_paths": "/fr3/fr3_linkN/collisions",
+    "usd_parent_frame": "/fr3/fr3_linkN",
+    "stl_mesh_uris": "package://franka_description/meshes/robots/fr3/collision/linkN.stl",
+    "stl_transform": "Environmental collision mesh has no origin/scale in robots/common/utils.xacro link_with_sc macro. URDF joint origins match USD body-frame joints within 1e-6.",
+    "source_utils_xacro_sha256": "20c9670a47e3ac0541b7e101e3afdd1a6585152c45a569abe19a0b637d73f7ef"
+  },
+  "links": {
+    "link0": {
+      "mesh_file": "fr3_link0_conservative_union.stl",
+      "sha256": "440ec7780a3255e964f839411f5f7af95d1bc6d7451a73b0608042175d103f59",
+      "bytes": 11884,
+      "triangle_count": 236,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.003098287442578486,
+      "union_unique_point_count": 295,
+      "usd_unique_point_count": 102,
+      "stl_unique_point_count": 193,
+      "stl_source_sha256": "56990396d712b2ebb89f7d29083973c823babd3bfa605f2d2863bd1069d29788",
+      "usd_point_cloud_prim": "/fr3/fr3_link0/collisions",
+      "interior_center_m": [
+        -0.048250456701983545,
+        -0.0007249268256903936,
+        0.06402544677810554
+      ],
+      "radial_scale_factor": 1.0000168400540366,
+      "max_vertex_displacement_m": 2.2771346053820464e-06,
+      "usd_max_signed_face_distance_m": -1.0013099666639214e-06,
+      "stl_max_signed_face_distance_m": -9.97672844005315e-07,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.8459213078022003,
+        -0.005541683174669743,
+        -3.755025375085097e-07
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.7699410581609493,
+      "negative_outlier_rejected": true
+    },
+    "link1": {
+      "mesh_file": "fr3_link1_conservative_union.stl",
+      "sha256": "410c7611f6b0660cc4001a222c9c138a9181c75c958d62fe7bcd5a3b6523cfc1",
+      "bytes": 18684,
+      "triangle_count": 372,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.0029919090780163196,
+      "union_unique_point_count": 272,
+      "usd_unique_point_count": 152,
+      "stl_unique_point_count": 120,
+      "stl_source_sha256": "e023cf1db282e07f38597d4e7f9edae03cd0dc338974677b31639f677411dc18",
+      "usd_point_cloud_prim": "/fr3/fr3_link1/collisions",
+      "interior_center_m": [
+        0.0005416180272809567,
+        -0.06073298641700951,
+        -0.032174796637341484
+      ],
+      "radial_scale_factor": 1.0000191672488328,
+      "max_vertex_displacement_m": 3.785299902927055e-06,
+      "usd_max_signed_face_distance_m": -1.0002860362789967e-06,
+      "stl_max_signed_face_distance_m": -9.99370656895593e-07,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9449515119194984,
+        -0.06257965415716171,
+        0.002724277786910534
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8899863059112831,
+      "negative_outlier_rejected": true
+    },
+    "link2": {
+      "mesh_file": "fr3_link2_conservative_union.stl",
+      "sha256": "5ca113fde215dddf2c76710b8590beec2f1cc39130058f77956c45451e7c3e41",
+      "bytes": 18884,
+      "triangle_count": 376,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.00302620136298917,
+      "union_unique_point_count": 268,
+      "usd_unique_point_count": 152,
+      "stl_unique_point_count": 116,
+      "stl_source_sha256": "3117fd3aea238c07fc1bf678784d38497bfdd603a7760bf36b7fb31b15f0624e",
+      "usd_point_cloud_prim": "/fr3/fr3_link2/collisions",
+      "interior_center_m": [
+        0.00048209890393129747,
+        -0.0336288031077282,
+        0.061888552751502415
+      ],
+      "radial_scale_factor": 1.0000191600258497,
+      "max_vertex_displacement_m": 3.8033852697224654e-06,
+      "usd_max_signed_face_distance_m": -1.0009985025732915e-06,
+      "stl_max_signed_face_distance_m": -9.986450821702908e-07,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9448465593159199,
+        -0.19400957226753235,
+        0.005101349670439959
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8889081246371084,
+      "negative_outlier_rejected": true
+    },
+    "link3": {
+      "mesh_file": "fr3_link3_conservative_union.stl",
+      "sha256": "cb891d4133f76458f8316b8ce69482a0296158c8da122619fe72352f37ff1bd6",
+      "bytes": 17284,
+      "triangle_count": 344,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.0023739932601045313,
+      "union_unique_point_count": 289,
+      "usd_unique_point_count": 152,
+      "stl_unique_point_count": 137,
+      "stl_source_sha256": "1f21215bdb62892271a263969c92dc1be15c409ec8fc96b6bdec3c28d77f0e6e",
+      "usd_point_cloud_prim": "/fr3/fr3_link3/collisions",
+      "interior_center_m": [
+        0.03234412184723749,
+        0.02620155920392309,
+        -0.035758777785024475
+      ],
+      "radial_scale_factor": 1.0000203956556333,
+      "max_vertex_displacement_m": 2.650949754542652e-06,
+      "usd_max_signed_face_distance_m": -9.976178036372185e-07,
+      "stl_max_signed_face_distance_m": -1.002410325010028e-06,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9440722949802876,
+        0.006148251239210367,
+        -0.12299612164497375
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8142900420368296,
+      "negative_outlier_rejected": true
+    },
+    "link4": {
+      "mesh_file": "fr3_link4_conservative_union.stl",
+      "sha256": "9cc46590b226f4981a286f681917cf8750f020e4870f6a90fdef279b0adf078a",
+      "bytes": 20184,
+      "triangle_count": 402,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.002392487120257268,
+      "union_unique_point_count": 285,
+      "usd_unique_point_count": 152,
+      "stl_unique_point_count": 133,
+      "stl_source_sha256": "b9574ef02cdf234dff9f12359e00f6c11a4b062cf73d1db20894c57f5a9d716a",
+      "usd_point_cloud_prim": "/fr3/fr3_link4/collisions",
+      "interior_center_m": [
+        -0.042869576116509996,
+        0.03081749668321916,
+        0.032560227395653535
+      ],
+      "radial_scale_factor": 1.0000202978412127,
+      "max_vertex_displacement_m": 2.8707883507036044e-06,
+      "usd_max_signed_face_distance_m": -1.0010227214363177e-06,
+      "stl_max_signed_face_distance_m": -9.968906811846923e-07,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.8623931258916855,
+        0.12399818748235703,
+        0.0032397976610809565
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8150375651742262,
+      "negative_outlier_rejected": true
+    },
+    "link5": {
+      "mesh_file": "fr3_link5_conservative_union.stl",
+      "sha256": "0cdcca53ae09d07ba448555a3a14889a27dce30f6dc1c25e8e25d947fc265805",
+      "bytes": 12784,
+      "triangle_count": 254,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.0034916713331298896,
+      "union_unique_point_count": 287,
+      "usd_unique_point_count": 152,
+      "stl_unique_point_count": 135,
+      "stl_source_sha256": "c174872b06547dc6acdd027679e476d4cddffe0224cb048763bdbf4f68fe7542",
+      "usd_point_cloud_prim": "/fr3/fr3_link5/collisions",
+      "interior_center_m": [
+        -0.0012477096265225667,
+        0.030259481195338764,
+        -0.12481436261012897
+      ],
+      "radial_scale_factor": 1.0000197174632248,
+      "max_vertex_displacement_m": 3.7494749234383747e-06,
+      "usd_max_signed_face_distance_m": -9.993052824258664e-07,
+      "stl_max_signed_face_distance_m": -9.99939711095188e-07,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9449834525585175,
+        -0.004387949593365192,
+        -0.2589862048625946
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8893176319389118,
+      "negative_outlier_rejected": true
+    },
+    "link6": {
+      "mesh_file": "fr3_link6_conservative_union.stl",
+      "sha256": "caec7484710cac0e4b2dd7bfd70fd23153b6014281c7d4101e93891deb023dbb",
+      "bytes": 15384,
+      "triangle_count": 306,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.001472187475225718,
+      "union_unique_point_count": 266,
+      "usd_unique_point_count": 102,
+      "stl_unique_point_count": 164,
+      "stl_source_sha256": "9ad5c4698aed204cd505e74356adfbb955196913d0b75a616c3865b319d39e6b",
+      "usd_point_cloud_prim": "/fr3/fr3_link6/collisions",
+      "interior_center_m": [
+        0.05386919776398328,
+        0.01862453093229804,
+        0.007515244395425167
+      ],
+      "radial_scale_factor": 1.0000229648937344,
+      "max_vertex_displacement_m": 2.4909831741009647e-06,
+      "usd_max_signed_face_distance_m": -9.999054154941067e-07,
+      "stl_max_signed_face_distance_m": -1.0265407560175466e-06,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9515509754419327,
+        -0.008297434076666832,
+        -0.016396092250943184
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8198495759321116,
+      "negative_outlier_rejected": true
+    },
+    "link7": {
+      "mesh_file": "fr3_link7_conservative_union.stl",
+      "sha256": "afc432fbe86bd51dcfddd23cbbc38b2848cccc6b0d8500fb43e952eca1021037",
+      "bytes": 11384,
+      "triangle_count": 226,
+      "manifold_edge_incidence": 2,
+      "positive_signed_volume_m3": 0.00046391326538514625,
+      "union_unique_point_count": 261,
+      "usd_unique_point_count": 102,
+      "stl_unique_point_count": 159,
+      "stl_source_sha256": "c48646a72ed0264e5f90b221327fd2b72163935ec7bc1cde9612ac1dcf23eabf",
+      "usd_point_cloud_prim": "/fr3/fr3_link7/collisions",
+      "interior_center_m": [
+        0.01455756114066943,
+        0.015000043861041574,
+        0.08270241663507794
+      ],
+      "radial_scale_factor": 1.0000414590965232,
+      "max_vertex_displacement_m": 3.1074949753582344e-06,
+      "usd_max_signed_face_distance_m": -9.97770170652057e-07,
+      "stl_max_signed_face_distance_m": -1.3370402385526337e-06,
+      "all_source_points_contained_with_required_margin": true,
+      "negative_outlier_m": [
+        0.9559654109179974,
+        -0.0016198796220123768,
+        0.052073732018470764
+      ],
+      "negative_outlier_max_signed_face_distance_m": 0.8747860008667461,
+      "negative_outlier_rejected": true
+    }
+  },
+  "source_point_cloud_snapshot": {
+    "file": "source_collision_points.json",
+    "sha256": "131c98ca386c0b5dd8ce4c8a365e8ebc0ba354be25db0f7804a40649c1069546",
+    "bytes": 258326
+  },
+  "offline_asset_inspection": {
+    "file": "../../../assets/fr3_offline_asset_inspection.json",
+    "sha256": "9c0dc052cd7514368457aa0094c69dc8ed94e2568024b311bd6416e4bf836f82"
+  },
+  "replay_generator": {
+    "file": "../../../assets/generate_conservative_envelopes.py",
+    "sha256": "937d59f4be6fd2fe2581cb3e41ed64591f3c7b0b4dd15cdd2a6173a4d6ee0604",
+    "required_optional_regeneration_dependencies": {
+      "numpy": "1.24.4",
+      "scipy": "1.8.0"
+    },
+    "check_command_from_fixture_root": "python3 assets/generate_conservative_envelopes.py --source moveit/task28_single_cube_description/meshes/source_collision_points.json --check",
+    "mutation_policy": "--check regenerates only under system temporary storage and compares bytes. --output-dir requires an explicit nonexistent destination; overwriting is rejected.",
+    "runtime_dependencies": "No pxr, Isaac, Kit, ROS, or network required; stdlib static containment checker is independent of generator dependencies."
+  }
+}

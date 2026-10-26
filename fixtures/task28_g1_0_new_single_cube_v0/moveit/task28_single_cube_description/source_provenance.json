@@ -1,0 +1,77 @@
+{
+  "status": "SOURCE_ONLY_NOT_BUILT_OR_LAUNCHED",
+  "copied_sources": [
+    {
+      "destination": "urdf/dual_side_suction.xacro",
+      "source_repository_path": "ros_ws/src/fr3_dual_side_suction_description/urdf/dual_side_suction.xacro",
+      "source_sha256": "a0630156df03502e6624f593041db3e5f281f52958512672049b60b31ed49f1d",
+      "copy_sha256": "a0630156df03502e6624f593041db3e5f281f52958512672049b60b31ed49f1d",
+      "transformation": "byte-identical"
+    },
+    {
+      "destination": "srdf/dual_fr3_side_suction.srdf.xacro",
+      "source_repository_path": "ros_ws/src/fr3_dual_side_suction_description/srdf/dual_fr3_side_suction.srdf.xacro",
+      "source_sha256": "473c380d9c8468c4f356ae556c3d7870bc78b307e92cab38cce467c7853bded1",
+      "copy_sha256": "473c380d9c8468c4f356ae556c3d7870bc78b307e92cab38cce467c7853bded1",
+      "transformation": "byte-identical"
+    },
+    {
+      "destination": "config/kinematics.yaml",
+      "source_repository_path": "ros_ws/src/fr3_dual_side_suction_description/config/kinematics.yaml",
+      "source_sha256": "80c77389765b8bb2e401fdfaa4a3d1bdd97aa85d90472a16d39d7ba403d70654",
+      "copy_sha256": "80c77389765b8bb2e401fdfaa4a3d1bdd97aa85d90472a16d39d7ba403d70654",
+      "transformation": "byte-identical"
+    },
+    {
+      "destination": "config/ompl_planning.yaml",
+      "source_absolute_path": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/franka_ros2/franka_fr3_moveit_config/config/ompl_planning.yaml",
+      "source_sha256": "17ca3bcd5adb3a8f0717e5c3a095a0dbf9f363c8f3fea0b2043e232206be0694",
+      "copy_sha256": "2272d23cfcf212dd4957a059c8f51db29a3c99efc523668f3fe6e8b1fc746d48",
+      "transformation": "YAML content unchanged; final blank EOF line normalized."
+    }
+  ],
+  "derived_sources": [
+    {
+      "destination": "urdf/dual_fr3_side_suction.urdf.xacro",
+      "source_repository_path": "ros_ws/src/fr3_dual_side_suction_description/urdf/dual_fr3_side_suction.urdf.xacro",
+      "source_sha256": "3f72a4d6d14967bfa98db5ee3e6c31c1e03927abbd12f0d7c0f26bfbdc3bfea6",
+      "transformation": "Only the local tool include is replaced with the relative filename dual_side_suction.xacro. External franka_description identity and all bases/robot calls are unchanged."
+    },
+    {
+      "destination": "scripts/task28_joint_state_bridge.py",
+      "source_repository_path": "ros_ws/src/fr3_dual_compact_suction_description/scripts/dual_joint_state_bridge.py",
+      "source_sha256": "e2eefdb9d4e42cfd6db384ff699c949944460a2e02fd380c8981d5458d4412ff",
+      "transformation": "Independent Task28 derivative with relative namespaced endpoints, strict single-Cube geometry, and no legacy executable dependency."
+    },
+    {
+      "destination": "scripts/task28_environment_publisher.py",
+      "source_repository_path": "ros_ws/src/fr3_dual_compact_suction_description/scripts/task06_environment_publisher.py",
+      "source_sha256": "8af4d668fee57364c9e98592ae0d8d6cc2a0cb0c994171548d86f36bd7dceb72",
+      "transformation": "Independent Task28 derivative with relative namespaced endpoints, strict single-Cube geometry, and no legacy executable dependency."
+    }
+  ],
+  "runtime_limits": [
+    "No trajectory execution or robot commands are enabled by this launch.",
+    "Cube_01 is maintained as a world collision object, not an attached body.",
+    "No new ACM entries or payload collision exceptions are supplied.",
+    "ROS node startup, namespace routing and collision scene insertion are specified by source and have not been validated by launch."
+  ],
+  "joint_limit_renderer": {
+    "source": "scripts/render_robot_description.py",
+    "configuration": "config/effective_joint_limits.json",
+    "policy": "Only narrow original rendered URDF lower/upper, velocity and effort limits to audited USD/YAML intersection; reject expansion or incomplete model. Both arms share the intersection; no ACM changes.",
+    "verification": "Pure standard-library positive using audited numeric intersections and four negative velocity/effort cases; earlier missing/duplicate/non-revolute/position negative cases also passed. No ROS/build/launch."
+  },
+  "collision_renderer": {
+    "source": "scripts/render_robot_description.py",
+    "function": "conservative_collision_meshes",
+    "destination": "package://task28_single_cube_description/meshes/fr3_linkN_conservative_union.stl (N=0..7)",
+    "policy": "Only expected original franka_description collision filenames at identity origin/scale may be replaced; require all 16 arm links exactly once. Preserve all origins, tools, visual geometry and ACM. Independent hull containment proof/hash required.",
+    "verification": "Pure synthetic XML positive preserves all non-filename tree data; five source/scale/origin/missing/duplicate negative cases passed."
+  },
+  "selected_robot_description": {
+    "path": "urdf/task28_single_cube_frozen.urdf",
+    "generation": "Offline xacro then scripts/render_robot_description.py transformations; launch reads the frozen output directly, not a host-dependent regenerated model.",
+    "runtime_generation": false
+  }
+}
