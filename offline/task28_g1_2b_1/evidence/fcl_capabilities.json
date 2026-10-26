@@ -1,0 +1,3498 @@
+{
+  "schema": "task28.g1_2b_1.fcl_capabilities.v1",
+  "scope": "Offline capability/motion-model audit only; FCL CCD results are not articulated-path certificates.",
+  "base_head": "bcc6e7d260eaa45f6f0d055d53334922df31db3a",
+  "environment": {
+    "python": "3.10.12",
+    "python_executable": "/usr/bin/python3",
+    "python_fcl_importable": false,
+    "system_fcl_pkg_config_version": "0.7.0",
+    "packages": [
+      "libccd-dev:amd64\t2.1-2",
+      "libccd2:amd64\t2.1-2",
+      "libeigen3-dev\t3.4.0-2ubuntu2",
+      "libfcl-dev:amd64\t0.7.0-3",
+      "libfcl0.7:amd64\t0.7.0-3"
+    ],
+    "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "compile_flags": "-std=c++11 -I/usr/include/eigen3 -lfcl -lccd -lm -loctomap -loctomath",
+    "compile_stderr": "",
+    "source_provenance": [
+      {
+        "path": "/usr/include/fcl/config.h",
+        "sha256": "cf577dab2b761d0df99be4708df649c329575d59524b75b5bccfcc1843c1ee08",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/config.h.in"
+      },
+      {
+        "path": "/usr/include/fcl/common/types.h",
+        "sha256": "8f97c3849265eedaac9e9478a3d85e20b87fab60b325dfe1bf66662f39f31013",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/common/types.h"
+      },
+      {
+        "path": "/usr/include/fcl/narrowphase/continuous_collision_request.h",
+        "sha256": "f433ba312b8c027561dc918b21663928eb74a2e895542385b9ad982d45ab2cae",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision_request.h"
+      },
+      {
+        "path": "/usr/include/fcl/narrowphase/continuous_collision-inl.h",
+        "sha256": "c8ff31f3d110236180cc627f0e0c15319aa141ca3bf61df9ce58fdd3be2c90ce",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/narrowphase/continuous_collision_result-inl.h",
+        "sha256": "63163dc192af908cb0d7c1f15f0a966d3ff331815a049e24d9a1281a7cd43a7b",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision_result-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/narrowphase/detail/conservative_advancement_func_matrix-inl.h",
+        "sha256": "6e9a310c96ffdbb73d788e56f0292c1fa838d1dea919191f15694709f4236d38",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/detail/conservative_advancement_func_matrix-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/narrowphase/detail/traversal/distance/shape_conservative_advancement_traversal_node-inl.h",
+        "sha256": "cd9ef3ed89b651228a810f8da29f6e730578dfbe8f30f6a8065db57a32902306",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/detail/traversal/distance/shape_conservative_advancement_traversal_node-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/math/motion/translation_motion-inl.h",
+        "sha256": "46ca146e6f193c4237e096f2bbead4befca5843837baa7ff7e94699e8aec605f",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/math/motion/translation_motion-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/math/motion/interp_motion.h",
+        "sha256": "6064eea2468ca8225fceb71cb31eae4f8ca5bfda33fc44fde85a2f93a34a2cb5",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/math/motion/interp_motion.h"
+      },
+      {
+        "path": "/usr/include/fcl/math/motion/interp_motion-inl.h",
+        "sha256": "0d987f791c11c7e97477b4ea8f154ca2471475ad34e01e1491454c6cd4c33800",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/math/motion/interp_motion-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/math/motion/screw_motion-inl.h",
+        "sha256": "2829aefa79e104dd2cfff95db1171f6dbf1ebbb2be5a15eaa1107a1a6558b368",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/math/motion/screw_motion-inl.h"
+      },
+      {
+        "path": "/usr/include/fcl/math/motion/spline_motion-inl.h",
+        "sha256": "e212fe276d8a0d522c23e552fc08c08e23d1370a0b40ea81f975bf91dff04d55",
+        "upstream_tag_source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/math/motion/spline_motion-inl.h"
+      }
+    ],
+    "linked_libraries": [
+      {
+        "path": "/usr/lib/x86_64-linux-gnu/libfcl.so.0.7.0",
+        "sha256": "0bb493f432f0a38ff605198937a037e1c41f1d5fb6dfc36473988da973b5dc05"
+      },
+      {
+        "path": "/usr/lib/x86_64-linux-gnu/libccd.so.2.0",
+        "sha256": "aa285639c8e4fa83f5987357fdc882e6df614949e40a7e85676b640ffb25f4f1"
+      },
+      {
+        "path": "/usr/lib/x86_64-linux-gnu/liboctomap.so.1.9.7",
+        "sha256": "27e22029990f69e951b5c4b1acc33e44fe3663af9e13620271a35ab1ed1309f7"
+      },
+      {
+        "path": "/usr/lib/x86_64-linux-gnu/liboctomath.so.1.9.7",
+        "sha256": "da54007d468946667bf76fc9f81ce64ad8d28ae2b3d551f501adaf2f0631731f"
+      }
+    ],
+    "probe_source_sha256": "b8896a05e2ef4c983522a0e133196620647ca6d157fcb1839348c662ebc90665",
+    "audit_script_sha256": "b40f7c0b76db05d465ef7bf36385adc861157185f5a1ca7047c4adeb24724d1e",
+    "frozen_fk_sources": [
+      {
+        "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1-2a-contact/offline/task28_g1_1/task28_validator/model.py",
+        "sha256": "38ec5d2cd2fc348ce9c67737a3a59b8194eaaf84331165ff5b2e3a4adb5b4dfa"
+      },
+      {
+        "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1-2a-contact/offline/task28_g1_1/task28_validator/se3.py",
+        "sha256": "b8ad8c23acf5a840155fea7cde35c38d1e747c11549ff07c5ede0c1e018f6bdf"
+      },
+      {
+        "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1-2a-contact/fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8"
+      },
+      {
+        "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1-2a-contact/fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json",
+        "sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286"
+      }
+    ],
+    "upstream_header_comparison": {
+      "source": "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision-inl.h",
+      "downloaded_source_sha256": "c8ff31f3d110236180cc627f0e0c15319aa141ca3bf61df9ce58fdd3be2c90ce",
+      "installed_header_matches_official_0_7_0_tag": true,
+      "comparison_scope": "Exact continuous_collision-inl.h bytes compared during audit. Remaining source records identify installed bytes; generated config.h need not exist upstream."
+    }
+  },
+  "python_binding_source_comparison": {
+    "installed": false,
+    "executed_or_installed": false,
+    "source_only_download": "/tmp/task28_fcl_audit_src/python_fcl-0.7.0.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+    "wheel_sha256": "c3252c0e8420857e6a08a703be46a65b97d089bab8a571f4ddc3d3c9b604f665",
+    "version": "0.7.0.10",
+    "source_hashes": {
+      "fcl/collision_data.py": "88580bb441d2846a81629be690f5fbc746d508ddd87724fa118d86601a9d5794",
+      "fcl/fcl.pyx": "72f7bdd4234e1c1b2cfd24c79b21f88a2ab62ce8729157d805ed4362c58ce928"
+    },
+    "ContinuousCollisionRequest_defaults": {
+      "num_max_iterations": "10",
+      "toc_err": "0.0001",
+      "ccd_motion_type": "CCDMotionType.CCDM_TRANS",
+      "gjk_solver_type": "GJKSolverType.GST_LIBCCD",
+      "ccd_solver_type": "CCDSolverType.CCDC_CONSERVATIVE_ADVANCEMENT"
+    },
+    "continuousCollide_signature": "continuousCollide(o1, tf1_end, o2, tf2_end, request=None, result=None)",
+    "wrapper_behavior": "passes only endpoint transforms to FCL; returns C++ scalar unchanged; result fields accumulate with OR(is_collide), min(time_of_contact). Use a fresh result for every query.",
+    "source_links": [
+      "https://github.com/BerkeleyAutomation/python-fcl/blob/v0.7.0.10/src/fcl/collision_data.py",
+      "https://github.com/BerkeleyAutomation/python-fcl/blob/v0.7.0.10/src/fcl/fcl.pyx",
+      "https://pypi.org/project/python-fcl/0.7.0.10/"
+    ],
+    "interpretation": "The downloaded binding defaults to CONSERVATIVE_ADVANCEMENT, unlike the installed C++ API's NAIVE default. This is a source comparison, not a claim that Python-FCL is the active backend."
+  },
+  "cpp_api": {
+    "default_request_actual": {
+      "kind": "defaults",
+      "num_max_iterations": 10,
+      "toc_err": 0.0001,
+      "ccd_motion_type": 0,
+      "gjk_solver_type": 0,
+      "ccd_solver_type": 0
+    },
+    "signature": "continuousCollide(geometry1, tf1_begin, tf1_end, geometry2, tf2_begin, tf2_end, request, result) -> double; CollisionObject overload reads begin poses from objects",
+    "motion_enum": {
+      "CCDM_TRANS": 0,
+      "CCDM_LINEAR": 1,
+      "CCDM_SCREW": 2,
+      "CCDM_SPLINE": 3
+    },
+    "solver_enum": {
+      "CCDC_NAIVE": 0,
+      "CCDC_CONSERVATIVE_ADVANCEMENT": 1,
+      "CCDC_RAY_SHOOTING": 2,
+      "CCDC_POLYNOMIAL_SOLVER": 3
+    },
+    "return_semantics": "Supported queries return scalar time in [0,1]; consult fresh result.is_collide to distinguish contact from no contact. -1 means unsupported/invalid/error, never no collision. time_of_contact=1 and is_collide=false are unchanged initial defaults on unsupported calls.",
+    "sources": [
+      "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision_request.h",
+      "https://github.com/flexible-collision-library/fcl/blob/0.7.0/include/fcl/narrowphase/continuous_collision-inl.h"
+    ]
+  },
+  "motion_types": [
+    {
+      "type": "CCDM_TRANS",
+      "implemented": true,
+      "semantics": "T(u)=T0+u(T1-T0); rotation remains R0, even at u=1. Any supplied final rotation is ignored."
+    },
+    {
+      "type": "CCDM_LINEAR",
+      "implemented": true,
+      "semantics": "InterpMotion advances rotation using constant-axis principal AngleAxis(R1 R0^T). Translation depends on reference_p; the endpoint constructor does not explicitly initialize that Eigen vector. A zero reference point gives the endpoint chord, as observed in this clean probe process, but zero initialization is not a guaranteed source-level default. No joint states or FK callbacks are supplied.",
+      "reference_initialization_caveat": "Do not infer a zero reference point from the source comment: inspected constructors do not explicitly set reference_p. Recorded transforms describe this run only; no cross-build or allocator-independent correctness guarantee is made."
+    },
+    {
+      "type": "CCDM_SCREW",
+      "implemented": true,
+      "semantics": "Single screw from endpoint transforms. General articulated simultaneous-joint FK is not a single screw. Installed pure-translation branch does not normalize its axis; actual endpoint failure is recorded."
+    },
+    {
+      "type": "CCDM_SPLINE",
+      "implemented": false,
+      "semantics": "Endpoint-transform constructors contain TODO and do not initialize spline controls; although enum/dispatch exist, this overload is unusable. It was not executed because using uninitialized controls is undefined behavior. Explicit multi-control-point constructor exists in C++ but is not this endpoint API."
+    }
+  ],
+  "solver_capabilities": [
+    {
+      "type": "CCDC_NAIVE",
+      "implemented": true,
+      "semantics": "Discrete sampling only: n=min(num_max_iterations,ceil(1/toc_err)); samples u=i/(n-1). Default n=10. An actual between-sample collision is missed by the control below. It cannot certify continuous clearance."
+    },
+    {
+      "type": "CCDC_CONSERVATIVE_ADVANCEMENT",
+      "implemented": true,
+      "semantics": "Shape pairs box/cylinder/convex have dispatch entries, and the recorded probes run them. Primitive wrapper ignores request (FCL_UNUSED(request)); its node has t_err=0.0001 and loop has no request iteration budget. BVH dispatch exists but the OBBRSS BVH/BVH crossing probe returns false/1 despite a discrete midpoint collision; dispatch availability alone is not correctness evidence. Useful diagnostic for its own rigid-motion model, not a joint-FK certificate."
+    },
+    {
+      "type": "CCDC_RAY_SHOOTING",
+      "implemented": false,
+      "semantics": "Primitive translation branch is empty and returns -1. Actual recorded unsupported control preserves default false/1 result."
+    },
+    {
+      "type": "CCDC_POLYNOMIAL_SOLVER",
+      "implemented": true,
+      "semantics": "Only BVH/BVH plus CCDM_TRANS accepted; primitive and Convex shapes are rejected with -1. BVH implementation updates vertex buffers internally; probe uses fresh geometries. Actual BVH crossing returns TOC 0 despite a discrete collision-free start, so no correct transform-aware TOC claim is made. Frozen G1-1 STL hulls are loaded as fcl::Convexd solids, not BVHModel, so this solver does not apply to those representations."
+    }
+  ],
+  "actual_ccd_controls": [
+    {
+      "kind": "ccd",
+      "name": "thin_sphere_crossing",
+      "motion": 0,
+      "solver": 0,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "thin_sphere_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.49,
+      "is_collide": true,
+      "time_of_contact": 0.49,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "thin_sphere_crossing",
+      "motion": 0,
+      "solver": 2,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": -1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "thin_sphere_crossing",
+      "motion": 0,
+      "solver": 3,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": -1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "box_box_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.49,
+      "is_collide": true,
+      "time_of_contact": 0.49,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "cylinder_box_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.4900000016972227,
+      "is_collide": true,
+      "time_of_contact": 0.4900000016972227,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_box_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.48875,
+      "is_collide": true,
+      "time_of_contact": 0.48875,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_convex_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.48,
+      "is_collide": true,
+      "time_of_contact": 0.48,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "sphere_clear",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "box_box_crossing",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.49,
+      "is_collide": true,
+      "time_of_contact": 0.49,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "cylinder_box_crossing",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.4900000016972227,
+      "is_collide": true,
+      "time_of_contact": 0.4900000016972227,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_box_crossing",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.48875,
+      "is_collide": true,
+      "time_of_contact": 0.48875,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_convex_crossing",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.48,
+      "is_collide": true,
+      "time_of_contact": 0.48,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "sphere_clear",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "box_box_crossing",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.245,
+      "is_collide": true,
+      "time_of_contact": 0.245,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "cylinder_box_crossing",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.24500000084861134,
+      "is_collide": true,
+      "time_of_contact": 0.24500000084861134,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_box_crossing",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.244375,
+      "is_collide": true,
+      "time_of_contact": 0.244375,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "convex_convex_crossing",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.24,
+      "is_collide": true,
+      "time_of_contact": 0.24,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "sphere_clear",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "initial_overlap",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0,
+      "is_collide": true,
+      "time_of_contact": 0,
+      "discrete_start_collision": true,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "endpoint_overlap",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.98,
+      "is_collide": true,
+      "time_of_contact": 0.98,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": true
+    },
+    {
+      "kind": "ccd",
+      "name": "primitive_ca_request_knobs",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 1,
+      "toc_err": 0.5,
+      "return_value": 0.49,
+      "is_collide": true,
+      "time_of_contact": 0.49,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "rotation_only",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": true
+    },
+    {
+      "kind": "ccd",
+      "name": "rotation_only",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.9672419491827048,
+      "is_collide": true,
+      "time_of_contact": 0.9672419491827048,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": true
+    },
+    {
+      "kind": "ccd",
+      "name": "rotation_only",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.9672419491827048,
+      "is_collide": true,
+      "time_of_contact": 0.9672419491827048,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": true
+    },
+    {
+      "kind": "ccd",
+      "name": "bvh_bvh_crossing",
+      "motion": 0,
+      "solver": 0,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "bvh_bvh_crossing",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "bvh_bvh_crossing",
+      "motion": 0,
+      "solver": 3,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0,
+      "is_collide": true,
+      "time_of_contact": 0,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": true,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "fk_arc_endpoint_motion",
+      "motion": 0,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "fk_arc_endpoint_motion",
+      "motion": 1,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 1,
+      "is_collide": false,
+      "time_of_contact": 1,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    },
+    {
+      "kind": "ccd",
+      "name": "fk_arc_endpoint_motion",
+      "motion": 2,
+      "solver": 1,
+      "iterations": 10,
+      "toc_err": 0.0001,
+      "return_value": 0.48085407116809664,
+      "is_collide": true,
+      "time_of_contact": 0.48085407116809664,
+      "discrete_start_collision": false,
+      "discrete_LINEAR_midpoint_collision": false,
+      "discrete_end_collision": false
+    }
+  ],
+  "probe_stderr": "Warning! Invalid continuous collision checking\n",
+  "independent_mathematical_counterexample": {
+    "model": "One revolute joint, unit-radius attached sphere center p(q)=(cos(q),sin(q),0), orientation Rz(q); q(u)=-pi/3+2*pi*u/3; moving and obstacle radii both 0.02 m; stationary obstacle center (1,0,0).",
+    "fk_midpoint": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "endpoint_chord_midpoint": [
+      0.5,
+      0.0,
+      0.0
+    ],
+    "midpoint_deviation_m": 0.5,
+    "derivation": "At u=1/2 FK gives cos(0)=1. Endpoint translations both have x=cos(pi/3)=1/2, so a zero-reference-point endpoint LINEAR/chord model keeps x=1/2 for every u. Its distance to the obstacle is at least 1/2 m > 0.04 m, whereas actual FK centers coincide at u=1/2. The actual endpoint API call below returned clear in this clean probe process; the separately documented reference_p initialization caveat prevents treating the chord model as an unconditional implementation guarantee.",
+    "actual_FCL_endpoint_ccd": [
+      {
+        "kind": "ccd",
+        "name": "fk_arc_endpoint_motion",
+        "motion": 0,
+        "solver": 1,
+        "iterations": 10,
+        "toc_err": 0.0001,
+        "return_value": 1,
+        "is_collide": false,
+        "time_of_contact": 1,
+        "discrete_start_collision": false,
+        "discrete_LINEAR_midpoint_collision": false,
+        "discrete_end_collision": false
+      },
+      {
+        "kind": "ccd",
+        "name": "fk_arc_endpoint_motion",
+        "motion": 1,
+        "solver": 1,
+        "iterations": 10,
+        "toc_err": 0.0001,
+        "return_value": 1,
+        "is_collide": false,
+        "time_of_contact": 1,
+        "discrete_start_collision": false,
+        "discrete_LINEAR_midpoint_collision": false,
+        "discrete_end_collision": false
+      },
+      {
+        "kind": "ccd",
+        "name": "fk_arc_endpoint_motion",
+        "motion": 2,
+        "solver": 1,
+        "iterations": 10,
+        "toc_err": 0.0001,
+        "return_value": 0.48085407116809664,
+        "is_collide": true,
+        "time_of_contact": 0.48085407116809664,
+        "discrete_start_collision": false,
+        "discrete_LINEAR_midpoint_collision": false,
+        "discrete_end_collision": false
+      }
+    ],
+    "actual_FCL_FK_midpoint_contact_count": 1,
+    "claim": "This exact analytic counterexample disproves treating zero-reference-point/chord LINEAR endpoint-transform CCD negatives as collision-free joint-interpolation certificates. The observed installed-API negative and independent actual-FK midpoint contact confirm a miss in this process; the analytic model mismatch itself is independent of discretization resolution and floating-point tolerances."
+  },
+  "frozen_robot_and_translation_motion_comparison": [
+    {
+      "name": "left_fr3_link7",
+      "records": [
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 0,
+          "u": 0,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.702731447160037
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924867,
+              0.09831503973539323,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147268,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.12208623402406736,
+              -0.9435697461541032,
+              0.702731447160037
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 5.247163312086313e-17
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 0,
+          "u": 0.25,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.9317593655456132
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6141536682002495
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.6970758800171111
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6612579222014742,
+              -0.7462693236953823,
+              0.0762892970017799,
+              0.9332475786600491
+            ],
+            [
+              -0.7326580699891625,
+              -0.6643216569082911,
+              -0.14794893930805417,
+              -0.6271934494960403
+            ],
+            [
+              0.1610903870674619,
+              0.041938439096601846,
+              -0.9860482009113933,
+              0.7017360216968889
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.013927224956596188,
+          "rotation_error_rad": 0.18134632849957508
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 0,
+          "u": 0.5,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.9529193717541224
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.5821200618881729
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.6914203128741852
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7071067811847436,
+              -0.7071067811883516,
+              9.06940223985416e-17,
+              0.9568905665926432
+            ],
+            [
+              -0.7071067811883516,
+              -0.7071067811847436,
+              5.41441377848579e-16,
+              -0.5999999999999996
+            ],
+            [
+              -2.8138365679825486e-16,
+              -4.843300829856993e-16,
+              -1.0000000000000002,
+              0.6972820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.019230771290558602,
+          "rotation_error_rad": 0.3537775797711858
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 0,
+          "u": 0.75,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.9740793779626316
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.5500864555760963
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.6857647457312592
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7363932297706511,
+              -0.6660245058602002,
+              -0.11889646227548176,
+              0.9786026408150735
+            ],
+            [
+              -0.6567770511675303,
+              -0.7459221322204611,
+              0.11065296075281732,
+              -0.5636011502094176
+            ],
+            [
+              -0.16238508616136027,
+              -0.0033956232649097746,
+              -0.9867216190674097,
+              0.6898847321824478
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.014835132834665947,
+          "rotation_error_rad": 0.5164114559781188
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 0,
+          "u": 1,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.9952393841711408
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.5180528492640195
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.6801091785883333
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7411507726448979,
+              -0.6171648874600109,
+              -0.2642026379397881,
+              0.9952393841711408
+            ],
+            [
+              -0.5931622827762465,
+              -0.7863130972169616,
+              0.17283003048296028,
+              -0.5180528492640195
+            ],
+            [
+              -0.31441062084405286,
+              0.028621929207183764,
+              -0.9488554930382793,
+              0.6801091785883333
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.6685408438053299
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 1,
+          "u": 0,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.702731447160037
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924867,
+              0.09831503973539323,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147268,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.12208623402406736,
+              -0.9435697461541032,
+              0.702731447160037
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 5.247163312086313e-17
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 1,
+          "u": 0.25,
+          "transform": [
+            [
+              0.6690651471753171,
+              -0.7429880390259853,
+              0.01790538186110585,
+              0.9317593655456132
+            ],
+            [
+              -0.7273711076461982,
+              -0.6595682116639916,
+              -0.1894757132824853,
+              -0.6141536682002495
+            ],
+            [
+              0.1525880093480941,
+              0.1137477385563535,
+              -0.981722135523337,
+              0.6970758800171111
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6612579222014742,
+              -0.7462693236953823,
+              0.0762892970017799,
+              0.9332475786600491
+            ],
+            [
+              -0.7326580699891625,
+              -0.6643216569082911,
+              -0.14794893930805417,
+              -0.6271934494960403
+            ],
+            [
+              0.1610903870674619,
+              0.041938439096601846,
+              -0.9860482009113933,
+              0.7017360216968889
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.013927224956596188,
+          "rotation_error_rad": 0.07248310721494701
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 1,
+          "u": 0.5,
+          "transform": [
+            [
+              0.7100887820645765,
+              -0.700523608369801,
+              -0.07099715277812363,
+              0.9529193717541224
+            ],
+            [
+              -0.7040881576090416,
+              -0.7072781160290031,
+              -0.0633840114001084,
+              -0.5821200618881729
+            ],
+            [
+              -0.005812736081378056,
+              0.09499652995250692,
+              -0.9954606327706941,
+              0.6914203128741852
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7071067811847436,
+              -0.7071067811883516,
+              9.06940223985416e-17,
+              0.9568905665926432
+            ],
+            [
+              -0.7071067811883516,
+              -0.7071067811847436,
+              5.41441377848579e-16,
+              -0.5999999999999996
+            ],
+            [
+              -2.8138365679825486e-16,
+              -4.843300829856993e-16,
+              -1.0000000000000002,
+              0.6972820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.019230771290558602,
+          "rotation_error_rad": 0.09542549647626032
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 1,
+          "u": 0.75,
+          "transform": [
+            [
+              0.7343426358244204,
+              -0.6581892830753412,
+              -0.1659149205322145,
+              0.9740793779626316
+            ],
+            [
+              -0.6589323974908207,
+              -0.7499225669716825,
+              0.05851699824496622,
+              -0.5500864555760963
+            ],
+            [
+              -0.16293860422699633,
+              0.0663551896340496,
+              -0.9844023567937998,
+              0.6857647457312592
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7363932297706511,
+              -0.6660245058602002,
+              -0.11889646227548176,
+              0.9786026408150735
+            ],
+            [
+              -0.6567770511675303,
+              -0.7459221322204611,
+              0.11065296075281732,
+              -0.5636011502094176
+            ],
+            [
+              -0.16238508616136027,
+              -0.0033956232649097746,
+              -0.9867216190674097,
+              0.6898847321824478
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.014835132834665947,
+          "rotation_error_rad": 0.07032095990864018
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 1,
+          "u": 1,
+          "transform": [
+            [
+              0.7411507726448981,
+              -0.6171648874600107,
+              -0.2642026379397882,
+              0.9952393841711408
+            ],
+            [
+              -0.5931622827762465,
+              -0.7863130972169621,
+              0.17283003048296008,
+              -0.5180528492640195
+            ],
+            [
+              -0.31441062084405275,
+              0.02862192920718372,
+              -0.9488554930382795,
+              0.6801091785883333
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7411507726448979,
+              -0.6171648874600109,
+              -0.2642026379397881,
+              0.9952393841711408
+            ],
+            [
+              -0.5931622827762465,
+              -0.7863130972169616,
+              0.17283003048296028,
+              -0.5180528492640195
+            ],
+            [
+              -0.31441062084405286,
+              0.028621929207183764,
+              -0.9488554930382793,
+              0.6801091785883333
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 3.153792107989312e-16
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 2,
+          "u": 0,
+          "transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924866,
+              0.09831503973539324,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147269,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.1220862340240674,
+              -0.9435697461541033,
+              0.702731447160037
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6124150275643216,
+              -0.7843991247924867,
+              0.09831503973539323,
+              0.910599359337104
+            ],
+            [
+              -0.7281323701147268,
+              -0.6081224913507157,
+              -0.3162440309389395,
+              -0.6461872745123263
+            ],
+            [
+              0.3078491279904842,
+              0.12208623402406736,
+              -0.9435697461541032,
+              0.702731447160037
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 5.247163312086313e-17
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 2,
+          "u": 0.25,
+          "transform": [
+            [
+              0.6690651471753171,
+              -0.7429880390259853,
+              0.01790538186110585,
+              0.9349293387756373
+            ],
+            [
+              -0.7273711076461982,
+              -0.6595682116639916,
+              -0.1894757132824853,
+              -0.6169508158003967
+            ],
+            [
+              0.1525880093480941,
+              0.1137477385563535,
+              -0.981722135523337,
+              0.694130357419897
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.6612579222014742,
+              -0.7462693236953823,
+              0.0762892970017799,
+              0.9332475786600491
+            ],
+            [
+              -0.7326580699891625,
+              -0.6643216569082911,
+              -0.14794893930805417,
+              -0.6271934494960403
+            ],
+            [
+              0.1610903870674619,
+              0.041938439096601846,
+              -0.9860482009113933,
+              0.7017360216968889
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.012868022039296734,
+          "rotation_error_rad": 0.07248310721494701
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 2,
+          "u": 0.5,
+          "transform": [
+            [
+              0.7100887820645765,
+              -0.700523608369801,
+              -0.07099715277812363,
+              0.9570759186449712
+            ],
+            [
+              -0.7040881576090416,
+              -0.7072781160290031,
+              -0.0633840114001084,
+              -0.5856107652135552
+            ],
+            [
+              -0.005812736081378056,
+              0.09499652995250692,
+              -0.9954606327706941,
+              0.687200177659084
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7071067811847436,
+              -0.7071067811883516,
+              9.06940223985416e-17,
+              0.9568905665926432
+            ],
+            [
+              -0.7071067811883516,
+              -0.7071067811847436,
+              5.41441377848579e-16,
+              -0.5999999999999996
+            ],
+            [
+              -2.8138365679825486e-16,
+              -4.843300829856993e-16,
+              -1.0000000000000002,
+              0.6972820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.01757067526895626,
+          "rotation_error_rad": 0.09542549647626032
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 2,
+          "u": 0.75,
+          "transform": [
+            [
+              0.7343426358244204,
+              -0.6581892830753412,
+              -0.1659149205322145,
+              0.9771296435135737
+            ],
+            [
+              -0.6589323974908207,
+              -0.7499225669716825,
+              0.05851699824496622,
+              -0.5525131172502278
+            ],
+            [
+              -0.16293860422699633,
+              0.0663551896340496,
+              -0.9844023567937998,
+              0.6823948701349184
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7363932297706511,
+              -0.6660245058602002,
+              -0.11889646227548176,
+              0.9786026408150735
+            ],
+            [
+              -0.6567770511675303,
+              -0.7459221322204611,
+              0.11065296075281732,
+              -0.5636011502094176
+            ],
+            [
+              -0.16238508616136027,
+              -0.0033956232649097746,
+              -0.9867216190674097,
+              0.6898847321824478
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.013461509181563828,
+          "rotation_error_rad": 0.07032095990864018
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_link7",
+          "motion": 2,
+          "u": 1,
+          "transform": [
+            [
+              0.7411507726448981,
+              -0.6171648874600107,
+              -0.2642026379397882,
+              0.9952393841711408
+            ],
+            [
+              -0.5931622827762465,
+              -0.7863130972169621,
+              0.17283003048296008,
+              -0.5180528492640195
+            ],
+            [
+              -0.31441062084405275,
+              0.02862192920718372,
+              -0.9488554930382795,
+              0.6801091785883334
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7411507726448979,
+              -0.6171648874600109,
+              -0.2642026379397881,
+              0.9952393841711408
+            ],
+            [
+              -0.5931622827762465,
+              -0.7863130972169616,
+              0.17283003048296028,
+              -0.5180528492640195
+            ],
+            [
+              -0.31441062084405286,
+              0.028621929207183764,
+              -0.9488554930382793,
+              0.6801091785883333
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 1.1102230246251565e-16,
+          "rotation_error_rad": 3.153792107989312e-16
+        }
+      ],
+      "q0_rad": [
+        -0.4,
+        -0.9353981634,
+        0.125,
+        -2.4561944902,
+        -0.175,
+        1.7207963268,
+        0.5853981634000001
+      ],
+      "q1_rad": [
+        0.4,
+        -0.6353981634,
+        -0.125,
+        -2.2561944902,
+        0.175,
+        1.4207963268000001,
+        0.9853981634
+      ],
+      "interpolation": "q(u)=(1-u)q0+u*q1; right arm remains at frozen home; both endpoints inside frozen effective joint limits. Kinematic diagnostic only: full-state closed-chain/contact/collision validity is not asserted."
+    },
+    {
+      "name": "left_fr3_side_suction_tcp",
+      "records": [
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 0,
+          "u": 0,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5073605383554893
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7843991247954855,
+              0.6124150275604807,
+              0.09831503973539323,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471504,
+              -0.7281323701177045,
+              -0.3162440309389395,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255996,
+              0.307849127991082,
+              -0.9435697461541032,
+              0.5073605383554893
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 1.914134585253319e-16
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 0,
+          "u": 0.25,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.048298114191019
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.5492632174776795
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5050796043573824
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7462693236986202,
+              0.66125792219782,
+              0.0762892970017799,
+              1.0631854223721664
+            ],
+            [
+              0.6643216569047036,
+              -0.7326580699924155,
+              -0.14794893930805417,
+              -0.5518900443258612
+            ],
+            [
+              -0.04193843909581305,
+              0.16109038706766726,
+              -0.9860482009113933,
+              0.5108445500664851
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.016179207743263792,
+          "rotation_error_rad": 0.18134632849957508
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 0,
+          "u": 0.5,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.0460300922715802
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.48746051281681196
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5027986703592755
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.707106781191814,
+              0.7071067811812811,
+              9.06940223985416e-17,
+              1.0664921176768376
+            ],
+            [
+              0.7071067811812811,
+              -0.707106781191814,
+              5.41441377848579e-16,
+              -0.49039844891636425
+            ],
+            [
+              4.843300829843215e-16,
+              -2.813836568006264e-16,
+              -1.0000000000000002,
+              0.5102820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.021984698257835476,
+          "rotation_error_rad": 0.3537775797711858
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 0,
+          "u": 0.75,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.043762070352141
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.42565780815594445
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5005177363611685
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.666024505863806,
+              0.7363932297673899,
+              -0.11889646227548176,
+              1.0596028007778895
+            ],
+            [
+              0.7459221322172451,
+              -0.6567770511711828,
+              0.11065296075281732,
+              -0.42729111605446923
+            ],
+            [
+              0.0033956232641146416,
+              -0.1623850861613769,
+              -0.9867216190674097,
+              0.5058941110229033
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.01680779103915677,
+          "rotation_error_rad": 0.5164114559781188
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 0,
+          "u": 1,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.0414940484327022
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.3638551034950769
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.49823680236306156
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.61716488746364,
+              0.7411507726418759,
+              -0.2642026379397881,
+              1.0414940484327022
+            ],
+            [
+              0.7863130972140572,
+              -0.5931622827800968,
+              0.17283003048296028,
+              -0.3638551034950769
+            ],
+            [
+              -0.028621929208723303,
+              -0.3144106208439127,
+              -0.9488554930382793,
+              0.49823680236306156
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.6685408438053299
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 1,
+          "u": 0,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5073605383554893
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7843991247954855,
+              0.6124150275604807,
+              0.09831503973539323,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471504,
+              -0.7281323701177045,
+              -0.3162440309389395,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255996,
+              0.307849127991082,
+              -0.9435697461541032,
+              0.5073605383554893
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 1.914134585253319e-16
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 1,
+          "u": 0.25,
+          "transform": [
+            [
+              0.7429880390292617,
+              0.6690651471716788,
+              0.017905381861105803,
+              1.048298114191019
+            ],
+            [
+              0.6595682116604299,
+              -0.7273711076494278,
+              -0.18947571328248525,
+              -0.5492632174776795
+            ],
+            [
+              -0.11374773855560633,
+              0.15258800934865102,
+              -0.981722135523337,
+              0.5050796043573824
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7462693236986202,
+              0.66125792219782,
+              0.0762892970017799,
+              1.0631854223721664
+            ],
+            [
+              0.6643216569047036,
+              -0.7326580699924155,
+              -0.14794893930805417,
+              -0.5518900443258612
+            ],
+            [
+              -0.04193843909581305,
+              0.16109038706766726,
+              -0.9860482009113933,
+              0.5108445500664851
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.016179207743263792,
+          "rotation_error_rad": 0.072483107214947
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 1,
+          "u": 0.5,
+          "transform": [
+            [
+              0.7005236083732782,
+              0.7100887820611461,
+              -0.07099715277812368,
+              1.0460300922715802
+            ],
+            [
+              0.7072781160255555,
+              -0.7040881576125051,
+              -0.06338401140010835,
+              -0.48746051281681196
+            ],
+            [
+              -0.09499652995253538,
+              -0.005812736080912949,
+              -0.9954606327706941,
+              0.5027986703592755
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.707106781191814,
+              0.7071067811812811,
+              9.06940223985416e-17,
+              1.0664921176768376
+            ],
+            [
+              0.7071067811812811,
+              -0.707106781191814,
+              5.41441377848579e-16,
+              -0.49039844891636425
+            ],
+            [
+              4.843300829843215e-16,
+              -2.813836568006264e-16,
+              -1.0000000000000002,
+              0.5102820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.021984698257835476,
+          "rotation_error_rad": 0.09542549647626034
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 1,
+          "u": 0.75,
+          "transform": [
+            [
+              0.6581892830789371,
+              0.7343426358211973,
+              -0.16591492053221452,
+              1.043762070352141
+            ],
+            [
+              0.7499225669684557,
+              -0.6589323974944925,
+              0.05851699824496619,
+              -0.42565780815594445
+            ],
+            [
+              -0.06635518963484753,
+              -0.1629386042266714,
+              -0.9844023567937994,
+              0.5005177363611685
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.666024505863806,
+              0.7363932297673899,
+              -0.11889646227548176,
+              1.0596028007778895
+            ],
+            [
+              0.7459221322172451,
+              -0.6567770511711828,
+              0.11065296075281732,
+              -0.42729111605446923
+            ],
+            [
+              0.0033956232641146416,
+              -0.1623850861613769,
+              -0.9867216190674097,
+              0.5058941110229033
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.01680779103915677,
+          "rotation_error_rad": 0.07032095990864023
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 1,
+          "u": 1,
+          "transform": [
+            [
+              0.6171648874636402,
+              0.7411507726418758,
+              -0.26420263793978815,
+              1.0414940484327022
+            ],
+            [
+              0.7863130972140571,
+              -0.5931622827800964,
+              0.1728300304829602,
+              -0.3638551034950769
+            ],
+            [
+              -0.028621929208723265,
+              -0.3144106208439126,
+              -0.9488554930382789,
+              0.49823680236306156
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.61716488746364,
+              0.7411507726418759,
+              -0.2642026379397881,
+              1.0414940484327022
+            ],
+            [
+              0.7863130972140572,
+              -0.5931622827800968,
+              0.17283003048296028,
+              -0.3638551034950769
+            ],
+            [
+              -0.028621929208723303,
+              -0.3144106208439127,
+              -0.9488554930382793,
+              0.49823680236306156
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 7.317177920620255e-17
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 2,
+          "u": 0,
+          "transform": [
+            [
+              0.7843991247954856,
+              0.6124150275604806,
+              0.0983150397353932,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471502,
+              -0.7281323701177047,
+              -0.31624403093893944,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255993,
+              0.30784912799108194,
+              -0.9435697461541033,
+              0.5073605383554893
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7843991247954855,
+              0.6124150275604807,
+              0.09831503973539323,
+              1.050566136110458
+            ],
+            [
+              0.6081224913471504,
+              -0.7281323701177045,
+              -0.3162440309389395,
+              -0.611065922138547
+            ],
+            [
+              -0.12208623402255996,
+              0.307849127991082,
+              -0.9435697461541032,
+              0.5073605383554893
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 1.914134585253319e-16
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 2,
+          "u": 0.25,
+          "transform": [
+            [
+              0.7429880390292617,
+              0.6690651471716788,
+              0.017905381861105803,
+              1.0534407912326917
+            ],
+            [
+              0.6595682116604299,
+              -0.7273711076494278,
+              -0.18947571328248525,
+              -0.5501497013763027
+            ],
+            [
+              -0.11374773855560633,
+              0.15258800934865102,
+              -0.981722135523337,
+              0.49291741860079824
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.7462693236986202,
+              0.66125792219782,
+              0.0762892970017799,
+              1.0631854223721664
+            ],
+            [
+              0.6643216569047036,
+              -0.7326580699924155,
+              -0.14794893930805417,
+              -0.5518900443258612
+            ],
+            [
+              -0.04193843909581305,
+              0.16109038706766726,
+              -0.9860482009113933,
+              0.5108445500664851
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.02047849291853571,
+          "rotation_error_rad": 0.072483107214947
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 2,
+          "u": 0.5,
+          "transform": [
+            [
+              0.7005236083732782,
+              0.7100887820611461,
+              -0.07099715277812368,
+              1.0523806103727813
+            ],
+            [
+              0.7072781160255555,
+              -0.7040881576125051,
+              -0.06338401140010835,
+              -0.4878354673608799
+            ],
+            [
+              -0.09499652995253538,
+              -0.005812736080912949,
+              -0.9954606327706941,
+              0.4863245771883258
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.707106781191814,
+              0.7071067811812811,
+              9.06940223985416e-17,
+              1.0664921176768376
+            ],
+            [
+              0.7071067811812811,
+              -0.707106781191814,
+              5.41441377848579e-16,
+              -0.49039844891636425
+            ],
+            [
+              4.843300829843215e-16,
+              -2.813836568006264e-16,
+              -1.0000000000000002,
+              0.5102820523004583
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.027922466341543634,
+          "rotation_error_rad": 0.09542549647626034
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 2,
+          "u": 0.75,
+          "transform": [
+            [
+              0.6581892830789371,
+              0.7343426358211973,
+              -0.16591492053221452,
+              1.0481228922507275
+            ],
+            [
+              0.7499225669684557,
+              -0.6589323974944925,
+              0.05851699824496619,
+              -0.42533244069780834
+            ],
+            [
+              -0.06635518963484753,
+              -0.1629386042266714,
+              -0.9844023567937994,
+              0.4880265750212001
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.666024505863806,
+              0.7363932297673899,
+              -0.11889646227548176,
+              1.0596028007778895
+            ],
+            [
+              0.7459221322172451,
+              -0.6567770511711828,
+              0.11065296075281732,
+              -0.42729111605446923
+            ],
+            [
+              0.0033956232641146416,
+              -0.1623850861613769,
+              -0.9867216190674097,
+              0.5058941110229033
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.02132776480827175,
+          "rotation_error_rad": 0.07032095990864023
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "left_fr3_side_suction_tcp",
+          "motion": 2,
+          "u": 1,
+          "transform": [
+            [
+              0.6171648874636402,
+              0.7411507726418758,
+              -0.26420263793978815,
+              1.0414940484327022
+            ],
+            [
+              0.7863130972140571,
+              -0.5931622827800964,
+              0.1728300304829602,
+              -0.3638551034950769
+            ],
+            [
+              -0.028621929208723265,
+              -0.3144106208439126,
+              -0.9488554930382789,
+              0.49823680236306156
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              0.61716488746364,
+              0.7411507726418759,
+              -0.2642026379397881,
+              1.0414940484327022
+            ],
+            [
+              0.7863130972140572,
+              -0.5931622827800968,
+              0.17283003048296028,
+              -0.3638551034950769
+            ],
+            [
+              -0.028621929208723303,
+              -0.3144106208439127,
+              -0.9488554930382793,
+              0.49823680236306156
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 7.317177920620255e-17
+        }
+      ],
+      "q0_rad": [
+        -0.4,
+        -0.9353981634,
+        0.125,
+        -2.4561944902,
+        -0.175,
+        1.7207963268,
+        0.5853981634000001
+      ],
+      "q1_rad": [
+        0.4,
+        -0.6353981634,
+        -0.125,
+        -2.2561944902,
+        0.175,
+        1.4207963268000001,
+        0.9853981634
+      ],
+      "interpolation": "q(u)=(1-u)q0+u*q1; right arm remains at frozen home; both endpoints inside frozen effective joint limits. Kinematic diagnostic only: full-state closed-chain/contact/collision validity is not asserted."
+    },
+    {
+      "name": "pure_translation_2m",
+      "records": [
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 0,
+          "u": 0,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 0,
+          "u": 0.25,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              0.5
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 0,
+          "u": 0.5,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 0,
+          "u": 0.75,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              1.5
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 0,
+          "u": 1,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 1,
+          "u": 0,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 1,
+          "u": 0.25,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              0.5
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 1,
+          "u": 0.5,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 1,
+          "u": 0.75,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              1.5
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 1,
+          "u": 1,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 2,
+          "u": 0,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 2,
+          "u": 0.25,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 0.5,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 2,
+          "u": 0.5,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 1.0,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 2,
+          "u": 0.75,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              1.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 1.5,
+          "rotation_error_rad": 0.0
+        },
+        {
+          "kind": "interpolated_motion",
+          "name": "pure_translation_2m",
+          "motion": 2,
+          "u": 1,
+          "transform": [
+            [
+              1,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "actual_fk_transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "translation_error_m": 2.0,
+          "rotation_error_rad": 0.0
+        }
+      ]
+    }
+  ],
+  "method_decision": {
+    "endpoint_ccd_negative_can_certify_articulated_segment": false,
+    "required_for_safe_use": "Either prove actual FK motion equals the selected FCL rigid-motion model over the entire interval, or conservatively bound the mismatch and include that bound in an independently verified enclosure/clearance proof. Otherwise retain UNKNOWN and subdivide under an independent conservative bound.",
+    "unacceptable_shortcuts": [
+      "fixed dense samples as continuous certification",
+      "motion enum existence as proof of implementation",
+      "ret<0 interpreted as clearance",
+      "Python-FCL and C++ defaults treated as identical",
+      "TOC tolerance interpreted as geometry/FK mismatch bound"
+    ],
+    "role_here": "FCL is a capability and collision-witness diagnostic. The continuous verifier uses independent conservative articulated motion bounds."
+  },
+  "verification": {
+    "thin_naive_miss_vs_CA_hit": true,
+    "unsupported_returns_minus_one": true,
+    "analytic_FK_arc_collision_vs_LINEAR_clear": true,
+    "frozen_robot_midpoint_LINEAR_translation_error_exceeds_1mm": true,
+    "BVH_CA_clear_despite_independent_discrete_midpoint_collision": true
+  }
+}
