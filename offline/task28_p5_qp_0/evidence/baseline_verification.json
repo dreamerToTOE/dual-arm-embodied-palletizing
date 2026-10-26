@@ -1,0 +1,87 @@
+{
+  "schema": "task28.g2_p5_qp_0.baseline_verification.v1",
+  "verified_utc": "2026-10-26T15:33:30.709993+00:00",
+  "starting_commit": "6eee5a01cba71c7802bbf0833dc3c89739dd62f6",
+  "local_branch": "side-suction-palletizing",
+  "protected_files": 425,
+  "changed_files": [],
+  "all_starting_tracked_files_covered": true,
+  "current_tracked_diff_from_starting_commit": [],
+  "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+  "formal_implementation_bindings": [
+    {
+      "path": "offline/task28_p5_qp_0/__init__.py",
+      "sha256": "5b4c80e0e2de6b022bfa05984066184fe2ef6a36953a3de99b78ad3a7a25a9fd",
+      "match": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/bootstrap.py",
+      "sha256": "e84a34f4625c2700869d8834268c45c10957d7553d8468a39c9d882d78db9d18",
+      "match": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/core.py",
+      "sha256": "cbf03201f6f874323a59fdc2e61601f314481a109f116f1cc5a2b6e28d79f091",
+      "match": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/integration.py",
+      "sha256": "cd7c0fe28d28164ff8ffde0d90e32f4cefade94d7b313696c459c2f2325ceb06",
+      "match": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/run_experiments.py",
+      "sha256": "63fefd7980ce8e10e7719b8392cc66669724a398d442c8e6f5b3b4f106a51837",
+      "match": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/solver.py",
+      "sha256": "1ebf678346d209f7ae0921e89f4b8b4faaeba01a0942a72795800b00df6d6811",
+      "match": true
+    }
+  ],
+  "formal_config_matches_saved_run": true,
+  "P5_local_source_files_rehashed": 12,
+  "dependency_binaries_rehashed": 3,
+  "saved_NR0_references_rehashed": [
+    28,
+    29,
+    30
+  ],
+  "independent_math_source_log_hash_verified": true,
+  "saved_review_artifact_hashes_verified": true,
+  "test_file_bindings": [
+    {
+      "path": "offline/task28_p5_qp_0/tests/test_independent_qp_optimum.py",
+      "final_sha256": "e9d7dc6dfa0f01a2dae0ef31ecf3185650f5ea8fabfd74fe96e66f91d1dc38a1",
+      "registered_sha256": "7c4d21346f175bceec593e5ec81f851550cf01c73e31a812a110aeab1cf0c770",
+      "same_version_as_registration": false
+    },
+    {
+      "path": "offline/task28_p5_qp_0/tests/test_integration.py",
+      "final_sha256": "ee8ef22e56f88f5a18c9cdd636cf29286bc0825d1381a179d933f15a7fde35f7",
+      "registered_sha256": "ee8ef22e56f88f5a18c9cdd636cf29286bc0825d1381a179d933f15a7fde35f7",
+      "same_version_as_registration": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/tests/test_kinematics.py",
+      "final_sha256": "0c4a3b70d198cf4f86df784b4a654585a25eae813b83bbe7539622862bc4a557",
+      "registered_sha256": "0c4a3b70d198cf4f86df784b4a654585a25eae813b83bbe7539622862bc4a557",
+      "same_version_as_registration": true
+    },
+    {
+      "path": "offline/task28_p5_qp_0/tests/test_qp_core.py",
+      "final_sha256": "0022192d63ff3772778114958c498f08b89c171697e56ca2c665dd8fa8b52bba",
+      "registered_sha256": "0022192d63ff3772778114958c498f08b89c171697e56ca2c665dd8fa8b52bba",
+      "same_version_as_registration": true
+    }
+  ],
+  "test_hash_scope": "Registration retains pre-formal test versions; independent optimum file extended after formal batch. Final 514-test log and inventory bind final version. No implementation or parameters changed.",
+  "preserved_original_checkout": {
+    "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p4-nr-0",
+    "head": "16241b181b2c4444b425f4a09057f5a5d1bac841",
+    "porcelain": ""
+  },
+  "checks": "CPU-only file hashing/JSON parsing/gzip CRC and Git status; no new experiment or solve.",
+  "execution_authorized": false
+}

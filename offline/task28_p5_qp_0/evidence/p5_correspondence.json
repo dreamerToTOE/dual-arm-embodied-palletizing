@@ -1,0 +1,240 @@
+{
+  "task": "Task28 G2-P5-QP-0",
+  "audit_scope": "Read-only local P5 correspondence audit; no original/source repository files modified; no planning, QP solve, simulator or robot execution.",
+  "identity": "P5-inspired centralized velocity-QP core adapted to frozen dual FR3; not exact P5 numerical implementation reproduction.",
+  "repositories": [
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-reproduction",
+      "head": "79ad22c7fded963e0b8e9cc50caadb242bca8108",
+      "branch": "reproduce-p1-numerical-20261021",
+      "status_porcelain": "?? results/20261007_TASK01_isaac_model_parity01/\n?? results/20261007_TASK01_isaac_model_parity02/\n?? results/20261008_TASK01_fixed_handoff01/\n?? results/20261009_102650_295770_TASK01_existing_gui_handoff01/\n"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020",
+      "head": "fe0b4900cec04b3d7ade7515d1d6cca1265a0cb0",
+      "branch": "reproduce-p5-numerical-20261020",
+      "status_porcelain": ""
+    }
+  ],
+  "files": [
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-reproduction/AGENTS.md",
+      "bytes": 10881,
+      "sha256": "ff97510cd78122be38b26a1264ff33f83a5f42322d10656f27d90e645fedf7de"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-reproduction/references/P5_qp_coordination.md",
+      "bytes": 901,
+      "sha256": "1ea7ad810ec5e483ab7d82963af84275faee3ee11543ecec04f6b180ff642bf5"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/impl/README.md",
+      "bytes": 3109,
+      "sha256": "a4ee8b841d15e598700e7dac6fdd73e4b79d8f1d5e43b6ad83fdff805070eb3b"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/impl/p5core/qp_ik.py",
+      "bytes": 18467,
+      "sha256": "3e43d25c2382e4cd64f029b6bab93965ace7961fdce34b52d14ab9325a54df85"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/impl/p5core/kinematics.py",
+      "bytes": 4550,
+      "sha256": "8305af6adeecd454667845703cfd6bc714a258bbb3033889a24629656c8c8a7e"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/impl/tasks/t04_qp_core.py",
+      "bytes": 19639,
+      "sha256": "b380cbf8ab9c34dc53a893859d4c5be5738b1715ea9bf7f59f9173b90db735a4"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/reviews/P5_T04_POST.md",
+      "bytes": 5121,
+      "sha256": "f87f65279c082c4c0aeb3fb58b430a362e4fdc80ee392eff7d8a6cf47a4d9319"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/P5_PAPER_STUDY.md",
+      "bytes": 45981,
+      "sha256": "84e0edc1ad0444f2b06917cbf3dfbc42b5f9547602ec19cd6d962293960c4a98"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/P5_EQUATION_AUDIT.md",
+      "bytes": 25587,
+      "sha256": "423ad918e8e73a9df1e9ed53bc44201f19ef21b2305dd16c4cd7e74ac4699e4e"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/P5_OFFICIAL_CODE_AUDIT.md",
+      "bytes": 20225,
+      "sha256": "39c1eefcd84ab5cd3e07324e2266de1fbd3ac0cc2705f4fb212bff0159717112"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/evidence/P5_official_code_manifest.json",
+      "bytes": 16769,
+      "sha256": "a25cf6021d9716bfce64f715c9f371b57ea62870f634c00cb9d74338be0894eb"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/papers_and_reference_all/references/private_sources/P5_original.pdf",
+      "bytes": 31161208,
+      "sha256": "6f367be45e0c925df64ec5e4ab3046e1de8aa96627c65ddb2fd71720d9eedc02"
+    }
+  ],
+  "paper": {
+    "title": "A unified framework for coordinated multi-arm motion planning",
+    "authors": [
+      "Seyed Sina Mirrazavi Salehian",
+      "Nadia Figueroa",
+      "Aude Billard"
+    ],
+    "doi": "10.1177/0278364918765952",
+    "year": 2018,
+    "journal": "The International Journal of Robotics Research",
+    "volume": 37,
+    "issue": 10,
+    "pages": "1205-1232",
+    "pdf_pages": 28,
+    "equation_page_locators": {
+      "16,17a-17d,18": {
+        "pdf_page_1based": 10,
+        "printed_page": 1214
+      },
+      "19-23": {
+        "pdf_page_1based": 11,
+        "printed_page": 1215
+      },
+      "24": {
+        "pdf_page_1based": 12,
+        "printed_page": 1216
+      },
+      "25-27": {
+        "pdf_page_1based": 13,
+        "printed_page": 1217
+      }
+    },
+    "visual_readback_pages": [
+      10,
+      12,
+      13
+    ]
+  },
+  "correspondence": [
+    {
+      "component": "velocity objective and centralized joint variable",
+      "paper": "17a, page1214",
+      "formula": "min 0.5*qdot.T*W*qdot, qdot=[qdot_L;qdot_R], W block diagonal positive definite",
+      "classification": "ORIGINAL math; FR3 14 DOF ADAPTATION"
+    },
+    {
+      "component": "task-space equality",
+      "paper": "17b, page1214",
+      "formula": "J=diag(J_i), J*qdot=stack(xidot_i)",
+      "classification": "ORIGINAL; using soft object-twist tracking is explicit Task28 ADAPTATION, and does not imply acceptable tracking on every feasible QP"
+    },
+    {
+      "component": "joint position/velocity bounds",
+      "paper": "17c,18,page1214",
+      "formula": "theta_minus=max(mu*(q_min-q), qdot_min); theta_plus=min(mu*(q_max-q),qdot_max)",
+      "classification": "ORIGINAL bound structure; exact dt look-ahead intersects or replaces mu barrier as Task28 ADAPTATION"
+    },
+    {
+      "component": "discrete acceleration bounds",
+      "paper": "No explicit per-step acceleration box in Eq17-18; paper discusses smoothness of LVI solver Eq20 on page1226",
+      "classification": "ENGINEERING/ADAPTATION; only with configured authenticated acceleration and previous valid-command contract"
+    },
+    {
+      "component": "SCA boundary",
+      "paper": "16,17d,24-26,page1214/1216/1217",
+      "formula": "Gamma(q)>1 free; -grad(Gamma).T*qdot <= log(Gamma-1); RBF SVM composed with FK features; grad_q=grad_f*J_f",
+      "classification": "NOT IMPLEMENTED in authorized Task28 scope; frozen FCL post-checks are not SVM and not QP collision avoidance"
+    },
+    {
+      "component": "shared rigid object TCP targets",
+      "formula": "world geometric twist [v_C;omega]; r_i=R_WC*p_CGi; v_i=v_C+omega cross r_i; omega_i=omega",
+      "classification": "Task28 ADAPTATION; do not set TCP translations equal under object rotation"
+    },
+    {
+      "component": "numerical backend",
+      "paper": "17,19-23; CVXGEN/NLopt/LVI alternatives discussed",
+      "classification": "ENGINEERING/ADAPTATION; no exact native timing, dynamical passivity or real-time claim"
+    }
+  ],
+  "local_implementation_anchors": [
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "1-25",
+      "finding": "Clean-room velocity-QP formulation and alternative numerical backends"
+    },
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "40-49",
+      "finding": "Eq18 max/min bounds; eta optional CODE_MODIFIED parameter"
+    },
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "52-92",
+      "finding": "QP storage, M/b and primal-dual bounds"
+    },
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "95-145",
+      "finding": "Rank, equality consistency, bound checks and analytic minimum norm; classify exact box intersection is limited to <=7 DOF"
+    },
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "156-296",
+      "finding": "Exact enumeration scales as 3^n; not a practical direct 14DOF transfer"
+    },
+    {
+      "path": "p5/impl/p5core/qp_ik.py",
+      "lines": "298-324",
+      "finding": "Static issue: SLSQP ineq convention is >=0, but _make_ineq returns -g*x-rhs; opposite to doc stated -g*x<=rhs. Do not use this SCA path as a golden reference; no source modification made."
+    },
+    {
+      "path": "p5/impl/p5core/kinematics.py",
+      "lines": "1-9,15-77",
+      "finding": "Explicitly planar analytic model, not original IIWA or Task28 FR3"
+    },
+    {
+      "path": "p5/reviews/P5_T04_POST.md",
+      "lines": "61-73",
+      "finding": "Historical reproduction admits adapted backend and no real-time claim"
+    }
+  ],
+  "historical_upstream_record": {
+    "evidence_file": "/home/ubuntu2004/lmy/p5-numerical-20261020/p5/evidence/P5_official_code_manifest.json",
+    "epistemic_status": "RECORDED_BY_HISTORICAL_AUDIT_NOT_REHASHED_FROM_UPSTREAM_SOURCE_THIS_TASK",
+    "QP_IK_solver": {
+      "url": "https://github.com/SinaMirrazavi/QP_IK_solver",
+      "commit": "f1c28fc17da5a5def53336ec52105825dc32e67e",
+      "tarball_sha256": "977d5e52a9123f566e57ab70c5522932e86636263456a5427e1a15c39a093613",
+      "current_local_source_snapshot": "NOT_FOUND in inspected source locations",
+      "reported_limitations": [
+        "CVXGEN generated solver absent",
+        "Gamma and DGamma never updated",
+        "get_gamma declared but undefined",
+        "Omega_projector return Input defect",
+        "eta=0.9 official shrink not in paper",
+        "licence header/root mismatch"
+      ]
+    },
+    "reliable_local_record_anchors": {
+      "P5_OFFICIAL_CODE_AUDIT.md": "100-127",
+      "P5_EQUATION_AUDIT.md": "153-202"
+    }
+  },
+  "metadata_discrepancies": [
+    {
+      "files": [
+        "p5/evidence/P5_official_code_manifest.json",
+        "p5/impl/README.md"
+      ],
+      "finding": "37(6):583-603 conflicts with original PDF and paper study 37(10):1205-1232; record discrepancy, do not silently edit historical sources."
+    }
+  ],
+  "boundaries": {
+    "svm_implemented": false,
+    "task28_frozen_fixture_changed": false,
+    "experiments_run": false,
+    "execution_authorized": false
+  },
+  "execution_authorized": false
+}

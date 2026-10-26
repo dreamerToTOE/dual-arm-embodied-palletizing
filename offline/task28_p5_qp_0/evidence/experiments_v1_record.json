@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=10s",
+    "300s",
+    "python3",
+    "-u",
+    "offline/task28_p5_qp_0/run_experiments.py",
+    "--output",
+    "offline/task28_p5_qp_0/evidence/experiments_v1"
+  ],
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "started_utc": "2026-10-26T15:20:04.291749+00:00",
+  "launcher_wall_s": 5.623802056994464,
+  "exit_code": 0,
+  "execution_authorized": false
+}

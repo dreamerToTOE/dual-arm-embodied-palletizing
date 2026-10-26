@@ -1,0 +1,46 @@
+{
+  "schema": "task28.g2_p5_qp_0.acceptance.v1",
+  "status": "PASS_G2_P5_QP_0_OFFLINE",
+  "execution_authorized": false,
+  "starting_commit": "6eee5a01cba71c7802bbf0833dc3c89739dd62f6",
+  "implementation_bound_to_formal_config": true,
+  "formal_experiment": {
+    "primary": 27,
+    "primary_passed": 27,
+    "controls": 18,
+    "controls_passed": 18,
+    "exit_code": 0,
+    "summary_path": "offline/task28_p5_qp_0/evidence/experiments_v1/summary.json",
+    "summary_sha256": "e53d1c715bce0edafbc1e48a447a8a8be66fbbc72780b6e957279a0a5388dde3",
+    "raw_path": "offline/task28_p5_qp_0/evidence/experiments_v1/results.json.gz",
+    "raw_sha256": "aff8129eb2695cc11ff6533e31bb75dc391e4d79a4ebf782cdf3c35313a4da02"
+  },
+  "tests": {
+    "original_passed": 466,
+    "new_passed": 48,
+    "final_passed": 514,
+    "original_exit_code": 0,
+    "final_exit_code": 0,
+    "final_log_path": "offline/task28_p5_qp_0/evidence/regression_final.txt",
+    "final_log_sha256": "6a80072a48766e2226d73d4f93e75b4045a52e7019312b35ed61ffaf733032aa"
+  },
+  "quantitative_metrics": "offline/task28_p5_qp_0/evidence/quantitative_summary.json",
+  "independent_evidence": [
+    "offline/task28_p5_qp_0/evidence/independent_math_evidence.json",
+    "offline/task28_p5_qp_0/evidence/saved_results_review.json"
+  ],
+  "protected_original_files_unchanged": 425,
+  "frozen_fixture_revision_performed": false,
+  "limitations": [
+    "P5-inspired adaptation, not exact author-code numerical reproduction",
+    "NR0 supplies nine archived states; synthetic twists are not multi-step trajectory tracking",
+    "Primary small-twist optima have no active box bounds; constrained numerical controls separately scoped",
+    "QP has no collision-avoidance row; original FCL is independent post-diagnostic",
+    "Default acceleration disabled; optional caps illustrative and unauthenticated",
+    "No new temporal phase-confirmation observations",
+    "New steps sampled-valid only; continuous collision/closure NOT_CERTIFIED",
+    "No measured servo performance, actuator adapter or physical success",
+    "Scoped PASS is not completion of all G2"
+  ],
+  "stop_after": "G2-P5-QP-0"
+}
