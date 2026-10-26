@@ -1,0 +1,315 @@
+{
+  "schema": "task28.p4_nr_0.final_report_review.v1",
+  "reviewed_utc": "2026-10-26T11:57:25.022872+00:00",
+  "status": "NO_BLOCKING_REPORT_OR_EVIDENCE_MISMATCH_FOUND",
+  "blockers": [],
+  "scope": "Saved-artifact/report consistency only; no planner, NR, FK, FCL, R1, B0 or B1 rerun. Lightweight JSON/gzip/CSV parsing and saved-array arithmetic only.",
+  "reviewer_participation": {
+    "projection_author": true,
+    "planner_author": false,
+    "planner_contract_test_author": true,
+    "fully_personnel_independent_review": false
+  },
+  "checks": [
+    {
+      "id": "status_and_no_execution",
+      "status": "PASS",
+      "detail": "Three accepted sampled candidates remain uncertified; report explicitly excludes physical, simulator and continuous-safety success."
+    },
+    {
+      "id": "all_three_result_tables",
+      "status": "PASS",
+      "detail": "All displayed counts, residuals, margins, lengths, lift heights, wall times and per-segment B0 counts match saved summaries within the displayed rounding."
+    },
+    {
+      "id": "NR_vs_sampled_tolerances",
+      "status": "PASS",
+      "detail": "Report distinguishes stricter NR endpoint reconstruction thresholds from unchanged sampled closure gates; seed29 sampled rotation >1e-5 is not misreported as NR precision."
+    },
+    {
+      "id": "fixed_object_12x14_adaptation",
+      "status": "PASS",
+      "detail": "Author KDL, reconstructed P4 full-chain NR and new fixed-object dual-FR3 adaptation are separated; no completeness, native iteration, or performance-equivalence claim."
+    },
+    {
+      "id": "original_B1_gaps_retained",
+      "status": "PASS",
+      "detail": "All 18 collision/combined statuses remain inconclusive; moving closed-chain dimensions remain independently inconclusive. No physical authorization."
+    },
+    {
+      "id": "negative_control_receipt_hash",
+      "status": "PASS",
+      "detail": "Receipt source SHA matches actual preserved raw negative-control archive."
+    },
+    {
+      "id": "negative_controls_scope_and_numbers",
+      "status": "PASS",
+      "detail": "One real necessary-reach planner rejection and two NR+single-state controls are accurately labeled; zero planner reject counters are retained separately from point-gate failure classification."
+    },
+    {
+      "id": "regression_counts_and_wait",
+      "status": "PASS",
+      "detail": "466 final tests =395 preserved+71 new; final 83.25s and old395 78.79s, actual wait0. Initial68-test record is distinguished, not added as new tests."
+    },
+    {
+      "id": "CPU_wall_resources_and_wait",
+      "status": "PASS",
+      "detail": "Total CPU wall228.38314482299756s, main RSS254392KiB, external cap900s and wait0 match report; planning times exclude subsequent archive writes as stated."
+    },
+    {
+      "id": "frozen_implementation_sources_still_match",
+      "status": "PASS",
+      "detail": "All six formal implementation hashes remain equal to preregistration after experiments and final regression."
+    },
+    {
+      "id": "export_whitespace_packaging_revision",
+      "status": "PASS_WITH_EXPLICIT_SVG_REVIEW_SCOPE",
+      "detail": "Three CSV before-byte hashes independently reconstructed exactly by LF->CRLF inverse transform; data rows and every parsed value unchanged. SVG current after hash,787-element XML and idempotent strip verified; prior token equality retained as recorded by normalization author, not independently re-compared without unavailable prior bytes."
+    }
+  ],
+  "runs": [
+    {
+      "seed": 28,
+      "main_table_exact_to_display_rounding": true,
+      "closure_table_exact_to_display_rounding": true,
+      "B0_sample_table_exact": true,
+      "sampled_segments": 6,
+      "R1_explicit_valid_frames": 19,
+      "continuous_collision_and_combined_inconclusive": true,
+      "moving_closed_chain_inconclusive": true,
+      "CSV_rows_including_duplicate_segment_boundaries": 211,
+      "deduplicated_path_nodes": 209,
+      "prior_saved_archive_CSV_exact_check_completed": true,
+      "lengths_recomputed_from_saved_result_equal_summary": true
+    },
+    {
+      "seed": 29,
+      "main_table_exact_to_display_rounding": true,
+      "closure_table_exact_to_display_rounding": true,
+      "B0_sample_table_exact": true,
+      "sampled_segments": 6,
+      "R1_explicit_valid_frames": 19,
+      "continuous_collision_and_combined_inconclusive": true,
+      "moving_closed_chain_inconclusive": true,
+      "CSV_rows_including_duplicate_segment_boundaries": 139,
+      "deduplicated_path_nodes": 137,
+      "prior_saved_archive_CSV_exact_check_completed": true,
+      "lengths_recomputed_from_saved_result_equal_summary": true
+    },
+    {
+      "seed": 30,
+      "main_table_exact_to_display_rounding": true,
+      "closure_table_exact_to_display_rounding": true,
+      "B0_sample_table_exact": true,
+      "sampled_segments": 6,
+      "R1_explicit_valid_frames": 19,
+      "continuous_collision_and_combined_inconclusive": true,
+      "moving_closed_chain_inconclusive": true,
+      "CSV_rows_including_duplicate_segment_boundaries": 155,
+      "deduplicated_path_nodes": 153,
+      "prior_saved_archive_CSV_exact_check_completed": true,
+      "lengths_recomputed_from_saved_result_equal_summary": true
+    }
+  ],
+  "saved_search_event_count_audit": {
+    "28": {
+      "projection": 226,
+      "state_gate": 226,
+      "object_sample": 6,
+      "lift_sample": 1,
+      "tree_insert": 6,
+      "leaf_edge": 224,
+      "full_candidate": 1
+    },
+    "29": {
+      "projection": 194,
+      "state_gate": 194,
+      "object_sample": 11,
+      "lift_sample": 1,
+      "tree_insert": 11,
+      "leaf_edge": 192,
+      "full_candidate": 1
+    },
+    "30": {
+      "projection": 266,
+      "state_gate": 266,
+      "object_sample": 13,
+      "lift_sample": 1,
+      "tree_insert": 13,
+      "leaf_edge": 264,
+      "full_candidate": 1
+    }
+  },
+  "metadata_verified": {
+    "numpy": "1.24.4",
+    "scipy": "1.8.0"
+  },
+  "artifacts": [
+    {
+      "path": "docs/tasks/TASK28_G1_P4_NR_0_BASELINE.md",
+      "bytes": 18081,
+      "sha256": "d06d57b4b4f664f0775fb1b3c2e0e1341d0fbe12397ebe2124b21295e316db09"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/summary.json",
+      "bytes": 27484,
+      "sha256": "552554332b2924767b3eff766bc23d95ebf2ff3853de31b1cf2509f67ee34c82"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiment_manifest.json",
+      "bytes": 3313,
+      "sha256": "c296fc6eaf48da04556f8322ad5cfbc0bef3abbe82981cec3cd707f2f2a092ee"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/control_receipts.json",
+      "bytes": 21459,
+      "sha256": "cd42e6c22dc008df9deeebb1eda95abb5c46f13a62ee56451cb6aaa979dedc8a"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/path_exports/path_receipts.json",
+      "bytes": 3343,
+      "sha256": "33f73d07e4050c13f5522943bedaeb772f935e325092bfdf728538ce60d4d4f6"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/regression_final.txt",
+      "bytes": 591,
+      "sha256": "5b1d5471e5cd6a315b89d66e942cdc9a8bab9e27ea9cad2bed28ca5938612f3c"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/regression_final_exit.json",
+      "bytes": 48,
+      "sha256": "2f11c378d2ffb113182eb0233c38688f384af3dfd0e64203559b1929f651b755"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/regression_395.txt",
+      "bytes": 511,
+      "sha256": "2c1f3541360df9cff22dea1aac771a4f69ff826ddecd06c883e89a61952f4904"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1_exit.json",
+      "bytes": 72,
+      "sha256": "3ff8ebff8c4d4e2e49c8140703987283ba8d6062d9fadba1c9c7e1f42d04bcd4"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_28_nodes.csv",
+      "bytes": 96626,
+      "sha256": "1a64711f7327540c908acf95cee9b44580a78ed7fed6e1dcc258a869da2bc421"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_29_nodes.csv",
+      "bytes": 73119,
+      "sha256": "cdbba6b69fd304791758b3a81474937a814cdf9b977034cbb426fa1d7b8415ec"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_30_nodes.csv",
+      "bytes": 76402,
+      "sha256": "4a958f42c0b39001169f394c506565c8f8a9f64231d7a402f025c87712eb602f"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/search_events.jsonl.gz",
+      "bytes": 7233418,
+      "sha256": "8fa83aca772d9dafee1769925a07980c6ff2700ba3c45520228c342d8cb7d4fb"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_29/search_events.jsonl.gz",
+      "bytes": 5321302,
+      "sha256": "dd5530cfd41933dc7c3b8784e13062a3712d31cbe09fb11a70db78ed966977c7"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_30/search_events.jsonl.gz",
+      "bytes": 6159963,
+      "sha256": "a49d08b021bac0de33d5b7162c65b4441325a4589da84ec47602231f6b4a42e9"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz",
+      "bytes": 5504208,
+      "sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_29/result.json.gz",
+      "bytes": 3734005,
+      "sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711"
+    },
+    {
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_30/result.json.gz",
+      "bytes": 4033418,
+      "sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857"
+    }
+  ],
+  "limitations": [
+    "No independent reproduction or fresh model query was performed during final review.",
+    "CSV includes both copies of segment-boundary nodes; deduplicated path counts209/137/153 differ from CSV rows211/139/155 by two exactly, as expected.",
+    "Continuous collision and moving closed-chain proof remain unresolved; review does not authorize simulation or physical execution.",
+    "Delivery commit, final artifact inventory and remote SHA are outside this report-data review and remain the root agent finalization responsibility."
+  ],
+  "packaging_revision": {
+    "reviewed_utc": "2026-10-26T12:02:09.157989+00:00",
+    "scope": "Whitespace-only export packaging after final diff --check; no change to planner, model, formal scientific implementation, raw gzip, report-data facts, thresholds or original review conclusion.",
+    "previous_final_review_sha256": "d96bd4bcf8b272b2f801c9f7243bf478ea8dd91f3784f12aebbe959c97bce573",
+    "normalization_record": {
+      "path": "offline/task28_p4_nr_0/evidence/export_normalization.json",
+      "bytes": 1602,
+      "sha256": "0c5f6c4d03c64b36a9cbea1bb2fcb9336c22be0f21ab35d535a0411fdc36f108"
+    },
+    "exporter_update": "export_paths.py now writes CSV lineterminator=LF and applies SVG rstrip; exporter is postprocessing, outside the six preregistered scientific sources.",
+    "exporter_current_sha256": "a48b5bee51ca85c54441752c751ddc2467767cf6839512c78751f2c5223e2799",
+    "changes": [
+      {
+        "path": "offline/task28_p4_nr_0/evidence/path_exports/object_paths.svg",
+        "before_sha256_retained_from_normalization_record": "3df41adc4628d3a512abbf9082d38d0d28efe7650ce98b890a7240b6bcbce96b",
+        "after_bytes": 63960,
+        "after_sha256": "82af960a0017de307d284df6dba6c8a1d8d078a5a6ff5ab9039dd4e533d594c6",
+        "operation": "remove_trailing_line_whitespace_only_recorded_by_export_normalization",
+        "current_XML_element_count": 787,
+        "current_line_stripping_is_idempotent": true,
+        "prior_svg_bytes_available_to_this_reviewer": false,
+        "prior_and_current_XML_token_equality": "RECORDED_BY_EXPORT_NORMALIZATION_NOT_INDEPENDENTLY_RECOMPARED_IN_THIS_REVIEW",
+        "limitation": "Current checkout and Git index contain only the normalized SVG; no pre-normalization SVG blob was available. Before SHA and recorded787-element token comparison are preserved without claiming a second independent byte comparison."
+      },
+      {
+        "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_28_nodes.csv",
+        "before_artifact_record_retained": {
+          "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_28_nodes.csv",
+          "bytes": 96838,
+          "sha256": "c4032dd3e389e02a529e35805c3adc4f2687e4bc57ccaaeb3918a88ca53a6518"
+        },
+        "after_bytes": 96626,
+        "after_sha256": "1a64711f7327540c908acf95cee9b44580a78ed7fed6e1dcc258a869da2bc421",
+        "operation": "CRLF_to_LF_only",
+        "independently_verified_by_exact_inverse_reconstruction_of_before_bytes": true,
+        "parsed_data_rows_exactly_unchanged": 211
+      },
+      {
+        "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_29_nodes.csv",
+        "before_artifact_record_retained": {
+          "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_29_nodes.csv",
+          "bytes": 73259,
+          "sha256": "a6f393b8cb875b0ce294edbdd2cabd6a521eb44365fb3417118eca708dcf56c5"
+        },
+        "after_bytes": 73119,
+        "after_sha256": "cdbba6b69fd304791758b3a81474937a814cdf9b977034cbb426fa1d7b8415ec",
+        "operation": "CRLF_to_LF_only",
+        "independently_verified_by_exact_inverse_reconstruction_of_before_bytes": true,
+        "parsed_data_rows_exactly_unchanged": 139
+      },
+      {
+        "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_30_nodes.csv",
+        "before_artifact_record_retained": {
+          "path": "offline/task28_p4_nr_0/evidence/path_exports/seed_30_nodes.csv",
+          "bytes": 76558,
+          "sha256": "63500079c3dcdef7f4aa53393891b1be10c1c07ddaba750f6d3ae28b2be78903"
+        },
+        "after_bytes": 76402,
+        "after_sha256": "4a958f42c0b39001169f394c506565c8f8a9f64231d7a402f025c87712eb602f",
+        "operation": "CRLF_to_LF_only",
+        "independently_verified_by_exact_inverse_reconstruction_of_before_bytes": true,
+        "parsed_data_rows_exactly_unchanged": 155
+      }
+    ],
+    "other_reviewed_artifact_bytes_and_hashes_unchanged": true,
+    "all_six_preregistered_implementation_hashes_unchanged": true,
+    "planner_model_gate_or_new_scientific_queries": 0,
+    "previous_hashes_not_hidden": true,
+    "original_review_conclusion_unchanged": true
+  }
+}

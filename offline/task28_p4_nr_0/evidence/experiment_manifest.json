@@ -1,0 +1,86 @@
+{
+  "status": "PREREGISTERED_BEFORE_FORMAL_PLANNING_RUNS",
+  "created_utc": "2026-10-26T11:26:13.742298+00:00",
+  "fixture": "task28_g1_0_new_single_cube_v0",
+  "cube_id": "Cube_01",
+  "seeds": [
+    28,
+    29,
+    30
+  ],
+  "negative_controls": [
+    "goal_outside_necessary_reach_sphere",
+    "wrong_grasp_orientation",
+    "payload_table_penetration"
+  ],
+  "configuration": {
+    "max_expansions": 64,
+    "max_lift_trials": 3,
+    "max_projection_calls": 1600,
+    "max_nr_iterations_per_call": 60,
+    "max_step_rad": 0.2,
+    "backtracks": 8,
+    "svd_cutoff": 1e-12,
+    "anchor_restarts": 8,
+    "max_connection_depth": 8,
+    "leaf_translation_m": 0.0025,
+    "leaf_rotation_rad": 0.005,
+    "leaf_joint_step_rad": 0.025,
+    "object_extension_range_m": 0.04,
+    "goal_bias": 0.35,
+    "sample_translation_lower_m": [
+      0.58,
+      -0.15,
+      0.274
+    ],
+    "sample_translation_upper_m": [
+      0.89,
+      0.1,
+      0.44
+    ],
+    "sample_rotation_vector_abs_rad": [
+      0.02,
+      0.02,
+      0.03
+    ],
+    "lift_height_range_m": [
+      0.28,
+      0.42
+    ],
+    "continuous_max_depth": 0,
+    "B0_sampling": "unchanged defaults: .05s/.02rad/.001m/.01rad;10001max",
+    "max_accepted_nodes": 80
+  },
+  "timing": "offline CPU wall; no realtime claim; counts, not a hard OS wall timeout, bound work",
+  "safety_status": "OFFLINE_CANDIDATE_UNCERTIFIED unless all original continuous dimensions actually verified; no execution authorization regardless",
+  "fixture_and_old_validators": "read-only; original thresholds/geometry/ACM",
+  "control_seeds": {
+    "unreachable_goal": 128,
+    "wrong_grasp_orientation": 129,
+    "payload_table_collision": 130
+  },
+  "budget_scope": {
+    "max_expansions": "per lift trial, at most3*64=192",
+    "max_accepted_nodes": "global across lift trials, at most80",
+    "projection_calls": "global per primary run, at most1600",
+    "anchor_NR_seeds": "HOME then limit midpoint then deterministic uniform; no precomputedq",
+    "negative_controls": "one necessary-reach-bound planner query plus2 labeled real-FK/FCL single-state gate controls; no fabricated collision path"
+  },
+  "implementation_hashes": {
+    "offline/task28_p4_nr_0/__init__.py": "e7062e0f3f255cadafd3c346ff7bc57cd3930064e4533101e6897eb392f59872",
+    "offline/task28_p4_nr_0/bootstrap.py": "fc78fc44b778747b79972890de84ca0983cc6deea5aa9ede1fe6c28b54e0c112",
+    "offline/task28_p4_nr_0/planner.py": "d2178c628d64bf990a122094d08b390b0837ce972c023164bcf6a1d89c85d7ca",
+    "offline/task28_p4_nr_0/projection.py": "2420e2ec1aec0d1f17a87308a434c1c3b76bcbcc0f2d3cb4620d4a77c69b31a1",
+    "offline/task28_p4_nr_0/run_experiments.py": "007afa0df6f51dd187e94e9af9cceae9212e5dfa000c266ef3864cee083dd77c",
+    "offline/task28_p4_nr_0/validation.py": "5f794218c39f3a606bf22173069ddb0bec1890885ddbb0502b16c0ebc23fa64d"
+  },
+  "algorithm_spec_sha256": "b42b7a876ea59dc1c2f70f21968292c0e3ab4e918d87446cacadb6a47703cef9",
+  "experiment_output": "offline/task28_p4_nr_0/evidence/experiments_v1",
+  "global_OS_wall_limit_s": 900,
+  "process_timeout_policy": "TERM only this CPU experiment after900s, KILL after10s; partial evidence retained, no auto retries",
+  "environment": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "fcl": "0.7.0",
+    "CPU_only": true
+  }
+}

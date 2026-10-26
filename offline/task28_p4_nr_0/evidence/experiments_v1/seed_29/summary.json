@@ -1,0 +1,256 @@
+{
+  "found": true,
+  "reason": "ALL_OFFLINE_SAMPLED_GATES_PASSED_CONTINUOUS_STATUS_SEPARATE",
+  "seed": 29,
+  "start": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.65
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.26
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "goal": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.82
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      -0.075
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.26
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "statistics": {
+    "sampled_nodes": 12,
+    "accepted_tree_nodes": 12,
+    "ik_attempts": 194,
+    "ik_failures": 0,
+    "candidate_connection_attempts": 371,
+    "collision_rejections": 0,
+    "closure_rejections": 0,
+    "joint_limit_rejections": 0,
+    "other_gate_rejections": 0,
+    "leaf_edges_checked": 192,
+    "full_candidate_attempts": 1,
+    "rejection_reasons": {},
+    "path_translation_length_m": 0.3020338282963839,
+    "path_rotation_length_rad": 0.028978201019587133,
+    "path_joint_length_rad": 1.7007279047212287,
+    "path_waypoints": 137,
+    "maximum_sampled_closure_translation_m": 5.519578015373797e-06,
+    "maximum_sampled_closure_rotation_rad": 1.3403479834817372e-05,
+    "minimum_joint_limit_margin_rad": 0.2692227147503692,
+    "planning_time_s": 58.91103320699767
+  },
+  "execution_authorized": false,
+  "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+  "continuous": {
+    "grasp_boundary": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUSLY_VERIFIED",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 0.2515937100033625
+    },
+    "attachment_confirmation": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUSLY_VERIFIED",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 0.4012295729990001
+    },
+    "vertical_lift": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 2.472004889998061
+    },
+    "bilateral_transport": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 16.66652967799746
+    },
+    "vertical_placement_and_support_hold": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 2.5083159819987486
+    },
+    "release_boundary": {
+      "joint_limits": {
+        "status": "CONTINUOUSLY_VERIFIED"
+      },
+      "closed_chain": {
+        "status": "CONTINUOUSLY_VERIFIED",
+        "rotation_scope": "constant normalized endpoint quaternion only"
+      },
+      "collision": {
+        "status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+        "checked_pairs": 414,
+        "skipped_acm_pairs": 40,
+        "unproved_contact_record_rules": "unchanged suction/support normal, location, depth and count policies"
+      },
+      "combined_status": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "runtime_s": 0.39852315899770474
+    }
+  },
+  "sampled": {
+    "grasp_boundary": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": null,
+        "max_closure_rotation_rad": null,
+        "minimum_joint_limit_margin_rad": 0.38350793691486196
+      },
+      "evaluated_sample_count": 5,
+      "reasons": []
+    },
+    "attachment_confirmation": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": 4.2537665955872e-09,
+        "max_closure_rotation_rad": 9.243902344338254e-09,
+        "minimum_joint_limit_margin_rad": 0.38350793691486196
+      },
+      "evaluated_sample_count": 7,
+      "reasons": []
+    },
+    "vertical_lift": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": 2.7861276984509e-06,
+        "max_closure_rotation_rad": 2.3472977990941474e-06,
+        "minimum_joint_limit_margin_rad": 0.38350793691486196
+      },
+      "evaluated_sample_count": 41,
+      "reasons": []
+    },
+    "bilateral_transport": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": 5.519578015373797e-06,
+        "max_closure_rotation_rad": 1.3403479834817372e-05,
+        "minimum_joint_limit_margin_rad": 0.3040830117379185
+      },
+      "evaluated_sample_count": 403,
+      "reasons": []
+    },
+    "vertical_placement_and_support_hold": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": 2.5275685531680944e-06,
+        "max_closure_rotation_rad": 1.9630135603827007e-06,
+        "minimum_joint_limit_margin_rad": 0.2692227147503692
+      },
+      "evaluated_sample_count": 41,
+      "reasons": []
+    },
+    "release_boundary": {
+      "status": "sampled_edge_valid",
+      "maxima": {
+        "max_closure_translation_m": 1.1917476172393455e-10,
+        "max_closure_rotation_rad": 2.9422959255382565e-10,
+        "minimum_joint_limit_margin_rad": 0.2692227147503692
+      },
+      "evaluated_sample_count": 7,
+      "reasons": []
+    }
+  },
+  "temporal_session": {
+    "valid": true,
+    "reasons": [],
+    "explicit_observation_count": 19,
+    "dense_path_nodes_used_as_observations": 0,
+    "interpolated_points_used_as_observations": 0,
+    "clock": "independent_fixed_20ms_synthetic_not_execution_time",
+    "scope": "phase_boundaries_and_explicit_three_frame_holds_only"
+  }
+}

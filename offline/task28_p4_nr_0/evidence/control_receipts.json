@@ -1,0 +1,640 @@
+{
+  "schema": "task28.p4_nr_0.negative_control_receipts.v1",
+  "created_utc": "2026-10-26T11:47:36.796799+00:00",
+  "source_file": "offline/task28_p4_nr_0/evidence/experiments_v1/negative_controls.json.gz",
+  "source_sha256": "c60b5937f5ab085978a261f42d7f245db513a8474abc4413b89064ca30a97c16",
+  "provenance": "Lightweight parsing of recorded artifacts only; no NR, FK, FCL, edge, R1 or B1 rerun. Raw code, data and preregistration unchanged.",
+  "interpretation_rule": "One actual seed-128 Planner precondition-negative query and two real seed-129/130 NR+single-state negative gates. Point controls are not failed complete planner paths. Missing recorded fields remain null/UNKNOWN; original zero counters are preserved.",
+  "all_negative_controls_rejected": true,
+  "controls": [
+    {
+      "case": "unreachable_goal",
+      "source_record_index": 0,
+      "scope": "necessary geometric reach sphere",
+      "scope_class": "actual_bounded_Planner_query_rejected_at_necessary_reach_precondition",
+      "is_complete_planning_attempt": true,
+      "seed": 128,
+      "start_T_WO": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.65
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "goal_T_WO": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.075
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "start_goal_field_status": "RECORDED_ACTUAL_PLANNER_QUERY",
+      "point_T_WO": null,
+      "point_q14_left7_right7_rad": null,
+      "NR_reconstruction_targets_T_WO": null,
+      "rejected": true,
+      "original_rejection_reasons": [
+        "GOAL_OUTSIDE_NECESSARY_REACH_BOUND"
+      ],
+      "time": {
+        "control_wall_s": null,
+        "gate_computation_time_s": null,
+        "planner_wall_s": 3.900400042766705e-05,
+        "point_observation_synthetic_stamp_s": null,
+        "unknown_fields_use_null": true,
+        "interpretation": "Gate duration is the recorded full original state-gate call; control wall includes NR reconstruction and control setup. Synthetic observation stamp is not a wall duration."
+      },
+      "original_statistics": {
+        "sampled_nodes": 0,
+        "accepted_tree_nodes": 0,
+        "ik_attempts": 0,
+        "ik_failures": 0,
+        "candidate_connection_attempts": 0,
+        "collision_rejections": 0,
+        "closure_rejections": 0,
+        "joint_limit_rejections": 0,
+        "other_gate_rejections": 0,
+        "leaf_edges_checked": 0,
+        "full_candidate_attempts": 0,
+        "rejection_reasons": {},
+        "planning_time_s": 3.900400042766705e-05
+      },
+      "original_statistics_source_field": "result.statistics",
+      "original_statistics_preserved_without_reclassification": true,
+      "separate_receipt_classification": {
+        "nonexclusive_flags": {
+          "closed_chain_grasp_rejection": false,
+          "collision_rejection": false,
+          "joint_limit_rejection": false,
+          "clearance_geometry_rejection": false,
+          "reach_precondition_rejection": true
+        },
+        "rejected_control_count": 1,
+        "classification_is_not_a_rewrite_of_original_planner_counters": true,
+        "why_original_zero_rejection_counters_can_coexist_with_gate_failure": "The necessary-reach precondition returns directly before Planner.reject, so its recorded aggregate counters remain zero."
+      },
+      "path_length": null,
+      "path_length_status": "NOT_CONSTRUCTED_REACH_PRECONDITION_REJECTION",
+      "path_length_explanation": "The actual planner stopped before NR/search/edge construction; no accepted path exists and length is null, not a fabricated zero-length trajectory.",
+      "closure": null,
+      "minimum_joint_limit_margin_rad": null,
+      "collision": {
+        "backend": null,
+        "checked_shape_pairs": null,
+        "skipped_acm_shape_pairs": null,
+        "remaining_collision_pair_count": null,
+        "remaining_collision_pairs": null,
+        "clearance_m": null
+      },
+      "original_continuous_proof_status": {
+        "joint_limits": "NOT_RUN_REACH_PRECONDITION_REJECTION",
+        "closed_chain": "NOT_RUN_REACH_PRECONDITION_REJECTION",
+        "collision": "NOT_RUN_REACH_PRECONDITION_REJECTION",
+        "combined_status": "NOT_RUN_REACH_PRECONDITION_REJECTION"
+      },
+      "full_trajectory_sampled_status": "NOT_CONSTRUCTED_REACH_PRECONDITION_REJECTION",
+      "execution_authorized": false
+    },
+    {
+      "case": "wrong_grasp_orientation",
+      "source_record_index": 1,
+      "scope": "actual frozen FK and unchanged q; observed shared object rotated .2rad",
+      "scope_class": "single_state_NR_plus_original_G1_gate_control",
+      "is_complete_planning_attempt": false,
+      "seed": 129,
+      "start_T_WO": null,
+      "goal_T_WO": null,
+      "start_goal_field_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "point_T_WO": [
+        [
+          0.9800665778412417,
+          -0.19866933079506124,
+          0.0,
+          0.65
+        ],
+        [
+          0.19866933079506124,
+          0.9800665778412417,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.35
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "point_q14_left7_right7_rad": [
+        0.47281158081816815,
+        -0.8988107351212326,
+        0.9364732057669328,
+        -2.5245085488783037,
+        0.706563338694642,
+        1.8124935969155604,
+        0.9735211455678513,
+        -0.13693475963491308,
+        -1.349087215929006,
+        -1.042516749589723,
+        -2.472554133139893,
+        -1.0160387769591988,
+        1.4379223921625874,
+        -0.7078984579287196
+      ],
+      "NR_reconstruction_targets_T_WO": [
+        [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.65
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.35
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      ],
+      "rejected": true,
+      "original_rejection_reasons": [
+        "LEFT_GRASP_ROTATION_MISMATCH",
+        "RIGHT_GRASP_ROTATION_MISMATCH",
+        "COLLISION:left_fr3_side_suction/3|Cube_01/box",
+        "COLLISION:left_fr3_side_suction/5|Cube_01/box",
+        "COLLISION:right_fr3_side_suction/4|Cube_01/box",
+        "COLLISION:right_fr3_side_suction/6|Cube_01/box"
+      ],
+      "time": {
+        "control_wall_s": 0.16388001199811697,
+        "gate_computation_time_s": 0.019714650996320415,
+        "planner_wall_s": null,
+        "point_observation_synthetic_stamp_s": 0.0,
+        "unknown_fields_use_null": true,
+        "interpretation": "Gate duration is the recorded full original state-gate call; control wall includes NR reconstruction and control setup. Synthetic observation stamp is not a wall duration."
+      },
+      "original_statistics": {
+        "sampled_nodes": 0,
+        "accepted_tree_nodes": 0,
+        "ik_attempts": 1,
+        "ik_failures": 0,
+        "candidate_connection_attempts": 0,
+        "collision_rejections": 0,
+        "closure_rejections": 0,
+        "joint_limit_rejections": 0,
+        "other_gate_rejections": 0,
+        "leaf_edges_checked": 0,
+        "full_candidate_attempts": 0,
+        "rejection_reasons": {}
+      },
+      "original_statistics_source_field": "statistics",
+      "original_statistics_preserved_without_reclassification": true,
+      "separate_receipt_classification": {
+        "nonexclusive_flags": {
+          "closed_chain_grasp_rejection": true,
+          "collision_rejection": true,
+          "joint_limit_rejection": false,
+          "clearance_geometry_rejection": false,
+          "reach_precondition_rejection": false
+        },
+        "rejected_control_count": 1,
+        "classification_is_not_a_rewrite_of_original_planner_counters": true,
+        "why_original_zero_rejection_counters_can_coexist_with_gate_failure": "The wrong-orientation and payload negative state gates are called directly outside Planner.reject; planner counters therefore describe NR setup only and remain at recorded zero."
+      },
+      "path_length": null,
+      "path_length_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "path_length_explanation": "No path or trajectory was requested or validated for this single-state control; null is not zero.",
+      "closure": {
+        "valid": false,
+        "reasons": [
+          "LEFT_GRASP_ROTATION_MISMATCH",
+          "RIGHT_GRASP_ROTATION_MISMATCH"
+        ],
+        "translation_error_m": 9.160647520204823e-12,
+        "rotation_error_rad": 1.2498672151236733e-11,
+        "left_object_translation_error_m": 8.768828523525254e-12,
+        "left_object_rotation_error_rad": 0.2000000000007895,
+        "right_object_translation_error_m": 2.1768787213235626e-12,
+        "right_object_rotation_error_rad": 0.1999999999982364
+      },
+      "minimum_joint_limit_margin_rad": 0.4346127278931309,
+      "collision": {
+        "backend": "FCL-0.7.0",
+        "checked_shape_pairs": 414,
+        "skipped_acm_shape_pairs": 40,
+        "remaining_collision_pair_count": 4,
+        "remaining_collision_pairs": [
+          {
+            "shape_a": "left_fr3_side_suction/3",
+            "shape_b": "Cube_01/box",
+            "owner_a": "left_fr3_side_suction",
+            "owner_b": "Cube_01",
+            "contact_count": 1,
+            "depths_m": [
+              0.006970695985056113
+            ],
+            "maximum_depth_m": 0.006970695985056113,
+            "original_contacts": [
+              {
+                "depth_m": 0.006970695985056113,
+                "normal_world": [
+                  -0.19866933079506094,
+                  0.9800665778412417,
+                  2.3282185130882283e-10
+                ],
+                "position_world_m": [
+                  0.6170421596798936,
+                  -0.061521079831956184,
+                  0.3740004123933272
+                ]
+              }
+            ]
+          },
+          {
+            "shape_a": "left_fr3_side_suction/5",
+            "shape_b": "Cube_01/box",
+            "owner_a": "left_fr3_side_suction",
+            "owner_b": "Cube_01",
+            "contact_count": 1,
+            "depths_m": [
+              0.006970695988830968
+            ],
+            "maximum_depth_m": 0.006970695988830968,
+            "original_contacts": [
+              {
+                "depth_m": 0.006970695988830968,
+                "normal_world": [
+                  -0.19866933056687508,
+                  0.9800665778874972,
+                  -2.328261968282468e-10
+                ],
+                "position_world_m": [
+                  0.6170421596687375,
+                  -0.06152107983189955,
+                  0.3259997165129594
+                ]
+              }
+            ]
+          },
+          {
+            "shape_a": "right_fr3_side_suction/4",
+            "shape_b": "Cube_01/box",
+            "owner_a": "right_fr3_side_suction",
+            "owner_b": "Cube_01",
+            "contact_count": 1,
+            "depths_m": [
+              0.006970695988505189
+            ],
+            "maximum_depth_m": 0.006970695988505189,
+            "original_contacts": [
+              {
+                "depth_m": 0.006970695988505189,
+                "normal_world": [
+                  0.19866933079506124,
+                  -0.9800665778412416,
+                  2.3282088502790583e-10
+                ],
+                "position_world_m": [
+                  0.6829578403123938,
+                  0.061521079827242,
+                  0.3740004123932986
+                ]
+              }
+            ]
+          },
+          {
+            "shape_a": "right_fr3_side_suction/6",
+            "shape_b": "Cube_01/box",
+            "owner_a": "right_fr3_side_suction",
+            "owner_b": "Cube_01",
+            "contact_count": 1,
+            "depths_m": [
+              0.006970695991988587
+            ],
+            "maximum_depth_m": 0.006970695991988587,
+            "original_contacts": [
+              {
+                "depth_m": 0.006970695991988587,
+                "normal_world": [
+                  0.19866933056687647,
+                  -0.980066577887497,
+                  -2.3282795812781637e-10
+                ],
+                "position_world_m": [
+                  0.6829578403225716,
+                  0.06152107982725376,
+                  0.32599971651293047
+                ]
+              }
+            ]
+          }
+        ],
+        "clearance_m": 0.08999999999999997
+      },
+      "original_continuous_proof_status": {
+        "joint_limits": "NOT_APPLICABLE_POINT_CONTROL",
+        "closed_chain": "NOT_APPLICABLE_POINT_CONTROL",
+        "collision": "NOT_APPLICABLE_POINT_CONTROL",
+        "combined_status": "NOT_APPLICABLE_POINT_CONTROL"
+      },
+      "full_trajectory_sampled_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "execution_authorized": false,
+      "specific_interpretation": {
+        "imposed_object_yaw_rotation_rad": 0.2,
+        "rotation_value_source": "raw.scope plus recorded 0.2-rad object-to-left/right closure residuals",
+        "left_object_rotation_error_rad": 0.2000000000007895,
+        "right_object_rotation_error_rad": 0.1999999999982364,
+        "tool_payload_collision_pair_count": 4,
+        "isolated_closure_only_negative": false,
+        "interpretation": "The shared-object yaw changed with unchanged reconstructed arm joints. Both grasp-rotation residuals reject and four tool/Cube collision pairs also reject. Do not describe this as an exclusively closure-only negative."
+      }
+    },
+    {
+      "case": "payload_table_collision",
+      "source_record_index": 2,
+      "scope": "actual NR-reconstructed bilateral point, payload penetrates table20mm",
+      "scope_class": "single_state_NR_plus_original_G1_gate_control",
+      "is_complete_planning_attempt": false,
+      "seed": 130,
+      "start_T_WO": null,
+      "goal_T_WO": null,
+      "start_goal_field_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "point_T_WO": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.65
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.24
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "point_q14_left7_right7_rad": [
+        0.48081460872941834,
+        -0.6843814308583459,
+        1.136523010733493,
+        -2.6800164817220113,
+        0.776996667564701,
+        2.183722599109842,
+        0.997419560387826,
+        -0.22895376696648365,
+        -1.2194033533839344,
+        -1.3007563405740017,
+        -2.6250238060999136,
+        -1.165914243304826,
+        1.7472985378187535,
+        -0.7336170216884369
+      ],
+      "NR_reconstruction_targets_T_WO": [
+        [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.65
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.24
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      ],
+      "rejected": true,
+      "original_rejection_reasons": [
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+        "CLEARANCE_TABLE_PENETRATION"
+      ],
+      "time": {
+        "control_wall_s": 0.16943048399843974,
+        "gate_computation_time_s": 0.019181898001988884,
+        "planner_wall_s": null,
+        "point_observation_synthetic_stamp_s": 0.0,
+        "unknown_fields_use_null": true,
+        "interpretation": "Gate duration is the recorded full original state-gate call; control wall includes NR reconstruction and control setup. Synthetic observation stamp is not a wall duration."
+      },
+      "original_statistics": {
+        "sampled_nodes": 0,
+        "accepted_tree_nodes": 0,
+        "ik_attempts": 1,
+        "ik_failures": 0,
+        "candidate_connection_attempts": 0,
+        "collision_rejections": 0,
+        "closure_rejections": 0,
+        "joint_limit_rejections": 0,
+        "other_gate_rejections": 0,
+        "leaf_edges_checked": 0,
+        "full_candidate_attempts": 0,
+        "rejection_reasons": {}
+      },
+      "original_statistics_source_field": "projection_statistics",
+      "original_statistics_preserved_without_reclassification": true,
+      "separate_receipt_classification": {
+        "nonexclusive_flags": {
+          "closed_chain_grasp_rejection": false,
+          "collision_rejection": true,
+          "joint_limit_rejection": false,
+          "clearance_geometry_rejection": true,
+          "reach_precondition_rejection": false
+        },
+        "rejected_control_count": 1,
+        "classification_is_not_a_rewrite_of_original_planner_counters": true,
+        "why_original_zero_rejection_counters_can_coexist_with_gate_failure": "The wrong-orientation and payload negative state gates are called directly outside Planner.reject; planner counters therefore describe NR setup only and remain at recorded zero."
+      },
+      "path_length": null,
+      "path_length_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "path_length_explanation": "No path or trajectory was requested or validated for this single-state control; null is not zero.",
+      "closure": {
+        "valid": true,
+        "reasons": [],
+        "translation_error_m": 3.0957889492744155e-11,
+        "rotation_error_rad": 8.139806618464533e-11,
+        "left_object_translation_error_m": 3.170274343119527e-11,
+        "left_object_rotation_error_rad": 8.311555664494015e-11,
+        "right_object_translation_error_m": 1.569182018498206e-12,
+        "right_object_rotation_error_rad": 7.876299868159829e-12
+      },
+      "minimum_joint_limit_margin_rad": 0.3620834030196205,
+      "collision": {
+        "backend": "FCL-0.7.0",
+        "checked_shape_pairs": 414,
+        "skipped_acm_shape_pairs": 40,
+        "remaining_collision_pair_count": 1,
+        "remaining_collision_pairs": [
+          {
+            "shape_a": "Cube_01/box",
+            "shape_b": "task28_table/box",
+            "owner_a": "Cube_01",
+            "owner_b": "task28_table",
+            "contact_count": 4,
+            "depths_m": [
+              0.020000000000000018,
+              0.020000000000000018,
+              0.020000000000000018,
+              0.020000000000000018
+            ],
+            "maximum_depth_m": 0.020000000000000018,
+            "original_contacts": [
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.71,
+                  0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.71,
+                  -0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.5900000000000001,
+                  -0.06,
+                  0.19
+                ]
+              },
+              {
+                "depth_m": 0.020000000000000018,
+                "normal_world": [
+                  0,
+                  0,
+                  -1
+                ],
+                "position_world_m": [
+                  0.5900000000000001,
+                  0.06,
+                  0.19
+                ]
+              }
+            ]
+          }
+        ],
+        "clearance_m": -0.020000000000000018
+      },
+      "original_continuous_proof_status": {
+        "joint_limits": "NOT_APPLICABLE_POINT_CONTROL",
+        "closed_chain": "NOT_APPLICABLE_POINT_CONTROL",
+        "collision": "NOT_APPLICABLE_POINT_CONTROL",
+        "combined_status": "NOT_APPLICABLE_POINT_CONTROL"
+      },
+      "full_trajectory_sampled_status": "NOT_APPLICABLE_POINT_CONTROL",
+      "execution_authorized": false,
+      "specific_interpretation": {
+        "original_closure_valid": true,
+        "table_payload_collision_pair_count": 1,
+        "reported_table_penetration_m": 0.020000000000000018,
+        "geometric_clearance_m": -0.020000000000000018,
+        "interpretation": "Actual NR produced an in-limit closed-chain point. Original FCL reports Cube/table penetration of 0.020000000000000018 m (20 mm), independently accompanied by clearance/airborne rejection. No collision path or continuous proof was constructed."
+      }
+    }
+  ],
+  "execution_authorized": false
+}

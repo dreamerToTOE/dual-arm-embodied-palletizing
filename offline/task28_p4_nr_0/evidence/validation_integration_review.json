@@ -1,0 +1,124 @@
+{
+  "schema": "task28.p4_nr_0.validation_integration_review.v1",
+  "reviewed_utc": "2026-10-26T11:39:53.841053+00:00",
+  "review_scope": "Read-only source/algorithm-spec integration audit; no test, planner, simulator or proof recomputation during formal CPU experiments.",
+  "status": "PASS_STATIC_INTEGRATION_REVIEW",
+  "blocking_findings": [],
+  "source_hashes_match_preregistration": true,
+  "source_sha256": {
+    "offline/task28_p4_nr_0/__init__.py": "e7062e0f3f255cadafd3c346ff7bc57cd3930064e4533101e6897eb392f59872",
+    "offline/task28_p4_nr_0/bootstrap.py": "fc78fc44b778747b79972890de84ca0983cc6deea5aa9ede1fe6c28b54e0c112",
+    "offline/task28_p4_nr_0/planner.py": "d2178c628d64bf990a122094d08b390b0837ce972c023164bcf6a1d89c85d7ca",
+    "offline/task28_p4_nr_0/projection.py": "2420e2ec1aec0d1f17a87308a434c1c3b76bcbcc0f2d3cb4620d4a77c69b31a1",
+    "offline/task28_p4_nr_0/run_experiments.py": "007afa0df6f51dd187e94e9af9cceae9212e5dfa000c266ef3864cee083dd77c",
+    "offline/task28_p4_nr_0/validation.py": "5f794218c39f3a606bf22173069ddb0bec1890885ddbb0502b16c0ebc23fa64d"
+  },
+  "algorithm_spec_sha256": "b42b7a876ea59dc1c2f70f21968292c0e3ab4e918d87446cacadb6a47703cef9",
+  "checks": [
+    {
+      "id": "formal_runner_requires_B1",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/run_experiments.py:67"
+      ],
+      "finding": "All three preregistered main seeds call Planner.plan(...,continuous=True). There is no formal experiment flag disabling B1."
+    },
+    {
+      "id": "complete_three_segment_parent_backtrace",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/planner.py:194",
+        "offline/task28_p4_nr_0/planner.py:210",
+        "offline/task28_p4_nr_0/planner.py:217",
+        "offline/task28_p4_nr_0/planner.py:219"
+      ],
+      "finding": "Lift and placement are checked local connections. Transport is reconstructed solely from accepted parent edges of the search tree, retaining their dense projected midpoints."
+    },
+    {
+      "id": "exact_segment_joins",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/validation.py:150",
+        "offline/task28_p4_nr_0/validation.py:170"
+      ],
+      "finding": "Full-candidate validation requires exact numeric equality of object matrices and all fourteen joints at lift/transport and transport/place boundaries; no unplanned tolerance bridge is inserted."
+    },
+    {
+      "id": "all_original_B0_gates_required",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/validation.py:198",
+        "offline/task28_p4_nr_0/validation.py:241",
+        "offline/task28_p4_nr_0/planner.py:225"
+      ],
+      "finding": "All six complete geometry trajectories, including dense NR/RBS nodes, use the original checker.validate defaults. Every reason and every non-sampled-edge-valid result is rejection evidence. Planner cannot accept when confirm_plan.valid is false."
+    },
+    {
+      "id": "independent_19_frame_R1_session_required",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/validation.py:247",
+        "offline/task28_p4_nr_0/validation.py:260",
+        "offline/task28_p4_nr_0/validation.py:291",
+        "offline/task28_p4_nr_0/validation.py:305"
+      ],
+      "finding": "The independent R1 inputs consist of detached3, attach3, begin-lift1, lift-end3, transport-boundaries2, begin-place1, target-support3, release3: nineteen in total, independent of dense path size. Fixed 20ms synthetic timestamps and new provenance are independent from geometric path timestamps; dense/interpolated nodes are never sent to R1. Any R1 rejection or unconfirmed final release makes candidate validation false."
+    },
+    {
+      "id": "B0_B1_do_not_claim_internal_R1_confirmation",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/validation.py:198",
+        "offline/task28_p4_nr_0/validation.py:306"
+      ],
+      "finding": "Complete geometric trajectories use default enforce_temporal_confirmation=False and no temporal prelude/terminal phase. Original B1 verifies those same geometry trajectories; the separate temporal_session result is retained, not falsely attributed to B1 internals."
+    },
+    {
+      "id": "original_B1_dimensions_preserved",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/validation.py:145",
+        "offline/task28_p4_nr_0/validation.py:306",
+        "offline/task28_p4_nr_0/run_experiments.py:71",
+        "offline/task28_p4_nr_0/run_experiments.py:73"
+      ],
+      "finding": "CandidateValidator invokes unchanged ContinuousVerifier(checker,max_depth=0). Its joint_limits,closed_chain,collision,combined outputs are stored without promoting any inconclusive dimension. Full proof details remain in result archives and per-dimension statuses in summaries."
+    },
+    {
+      "id": "certified_continuous_rejection_excludes_candidate",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/planner.py:229"
+      ],
+      "finding": "After sampled and R1 success, any original B1 combined_status CONTINUOUSLY_REJECTED causes explicit rejection and continued search. B1 combines any rejected dimension into rejected combined_status."
+    },
+    {
+      "id": "no_old_waypoint_or_reference_solution_load",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/planner.py:130",
+        "offline/task28_p4_nr_0/planner.py:153",
+        "offline/task28_p4_nr_0/projection.py:16",
+        "offline/task28_p4_nr_0/run_experiments.py:44"
+      ],
+      "finding": "Runtime implementation imports accepted mathematical/model gates but contains no reads of old A-stage paths, r1_configurations, test control states, or precomputed IK solutions. Anchor seeds are HOME, joint midpoint, or deterministic RNG; all trajectory joint states arise from current NR calls. Tests-only control fixtures are outside runtime."
+    },
+    {
+      "id": "uncertified_and_no_execution_claim",
+      "result": "PASS_STATIC",
+      "references": [
+        "offline/task28_p4_nr_0/planner.py:233",
+        "offline/task28_p4_nr_0/validation.py:317",
+        "offline/task28_p4_nr_0/run_experiments.py:106"
+      ],
+      "finding": "Accepted sampled candidates retain OFFLINE_CANDIDATE_UNCERTIFIED and execution_authorized=False. Static review does not establish planning success, continuous safety, dynamics, measured timing, or physical execution."
+    }
+  ],
+  "limitations": [
+    "This is a static integration review, not evidence that any formal seed found a candidate.",
+    "Real B0/R1/B1 outcomes and exact residuals must be read from the preregistered run archives.",
+    "Unresolved original continuous proofs remain unresolved and prohibit an execution authorization."
+  ],
+  "source_modifications_performed": false,
+  "heavy_computation_performed": false
+}

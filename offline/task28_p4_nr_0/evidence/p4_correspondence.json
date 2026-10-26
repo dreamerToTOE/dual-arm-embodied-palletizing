@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "audit_kind": "READ_ONLY_LOCAL_SOURCE_CORRESPONDENCE",
+  "audit_date": "2026-10-26",
+  "source_repository": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full",
+  "source_repository_head": "af5a2b09138f8785cf62e575ae794b71446a8cd7",
+  "native_method": {
+    "name": "Full-chain Newton–Raphson projection using pseudoinverse velocity IK",
+    "source_entry": "kdl::GD",
+    "native_library": "KDL ChainIkSolverPos_NR + ChainIkSolverVel_pinv",
+    "native_max_updates": 10000,
+    "native_tolerance_literal": 1e-05,
+    "native_pinv_absolute_cutoff_from_saved_source_audit": 1e-05,
+    "native_internal_state": "12 ABB joint coordinates, reversed second arm through serial closed-loop chain"
+  },
+  "qualified_reproduction_method": {
+    "label": "RECONSTRUCTED_PHYSICAL_FULL_NR_CPP",
+    "state": "q=(q_left[6],q_right[6]) in R^12",
+    "target": "T_target=T_left * G_rod * diag(-1,-1,1,1)",
+    "residual": "g(q)=[p_right-p_target; Log(R_right R_target^T)]",
+    "jacobian": "full analytic physical Jacobian, including inverse left Jacobian of SO(3) log away from the manifold",
+    "update": "J=U S V^T; q_next=q - V diag(s_i>1e-12*s_max ? 1/s_i : 0) U^T g",
+    "damping": false,
+    "line_search": false,
+    "step_clipping": false,
+    "active_arm_frozen": false,
+    "relative_svd_cutoff": 1e-12,
+    "max_updates": 10000,
+    "termination": "separate max-abs translation 1e-5 mm and max-abs rotation-matrix entry 1e-5; post-convergence periodic chart and fresh closure/physical joint-limit checks",
+    "not_equivalent_to": "native KDL numerical trajectory, projection map, or performance baseline"
+  },
+  "search_correspondence": {
+    "native_sampling": "goal-biased ambient joint-space uniform sampler (R^12); goal bias .05",
+    "nearest": "ambient full-joint distance",
+    "extension": "nearest-to-sample range-truncated linear joint interpolation",
+    "projection": "NR projection of extension unless exact reached goal (prevalidated externally)",
+    "local_connection": "recursive arithmetic joint midpoint, NR project midpoint, collision and limits check, recurse both halves",
+    "native_local_resolution_rad": 0.05,
+    "native_max_recursive_depth": 150,
+    "tree_acceptance": "only after projected local connection passes; store parent",
+    "termination": "goal satisfied or bounded planner termination condition; native approximate result distinct from exact"
+  },
+  "transferable_components": [
+    "explicit full-chain SE(3) closure residual and Jacobian",
+    "undamped SVD Moore–Penrose NR minimum-norm correction across both arms",
+    "bounded tree search with deterministic sampling, nearest state, range control and parent lineage",
+    "projected intermediate-state local connection and saved reconstruction",
+    "separate projection, joint-limit, collision, edge and final candidate validation"
+  ],
+  "required_adaptations": [
+    "ABB q12 -> FR3 q14; relative closure manifold dimension 6 -> 8 generically",
+    "shared Cube pose X in SE(3) and frozen object-to-left/right suction grasps replace rod + flip model",
+    "object-conditioned sampling required by Task28 replaces author ambient joint-space sampler; call it an engineering adaptation",
+    "for fixed sampled X, stack both arm SE(3) target errors into 12 residual rows over 14 joints; each arm retains redundancy; both arms remain variables",
+    "derive FK/J from frozen Task28 robot model; preserve full TCP transforms and world bases",
+    "meter/radian units and existing G1-1 position/rotation tolerances replace legacy millimeter and matrix-entry convergence literals; do not transplant legacy numbers silently",
+    "per-proposal limit rejection, trust bounds, finite-difference J, lower projection/recursion budgets or new sampling distribution (if used) must be explicitly labeled engineering adaptations",
+    "replace old PQP/source geometry by existing frozen Task28 FCL interface without relaxing ACM",
+    "all accepted edges additionally reuse G1-2A-R1, B0 sampling and B1 per-dimension statuses; RBS sampling alone is not continuous certification"
+  ],
+  "prohibited_inferences": [
+    "generic RRT or precomputed waypoint playback is P4-NR",
+    "existing independent IK least_squares is automatically the P4 NR projector",
+    "native KDL and reconstructed physical NR share identical off-manifold iterates",
+    "old ABB 393-state saved success proves dual-FR3 feasibility",
+    "PCS fixed active-arm or branch-lock gates belong to ordinary NR",
+    "finite projected bisection implies continuous collision or closure certificates"
+  ],
+  "historical_evidence_boundary": {
+    "rrt_nr_path_report": "one reconstructed-endpoint environment-II exact RRT_NR discrete path; 393 unique nodes/392 leaves; original source-policy and aligned collision limitations retained",
+    "historical_report_evidence_only": true,
+    "no_scientific_queries_in_this_audit": true,
+    "no_author_source_redistributed": true
+  },
+  "artifacts": [
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/baselines/p4_full/geometry_consistent/physical_nr.py",
+      "sha256": "e2dc41936190c7fe335a442c1fee2952681ea5c1be5b94393590188f0fb87d43",
+      "bytes": 8862,
+      "lines": [
+        [
+          109,
+          136
+        ],
+        [
+          171,
+          212
+        ]
+      ],
+      "role": "PROJECT_RECONSTRUCTED_REFERENCE"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/baselines/p4_full/geometry_consistent/physical_nr_abb_cpp_draft.hpp",
+      "sha256": "e387e7c4b625ffa41d63d47093a4cf0c75a04d07d1f1b8d4693162653814449e",
+      "bytes": 12858,
+      "lines": [
+        [
+          193,
+          215
+        ],
+        [
+          257,
+          340
+        ]
+      ],
+      "role": "PROJECT_RECONSTRUCTED_CPP"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/baselines/p4_full/geometry_consistent/abb_nr_interface_kernel_draft.cpp",
+      "sha256": "2d5d61ac8742330611c39243c740df5a6e5e15fbe13a72ad6ea50973917c930b",
+      "bytes": 2467,
+      "lines": [
+        [
+          9,
+          27
+        ]
+      ],
+      "role": "QUALIFIED_GD_NUMERICAL_ADAPTER"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/reports/P4_FULL_R2_NR_THIN_INTERFACE_SOURCE_AUDIT_PRE_DRAFT_20261015.md",
+      "sha256": "4d1dd8b274540fc95c8d54260fe6de6cb094ea11bf73b48c29e7739e81a551db",
+      "bytes": 16087,
+      "lines": [
+        [
+          15,
+          40
+        ],
+        [
+          61,
+          69
+        ]
+      ],
+      "role": "SOURCE_AUDIT"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/reports/P4_FULL_R2_ABB_NR_LOCAL_POST_TASK_20261015.md",
+      "sha256": "2c919e09631d5da06e562b95335064784049ef73a013df441a799f818512b25b",
+      "bytes": 3339,
+      "lines": [],
+      "role": "SAVED_LOCAL_QUALIFICATION_REPORT"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/dual-arm-coordinated-manipulation-p4-full/reports/P4_FULL_R2_ABB_RRT_NR_PATH_POST_TASK_20261016.md",
+      "sha256": "0a5e385005c93e0e414b104a6b92ce4cccba4e41682dd7bbf7fc76e36b844a33",
+      "bytes": 3854,
+      "lines": [],
+      "role": "SAVED_RRT_PATH_QUALIFICATION_REPORT"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/.p4_d079_author_asset_audit/CKCplanning/proj_classes/kdl_class.cpp",
+      "sha256": "83a0ab6109fddb3d820d9987791c921c340287648630d18dc2a68e3728a21fd4",
+      "bytes": 8775,
+      "lines": [
+        [
+          30,
+          45
+        ],
+        [
+          68,
+          139
+        ]
+      ],
+      "role": "AUTHOR_NATIVE_KDL_NR"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/.p4_d079_author_asset_audit/CKCplanning/planners/RRT_NR.cpp",
+      "sha256": "ab11fe1e5164f6d4f7b7d1fc8526bda847180611e8085ca6cd836544874dc1e3",
+      "bytes": 10582,
+      "lines": [
+        [
+          146,
+          212
+        ]
+      ],
+      "role": "AUTHOR_RRT_NR_SEARCH"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/.p4_d079_author_asset_audit/CKCplanning/validity_checkers/StateValidityCheckerNR.cpp",
+      "sha256": "d9f49d2fb8a600fe85f6885bbf153c3b2f86d0185f945f23a181eca287f8827d",
+      "bytes": 8186,
+      "lines": [
+        [
+          96,
+          109
+        ],
+        [
+          115,
+          175
+        ],
+        [
+          181,
+          227
+        ]
+      ],
+      "role": "AUTHOR_PROJECTED_MIDPOINT_RBS"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/.p4_d079_author_asset_audit/CKCplanning/validity_checkers/StateValidityCheckerNR.h",
+      "sha256": "9755ac49c7ac032da4fd6713144f2d8de95ac115da4f7c3d48bc92fd6b1a97c3",
+      "bytes": 5335,
+      "lines": [
+        [
+          189,
+          190
+        ]
+      ],
+      "role": "AUTHOR_RBS_PARAMETERS"
+    },
+    {
+      "path": "/home/ubuntu2004/lmy/.p4_d079_author_asset_audit/CKCplanning/run/plan_NR.cpp",
+      "sha256": "b322c444ba296b2e1f19173cef61cc67c98bd8a3525f6d3d6f375f7ea7217409",
+      "bytes": 9784,
+      "lines": [
+        [
+          77,
+          110
+        ]
+      ],
+      "role": "AUTHOR_JOINT_STATE_SAMPLING_BOX"
+    }
+  ]
+}
