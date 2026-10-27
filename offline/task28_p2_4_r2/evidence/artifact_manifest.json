@@ -1,0 +1,164 @@
+{
+  "commands": {
+    "new_tests": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=offline python3 -m pytest offline/task28_p2_4_r2/tests -q -p no:cacheprovider",
+    "online_collection": "same collector with --stage online --source-gate <source_eval>; stopped at BOUNDED_MOTION_LIMIT",
+    "online_evaluation": "python3 offline/task28_p2_4_r2/evaluate.py --stage online --input <formal_online_failed> --output <evaluation.json>",
+    "source_collection_formal": "OMNI_KIT_ACCEPT_EULA=YES PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p2_4_r2/collector.py --stage source --asset <frozen-fr3.usd> --output <isolated> --prereg-sha256 cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d",
+    "source_evaluation": "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 python3 offline/task28_p2_4_r2/evaluate.py --stage source --input <formal_source> --output <evaluation.json>"
+  },
+  "execution_authorized": false,
+  "exit_codes": {
+    "cross_task_regression": 0,
+    "new_tests": 0,
+    "online_collection": 1,
+    "online_evaluation": 1,
+    "p2_4_focused": 0,
+    "r1_focused": 0,
+    "source_formal_collection": 0,
+    "source_formal_evaluation": 0,
+    "source_initial_preflight": 1
+  },
+  "files": [
+    {
+      "bytes": 68,
+      "path": "offline/task28_p2_4_r2/__init__.py",
+      "sha256": "c92689c859ecac9a2c559bc27456dea9a3046a250f8a9d5dd21b16c41508051c"
+    },
+    {
+      "bytes": 2391,
+      "path": "offline/task28_p2_4_r2/analyze_source.py",
+      "sha256": "18ee2518ade661fe04be4b35ae91df6e370e6811758d2eca19c9ebdb1393f37d"
+    },
+    {
+      "bytes": 10183,
+      "path": "offline/task28_p2_4_r2/collector.py",
+      "sha256": "f9aab9acd72f47204ff498059c187d97f7e385ae6153f67ff972cef4bc8b0ac7"
+    },
+    {
+      "bytes": 6032,
+      "path": "offline/task28_p2_4_r2/evaluate.py",
+      "sha256": "3704a8bbe26b85b447e9a7284064a44db1cd83f16b4538f918fb8021eeea1243"
+    },
+    {
+      "bytes": 3446,
+      "path": "offline/task28_p2_4_r2/evidence/experiment_preregistration.json",
+      "sha256": "cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d"
+    },
+    {
+      "bytes": 3157,
+      "path": "offline/task28_p2_4_r2/evidence/formal_online_failed/collector_status.json",
+      "sha256": "4cbd77af3e57a68d594bfd55c80d1584ad49fc313e1b3f847da618a87422879f"
+    },
+    {
+      "bytes": 36452,
+      "path": "offline/task28_p2_4_r2/evidence/formal_online_failed/console.log",
+      "sha256": "7f1f0e73945d8daf41138f6494bf13e3c7e743738c7c39a3b92f76ead098c827"
+    },
+    {
+      "bytes": 1126,
+      "path": "offline/task28_p2_4_r2/evidence/formal_online_failed/evaluation.json",
+      "sha256": "ed663a995bb47ad572b7a27c123021f2497fede8e95cf186d92cc7e51869925a"
+    },
+    {
+      "bytes": 2774,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/collector_status.json",
+      "sha256": "3f6bb66eed84aeb4d6229af6c2fb875ed9d219bab7a9bae2430b80613f1297ec"
+    },
+    {
+      "bytes": 36452,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/console.log",
+      "sha256": "7b13a2de18d989a908795aa9a14de60c6a43e679449833804b1b3f30e0f04272"
+    },
+    {
+      "bytes": 1816,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/evaluation.json",
+      "sha256": "cf97bfa9e2762fab0fb0decc8445476ae637ccff83b47a921dcecda78aaa3bc6"
+    },
+    {
+      "bytes": 98189,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/minus_q1_observations.json",
+      "sha256": "300935a49b540ba146968b7eb2dd5092a06bca43aa776f556a3adfdfd6906e61"
+    },
+    {
+      "bytes": 1160,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/minus_q1_oracle.json",
+      "sha256": "8b0494164dde37bc395f2d490f25afc64deba0473ebad2c02d01a1eff64d1b7a"
+    },
+    {
+      "bytes": 97979,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/plus_q1_observations.json",
+      "sha256": "2a07b19c8de9e484c3f9b5d16051d8f16e82ed88f1465b2981a969c2f7d82d3e"
+    },
+    {
+      "bytes": 1158,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/plus_q1_oracle.json",
+      "sha256": "8d490f635545913119b07f421f7d0a6a4b541b70183b670a49d9ddeee5345785"
+    },
+    {
+      "bytes": 98209,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/zero_observations.json",
+      "sha256": "8ac6d38eadadb4ae83d6733df60d4fe61be1849d58357cd1a270e9e8562bc50e"
+    },
+    {
+      "bytes": 1154,
+      "path": "offline/task28_p2_4_r2/evidence/formal_source/zero_oracle.json",
+      "sha256": "276f41babd0d337f4cc7728c78aefed1b594ef7eb981078a4f4c0d27efa11e4c"
+    },
+    {
+      "bytes": 98,
+      "path": "offline/task28_p2_4_r2/evidence/r2_focused.log",
+      "sha256": "f21802e5e24571b06b077e416af1539fdce6ad55b407e03af6af45b03968cb3b"
+    },
+    {
+      "bytes": 3095,
+      "path": "offline/task28_p2_4_r2/evidence/source_initial_failure/collector_status.json",
+      "sha256": "2c41b9f8d9659a52c1537e08eabb51a20249f988f1fbb4d0f2f7da1519d00058"
+    },
+    {
+      "bytes": 38695,
+      "path": "offline/task28_p2_4_r2/evidence/source_initial_failure/console.log",
+      "sha256": "edf5bec6190a02ace3ad3537f1ae5ee8aad386ce56e8a7d62444c6c4b4637fc4"
+    },
+    {
+      "bytes": 4942,
+      "path": "offline/task28_p2_4_r2/evidence/source_metrics.json",
+      "sha256": "f1fba1267e54ba94b3f6ca03e8d3451ea8af23d53b8fa264e135dee329c4712c"
+    },
+    {
+      "bytes": 3446,
+      "path": "offline/task28_p2_4_r2/experiment_preregistration.json",
+      "sha256": "cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d"
+    },
+    {
+      "bytes": 2453,
+      "path": "offline/task28_p2_4_r2/tests/test_r2.py",
+      "sha256": "fb9ff5c013c24c3f53e2d148c6a355f73a31478dfd57cc5f535b3d5e6beb63c0"
+    }
+  ],
+  "frozen_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "notes": [
+    "Initial source failure and formal source success are both archived.",
+    "Online failure was a bounded safety stop before complete case files; no online pass is claimed.",
+    "Applied effort is command/input readback, not a hardware-equivalent torque sensor.",
+    "artifact_manifest.json excludes itself from files."
+  ],
+  "physical_robot_tested": false,
+  "schema": "task28.g3_p2_4_r2.artifact_manifest.v1",
+  "source_hashes": {
+    "docs/tasks/TASK28_G3_P2_4_R2_EXPLICIT_EFFORT_VALIDATION.md": "fcb784d94e73d2df52da9773a0237014302a00747f1ea6ddafea318a3987dd7f",
+    "offline/task28_p2_4/observer.py": "d60f6d9909a450fa4429cfa3a27f945a13a4ef49efcacedd82cb220b91a7d067",
+    "offline/task28_p2_4_r1/evidence/source_semantics.json": "1b47d0771fb34a6c95271af176d375998c187a9d075dacd61f6a9207fc73991e",
+    "offline/task28_p2_4_r2/analyze_source.py": "18ee2518ade661fe04be4b35ae91df6e370e6811758d2eca19c9ebdb1393f37d",
+    "offline/task28_p2_4_r2/collector.py": "f9aab9acd72f47204ff498059c187d97f7e385ae6153f67ff972cef4bc8b0ac7",
+    "offline/task28_p2_4_r2/evaluate.py": "3704a8bbe26b85b447e9a7284064a44db1cd83f16b4538f918fb8021eeea1243",
+    "offline/task28_p2_4_r2/experiment_preregistration.json": "cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d"
+  },
+  "starting_head": "bf1ab9e22c0ace3b8644fa92c4f8e5d310e5ff6c",
+  "status": "G3_P2_4_R2_SOURCE_PASS_ONLY",
+  "test_counts": {
+    "cross_task_regression": 731,
+    "new_r2": 3,
+    "p2_4_focused": 46,
+    "r1_focused": 5
+  }
+}

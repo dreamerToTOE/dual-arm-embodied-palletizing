@@ -1,0 +1,51 @@
+{
+  "cases": {
+    "minus_q1": {
+      "observation_sha256": "300935a49b540ba146968b7eb2dd5092a06bca43aa776f556a3adfdfd6906e61",
+      "oracle_sha256": "8b0494164dde37bc395f2d490f25afc64deba0473ebad2c02d01a1eff64d1b7a",
+      "pass": true,
+      "reasons": [],
+      "rows": 20,
+      "sign": {
+        "dq1_mean_last20": -0.07694049128331244,
+        "q1_delta": -0.012725502921966836
+      }
+    },
+    "plus_q1": {
+      "observation_sha256": "2a07b19c8de9e484c3f9b5d16051d8f16e82ed88f1465b2981a969c2f7d82d3e",
+      "oracle_sha256": "8d490f635545913119b07f421f7d0a6a4b541b70183b670a49d9ddeee5345785",
+      "pass": true,
+      "reasons": [],
+      "rows": 20,
+      "sign": {
+        "dq1_mean_last20": 0.08781702071428299,
+        "q1_delta": 0.014587361132726073
+      }
+    },
+    "zero": {
+      "observation_sha256": "8ac6d38eadadb4ae83d6733df60d4fe61be1849d58357cd1a270e9e8562bc50e",
+      "oracle_sha256": "276f41babd0d337f4cc7728c78aefed1b594ef7eb981078a4f4c0d27efa11e4c",
+      "pass": true,
+      "reasons": [],
+      "rows": 20,
+      "sign": {
+        "dq1_mean_last20": 0.005417475290596485,
+        "q1_delta": 0.0009274579442717368
+      }
+    }
+  },
+  "collector_sha256": "f9aab9acd72f47204ff498059c187d97f7e385ae6153f67ff972cef4bc8b0ac7",
+  "gate_pass": true,
+  "interpretation": "Explicit input/readback is source-characterized only; applied readback is not a hardware-equivalent torque sensor. Online oracle comparison must remain separate.",
+  "preregistration_sha256": "cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d",
+  "reasons": [],
+  "schema": "task28.g3_p2_4_r2.evaluation.v1",
+  "source_prerequisites": {
+    "collection_complete": true,
+    "dof_names": true,
+    "force_mode": true,
+    "zero_gains": true
+  },
+  "stage": "source",
+  "status": "SOURCE_GATE_PASS"
+}

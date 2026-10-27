@@ -1,0 +1,183 @@
+{
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "base_world_m": [
+    0.65,
+    -0.6,
+    0.0
+  ],
+  "boundaries": {
+    "frozen_usd_modified": false,
+    "no_cube": true,
+    "no_force_controller": true,
+    "no_physical_robot": true,
+    "no_production_bridge": true,
+    "no_ros": true,
+    "no_suction": true,
+    "wrist_ft_sensor_required": false
+  },
+  "commands": {
+    "minus_q1": [
+      -0.25,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "plus_q1": [
+      0.25,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "zero": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "configuration_rad": [
+    0.0,
+    -0.7853981634,
+    0.0,
+    -2.3561944902,
+    0.0,
+    1.5707963268,
+    0.7853981634
+  ],
+  "dof_types": [
+    "revolute",
+    "revolute",
+    "revolute",
+    "revolute",
+    "revolute",
+    "revolute",
+    "revolute",
+    "prismatic",
+    "prismatic"
+  ],
+  "expected_all_dof_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1",
+    "fr3_finger_joint2"
+  ],
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "gravity_m_s2": [
+    0.0,
+    0.0,
+    -9.81
+  ],
+  "joint_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7"
+  ],
+  "limits": {
+    "max_abs_command_nm": 0.25,
+    "max_abs_q1_rad": 1.2,
+    "max_abs_qd_rad_s": 3.0,
+    "max_readback_error": 1e-06,
+    "max_source_read_s": 0.008333333333333333
+  },
+  "mode_configuration": {
+    "damping": 0.0,
+    "effort_mode": "force",
+    "runtime_only": true,
+    "source_usd_unchanged": true,
+    "stiffness": 0.0
+  },
+  "notes": "set_joint_efforts is explicit input; get_applied_joint_efforts is command/input readback, not hardware-equivalent sensor. get_measured_joint_efforts remains projected solver force and is retained only for comparison.",
+  "observer_policy": {
+    "causal": true,
+    "excluded": [
+      "known_external_force_oracle",
+      "future_samples",
+      "matched_unloaded_reset",
+      "posthoc_fitting"
+    ],
+    "inputs": [
+      "current_q",
+      "previous_q",
+      "current_dq",
+      "previous_dq",
+      "source_verified_applied_effort",
+      "current_M_c_g",
+      "current_jacobian"
+    ]
+  },
+  "online_cases": [
+    "force_zero",
+    "force_plus",
+    "force_minus"
+  ],
+  "online_command": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "online_force_world_n": {
+    "force_minus": [
+      -0.5,
+      0.0,
+      0.0
+    ],
+    "force_plus": [
+      0.5,
+      0.0,
+      0.0
+    ],
+    "force_zero": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "online_steps": 120,
+  "physics_dt_s": 0.008333333333333333,
+  "schema": "task28.g3_p2_4_r2.explicit_effort.v1",
+  "source_cases": [
+    "zero",
+    "plus_q1",
+    "minus_q1"
+  ],
+  "source_gate": {
+    "require_all_dof_names": true,
+    "require_bounded_motion": true,
+    "require_command_readback": true,
+    "require_force_mode": true,
+    "require_monotonic_time": true,
+    "require_sign_response": true,
+    "require_zero_gains": true
+  },
+  "source_steps": 20
+}

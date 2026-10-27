@@ -1,0 +1,42 @@
+{
+  "cases": {
+    "force_minus": {
+      "pass": false,
+      "reasons": [
+        "MISSING_FILES"
+      ],
+      "rows": []
+    },
+    "force_plus": {
+      "pass": false,
+      "reasons": [
+        "MISSING_FILES"
+      ],
+      "rows": []
+    },
+    "force_zero": {
+      "pass": false,
+      "reasons": [
+        "MISSING_FILES"
+      ],
+      "rows": []
+    }
+  },
+  "collector_sha256": "f9aab9acd72f47204ff498059c187d97f7e385ae6153f67ff972cef4bc8b0ac7",
+  "gate_pass": false,
+  "interpretation": "Explicit input/readback is source-characterized only; applied readback is not a hardware-equivalent torque sensor. Online oracle comparison must remain separate.",
+  "preregistration_sha256": "cacf2ad54c0cd836e60af4df2dec1378f2df0467bc6f54bb7fa12064e33ff93d",
+  "reasons": [
+    "COLLECTION_FAILED",
+    "ONLINE_EXTERNAL_WRENCH_GATE_NOT_IMPLEMENTED_IN_SOURCE_EVALUATOR"
+  ],
+  "schema": "task28.g3_p2_4_r2.evaluation.v1",
+  "source_prerequisites": {
+    "collection_complete": false,
+    "dof_names": true,
+    "force_mode": true,
+    "zero_gains": true
+  },
+  "stage": "online",
+  "status": "ONLINE_CANDIDATE_REJECTED"
+}
