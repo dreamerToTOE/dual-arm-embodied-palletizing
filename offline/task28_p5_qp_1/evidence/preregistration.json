@@ -1,0 +1,1282 @@
+{
+  "schema": "task28.g2_p5_qp_1.preregistration.v1",
+  "registered_utc": "2026-10-27T01:14:25.974432+00:00",
+  "status": "FROZEN_DESIGN_BEFORE_FORMAL_EXPERIMENTS",
+  "starting_commit": "72afea314a62cb0cf622292147e05cacc556dc85",
+  "source_selection": "All three seeds28,29,30; each lift/transport/place saved node len(segment)//2. Keep complete archived q14 and SE3; no new IK or search.",
+  "references": [
+    {
+      "seed": 28,
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz",
+      "sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+      "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+      "execution_authorized": false
+    },
+    {
+      "seed": 29,
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_29/result.json.gz",
+      "sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711",
+      "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+      "execution_authorized": false
+    },
+    {
+      "seed": 30,
+      "path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_30/result.json.gz",
+      "sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857",
+      "label": "OFFLINE_CANDIDATE_UNCERTIFIED",
+      "execution_authorized": false
+    }
+  ],
+  "nodes": [
+    {
+      "identity": "seed28:lift:midpoint32",
+      "seed": 28,
+      "segment": "lift",
+      "node_index": 32,
+      "segment_node_count": 65,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.65
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.329628375518751
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.5273911662400236,
+        -0.8299759642420473,
+        0.9380310571022844,
+        -2.5658786459091862,
+        0.6815779891355582,
+        1.9055324213283569,
+        1.010831745178925,
+        -0.2130796036219694,
+        -1.2482267332554424,
+        -1.0807383112378905,
+        -2.5171612485354817,
+        -0.9914227407999948,
+        1.5669984215845443,
+        -0.7550573963647076
+      ],
+      "source_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40",
+      "seed": 28,
+      "segment": "transport",
+      "node_index": 40,
+      "segment_node_count": 81,
+      "object_pose": [
+        [
+          0.9999624388165116,
+          -0.008420515480591343,
+          -0.0020532596463821826,
+          0.7317598428873924
+        ],
+        [
+          0.008416486620595387,
+          0.9999626540212794,
+          -0.0019629864198555274,
+          -0.04094934189119079
+        ],
+        [
+          0.002069712322927705,
+          0.0019456314554200428,
+          0.9999959653964311,
+          0.3899251573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.47955903375587694,
+        -0.8617497871607237,
+        0.6909323531073726,
+        -2.5455939932591547,
+        0.5172879671908382,
+        1.7857317110077244,
+        0.8458116607892705,
+        0.048681976158396846,
+        -1.0618819654519702,
+        -1.0564533676035006,
+        -2.2881856578029978,
+        -0.8609485506475615,
+        1.5677818360225082,
+        -0.675279902172274
+      ],
+      "source_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:place:midpoint32",
+      "seed": 28,
+      "segment": "place",
+      "node_index": 32,
+      "segment_node_count": 65,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.82
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.075
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.329628375518751
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.3791240611520313,
+        -0.734025571756857,
+        0.6453246185379552,
+        -2.6748266966174663,
+        0.4605695117813423,
+        2.006709076876077,
+        0.6823264097060182,
+        0.3363272510378404,
+        -0.9241500419852045,
+        -1.2959493315833368,
+        -2.2256641865638764,
+        -0.899819080782112,
+        1.7672235639442728,
+        -0.5556692943597562
+      ],
+      "source_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:lift:midpoint8",
+      "seed": 29,
+      "segment": "lift",
+      "node_index": 8,
+      "segment_node_count": 17,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.65
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.27350328792478484
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.5021446766647971,
+        -0.7632108076449147,
+        1.059152419020823,
+        -2.643834019032269,
+        0.753551485307159,
+        2.0638780392441505,
+        0.9943967988186837,
+        -0.22215698658985236,
+        -1.2563989784518312,
+        -1.2133640896157554,
+        -2.591298743843581,
+        -1.107260031707804,
+        1.6605145148709282,
+        -0.7363879136554996
+      ],
+      "source_sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52",
+      "seed": 29,
+      "segment": "transport",
+      "node_index": 52,
+      "segment_node_count": 105,
+      "object_pose": [
+        [
+          0.9999983121532001,
+          0.001432551630184979,
+          -0.001150428866903998,
+          0.7618984399249437
+        ],
+        [
+          -0.001428727814039095,
+          0.999993475483268,
+          0.0033177895846302247,
+          -0.04911128800711512
+        ],
+        [
+          0.00115517426578968,
+          -0.0033161403349894723,
+          0.9999938343738395,
+          0.29356707270649146
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.4056537782933197,
+        -0.7718339272379032,
+        0.8332954198374355,
+        -2.7163266281686944,
+        0.6165359487737126,
+        2.0465732695554575,
+        0.7596616097470894,
+        0.16711580001058415,
+        -1.0987138174094415,
+        -1.2748453619786664,
+        -2.391549180556384,
+        -1.0422660047211867,
+        1.7298071247252325,
+        -0.5520266023816865
+      ],
+      "source_sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:place:midpoint8",
+      "seed": 29,
+      "segment": "place",
+      "node_index": 8,
+      "segment_node_count": 17,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.82
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.075
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.27350328792478484
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.30599592095982026,
+        -0.6794292191842812,
+        0.7887427973192852,
+        -2.7560236169186365,
+        0.5652162981461866,
+        2.158294529114517,
+        0.6323273653374171,
+        0.3899715164594818,
+        -1.0326862408070265,
+        -1.4022429399400522,
+        -2.2798700473315057,
+        -1.0524923503354526,
+        1.79710891397124,
+        -0.4854097883893848
+      ],
+      "source_sha256": "fd6e5a22196b029dd182713a574e78ea0f097719a675ff1b0ab74f95cd7f8711",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:lift:midpoint16",
+      "seed": 30,
+      "segment": "lift",
+      "node_index": 16,
+      "segment_node_count": 33,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.65
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.2865059163368773
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.5112242192543701,
+        -0.7822569889454466,
+        1.028075333527788,
+        -2.628096116818613,
+        0.7366305041433906,
+        2.025297493268635,
+        0.9984409333559583,
+        -0.2216412324321998,
+        -1.2559500665595202,
+        -1.1806496489103395,
+        -2.5764781145733444,
+        -1.0788675765366817,
+        1.6387167471047317,
+        -0.7411054779656592
+      ],
+      "source_sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44",
+      "seed": 30,
+      "segment": "transport",
+      "node_index": 44,
+      "segment_node_count": 89,
+      "object_pose": [
+        [
+          0.9999895497228458,
+          -0.001464270094253869,
+          -0.0043308611373465,
+          0.7347064563598824
+        ],
+        [
+          0.0014372300374411943,
+          0.9999794974809103,
+          -0.0062401111885793895,
+          -0.01771447831515484
+        ],
+        [
+          0.004339909551981609,
+          0.006233821533973414,
+          0.9999711519109757,
+          0.33396627435462634
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.4244988528351041,
+        -0.7746894457835906,
+        0.8386764843006688,
+        -2.597874543299648,
+        0.595215516673428,
+        1.957023948368258,
+        0.8496580740532497,
+        0.013978116418149781,
+        -1.1255957762641,
+        -1.113694060927124,
+        -2.440369254809095,
+        -0.9399156774173479,
+        1.6429157945036892,
+        -0.6072741655903514
+      ],
+      "source_sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:place:midpoint16",
+      "seed": 30,
+      "segment": "place",
+      "node_index": 16,
+      "segment_node_count": 33,
+      "object_pose": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.82
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.075
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.2865059163368773
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "q14": [
+        0.3242966697533935,
+        -0.6962919545483837,
+        0.7531188981072031,
+        -2.7396135858753454,
+        0.54059346484656,
+        2.121161740346638,
+        0.6436300040674781,
+        0.37134102699587707,
+        -0.9808942366235255,
+        -1.3805392806531367,
+        -2.271875143229336,
+        -0.9978334486881938,
+        1.811862271722115,
+        -0.5117452487929159
+      ],
+      "source_sha256": "7f909c45d9c8f15aa08a750f4b199943650d3be85e6be3df82e3db309f0c5857",
+      "execution_authorized": false
+    }
+  ],
+  "point_cases": [
+    {
+      "identity": "seed28:lift:midpoint32:small_combined",
+      "node_identity": "seed28:lift:midpoint32",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:lift:midpoint32:high_translation",
+      "node_identity": "seed28:lift:midpoint32",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40:small_combined",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40:high_translation",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40:coarse_small",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "large_synthetic_step_current_valid_predicted_gate_pressure",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:place:midpoint32:small_combined",
+      "node_identity": "seed28:place:midpoint32",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:place:midpoint32:high_translation",
+      "node_identity": "seed28:place:midpoint32",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:place:midpoint32:downward_coarse",
+      "node_identity": "seed28:place:midpoint32",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "current_valid_but_potential_payload_table_or_closure_failure",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:lift:midpoint8:small_combined",
+      "node_identity": "seed29:lift:midpoint8",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:lift:midpoint8:high_translation",
+      "node_identity": "seed29:lift:midpoint8",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:small_combined",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:high_translation",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:coarse_small",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "large_synthetic_step_current_valid_predicted_gate_pressure",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:place:midpoint8:small_combined",
+      "node_identity": "seed29:place:midpoint8",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:place:midpoint8:high_translation",
+      "node_identity": "seed29:place:midpoint8",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:place:midpoint8:downward_coarse",
+      "node_identity": "seed29:place:midpoint8",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "current_valid_but_potential_payload_table_or_closure_failure",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:lift:midpoint16:small_combined",
+      "node_identity": "seed30:lift:midpoint16",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:lift:midpoint16:high_translation",
+      "node_identity": "seed30:lift:midpoint16",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:small_combined",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:high_translation",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:coarse_small",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "large_synthetic_step_current_valid_predicted_gate_pressure",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:place:midpoint16:small_combined",
+      "node_identity": "seed30:place:midpoint16",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "small_combined",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:place:midpoint16:high_translation",
+      "node_identity": "seed30:place:midpoint16",
+      "desired_object_twist": [
+        5.0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "high_translation",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:place:midpoint16:downward_coarse",
+      "node_identity": "seed30:place:midpoint16",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 1.0,
+      "max_steps": 1,
+      "methods": [
+        "bounded",
+        "unbounded_reference"
+      ],
+      "purpose": "current_valid_but_potential_payload_table_or_closure_failure",
+      "execution_authorized": false
+    }
+  ],
+  "invalid_requests": [
+    {
+      "identity": "wrong_cube",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "cube_id": "Cube_99"
+      },
+      "execution_authorized": false
+    },
+    {
+      "identity": "wrong_frame",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "frame_id": "left_base"
+      },
+      "execution_authorized": false
+    },
+    {
+      "identity": "missing_q",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "q14": null
+      },
+      "execution_authorized": false
+    },
+    {
+      "identity": "wrong_twist_length",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "desired_object_twist": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "execution_authorized": false
+    },
+    {
+      "identity": "zero_dt",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "dt_s": 0.0
+      },
+      "execution_authorized": false
+    },
+    {
+      "identity": "unsupported_method",
+      "node_identity": "seed28:transport:midpoint40",
+      "mutation": {
+        "method": "independent_arms"
+      },
+      "execution_authorized": false
+    }
+  ],
+  "rollouts": [
+    {
+      "identity": "seed28:transport:midpoint40:translation_fine",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        0.01,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "translation_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40:combined_fine",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "combined_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:transport:midpoint40:combined_coarse",
+      "node_identity": "seed28:transport:midpoint40",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.05,
+      "max_steps": 100,
+      "method": "bounded",
+      "purpose": "combined_coarse",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed28:place:midpoint32:downward_rollout",
+      "node_identity": "seed28:place:midpoint32",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.02,
+      "max_steps": 40,
+      "method": "bounded",
+      "purpose": "first_failure_retention_no_collision_avoidance",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:translation_fine",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        0.01,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "translation_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:combined_fine",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "combined_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:transport:midpoint52:combined_coarse",
+      "node_identity": "seed29:transport:midpoint52",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.05,
+      "max_steps": 100,
+      "method": "bounded",
+      "purpose": "combined_coarse",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed29:place:midpoint8:downward_rollout",
+      "node_identity": "seed29:place:midpoint8",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.02,
+      "max_steps": 40,
+      "method": "bounded",
+      "purpose": "first_failure_retention_no_collision_avoidance",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:translation_fine",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        0.01,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "translation_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:combined_fine",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.01,
+      "max_steps": 50,
+      "method": "bounded",
+      "purpose": "combined_fine",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:transport:midpoint44:combined_coarse",
+      "node_identity": "seed30:transport:midpoint44",
+      "desired_object_twist": [
+        0.005,
+        -0.003,
+        0.002,
+        0.01,
+        -0.005,
+        0.02
+      ],
+      "dt_s": 0.05,
+      "max_steps": 100,
+      "method": "bounded",
+      "purpose": "combined_coarse",
+      "execution_authorized": false
+    },
+    {
+      "identity": "seed30:place:midpoint16:downward_rollout",
+      "node_identity": "seed30:place:midpoint16",
+      "desired_object_twist": [
+        0,
+        0,
+        -0.05,
+        0,
+        0,
+        0
+      ],
+      "dt_s": 0.02,
+      "max_steps": 40,
+      "method": "bounded",
+      "purpose": "first_failure_retention_no_collision_avoidance",
+      "execution_authorized": false
+    }
+  ],
+  "counts": {
+    "selected_nodes": 9,
+    "point_demands": 24,
+    "paired_point_method_runs": 48,
+    "invalid_requests": 6,
+    "bounded_rollouts": 12,
+    "maximum_rollout_attempts": 720
+  },
+  "QP_config": "Unchanged original QPConfig defaults; acceleration disabled, no new tuning",
+  "gates": {
+    "closure_translation_m": 0.0001,
+    "closure_rotation_rad": 0.001,
+    "independent_FK_m_rad": 1e-06,
+    "tracking_translation_m_s": 0.0001,
+    "tracking_rotation_rad_s": 0.001,
+    "full_C_box_tolerance": 1e-08,
+    "KKT_tolerance": 1e-07,
+    "active_bound_tolerance_rad_s": 1e-07,
+    "sampling": "Unchanged original SamplingPolicy(max_dt_s=.05,max_joint_step_rad=.02,max_object_step_m=.001,max_rotation_step_rad=.01,max_samples=10001)",
+    "continue": "Only QP numerically accepted AND hard bounds AND tracking AND original current/predicted G1 AND B0 sampled_edge_valid; stop first rejected/inconclusive. Continuous safety outside scope remains NOT_CERTIFIED."
+  },
+  "budget": {
+    "formal_batches": 1,
+    "OS_wall_limit_s": 900,
+    "rollout_max_steps": "50/50/100/40 per seed",
+    "HiGHS_time_limit_s": 10.0,
+    "SLSQP_max_iterations": 500,
+    "random_new_samples": 0,
+    "new_NR_IK_calls": 0
+  },
+  "comparison": "Paired single-step runs start from exactly same archived q/X/V/dt; free reference retains Cx=0 and same weighted regularized objective, removes box only. Independently evaluate same bounds and original geometry; never executable.",
+  "desired_reference": "Fixed world-at-Cube-center twist; p+=dt*v, R=Exp(dt*omega)*R. Never advance Cube using achieved twist to hide tracking errors. No reproject/reset of q.",
+  "required_acceptance": [
+    "all nine original current states pass unchanged full G1/FCL",
+    "at least one real FR3 active authenticated velocity or position bound with bounded hard-gate pass and paired free bound violation",
+    "at least one QP-feasible tracking-rejected real FR3 demand",
+    "at least one nonzero rollout accepts two or more consecutive steps with complete evidence",
+    "at least one initially valid real FR3 predicted state or sampled edge is rejected; failed state retained with no continuation",
+    "all invalid/unsupported requests reject",
+    "complete prior514-test regression passes and frozen sources unchanged"
+  ],
+  "NOT_TRIGGERED_policy": "No new states/demands/thresholds added after results. Required category missing => PARTIAL. Position lookahead-active category is exploratory diagnostic, not guaranteed or required; if absent explicitly NOT_TRIGGERED. Acceleration caps not tested/authenticated.",
+  "provenance": "Every generated state/time is SYNTHETIC_OFFLINE_INTEGRATION, no measured feedback, no R1 observation or confirmation.",
+  "continuous_safety": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+  "execution_authorized": false,
+  "actuator_interface": "POSITION_ONLY_UNCHANGED_BLOCKED_FOR_DIRECT_VELOCITY",
+  "stop_after": "G2-P5-QP-1"
+}

@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "python3",
+    "-m",
+    "pytest",
+    "offline/task28_g1_1/tests",
+    "offline/task28_g1_2a/tests",
+    "offline/task28_g1_2b_0/tests",
+    "offline/task28_g1_2b_1/tests",
+    "offline/task28_p4_nr_0/tests",
+    "offline/task28_p5_qp_0/tests",
+    "offline/task28_p5_qp_1/tests",
+    "-q",
+    "-s",
+    "-p",
+    "no:cacheprovider"
+  ],
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "PYTHONPATH": "offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1"
+  },
+  "started_utc": "2026-10-27T01:21:00.773201+00:00",
+  "wall_s": 90.44602156000019,
+  "exit_code": 0,
+  "expected_original_count": 514,
+  "expected_new_count": 15,
+  "expected_total": 529,
+  "source_hashes": {
+    "offline/task28_p5_qp_1/__init__.py": "65dd887569ecc5923c580c4f199e0b6e506796a1413435859716292be878ae58",
+    "offline/task28_p5_qp_1/driver.py": "dae5c0d65eaecb6084f885fb215d3ee538d0f89a9617a3663a824d3541a64f39",
+    "offline/task28_p5_qp_1/run_experiments.py": "889fb3d3fa741124e83c18c0b3c2e5661a514b881198c684e711553afbfe4b8b",
+    "offline/task28_p5_qp_1/tests/test_driver.py": "730b03d9ab8d4d7775ee7ed3042547a4a37cbd3d5f6124cb1e0cd8e5265165ee",
+    "offline/task28_p5_qp_1/tests/test_reference.py": "30eb418c7d7fb74e5a58ae4c17f28544d74c3e4654e44b6819e4660729874837",
+    "offline/task28_p5_qp_1/tests/test_runner.py": "82aed472ab1e7a74231e031fdf5ca5651e2148971c0db4810d2e5d4515c7ee37"
+  },
+  "execution_authorized": false
+}

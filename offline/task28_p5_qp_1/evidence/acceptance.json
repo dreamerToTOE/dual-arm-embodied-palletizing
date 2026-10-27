@@ -1,0 +1,72 @@
+{
+  "schema": "task28.g2_p5_qp_1.acceptance.v1",
+  "status": "PASS_G2_P5_QP_1_OFFLINE",
+  "execution_authorized": false,
+  "starting_commit": "72afea314a62cb0cf622292147e05cacc556dc85",
+  "experiment_requirements": {
+    "all_nine_original_states_valid": true,
+    "paired_inputs_identical": true,
+    "all_nine_small_positive_controls_accepted": true,
+    "meaningful_real_FR3_active_bound_difference": true,
+    "real_QP_feasible_tracking_miss": true,
+    "nonzero_rollout_at_least_two_accepted": true,
+    "current_valid_predicted_geometry_rejection": true,
+    "invalid_requests_rejected": true
+  },
+  "formal_batch": {
+    "count": 1,
+    "exit_code": 0,
+    "summary_path": "offline/task28_p5_qp_1/evidence/experiments_v1/summary.json",
+    "summary_sha256": "c9bb55e41935e8055f275b49c2009ba32aea895b914e293ef65769a6520e5180",
+    "case_records": 66,
+    "paired_demands": 24,
+    "paired_method_runs": 48,
+    "invalid_requests": 6,
+    "bounded_rollouts": 12,
+    "candidate_attempts": 720,
+    "B0_samples": 3456
+  },
+  "regression": {
+    "old": 514,
+    "new": 15,
+    "passed": 529,
+    "exit_code": 0,
+    "log_path": "offline/task28_p5_qp_1/evidence/regression_final.txt",
+    "log_sha256": "c9a79bcf37fb1dcd83a26dbf07dbbeb7e1e86ac0ad1280a42db07c54c5f4f681"
+  },
+  "evidence_integrity": {
+    "status": "SAVED_EVIDENCE_AUDIT_PASS",
+    "checks": 168238,
+    "errors": 0,
+    "audit_sha256": "00d04fd659e972b17f4942aaa960b2b96ccbfa260c2875a1202f75614b5fe258",
+    "original_files_unchanged": 461
+  },
+  "scientific_findings": {
+    "real_FR3_active_frozen_velocity_bound_pairs": 9,
+    "paired_unbounded_real_limit_violations": 9,
+    "bounded_high_demand_feasible_but_tracking_rejected": 9,
+    "small_paired_positive_demands_passed": 9,
+    "rollout_steps_accepted": 669,
+    "rollout_steps_attempted": 672,
+    "transport_rollouts_complete": 9,
+    "downward_rollouts_first_rejected_after_accepted_steps": [
+      30,
+      13,
+      26
+    ],
+    "position_lookahead_active": "NOT_TRIGGERED_EXPLORATORY_NOT_FABRICATED",
+    "acceleration_caps": "DISABLED_NO_AUTHENTICATED_CONFIGURATION"
+  },
+  "limitations": [
+    "Scoped bounded offline validation only, not all G2 or physical execution",
+    "No true position-lookahead-active closed-chain case obtained",
+    "Unbounded reference retains equality but violates frozen velocity bounds; never an executable controller",
+    "QP still has no collision-avoidance inequalities or validated collision gradient",
+    "Finite Euler integration exhibits accumulating SE3 drift; no NR reprojection or correction used",
+    "All new motion safety remains NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+    "No new R1 observations, physical support confirmation or measured servo timing",
+    "Position-only actuator remains BLOCKED for direct velocity QP",
+    "No authenticated dynamic/acceleration, load or suction-force conclusion"
+  ],
+  "stop_after": "G2-P5-QP-1"
+}

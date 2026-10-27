@@ -1,0 +1,50 @@
+{
+  "schema": "task28.g2_p5_qp_1.run_registration.v1",
+  "status": "SEALED_BEFORE_FIRST_FORMAL_BATCH",
+  "registered_utc": "2026-10-27T01:21:29.941775+00:00",
+  "starting_commit": "72afea314a62cb0cf622292147e05cacc556dc85",
+  "bound_file_hashes": {
+    "offline/task28_p5_qp_1/__init__.py": "65dd887569ecc5923c580c4f199e0b6e506796a1413435859716292be878ae58",
+    "offline/task28_p5_qp_1/driver.py": "dae5c0d65eaecb6084f885fb215d3ee538d0f89a9617a3663a824d3541a64f39",
+    "offline/task28_p5_qp_1/run_experiments.py": "889fb3d3fa741124e83c18c0b3c2e5661a514b881198c684e711553afbfe4b8b",
+    "offline/task28_p5_qp_1/tests/test_driver.py": "730b03d9ab8d4d7775ee7ed3042547a4a37cbd3d5f6124cb1e0cd8e5265165ee",
+    "offline/task28_p5_qp_1/tests/test_reference.py": "30eb418c7d7fb74e5a58ae4c17f28544d74c3e4654e44b6819e4660729874837",
+    "offline/task28_p5_qp_1/tests/test_runner.py": "82aed472ab1e7a74231e031fdf5ca5651e2148971c0db4810d2e5d4515c7ee37",
+    "offline/task28_p5_qp_1/evidence/preregistration.json": "f234e3637913af0c3e40ce95681e16286e7bae7c537a985ac6927ff58d965537",
+    "offline/task28_p5_qp_1/evidence/protected_baseline.json": "1b0d084e8b149e705d61e31e1d047aa3bc91381d50618d1be2410f199a5ad5ec",
+    "offline/task28_p5_qp_1/evidence/dependency_identities.json": "363c9f6df48852376f70535826b1f10f8d49e7df76a6ddcb08e82b2ded80a406",
+    "offline/task28_p5_qp_1/evidence/preformal_design_review.json": "b2067c5a76a8b85efa7f8030a7881110fab953900e97e95ff04de4b62925624e",
+    "offline/task28_p5_qp_0/__init__.py": "5b4c80e0e2de6b022bfa05984066184fe2ef6a36953a3de99b78ad3a7a25a9fd",
+    "offline/task28_p5_qp_0/bootstrap.py": "e84a34f4625c2700869d8834268c45c10957d7553d8468a39c9d882d78db9d18",
+    "offline/task28_p5_qp_0/core.py": "cbf03201f6f874323a59fdc2e61601f314481a109f116f1cc5a2b6e28d79f091",
+    "offline/task28_p5_qp_0/integration.py": "cd7c0fe28d28164ff8ffde0d90e32f4cefade94d7b313696c459c2f2325ceb06",
+    "offline/task28_p5_qp_0/run_experiments.py": "63fefd7980ce8e10e7719b8392cc66669724a398d442c8e6f5b3b4f106a51837",
+    "offline/task28_p5_qp_0/solver.py": "1ebf678346d209f7ae0921e89f4b8b4faaeba01a0942a72795800b00df6d6811",
+    "offline/task28_p4_nr_0/validation.py": "5f794218c39f3a606bf22173069ddb0bec1890885ddbb0502b16c0ebc23fa64d",
+    "offline/task28_g1_2b_0/task28_edge/checker.py": "cfc23a8d5251a1b9a5ded2558680105122b43f25e68d26afae6a6c19161c6bf6"
+  },
+  "formal_batches_preceding_registration": 0,
+  "experimental_design_changed_after_initial_registration": false,
+  "prior_development_test_failure": "focused_tests.txt preserves one abstract summarizer fixture missing new required fields; only the abstract fixture was completed. No scientific parameter changed. Final full regression records current sources.",
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=10s",
+    "900s",
+    "python3",
+    "-u",
+    "offline/task28_p5_qp_1/run_experiments.py",
+    "--output",
+    "offline/task28_p5_qp_1/evidence/experiments_v1"
+  ],
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "declared_execution_authorized": false,
+  "execution_authorized": false,
+  "acceptance_interpretation": "Required predicted geometry-negative excludes QP tracking/hard failures; small positive cases must all accept; missing free numerical data cannot count as actual bound violation. These are preformal checks, not post-result criterion changes.",
+  "continuous_safety": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+  "stop_after": "G2-P5-QP-1"
+}

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=10s",
+    "900s",
+    "python3",
+    "-u",
+    "offline/task28_p5_qp_1/run_experiments.py",
+    "--output",
+    "offline/task28_p5_qp_1/evidence/experiments_v1"
+  ],
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "started_utc": "2026-10-27T01:22:57.555863+00:00",
+  "launcher_wall_s": 123.65562712499968,
+  "exit_code": 0,
+  "registration_sha256": "33b97df07dcae0722b60e675f63dc5a920e0b841f56013539aa358218f8d0bd0",
+  "execution_authorized": false
+}
