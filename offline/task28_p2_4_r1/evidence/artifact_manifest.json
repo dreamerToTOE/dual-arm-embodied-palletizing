@@ -1,0 +1,111 @@
+{
+  "commands": {
+    "archive_analysis": "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 offline/task28_p2_4_r1/analyze_archive.py --output offline/task28_p2_4_r1/evidence/motion_archive_diagnostics.json",
+    "cross_task_regression": "historical fixed pytest command recorded in offline/task28_p2_4/evidence/regression_record.json",
+    "focused_tests": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=offline:offline/task28_p2_4_r1 python3 -m pytest offline/task28_p2_4_r1/tests -q -p no:cacheprovider --import-mode=importlib",
+    "mode_probe": "OMNI_KIT_ACCEPT_EULA=YES PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p2_4_r1/mode_probe.py --asset <frozen-fr3.usd> --output <isolated-output>",
+    "p2_4_focused": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=offline:offline/task28_p2_4 python3 -m pytest offline/task28_p2_4/tests -q -p no:cacheprovider --import-mode=importlib"
+  },
+  "execution_authorized": false,
+  "exit_codes": {
+    "archive_analysis": 0,
+    "focused_tests": 0,
+    "historical_cross_task_regression": 0,
+    "mode_probe": 0,
+    "p2_4_focused": 0
+  },
+  "files": [
+    {
+      "bytes": 8669,
+      "path": "offline/task28_p2_4_r1/analyze_archive.py",
+      "sha256": "e5ca01094ef112f7e7a37bae715f3259c000e8e20087a990951255fec1b7457b"
+    },
+    {
+      "bytes": 31156,
+      "path": "offline/task28_p2_4_r1/evidence/cross_task_regression.log",
+      "sha256": "c8d0442ecbcb7781b7db1f2c6a93513cee2ac79d05b99a76f9d32e7b586249d0"
+    },
+    {
+      "bytes": 98,
+      "path": "offline/task28_p2_4_r1/evidence/focused.log",
+      "sha256": "9310d484212a1fe2c33b4b8accdf50a2639f09ba039354f8448f8aa8d173e1ff"
+    },
+    {
+      "bytes": 1440,
+      "path": "offline/task28_p2_4_r1/evidence/mode_probe.json",
+      "sha256": "00f1833dbd63710aa5c42e0ba4659583e061e5c04471dae7bcc612c0cc177b1b"
+    },
+    {
+      "bytes": 37962,
+      "path": "offline/task28_p2_4_r1/evidence/mode_probe.log",
+      "sha256": "24d095bfef1e81e53755afea07f83743b8df8fc79b388c78865fc6655552be81"
+    },
+    {
+      "bytes": 29628,
+      "path": "offline/task28_p2_4_r1/evidence/motion_archive_diagnostics.json",
+      "sha256": "eecb8222a41cf32269bc5dab615253cc7d6e6d34cad424bd6f5d707b36e1ff30"
+    },
+    {
+      "bytes": 99,
+      "path": "offline/task28_p2_4_r1/evidence/p2_4_focused.log",
+      "sha256": "0749da7a15a9021f3494108a2e9167c0067bf4a56e8609b345cd8d48ed322ec6"
+    },
+    {
+      "bytes": 1268,
+      "path": "offline/task28_p2_4_r1/evidence/phase3_decision.json",
+      "sha256": "8f622e578c6128e810eed52abd6c5b9db50463e383fb679e741e9e4b460e16ae"
+    },
+    {
+      "bytes": 3677,
+      "path": "offline/task28_p2_4_r1/evidence/source_semantics.json",
+      "sha256": "1b47d0771fb34a6c95271af176d375998c187a9d075dacd61f6a9207fc73991e"
+    },
+    {
+      "bytes": 3423,
+      "path": "offline/task28_p2_4_r1/mode_probe.py",
+      "sha256": "103b4467c7566dd8e03aa8fc8f17897aa747ede9ec845faa78471d518f69740c"
+    },
+    {
+      "bytes": 5832,
+      "path": "offline/task28_p2_4_r1/tests/__pycache__/test_archive_analysis.cpython-310-pytest-6.2.5.pyc",
+      "sha256": "2442c00b6107e5b8cc24752af2dfccc892a18ea397ac48d3d7aee9ed05964e34"
+    },
+    {
+      "bytes": 2710,
+      "path": "offline/task28_p2_4_r1/tests/test_archive_analysis.py",
+      "sha256": "aca3b71068f97a6954af0ff59968e7d6843750b69e6edd85ef524e5c6ebac1c3"
+    }
+  ],
+  "notes": [
+    "No explicit-effort control mode was run; it would be a different mode and cannot validate historical position-drive semantics.",
+    "Raw motion archive is preserved by hash in the source_hashes and prior P2-4 evidence manifest.",
+    "artifact_manifest.json excludes itself from files."
+  ],
+  "physical_robot_tested": false,
+  "schema": "task28.g3_p2_4_r1.artifact_manifest.v1",
+  "source_hashes": {
+    "docs/tasks/TASK28_G3_P2_4_R1_DYNAMIC_SOURCE_AUDIT.md": "ecb9245ae0082bf244f53a7de7d066cdeed143d7c1d544d5762bad0bad232615",
+    "offline/task28_p2_4/collector.py": "2b1f3d20e8b1130cba7c580c0f84fd321fb9ca9dc86f599ddd63ed4079b2d26e",
+    "offline/task28_p2_4/evaluate.py": "e1c0cdf235ec861d0b14ac5ac7f3a18c64d696f5ff2835b6d846a4fb8f531193",
+    "offline/task28_p2_4/evidence/api_preflight.json": "451b026c043ab2fcfed661c0f713bbed447cfd14547c9c7f9d1e5621c0278f26",
+    "offline/task28_p2_4/evidence/experiment_preregistration.json": "17df28596f336bb00909decb640d1d8b2f713a5ad1d47649e005a4c1c88e0e82",
+    "offline/task28_p2_4/evidence/motion_zero_raw/motion_zero_observations.json.gz": "235adb5616a23dfec1c7e4d1e290ba45f7d7e761f446c01d39e183ba3cf7e3e0",
+    "offline/task28_p2_4/evidence/motion_zero_raw/motion_zero_oracle.json.gz": "69e8b2c137b2fafa938a5e1e8fd19a320285143a81cce9fbbddb94b8cdaa8219",
+    "offline/task28_p2_4/observer.py": "d60f6d9909a450fa4429cfa3a27f945a13a4ef49efcacedd82cb220b91a7d067",
+    "offline/task28_p2_4_r1/analyze_archive.py": "e5ca01094ef112f7e7a37bae715f3259c000e8e20087a990951255fec1b7457b",
+    "offline/task28_p2_4_r1/mode_probe.py": "103b4467c7566dd8e03aa8fc8f17897aa747ede9ec845faa78471d518f69740c",
+    "offline/task28_p2_4_r1/tests/test_archive_analysis.py": "aca3b71068f97a6954af0ff59968e7d6843750b69e6edd85ef524e5c6ebac1c3"
+  },
+  "starting_head": "2c459c50ec9e70e2437a2c4b53de6236d0d95ab8",
+  "status": "G3_P2_4_R1_BLOCKED",
+  "test_counts": {
+    "cross_task_regression": 731,
+    "new_focused": 5,
+    "p2_4_focused": 46
+  },
+  "timings_s": {
+    "cross_task_regression": 100.68,
+    "new_focused": 0.01,
+    "p2_4_focused": 0.12
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "task28.g3_p2_4_r1.source_semantics.v1",
+  "installed_environment": {
+    "isaac_sim": "4.5.0",
+    "articulation_py": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a"
+    },
+    "single_articulation_py": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_articulation.py",
+      "sha256": "e7e3fc2909dfa9c9ff82ecf67983b2ead0594a99e201492c7201dac40bf4091e"
+    }
+  },
+  "source_findings": [
+    {
+      "api": "SingleArticulation.get_measured_joint_efforts",
+      "lines": "single_articulation.py:598-631; articulation.py:1279-1347",
+      "implementation": "delegates to _physics_view.get_dof_projected_joint_forces()",
+      "semantic_result": "solver-computed/projected force in each DOF motion direction; not documented as actuator-only torque"
+    },
+    {
+      "api": "SingleArticulation.get_applied_joint_efforts",
+      "lines": "single_articulation.py:633-665; articulation.py:1211-1277",
+      "implementation": "delegates to _physics_view.get_dof_actuation_forces()",
+      "semantic_result": "returns effort explicitly set by set_joint_efforts; does not expose implicit position-drive output"
+    },
+    {
+      "api": "SingleArticulation.get_measured_joint_forces",
+      "lines": "single_articulation.py:667-731; articulation.py:1350-1458",
+      "implementation": "delegates to _physics_view.get_link_incoming_joint_force()",
+      "shape_and_frame": "(M, num_joint+1, 6), first three force and last three torque, in incoming joint frame; row is joint_index+1",
+      "semantic_result": "incoming transmitted spatial force, not an isolated actuator signal"
+    },
+    {
+      "api": "mass_coriolis_gravity",
+      "lines": "articulation.py:3901-4105",
+      "semantic_result": "generalized mass, state-only Coriolis/centrifugal compensation and gravity compensation are exposed; no direct public joint acceleration getter found"
+    },
+    {
+      "api": "implicit_position_drive",
+      "runtime_probe": "mode_probe.json reports force for all 9 DOF without setting or changing a mode",
+      "source_control_path": "collector.py uses ArticulationAction(joint_positions=...) and the wrapper's position-target path is an implicit PD target",
+      "semantic_result": "installed Python wrapper does not expose a separate actual implicit position-drive torque readout"
+    },
+    {
+      "api": "inertia_warnings",
+      "evidence": "prior P2-4 static_console.log and P2-2-R1 sign_console.log",
+      "semantic_result": "fr3_link8 and fr3_hand_tcp report invalid inertia/negative mass; PhysX uses small-sphere approximation"
+    }
+  ],
+  "physx_primary_documentation": {
+    "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.3.0/docs/Articulations.html",
+    "sections": "Articulation Joint Drives; Link Incoming Joint Force",
+    "relevance": "official documentation states implicit drives act with respect to end of time step; incoming joint force includes gravity/Coriolis, external/constraint forces, friction, velocity clamping, direct force, drives and limits; reported force is a simulation-step average",
+    "version_caveat": "5.3.0 documentation is supporting semantics only; installed wrapper source and recorded 4.5 behavior take precedence"
+  },
+  "decision": {
+    "position_drive_actuator_torque_source_validated": false,
+    "supported_alternative": "incoming joint force is observable but not actuator-only; explicit set_joint_efforts is a different actuation mode",
+    "dynamic_source_gate": "BLOCKED_FOR_PASS"
+  }
+}

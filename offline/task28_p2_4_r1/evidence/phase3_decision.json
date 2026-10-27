@@ -1,0 +1,24 @@
+{
+  "schema": "task28.g3_p2_4_r1.phase3_decision.v1",
+  "phase1_source_result": "NO_SEPARATE_POSITION_DRIVE_TORQUE_API",
+  "phase2_archive_result": "TIMING_AND_RESIDUAL_DIAGNOSTICS_COMPLETE",
+  "phase3_status": "COMPLETE_READ_ONLY_MODE_PROBE",
+  "reason": "The installed position-drive setup exposes projected/incoming solver forces, not an independent actuator-only torque. An explicit-effort run would be a different control mode and cannot validate the historical position-drive source; no new Isaac run is needed to establish this boundary.",
+  "execution_authorized": false,
+  "physical_robot_tested": false,
+  "recommended_next_test": "A separately preregistered explicit-effort-only source characterization may validate that alternate mode, but must not be substituted into the historical position-drive observer without a new equivalence proof.",
+  "mode_probe": "PROBE_COMPLETE",
+  "mode_probe_exit_code": 0,
+  "observed_effort_modes": [
+    "force",
+    "force",
+    "force",
+    "force",
+    "force",
+    "force",
+    "force",
+    "force",
+    "force"
+  ],
+  "interpretation": "Runtime mode is force for all nine DOF, but this is the USD/drive effort mode and does not expose a separate actual implicit position-drive torque. No mode was set or changed."
+}
