@@ -1,0 +1,135 @@
+{
+  "branch": "side-suction-palletizing",
+  "evidence_audit": {
+    "checks": {
+      "execution_disabled": true,
+      "expected_artifact_count": true,
+      "finite_sampling_boundary": true,
+      "no_new_calls": true,
+      "pair_count": true,
+      "payload_negative_both_rejected": true,
+      "primary_requirements": true,
+      "record_identity_and_hashes": true,
+      "registered_config_matches": true,
+      "summary_schema": true
+    },
+    "status": "PASS"
+  },
+  "execution_authorized": false,
+  "focused_tests": {
+    "exit_code": 0,
+    "passed": 38
+  },
+  "formal_experiment": {
+    "B0_samples": 5499,
+    "CPU_wall_s": 248.46435742300037,
+    "accepted_step_count": 1828,
+    "actual_step_attempts": 1833,
+    "experiment_requirements": {
+      "all_accepted_steps_keep_frozen_state_edge_bounds": true,
+      "all_primary_pairs_reach_same_preregistered_time": true,
+      "all_registered_source_initial_states_valid": true,
+      "first_failure_retained_no_continuation": true,
+      "no_new_phase_observation_or_execution": true,
+      "preserved_archived_payload_table_penetration_rejected_both": true,
+      "primary_two_of_three_per_dt_improve_both_by_20pct": true
+    },
+    "peak_main_RSS_KiB": 685508,
+    "primary_per_dt": {
+      "0.02": {
+        "case_count": 3,
+        "comparable_count": 3,
+        "execution_authorized": false,
+        "improved_both_20pct": 3,
+        "required_count": 2
+      },
+      "0.05": {
+        "case_count": 3,
+        "comparable_count": 3,
+        "execution_authorized": false,
+        "improved_both_20pct": 3,
+        "required_count": 2
+      }
+    },
+    "scenario_count": 16,
+    "summary_status_before_acceptance": "FORMAL_EXPERIMENT_REQUIREMENTS_MET_PENDING_REGRESSION_AND_MATH",
+    "trajectory_count": 32
+  },
+  "full_regression": {
+    "exit_code": 0,
+    "log_sha256": "9641683c0d74396d1a31091654fb79bc9d84b63c830aed4bc5c6dca97bfa0b91",
+    "new_tests": 38,
+    "original_suite": 529,
+    "passed": 567,
+    "wall_s": 100.96
+  },
+  "limitations": [
+    "\u6307\u6807\u6765\u81ea\u4fdd\u5b58\u7684 NR-0 \u8282\u70b9\u4e0e\u5408\u6210\u79bb\u7ebf\u79ef\u5206\uff0c\u4e0d\u662f ROS/\u4eff\u771f/\u7269\u7406\u89c2\u6d4b\u3002",
+    "\u4ec5\u6709\u9650\u91c7\u6837\uff0ccontinuous_safety \u672a\u8ba4\u8bc1\u3002",
+    "QP-2 \u65b0\u53cd\u9988\u786c\u7b49\u5f0f\u4e3a A qdot=b\uff1b\u539f QP1 \u7684 C qdot=0 \u5728\u53cd\u9988\u8f68\u8ff9\u4e2d\u4ec5\u4f5c\u6bd4\u8f83\u8bca\u65ad\u3002",
+    "\u672a\u5b9e\u73b0\u78b0\u649e\u68af\u5ea6\u3001\u52a0\u901f\u5ea6\u7ea6\u675f\u3001\u5728\u7ebf\u89c2\u6d4b\u3001\u6267\u884c\u6216\u63a5\u89e6\u63a7\u5236\u3002",
+    "\u6b63\u5f0f\u521d\u59cb\u72b6\u6001\u4e3a\u4e09\u9897\u56fa\u5b9a\u968f\u673a\u79cd\u5b50\u6765\u6e90\uff0c\u4e0d\u662f\u72ec\u7acb\u7269\u7406\u6837\u672c\u3002"
+  ],
+  "local_head_before_commit": "0a8fc0369b72998c2f51b2a637c405b1e3ac33bd",
+  "mathematical_evidence": {
+    "actual_center_fk_fd_max_abs": 1.8085588582295031e-10,
+    "affine_enumeration_max_objective_abs_error": 1.7763568394002505e-15,
+    "affine_enumeration_max_primal_dual_gap": 1.7763568394002505e-15,
+    "affine_enumeration_max_solution_abs_error": 2.220446049250313e-15,
+    "feedback_direction_fd_max_abs": 3.633275902359401e-10,
+    "record_count": 9,
+    "reference_feedback_fd_max_abs": 4.5812376114895415e-10,
+    "relative_log_fd_max_abs": 3.539541992836348e-10,
+    "source_log_sha256": "9641683c0d74396d1a31091654fb79bc9d84b63c830aed4bc5c6dca97bfa0b91"
+  },
+  "primary_acceptance": {
+    "0.02": {
+      "comparable_count": 3,
+      "count": 3,
+      "improved_both_20pct": 3,
+      "max_rotation_ratio": 0.28608413660418186,
+      "max_translation_ratio": 0.24992585879382884,
+      "min_rotation_ratio": 0.2488328253159716,
+      "min_translation_ratio": 0.24569855409803146,
+      "rotation_ratios": [
+        0.28608413660418186,
+        0.2488328253159716,
+        0.24991466965725864
+      ],
+      "translation_ratios": [
+        0.24992585879382884,
+        0.24569855409803146,
+        0.24659184557864322
+      ]
+    },
+    "0.05": {
+      "comparable_count": 3,
+      "count": 3,
+      "improved_both_20pct": 3,
+      "max_rotation_ratio": 0.262808384177566,
+      "max_translation_ratio": 0.24773120122618897,
+      "min_rotation_ratio": 0.24917812872399217,
+      "min_translation_ratio": 0.24624725744642253,
+      "rotation_ratios": [
+        0.262808384177566,
+        0.24917812872399217,
+        0.24970185890328722
+      ],
+      "translation_ratios": [
+        0.24773120122618897,
+        0.24624725744642253,
+        0.2463190783415012
+      ]
+    }
+  },
+  "remaining_gaps": [
+    "\u9700\u8981\u5728\u4eff\u771f\u4e2d\u9a8c\u8bc1\u65f6\u5e8f\u3001\u78b0\u649e\u8fde\u7eed\u6027\u548c\u7269\u7406\u63a5\u89e6\u3002",
+    "\u9700\u8981\u72ec\u7acb\u7684\u8fde\u7eed/CCD \u8fb9\u754c\u8bc1\u660e\u4e0e\u66f4\u5f3a\u7684\u52a0\u901f\u5ea6/\u6267\u884c\u63a5\u53e3\u3002",
+    "\u9700\u8981\u540e\u7eed\u7814\u7a76\u4efb\u52a1\u6388\u6743\u540e\u518d\u8bc4\u4f30 NR-1 \u6216\u5b9e\u9645\u63a7\u5236\u3002"
+  ],
+  "schema": "task28.g2_p5_qp_2.acceptance.v1",
+  "scope": "CPU-only offline pose-error feedback comparison under frozen QP/G1/B0 gates",
+  "starting_commit": "0a8fc0369b72998c2f51b2a637c405b1e3ac33bd",
+  "status": "PASS_G2_P5_QP_2_OFFLINE",
+  "stop_after": "G2-P5-QP-2"
+}

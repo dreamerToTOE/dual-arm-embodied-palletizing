@@ -1,0 +1,48 @@
+{
+  "schema": "task28.g2_p5_qp_2.run_registration.v1",
+  "status": "SEALED_BEFORE_FORMAL_EXPERIMENTS",
+  "registered_utc": "2026-10-27T02:07:53.616087+00:00",
+  "starting_commit": "0a8fc0369b72998c2f51b2a637c405b1e3ac33bd",
+  "bound_file_hashes": {
+    "offline/task28_p5_qp_2/__init__.py": "2a5a456fa566d79265a9d1c033c84e54457134fa081bfb6c76e7af50cdff4fdf",
+    "offline/task28_p5_qp_2/feedback.py": "de65e572c27f1a7ffd6a39239f3210da58e9010ecddba6b5bbe1141c01fea969",
+    "offline/task28_p5_qp_2/driver.py": "43454cdd55a83134a765e19c9999e4a90122fb871ac631523795c5144425247b",
+    "offline/task28_p5_qp_2/affine_solver.py": "bb227e971e19e3e96fb3545dd5531a21f009d540161bcdacd511d3203c9d4090",
+    "offline/task28_p5_qp_2/run_experiments.py": "c5b51a2735bfcb611676e54bd6a88bbcbbb2f2564f554cf21b14366da494c4dc",
+    "offline/task28_p5_qp_2/tests/test_affine_solver.py": "fc4031f48790d2beca49c58690a4fc7aa0f68c50ad01f0c78b54e70c4a7abca6",
+    "offline/task28_p5_qp_2/tests/test_driver.py": "d9bcf85e90e6bbaee6df63d807737237e7dbd4650ec3d36c82f829b6eb66cad0",
+    "offline/task28_p5_qp_2/tests/test_feedback_math.py": "01ce908f63dec3489242ba9cf3fcdfedc4553178d4a1cbbb1423b79373fc0d8d",
+    "offline/task28_p5_qp_2/tests/test_runner.py": "caffe6a2dc0c9e6d56ed9a953fc55b1a6c862dcbe68ed46472e1de2b98854c7e",
+    "offline/task28_p5_qp_2/evidence/preregistration.json": "98afb3b5de55b3b1f931552b175adab7b2db9c870b7a692b09fecce9f41a5816",
+    "offline/task28_p5_qp_2/evidence/preregistration_initial.json": "1f957f899885b95ccc7cb89d336366a9f078472d13f260ec2b904fc480ba6180",
+    "offline/task28_p5_qp_2/evidence/protected_baseline.json": "d53aa1d67900e1a6f9013c77f0448685eadb11bb8fc335d5c3f0d954f8044b8d"
+  },
+  "QP1_source_registration": "offline/task28_p5_qp_1/evidence/run_registration.json and protected baseline from accepted commit; unchanged and checked by preflight",
+  "formal_batches_preceding_registration": 0,
+  "experimental_design_changed_after_registration": false,
+  "full_regression_expected": 567,
+  "focused_tests_expected": 38,
+  "formal_command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=10s",
+    "900s",
+    "python3",
+    "-u",
+    "offline/task28_p5_qp_2/run_experiments.py",
+    "--output",
+    "offline/task28_p5_qp_2/evidence/experiments_v1"
+  ],
+  "execution_authorized": false,
+  "continuous_safety": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+  "stop_after": "G2-P5-QP-2",
+  "full_regression_pytest_collection_fix": "pytest --import-mode=importlib required because legacy and Task28 QP2 tests both contain test_runner.py; no source/test semantics changed.",
+  "full_regression_command_tail": [
+    "-q",
+    "-s",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib"
+  ],
+  "full_regression_count_correction": "Initial expected_total=538 was a bookkeeping error (529 accepted baseline plus 38 QP2 tests = 567); corrected before formal batch, no source/test/parameter change."
+}
