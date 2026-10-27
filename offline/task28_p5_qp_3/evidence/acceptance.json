@@ -1,0 +1,30 @@
+{
+  "schema": "task28.g2_p5_qp_3.acceptance.v1",
+  "status": "PARTIAL_G2_P5_QP_3_OFFLINE",
+  "execution_authorized": false,
+  "offline_reference_handoff": "DEMONSTRATED",
+  "offline_geometric_acceptance": "DEMONSTRATED_FINITE_SAMPLED_ONLY",
+  "velocity_to_position_adapter": "FEASIBLE_OFFLINE",
+  "position_only_bridge_static_compatibility": "PARTIALLY_CONFIRMED",
+  "position_only_bridge_runtime_compatibility": "UNVERIFIED",
+  "real_time_feedback_and_actuator_tracking": "UNVERIFIED",
+  "collision_avoidance_in_qp": "UNRESOLVED",
+  "focused_tests_passed": 5,
+  "full_regression_passed": 572,
+  "original_regression_preserved": 567,
+  "handoff_positive_target_pairs": 5,
+  "handoff_negative_initial_gate_stops": 1,
+  "evidence_audit": "PASS",
+  "continuous_safety": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+  "physical_feedback_measured": false,
+  "real_time_verified": false,
+  "no_commands_published": true,
+  "stop_after": "G2-P5-QP-3",
+  "remaining_prerequisites": [
+    "ROS/Isaac bridge dry-run or runtime receiver validation",
+    "source/receive/applied timestamps, left-right skew and feedback-age gates",
+    "applied joint feedback and servo timing verification",
+    "continuous closed-chain and collision safety evidence",
+    "physical position-adapter bandwidth, acceleration and recovery validation"
+  ]
+}

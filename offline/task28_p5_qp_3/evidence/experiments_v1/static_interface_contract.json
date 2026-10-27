@@ -1,0 +1,52 @@
+{
+  "execution_authorized": false,
+  "fixture": "fixtures/task28_g1_0_new_single_cube_v0",
+  "hashes": {
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_g1_0_bridge_contract.json": "5d51cb13eaa16247ad38b391242c0f3fda7f7444d7e428ddcc72130dbdb85bfe",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py": "15759cde17b389dd4ae29c90c1c2b107d76f67ccaffee14e2cbb8876445e108b",
+    "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+    "offline/task28_p5_qp_2/driver.py": "43454cdd55a83134a765e19c9999e4a90122fb871ac631523795c5144425247b",
+    "offline/task28_p5_qp_2/feedback.py": "de65e572c27f1a7ffd6a39239f3210da58e9010ecddba6b5bbe1141c01fea969"
+  },
+  "interface_facts": {
+    "collision_avoidance_in_qp": false,
+    "command_topic_shape": "/left/joint_command and /right/joint_command sensor_msgs/JointState.position in historical sink",
+    "dual_sync_contract": "same stamp and frame_id task28_g1_0_dual_sync; target pair is atomically represented but never published",
+    "failure_policy": "first rejected/inconclusive step retained and no later candidate is generated",
+    "joint_order": [
+      "left_fr3_joint1",
+      "left_fr3_joint2",
+      "left_fr3_joint3",
+      "left_fr3_joint4",
+      "left_fr3_joint5",
+      "left_fr3_joint6",
+      "left_fr3_joint7",
+      "right_fr3_joint1",
+      "right_fr3_joint2",
+      "right_fr3_joint3",
+      "right_fr3_joint4",
+      "right_fr3_joint5",
+      "right_fr3_joint6",
+      "right_fr3_joint7"
+    ],
+    "nominal_period": "historical code contains 10 ms sleep/period constants; measured servo/physics period remains UNKNOWN",
+    "object_path_source": "saved NR-0 seed28 transport midpoint40; no new NR or waypoint replacement",
+    "object_time_parameterization": "not present in NR-0; QP3 uses explicitly registered synthetic dt=0.02 s",
+    "position_adapter": "q_next=q+dt*qdot; split 14-vector into left/right 7-vector position targets in memory",
+    "position_only": true,
+    "source_feedback": "QP2 predicted q_next and G1/B0 synthetic state diagnostics; no actuator feedback or R1 observation",
+    "velocity_field_connected": false
+  },
+  "schema": "task28.g2_p5_qp_3.static_interface_contract.v1",
+  "source_files": [
+    "docs/tasks/TASK28_G0A_INTERFACE_AUDIT.md",
+    "docs/tasks/TASK28_PAPER_TO_MAIN_RESEARCH_ROADMAP.md",
+    "isaac/scripts/task24_side_suction_tight_bridge.py",
+    "ros_ws/src/fr3_dual_palletize/src/task25_batched_side_suction.cpp",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_g1_0_bridge_contract.json",
+    "offline/task28_p5_qp_2/feedback.py",
+    "offline/task28_p5_qp_2/driver.py",
+    "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz"
+  ]
+}
