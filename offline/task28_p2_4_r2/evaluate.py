@@ -54,7 +54,11 @@ def evaluate(inp:Path,out:Path,stage:str):
  # source sign response uses command identities and causal response difference; no fitted correction.
  if stage=='source' and not reasons:
   z=cases.get('zero',{}); p=cases.get('plus_q1',{}); m=cases.get('minus_q1',{})
-  if not all(c.get('pass') for c in (z,p,m)): reasons.append('SOURCE_CASE_FAILURE')
+  if not all(c.get('pass') for c in (z,p,m)):
+   reasons.append('SOURCE_CASE_FAILURE')
+   for cid, case_result in ((k,cases.get(k,{})) for k in ('zero','plus_q1','minus_q1')):
+    for reason in case_result.get('reasons',[]):
+     reasons.append(reason); reasons.append('CASE_'+cid.upper()+'_'+reason)
   else:
    pd=p['sign']['q1_delta']; md=m['sign']['q1_delta'];
    if not np.isfinite([pd,md]).all() or pd-md <= 1e-7: reasons.append('COMMAND_SIGN_RESPONSE_NOT_SEPARATED')

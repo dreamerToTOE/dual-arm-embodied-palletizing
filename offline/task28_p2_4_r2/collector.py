@@ -105,7 +105,7 @@ def main() -> int:
             for step in range(cfg['source_steps'] if args.stage=='source' else cfg['online_steps']):
                 robot.set_joint_efforts(command, joint_indices=indices)
                 q_pre = np.asarray(robot.get_joint_positions(joint_indices=arm_indices),float)
-                point = np.asarray(robot._articulation_view.get_link_transforms() if False else [0.,0.,0.]) # set below after physics
+                point = np.zeros(3)
                 if args.stage == 'online' and np.any(force):
                     # Apply known evaluation force to link 7, but keep it in the oracle only.
                     pos, _ = link.get_world_poses(); point = np.asarray(pos[0],float)
