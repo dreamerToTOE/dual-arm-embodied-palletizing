@@ -1,0 +1,158 @@
+{
+  "boundaries": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "cases": {
+    "minus_home": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 7.523306366180593e-05,
+      "max_arm_velocity_rad_s": 0.006046267691999674,
+      "max_force_error_n": 6.986277642576319e-05,
+      "max_jacobian_residual_nm": 1.0914665155537203e-06,
+      "max_moment_error_nm": 9.531961809298002e-05,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.21598544991130147,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "minus_offset": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 9.756490479947977e-05,
+      "max_arm_velocity_rad_s": 0.0078088971786201,
+      "max_force_error_n": 0.00017351052686476916,
+      "max_jacobian_residual_nm": 6.714597121367032e-06,
+      "max_moment_error_nm": 8.06572196244967e-05,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.18735948337921787,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "plus_home": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 0.00012131242650445517,
+      "max_arm_velocity_rad_s": 0.006100556813180447,
+      "max_force_error_n": 6.37683983196224e-05,
+      "max_jacobian_residual_nm": 1.0775212886323647e-06,
+      "max_moment_error_nm": 0.00011527769823417007,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.21598384968749446,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "plus_offset": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 0.00013702305855578523,
+      "max_arm_velocity_rad_s": 0.008008619770407677,
+      "max_force_error_n": 0.00016938451514257873,
+      "max_jacobian_residual_nm": 5.4701782806868435e-06,
+      "max_moment_error_nm": 0.0001616226293623571,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.18735926640452366,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "zero_heldout": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 4.5337597073924485e-05,
+      "max_arm_velocity_rad_s": 0.007097601890563965,
+      "max_force_error_n": 8.7558370443333e-05,
+      "max_jacobian_residual_nm": 1.8204395865381774e-06,
+      "max_moment_error_nm": 1.708482893693223e-05,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.2008952079317308,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "zero_home": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 4.333511229681619e-05,
+      "max_arm_velocity_rad_s": 0.006050353404134512,
+      "max_force_error_n": 8.399001004336608e-05,
+      "max_jacobian_residual_nm": 1.802759020809867e-06,
+      "max_moment_error_nm": 2.4132405894232774e-05,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.21598403129996022,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    },
+    "zero_offset": {
+      "evaluation_rows": 60,
+      "evaluation_start_step": 540,
+      "full_sample_count": 600,
+      "max_abs_joint_torque_error_nm": 8.102407161203473e-05,
+      "max_arm_velocity_rad_s": 0.007912343367934227,
+      "max_force_error_n": 0.0001509996275928352,
+      "max_jacobian_residual_nm": 8.04537242325594e-06,
+      "max_moment_error_nm": 4.5392153010460396e-05,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.18735926844115125,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 599,
+        "WARMUP": 1
+      },
+      "pass": true,
+      "rejection_reasons": []
+    }
+  },
+  "gate_pass": true,
+  "interpretation": "Source-gated candidate estimates only; online physical, dynamic and bilateral control claims are not implied.",
+  "preflight_sha256": "451b026c043ab2fcfed661c0f713bbed447cfd14547c9c7f9d1e5621c0278f26",
+  "preregistration_sha256": "17df28596f336bb00909decb640d1d8b2f713a5ad1d47649e005a4c1c88e0e82",
+  "schema": "task28.p2_4.evaluation_summary.v1",
+  "source_prerequisites": {
+    "arm_indices_match": true,
+    "collection_complete": true,
+    "dof_names_match": true,
+    "gains_finite_nonnegative_and_shape_9": true,
+    "physics_dt_match": true
+  },
+  "stage": "static",
+  "status": "STATIC_SOURCE_AND_ORACLE_GATE_PASS"
+}

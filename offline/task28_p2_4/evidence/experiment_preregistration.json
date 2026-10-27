@@ -1,0 +1,245 @@
+{
+  "acceleration_estimator": "All nine DOF backward velocity differences with dt from strictly increasing simulator timestamps; first sample invalid, no zero-acceleration substitution; no filtering or future samples",
+  "base_world_m": [
+    0.65,
+    -0.6,
+    0.0
+  ],
+  "bias_policy": "No bias calibration is used; all conditions are evaluation data. Any future learned calibration requires an independently identified training set and held-out cases.",
+  "boundaries": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "cases": [
+    {
+      "configuration": "home",
+      "force_world_n": [
+        0,
+        0,
+        0
+      ],
+      "id": "zero_home",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "offset",
+      "force_world_n": [
+        0,
+        0,
+        0
+      ],
+      "id": "zero_offset",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "heldout",
+      "force_world_n": [
+        0,
+        0,
+        0
+      ],
+      "id": "zero_heldout",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "home",
+      "force_world_n": [
+        1,
+        0,
+        0
+      ],
+      "id": "plus_home",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "home",
+      "force_world_n": [
+        -1,
+        0,
+        0
+      ],
+      "id": "minus_home",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "offset",
+      "force_world_n": [
+        1,
+        0,
+        0
+      ],
+      "id": "plus_offset",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "offset",
+      "force_world_n": [
+        -1,
+        0,
+        0
+      ],
+      "id": "minus_offset",
+      "motion": false,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "home",
+      "force_world_n": [
+        0,
+        0,
+        0
+      ],
+      "id": "motion_zero",
+      "motion": true,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "configuration": "home",
+      "force_world_n": [
+        1,
+        0,
+        0
+      ],
+      "id": "motion_plus",
+      "motion": true,
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "configurations_rad": {
+    "heldout": [
+      -0.15,
+      -0.62,
+      0.16,
+      -2.15,
+      -0.14,
+      1.45,
+      0.55
+    ],
+    "home": [
+      0.0,
+      -0.7853981634,
+      0.0,
+      -2.3561944902,
+      0.0,
+      1.5707963268,
+      0.7853981634
+    ],
+    "offset": [
+      0.2,
+      -0.5,
+      -0.2,
+      -2.0,
+      0.3,
+      1.3,
+      0.4
+    ]
+  },
+  "dynamics_source_warning": "Source terms from simulator model with invalid inertia/mass warnings; may not match real FR3 and is no independent physical model. Solver projected effort is not assumed to equal actuator torque under motion; gate must establish it.",
+  "expected_all_dof_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1",
+    "fr3_finger_joint2"
+  ],
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "force_semantics": "Known world-frame force ON link7 at frozen left-side virtual TCP; no physical tool. Oracle is separate from observations and excluded from observer interface.",
+  "gravity_m_s2": [
+    0.0,
+    0.0,
+    -9.81
+  ],
+  "joint_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7"
+  ],
+  "latency_budget_s": 0.008333333333333333,
+  "max_steps": 6200,
+  "motion_amplitude_rad": 0.12,
+  "motion_joint": "fr3_joint1",
+  "motion_start_step": 240,
+  "motion_steps": 960,
+  "motion_stop_step": 720,
+  "observer_inputs": "Per step current and prior q,dq, full M/c/g and measured projected effort only; no load, pair, oracle, future samples or test-specific fitting. Differencing is backward and unfiltered.",
+  "phase_gate": {
+    "force_only_offline_oracle": "Applied load oracle is separate from estimation. Static source sign and action/reaction are established independently from R1 first-axis signs and known +/- loading; motion actuator interpretation is never inferred solely from fitting signs.",
+    "static_before_unloaded_motion": "All source shapes/order/units and state timestamps valid, link FK within configured gates, all static final-60-frame zero and +/- load torque, wrench, rank and near-rest gates pass without bias and without post-hoc sign adjustment; retain all failures.",
+    "unloaded_motion_before_loaded_motion": "Static gate must pass; independently source-validate measured projected effort as actuator-like dynamically (including joint friction/limits/drive, temporal averaging and current-state lag) and record evidence; all motion-zero per-step torque residual infinity norms <= 0.1 N m including onset and stop using causal backward difference for all 9 velocities, plus all FK/rank/timestamp gates and declared latency budget. If semantics are not independently established, source gate cannot pass even if residual happens to be low."
+  },
+  "physics_dt_s": 0.008333333333333333,
+  "schema": "task28.p2_4.online_observer.preregistration.v1",
+  "stage_sequence": [
+    "static",
+    "motion_zero_after_static_gate",
+    "motion_plus_only_after_independent_dynamic_source_gate"
+  ],
+  "static_evaluation_start_step": 540,
+  "static_steps": 600,
+  "status": "FROZEN_BEFORE_FORMAL_PHYSICS_COLLECTION",
+  "thresholds": {
+    "max_force_error_n": 0.3,
+    "max_joint_torque_error_nm": 0.1,
+    "max_link7_fk_position_difference_m": 0.0001,
+    "max_link7_fk_rotation_difference_rad": 0.0001,
+    "max_moment_error_nm": 0.08,
+    "max_static_joint_velocity_rad_s": 0.01,
+    "minimum_jacobian_singular_value": 0.05
+  },
+  "timing_semantics": "Apply force and drive, advance one physics step, then query q,dq,M,c,g (current state) and measured projected effort (average over preceding integration interval, potentially includes limits, friction and drive). Their unequal temporal support is recorded and is not assumed synchronized; dynamic source validation is mandatory.",
+  "units": "First seven coordinates/velocities rad, rad/s, generalized forces N m; last two m, m/s, N; mass matrix mixed generalized force per generalized acceleration.",
+  "wall_timeout_s": 600
+}

@@ -1,0 +1,133 @@
+{
+  "scope": "Read-only review of installed Isaac Sim 4.5.0 Python source and archived G3-P2-2-R1 evidence; no current G3-P2-4 SimulationApp or physics run.",
+  "starting_git_head": "39a506b6ccd4ee0a498b9f1192b2ee9ba92517e8",
+  "result": "STATIC_SOURCE_PREFLIGHT_ONLY_RUNTIME_VALIDITY_NOT_ESTABLISHED",
+  "sources": [
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a",
+      "lines": {
+        "dof_names": 297,
+        "measured_effort": 1279,
+        "joint_position": 1460,
+        "joint_velocity": 1532,
+        "mass_matrix_shape": 3817,
+        "mass_matrices": 3901,
+        "coriolis_compensation": 3952,
+        "gravity_compensation": 4029
+      }
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_articulation.py",
+      "sha256": "e7e3fc2909dfa9c9ff82ecf67983b2ead0594a99e201492c7201dac40bf4091e",
+      "lines": {
+        "dof_names": 268,
+        "get_measured_joint_efforts": 598,
+        "get_applied_joint_efforts": 633
+      }
+    },
+    {
+      "path": "offline/task28_p2_2_r1/evidence/sign_console.log",
+      "sha256": "591786c37e60cbc5937c188665bf9cf9d1f9676be60ca550713be9d85a0a4dd5",
+      "lines": {
+        "warning_hand_tcp": 421,
+        "warning_link8": 422
+      }
+    },
+    {
+      "path": "offline/task28_p2_2_r1/evidence/sign_raw/collector_status.json",
+      "sha256": "1049e7c61c19075cf30a6993ef9e1b2b08cfa3c9560eadedc19860e7c404d244",
+      "lines": {
+        "historical_dof_names": 36
+      }
+    },
+    {
+      "path": "offline/task28_p2_2_r1/evidence/six_raw/collector_status.json",
+      "sha256": "c336fa8c23e537470aefb97e68b211330f49b3fde1ea470cc2d57eb11161fa3c"
+    }
+  ],
+  "external_primary_references": [
+    {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.1.1/docs/Articulations.html",
+      "relevance": "Gravity, Coriolis and inertia inverse dynamics semantics, implicit drives and solver force contributions; this public SDK documentation is not proof of the exact bundled library version."
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.3.0/docs/Articulations.html",
+      "relevance": "Incoming joint force is a step-average; projected components and unmodelled damping, friction, constraints and armature need careful interpretation; different SDK version, not proof of exact bundled implementation."
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/extensions/runtime/source/omni.physics.tensors/docs/api/python.html",
+      "relevance": "Projected joint force definition; different extension version, installed wrapper source takes precedence."
+    }
+  ],
+  "documented_api": {
+    "position_and_velocity": "Articulation view get_joint_positions/get_joint_velocities: (M,K), name or index selections. Actual current run timestamps, ordering, finite outputs and units remain runtime checks.",
+    "mass_matrix": "Articulation view get_mass_matrices -> get_generalized_mass_matrices. For fixed base shape (M,num_dof,num_dof); for floating base includes six base DOF. Expected 9x9 based on historical FR3, not a new runtime observation.",
+    "gravity": "get_generalized_gravity_forces returns gravity-compensating joint forces, via get_gravity_compensation_forces. Thus it corresponds to +g in conventional M qdd + c + g.",
+    "coriolis": "get_coriolis_and_centrifugal_forces returns Coriolis/centrifugal compensating forces via get_coriolis_and_centrifugal_compensation_forces, corresponding to +c in the conventional equation.",
+    "measured_effort": "get_measured_joint_efforts calls get_dof_projected_joint_forces; solver joint-force projection in DOF direction, not documented as an unconditionally clean actuator-only measurement. Moving-state sign and alignment must be checked; R1 static sign cannot be assumed for motion.",
+    "applied_effort": "get_applied_joint_efforts returns explicitly set joint efforts, not necessarily implicit position-drive output.",
+    "acceleration": "No joint-acceleration getter found in the inspected articulation.py wrapper. A causal measured-velocity derivative is a possible estimate, requiring known sample time, explicit age, initialization, and sensitivity analysis; it is not a direct acceleration measurement.",
+    "view_access": "The inspected single articulation wrapper does not expose the matrix, gravity and Coriolis methods as single methods; use the articulation view with initialized valid physics handle and validate output."
+  },
+  "historical_dof_evidence": {
+    "scope": "G3-P2-2-R1 archived sign run only, not a G3-P2-4 runtime measurement",
+    "joint_names": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ],
+    "arm_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "expected_shape_if_same_fixed_base": {
+      "joint_vector": [
+        1,
+        9
+      ],
+      "mass_matrix": [
+        1,
+        9,
+        9
+      ]
+    },
+    "finger_coupling": "For arm components of M qdd, retain all 9 columns and measured accelerations, or establish and validate stationary fingers before dropping cross-coupling.",
+    "runtime_confirmation_for_this_task": "UNKNOWN"
+  },
+  "inertia_warning": {
+    "historical_bodies": [
+      "/World/ProbeFR3/fr3_hand_tcp",
+      "/World/ProbeFR3/fr3_link8"
+    ],
+    "source": "G3-P2-2-R1 sign_console.log lines 421-422; negative mass/possibly invalid inertia and small-sphere approximation reported by PhysX",
+    "interpretation": "Inertia approximation can affect mass-matrix and dynamic residual accuracy and prevents claiming calibrated real-FR3 dynamics. Consistency with the same PhysX backend can still be investigated; actual model validity is not established.",
+    "frozen_asset_modified": false
+  },
+  "safety_flags": {
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "wrist_ft_sensor_required": false,
+    "dual_arm_force_control_implemented": false,
+    "production_bridge_modified": false,
+    "isaac_run_during_this_preflight": false
+  },
+  "unresolved": [
+    "Actual runtime shape, values, timestamps and ordering",
+    "Whether measured projected solver effort supports actuator-like interpretation during the planned motion",
+    "Frequency and quality of causal acceleration estimate",
+    "Gravity, Coriolis and mass-matrix residuals and unmodelled friction/damping",
+    "Effect of PhysX inertia approximations and timing alignment"
+  ]
+}

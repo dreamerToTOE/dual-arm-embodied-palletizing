@@ -1,0 +1,46 @@
+{
+  "boundaries": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "cases": {
+    "motion_zero": {
+      "evaluation_rows": 959,
+      "evaluation_start_step": 1,
+      "full_sample_count": 960,
+      "max_abs_joint_torque_error_nm": 0.009108052289962143,
+      "max_arm_velocity_rad_s": 0.04523082077503204,
+      "max_force_error_n": 0.011338843580967508,
+      "max_jacobian_residual_nm": 0.002996161051805997,
+      "max_moment_error_nm": 0.007064237604636517,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.2159689643670879,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 959,
+        "WARMUP": 1
+      },
+      "pass": false,
+      "rejection_reasons": [
+        "INDEPENDENT_DYNAMIC_SOURCE_SEMANTICS_NOT_VALIDATED"
+      ]
+    }
+  },
+  "gate_pass": false,
+  "interpretation": "Source-gated candidate estimates only; online physical, dynamic and bilateral control claims are not implied.",
+  "preflight_sha256": "451b026c043ab2fcfed661c0f713bbed447cfd14547c9c7f9d1e5621c0278f26",
+  "preregistration_sha256": "17df28596f336bb00909decb640d1d8b2f713a5ad1d47649e005a4c1c88e0e82",
+  "schema": "task28.p2_4.evaluation_summary.v1",
+  "source_prerequisites": {
+    "arm_indices_match": true,
+    "collection_complete": true,
+    "dof_names_match": true,
+    "gains_finite_nonnegative_and_shape_9": true,
+    "physics_dt_match": true
+  },
+  "stage": "motion_zero",
+  "status": "GATE_REJECTED_OR_INCONCLUSIVE"
+}
