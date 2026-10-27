@@ -1,0 +1,445 @@
+{
+  "schema": "task28.g3_p2_3.preregistration.v1",
+  "status": "FROZEN_BEFORE_FORMAL_ISAAC_RUN",
+  "scope": "VIRTUAL_CONTACT_STATIC; no Cube, grasp constraint, production bridge, ROS or physical robot",
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "source_state": "offline/task28_g1_1/tests/control_states.json#states[lifted_symmetric]",
+  "state": {
+    "label": "lifted_symmetric",
+    "object_position_m": [
+      0.65,
+      0,
+      0.4
+    ],
+    "object_yaw_rad": 0,
+    "left_q": [
+      0.557603796757615,
+      -0.8373343370059545,
+      0.8055893994340318,
+      -2.4377445222332517,
+      0.5756862779482265,
+      1.749089169682287,
+      1.0517412724712967
+    ],
+    "right_q": [
+      -0.40297088307662937,
+      -0.9687784449078064,
+      -0.8855669904966926,
+      -2.420668666202972,
+      -0.694839561861571,
+      1.6520010279977793,
+      -0.9413810544011763
+    ]
+  },
+  "base_world_m": {
+    "left": [
+      0.65,
+      -0.6,
+      0
+    ],
+    "right": [
+      0.65,
+      0.6,
+      0
+    ]
+  },
+  "base_world_orientation_wxyz": [
+    1,
+    0,
+    0,
+    0
+  ],
+  "joint_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7"
+  ],
+  "cases": [
+    {
+      "id": "zero",
+      "left": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "both unloaded control"
+    },
+    {
+      "id": "left_positive_fx",
+      "left": {
+        "force_world_n": [
+          1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "left sign and single-channel control"
+    },
+    {
+      "id": "left_negative_fx",
+      "left": {
+        "force_world_n": [
+          -1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "left independent opposite sign control"
+    },
+    {
+      "id": "right_positive_fx",
+      "left": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "right first-joint independent positive sign control"
+    },
+    {
+      "id": "right_negative_fx",
+      "left": {
+        "force_world_n": [
+          0,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          -1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "right first-joint independent negative sign control"
+    },
+    {
+      "id": "opposing_contact_line",
+      "left": {
+        "force_world_n": [
+          0,
+          -1,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          0,
+          1,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "virtual internal load along contact line"
+    },
+    {
+      "id": "same_direction",
+      "left": {
+        "force_world_n": [
+          0,
+          0,
+          1
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          0,
+          0,
+          1
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "nonzero net cube force"
+    },
+    {
+      "id": "opposing_offset_forces",
+      "left": {
+        "force_world_n": [
+          1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          -1,
+          0,
+          0
+        ],
+        "pure_torque_world_nm": [
+          0,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "opposing x forces at different nominal +/-y contact origins create object-center moment"
+    },
+    {
+      "id": "asymmetric",
+      "left": {
+        "force_world_n": [
+          0.6,
+          0.8,
+          -0.3
+        ],
+        "pure_torque_world_nm": [
+          0.05,
+          0,
+          0
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "right": {
+        "force_world_n": [
+          -0.3,
+          0.2,
+          0.5
+        ],
+        "pure_torque_world_nm": [
+          0,
+          -0.04,
+          0.02
+        ],
+        "offset_from_tcp_world_m": [
+          0,
+          0,
+          0
+        ]
+      },
+      "purpose": "asymmetric bilateral load with nonzero couples"
+    }
+  ],
+  "physics_dt_s": 0.008333333333333333,
+  "gravity_m_s2": [
+    0,
+    0,
+    -9.81
+  ],
+  "settle_steps_each_condition": 600,
+  "precheck_steps": 1,
+  "observation_window_steps": 60,
+  "max_steps": 11000,
+  "wall_timeout_s": 600,
+  "thresholds": {
+    "max_link7_fk_position_difference_m": 0.0001,
+    "max_link7_fk_rotation_difference_rad": 0.0001,
+    "max_abs_velocity_rad_s": 0.01,
+    "max_pair_mean_q_difference_rad": 0.002,
+    "max_window_q_range_rad": 0.002,
+    "max_window_effort_std_nm": 0.05,
+    "max_abs_torque_error_nm": 0.1,
+    "max_force_error_n": 0.3,
+    "max_moment_error_nm": 0.08,
+    "zero_delta_tau_inf_nm": 0.05,
+    "minimum_jacobian_singular_value": 0.05,
+    "sign_joint1_residual_nm": 0.1,
+    "max_object_wrench_force_error_n": 0.6,
+    "max_object_wrench_moment_error_nm": 0.25,
+    "null_space_residual": 1e-10
+  },
+  "threshold_provenance": "single-arm thresholds are unchanged R1 preregistered experimental gates; bilateral force gate is sum of both component force gates, bilateral moment gate includes both moment gates and moment-arm contribution; numerical null-space tolerance is algebraic, not a physical tolerance",
+  "sampling": "one shared simulation scene; simultaneous left/right sample pair on each step; paired unloaded versus loaded trials use separate whole-world resets and are not physically synchronous; force applied before every step; no estimator receives applied loads",
+  "stop_criteria": "wrong USD hash, DOF identities, base placement or live per-arm FK, invalid gains, malformed observations, timestep/gravity mismatch, elapsed/step budget => stop and preserve partial data; retain all failed case evaluation results",
+  "oracle_semantics": "all loads are known external wrenches ON simulated robots at virtual TCP; TCP contact local action-reaction maps to hypothetical Cube only; load values are held separately from estimator input",
+  "control": "USD native position drives; exactly same initial q, zero velocity and joint targets after each reset, unchanged gains, no D6 or physical Cube",
+  "flags": {
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "wrist_ft_sensor_required": false,
+    "dual_arm_force_control_implemented": false,
+    "production_bridge_modified": false
+  }
+}

@@ -1,0 +1,675 @@
+{
+  "cases": [
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "zero",
+      "input_sha256": {
+        "loaded": "122141caa56a451bb31c89012652ae431ebfa3aed2e066e4d0cf9de707a36790",
+        "unloaded": "b6d3b4665873b3b847cd76a9e996b9171751c5541aa85c1c20b4699303d55f44"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0008185978338236508,
+          "translation_m": 0.0004413093464534519
+        },
+        "right": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0006312000389675183,
+          "translation_m": 0.0003333260783885495
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          1143,
+          1202
+        ],
+        "unloaded": [
+          542,
+          601
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "left_positive_fx",
+      "input_sha256": {
+        "loaded": "bbaf5b370ff262b442bdf94eff33040b5201079b96643a27bebac25fa9109adf",
+        "unloaded": "fd0d2eeabfda7cd1ba0aa7232125f30c82d4e088f2088d1722f3e2ff45be9680"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 4.923874155018949e-07,
+          "max_translation_m": 3.9420186928865345e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 3.6835670471191406e-05,
+          "rotation_rad": 0.0008133055090313593,
+          "translation_m": 0.0004357949548219165
+        },
+        "right": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0006312000389675183,
+          "translation_m": 0.0003333260783885495
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          2345,
+          2404
+        ],
+        "unloaded": [
+          1744,
+          1803
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "left_negative_fx",
+      "input_sha256": {
+        "loaded": "16820bc98d364a258a39fa9dab695dc7b254397df1dea5b2aa315a95dd1c3bac",
+        "unloaded": "77cf1a4ad942bb773a3775355bc95bf987391391b7cfd89b8a93174970b0cc33"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 7.777522099202483e-07,
+          "max_translation_m": 1.6793796413978194e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 3.2007694244384766e-05,
+          "rotation_rad": 0.0007841733462078167,
+          "translation_m": 0.0004271023976148636
+        },
+        "right": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0006312000389675183,
+          "translation_m": 0.0003333260783885495
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          3547,
+          3606
+        ],
+        "unloaded": [
+          2946,
+          3005
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "right_positive_fx",
+      "input_sha256": {
+        "loaded": "2314044d1feb9e2d5d32d39710373087b92db2bd06cc04085888b5ae4c30729d",
+        "unloaded": "88cbe9cd67160f31e2728dfbd87c3bf2ccff7d4fa49750919b977499b9028b2a"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 9.000038267180297e-07,
+          "max_translation_m": 4.593669554345775e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0008185978338236508,
+          "translation_m": 0.0004413093464534519
+        },
+        "right": {
+          "pair_q_inf_rad": 3.203749656677246e-05,
+          "rotation_rad": 0.0006289016004291873,
+          "translation_m": 0.00032805104986921146
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          4749,
+          4808
+        ],
+        "unloaded": [
+          4148,
+          4207
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "right_negative_fx",
+      "input_sha256": {
+        "loaded": "c4a08cad8c0b7837e25a207dcdb2ab8fc323ea7c6377ee4b198a6bf03680c5ac",
+        "unloaded": "4e7e528eb31253c3d4c567923f9f7ab7135ad943cb163d3ca29e14074bc30bf4"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 4.1827611141554217e-07,
+          "max_translation_m": 1.7493414866101208e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 0.0,
+          "rotation_rad": 0.0008185978338236508,
+          "translation_m": 0.0004413093464534519
+        },
+        "right": {
+          "pair_q_inf_rad": 3.30507755279541e-05,
+          "rotation_rad": 0.0006432366977628845,
+          "translation_m": 0.0003377982512492466
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          5951,
+          6010
+        ],
+        "unloaded": [
+          5350,
+          5409
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "opposing_contact_line",
+      "input_sha256": {
+        "loaded": "09ff6a9fb6b9c825f365279fc916de94e1f0ffcdf1f255ecbaebe91ca5f0b0b7",
+        "unloaded": "e25a14a828c3da05bdffc2eb04d4ae453e588a44f84bb4fb21c58ea831a6b0f1"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 5.592630171163968e-07,
+          "max_translation_m": 4.3794494637469255e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 5.639970666016199e-07,
+          "max_translation_m": 3.9037238544372545e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 2.6702880859375e-05,
+          "rotation_rad": 0.0008410649320141367,
+          "translation_m": 0.0004556548004276389
+        },
+        "right": {
+          "pair_q_inf_rad": 2.9802322387695312e-05,
+          "rotation_rad": 0.0006523421372076276,
+          "translation_m": 0.00034856903217372876
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          7153,
+          7212
+        ],
+        "unloaded": [
+          6552,
+          6611
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "same_direction",
+      "input_sha256": {
+        "loaded": "1e1c46007db42c9e57bd050c2599f5c0998df2ad413eebcf1717aed0e9d8eb2a",
+        "unloaded": "629e819b717ee1c56c262f934289337377f895e05ad128a421444330adc2e560"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 7.429904313454692e-07,
+          "max_translation_m": 3.151673338021688e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 9.124193532184315e-07,
+          "max_translation_m": 4.967118865561212e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 5.054473876953125e-05,
+          "rotation_rad": 0.0007708681829455814,
+          "translation_m": 0.0004122973603461505
+        },
+        "right": {
+          "pair_q_inf_rad": 4.673004150390625e-05,
+          "rotation_rad": 0.0005987696919288128,
+          "translation_m": 0.0003099763613044593
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          8355,
+          8414
+        ],
+        "unloaded": [
+          7754,
+          7813
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "opposing_offset_forces",
+      "input_sha256": {
+        "loaded": "e741c8a78c222612a2cb05dcba847b3ebd1be7634445c8097007ebe6191cd999",
+        "unloaded": "7d024ddddd5d02b4c48e8da73d959dff4ad1ad217a9e057d3ac239032a007f54"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 4.923874155018949e-07,
+          "max_translation_m": 3.9420186928865345e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 4.1827611141554217e-07,
+          "max_translation_m": 1.7493414866101208e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 3.6835670471191406e-05,
+          "rotation_rad": 0.0008133055090313593,
+          "translation_m": 0.0004357949548219165
+        },
+        "right": {
+          "pair_q_inf_rad": 3.30507755279541e-05,
+          "rotation_rad": 0.0006432366977628845,
+          "translation_m": 0.0003377982512492466
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          9557,
+          9616
+        ],
+        "unloaded": [
+          8956,
+          9015
+        ]
+      }
+    },
+    {
+      "failures": [
+        "ValueError:FROZEN_GRASP_MISMATCH:left"
+      ],
+      "id": "asymmetric",
+      "input_sha256": {
+        "loaded": "330f96a46a7736557b6714aff1ab4a599ebdcf1d887df75064c966a29817bb34",
+        "unloaded": "3da77bd6e8f5527f793e0cbd563a33e23abbfb3db3de00ba7cc4a1c4b5ef2700"
+      },
+      "live_fk": {
+        "left_loaded": {
+          "max_rotation_rad": 6.193535179025083e-07,
+          "max_translation_m": 2.99905557637814e-07
+        },
+        "left_unloaded": {
+          "max_rotation_rad": 5.650459641079028e-07,
+          "max_translation_m": 2.978733979816093e-07
+        },
+        "right_loaded": {
+          "max_rotation_rad": 4.6086299683956887e-07,
+          "max_translation_m": 2.8934968566220586e-07
+        },
+        "right_unloaded": {
+          "max_rotation_rad": 6.798365183886405e-07,
+          "max_translation_m": 2.8875406337330225e-07
+        }
+      },
+      "pre_gate_grasp_residuals": {
+        "left": {
+          "pair_q_inf_rad": 4.100799560546875e-05,
+          "rotation_rad": 0.0007894828425371827,
+          "translation_m": 0.00041999283638993555
+        },
+        "right": {
+          "pair_q_inf_rad": 2.3126602172851562e-05,
+          "rotation_rad": 0.0006088644578833178,
+          "translation_m": 0.0003203729937290453
+        }
+      },
+      "status": "REJECTED",
+      "window_global_step_ranges": {
+        "loaded": [
+          10759,
+          10818
+        ],
+        "unloaded": [
+          10158,
+          10217
+        ]
+      }
+    }
+  ],
+  "collector_status_sha256": "b82ed33c73511e082739c89b8c6784d36d51189a28188ff3a359e3c1e042f4ac",
+  "config_sha256": "255989c31bd86074291290ede4ffe008fd98e05113e6ea3abb87ec0c4cfaf689",
+  "evaluator_sha256": "b5a16bf84672bf7f8afbe652c41ea6bfe17e3c66bc4249e1ec2938a61439b299",
+  "execution_authorized": false,
+  "flags": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "global_failures": [],
+  "physical_contact_measured": false,
+  "schema": "task28.g3_p2_3.evaluation.v1",
+  "scope": "VIRTUAL_CONTACT_STATIC",
+  "sign_control": {
+    "cases": [
+      {
+        "alternative_sign_residual_nm": 1.0778099979801221,
+        "axis_origin_world_m": [
+          0.65,
+          -0.6,
+          0.0
+        ],
+        "axis_world": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "case_id": "left_positive_fx",
+        "delta_effort_joint1_nm": 0.5388699014981587,
+        "delta_q1_rad": -3.6835670471191406e-05,
+        "equilibrium_residual_nm": 7.019498380467226e-05,
+        "failures": [],
+        "global_step_ranges": {
+          "loaded": [
+            2345,
+            2404
+          ],
+          "unloaded": [
+            1744,
+            1803
+          ]
+        },
+        "input_sha256": {
+          "loaded": "bbaf5b370ff262b442bdf94eff33040b5201079b96643a27bebac25fa9109adf",
+          "unloaded": "fd0d2eeabfda7cd1ba0aa7232125f30c82d4e088f2088d1722f3e2ff45be9680"
+        },
+        "moment_on_robot_joint1_nm": -0.5389400964819634,
+        "observation_times_s": {
+          "loaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ],
+          "unloaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ]
+        },
+        "side": "left",
+        "status": "PASS"
+      },
+      {
+        "alternative_sign_residual_nm": 1.077832737686382,
+        "axis_origin_world_m": [
+          0.65,
+          -0.6,
+          0.0
+        ],
+        "axis_world": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "case_id": "left_negative_fx",
+        "delta_effort_joint1_nm": -0.5388823906580608,
+        "delta_q1_rad": 3.2007694244384766e-05,
+        "equilibrium_residual_nm": 6.79563702605801e-05,
+        "failures": [],
+        "global_step_ranges": {
+          "loaded": [
+            3547,
+            3606
+          ],
+          "unloaded": [
+            2946,
+            3005
+          ]
+        },
+        "input_sha256": {
+          "loaded": "16820bc98d364a258a39fa9dab695dc7b254397df1dea5b2aa315a95dd1c3bac",
+          "unloaded": "77cf1a4ad942bb773a3775355bc95bf987391391b7cfd89b8a93174970b0cc33"
+        },
+        "moment_on_robot_joint1_nm": 0.5389503470283213,
+        "observation_times_s": {
+          "loaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ],
+          "unloaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ]
+        },
+        "side": "left",
+        "status": "PASS"
+      },
+      {
+        "alternative_sign_residual_nm": 1.0778261528650428,
+        "axis_origin_world_m": [
+          0.65,
+          0.6,
+          0.0
+        ],
+        "axis_world": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "case_id": "right_positive_fx",
+        "delta_effort_joint1_nm": -0.5388851920763651,
+        "delta_q1_rad": 3.203749656677246e-05,
+        "equilibrium_residual_nm": 5.576871231249836e-05,
+        "failures": [],
+        "global_step_ranges": {
+          "loaded": [
+            4749,
+            4808
+          ],
+          "unloaded": [
+            4148,
+            4207
+          ]
+        },
+        "input_sha256": {
+          "loaded": "2314044d1feb9e2d5d32d39710373087b92db2bd06cc04085888b5ae4c30729d",
+          "unloaded": "88cbe9cd67160f31e2728dfbd87c3bf2ccff7d4fa49750919b977499b9028b2a"
+        },
+        "moment_on_robot_joint1_nm": 0.5389409607886776,
+        "observation_times_s": {
+          "loaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ],
+          "unloaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ]
+        },
+        "side": "right",
+        "status": "PASS"
+      },
+      {
+        "alternative_sign_residual_nm": 1.077816788172716,
+        "axis_origin_world_m": [
+          0.65,
+          0.6,
+          0.0
+        ],
+        "axis_world": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "case_id": "right_negative_fx",
+        "delta_effort_joint1_nm": 0.5388753831386566,
+        "delta_q1_rad": -3.30507755279541e-05,
+        "equilibrium_residual_nm": 6.602189540294567e-05,
+        "failures": [],
+        "global_step_ranges": {
+          "loaded": [
+            5951,
+            6010
+          ],
+          "unloaded": [
+            5350,
+            5409
+          ]
+        },
+        "input_sha256": {
+          "loaded": "c4a08cad8c0b7837e25a207dcdb2ab8fc323ea7c6377ee4b198a6bf03680c5ac",
+          "unloaded": "4e7e528eb31253c3d4c567923f9f7ab7135ad943cb163d3ca29e14074bc30bf4"
+        },
+        "moment_on_robot_joint1_nm": -0.5389414050340595,
+        "observation_times_s": {
+          "loaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ],
+          "unloaded": [
+            4.533333569765091,
+            5.0250002620741725
+          ]
+        },
+        "side": "right",
+        "status": "PASS"
+      }
+    ],
+    "collector_sha256": "c4649cd0295c7a6bbe10885aa01676e567fcdfeed24a546b378af2b2da905423",
+    "collector_status_sha256": "b82ed33c73511e082739c89b8c6784d36d51189a28188ff3a359e3c1e042f4ac",
+    "config_sha256": "255989c31bd86074291290ede4ffe008fd98e05113e6ea3abb87ec0c4cfaf689",
+    "execution_authorized": false,
+    "failures": [],
+    "method": "direct +Z joint1 axis moment, no Jacobian or wrench estimator",
+    "schema": "task28.g3_p2_3.sign_control.v1",
+    "scope": "ISAAC_STATIC_VIRTUAL_ONLY",
+    "status": "SIGN_CONTROL_PASS"
+  },
+  "sign_control_sha256": "71d01b7c73a3e74896315f91839c488765a3d652b9d2e39d7cb10b77e86c851c",
+  "source_kind": "ISAAC_TWO_ARTICULATIONS_STANDALONE",
+  "status": "PARTIAL",
+  "unloaded_loaded_physically_synchronous": false
+}

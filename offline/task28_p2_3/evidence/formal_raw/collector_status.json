@@ -1,0 +1,263 @@
+{
+  "actual_physics_steps": 10818,
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "collector_sha256": "c4649cd0295c7a6bbe10885aa01676e567fcdfeed24a546b378af2b2da905423",
+  "command": [
+    "offline/task28_p2_3/collector.py",
+    "--asset",
+    "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+    "--output",
+    "/tmp/task28_p2_3_formal/raw"
+  ],
+  "completed_condition_files": [
+    "zero_unloaded.json",
+    "zero_loaded.json",
+    "left_positive_fx_unloaded.json",
+    "left_positive_fx_loaded.json",
+    "left_negative_fx_unloaded.json",
+    "left_negative_fx_loaded.json",
+    "right_positive_fx_unloaded.json",
+    "right_positive_fx_loaded.json",
+    "right_negative_fx_unloaded.json",
+    "right_negative_fx_loaded.json",
+    "opposing_contact_line_unloaded.json",
+    "opposing_contact_line_loaded.json",
+    "same_direction_unloaded.json",
+    "same_direction_loaded.json",
+    "opposing_offset_forces_unloaded.json",
+    "opposing_offset_forces_loaded.json",
+    "asymmetric_unloaded.json",
+    "asymmetric_loaded.json"
+  ],
+  "config_sha256": "255989c31bd86074291290ede4ffe008fd98e05113e6ea3abb87ec0c4cfaf689",
+  "elapsed_wall_s": 93.92091598400293,
+  "flags": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "g1_source_state_sha256": "f51c4e6d0aff6a774f0212b3532bc7583c877bd71e5fc588eef27c45c104ccf8",
+  "runtime": {
+    "arms": {
+      "left": {
+        "all_dof_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7",
+          "fr3_finger_joint1",
+          "fr3_finger_joint2"
+        ],
+        "articulation_path": "/World/Probe_left",
+        "asset_physx_articulation_properties": {
+          "GetEnabledSelfCollisionsAttr": false,
+          "GetSleepThresholdAttr": 4.999999873689376e-05,
+          "GetSolverPositionIterationCountAttr": 32,
+          "GetSolverVelocityIterationCountAttr": 16,
+          "GetStabilizationThresholdAttr": 9.999999747378752e-06
+        },
+        "base_world_orientation_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "base_world_position_m": [
+          0.6499999761581421,
+          -0.6000000238418579,
+          -2.2351741790771484e-08
+        ],
+        "dof_damping": [
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          6000.0,
+          0.0
+        ],
+        "dof_stiffness": [
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          60000.0,
+          0.0
+        ],
+        "link7_path": "/World/Probe_left/fr3_link7",
+        "link7_to_frozen_virtual_tcp": [
+          [
+            4.896588860146771e-12,
+            1.0,
+            -5.346018767013055e-26,
+            0.0
+          ],
+          [
+            -1.0000000000000002,
+            4.896588860146797e-12,
+            3.1410967100801683e-25,
+            -0.15499999999999997
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.18700000000000006
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "ordered_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "ordered_joint_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7"
+        ]
+      },
+      "right": {
+        "all_dof_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7",
+          "fr3_finger_joint1",
+          "fr3_finger_joint2"
+        ],
+        "articulation_path": "/World/Probe_right",
+        "asset_physx_articulation_properties": {
+          "GetEnabledSelfCollisionsAttr": false,
+          "GetSleepThresholdAttr": 4.999999873689376e-05,
+          "GetSolverPositionIterationCountAttr": 32,
+          "GetSolverVelocityIterationCountAttr": 16,
+          "GetStabilizationThresholdAttr": 9.999999747378752e-06
+        },
+        "base_world_orientation_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "base_world_position_m": [
+          0.6499999761581421,
+          0.6000000238418579,
+          -2.2351741790771484e-08
+        ],
+        "dof_damping": [
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          343774.6875,
+          6000.0,
+          0.0
+        ],
+        "dof_stiffness": [
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          3437746.75,
+          60000.0,
+          0.0
+        ],
+        "link7_path": "/World/Probe_right/fr3_link7",
+        "link7_to_frozen_virtual_tcp": [
+          [
+            4.89658886014672e-12,
+            -1.0,
+            0.0,
+            -1.1102230246251565e-16
+          ],
+          [
+            1.0,
+            4.896588860146793e-12,
+            0.0,
+            0.155
+          ],
+          [
+            0.0,
+            1.0339757656912846e-25,
+            1.0,
+            0.187
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "ordered_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "ordered_joint_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7"
+        ]
+      }
+    },
+    "force_application_api": "RigidPrim.apply_forces_and_torques_at_pos(is_global=True)",
+    "force_frame": "world",
+    "observation_source": "SingleArticulation.get_measured_joint_efforts",
+    "physics_dt_s": 0.008333333333333333,
+    "physics_gravity": [
+      [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      9.8100004196167
+    ],
+    "reference_point": "frozen nominal virtual TCP; applied to link7 without physical tool or Cube",
+    "simultaneity": "both arms same physics step per record; unloaded and loaded whole-world resets are separate",
+    "torque_frame": "world"
+  },
+  "scope": "VIRTUAL_CONTACT_STATIC",
+  "source_kind": "ISAAC_TWO_ARTICULATIONS_STANDALONE",
+  "status": "COLLECTION_COMPLETE_NOT_EVALUATED"
+}
