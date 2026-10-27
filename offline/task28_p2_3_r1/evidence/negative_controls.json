@@ -1,0 +1,114 @@
+{
+  "schema": "task28.g3_p2_3_r1.negative_controls.v1",
+  "source": "synthetic test cases and mutation of archived observation copies; not physical evidence",
+  "count": 25,
+  "exit_code": 0,
+  "tests": [
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_ideal_opposing_fx_is_a_couple_not_pure_internal",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_action_reaction_rejected_by_independent_force_oracle",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_moment_arm_caught_by_direct_reference_comparison",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_estimated_actual_tcp_direct_net_catches_omitted_arms",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_weighted_split_detected_even_if_reconstructs_and_is_null",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_observation_only_ignores_missing_oracles",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[identity-ARM_SOURCE_OR_JOINT_ORDER_MISMATCH]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[order-ARM_SOURCE_OR_JOINT_ORDER_MISMATCH]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[duplicate-STALE_DUPLICATE_OR_OUT_OF_ORDER_OBSERVATION]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_oracle_bad_point_rejected_only_after_estimation_input_parsed",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_nonclosing_synthetic_object_still_produces_virtual_mechanics",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[arm-ARM_IDENTITY_MISMATCH]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[frame-INVALID_CUBE_OR_GRASP_FRAME]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[order-JOINT_ORDER_MISMATCH]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[sign-UNSUPPORTED_OR_UNCALIBRATED_SIGN]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[stale-STALE_OBSERVATION]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[calibration-UNCALIBRATED_ARM_SOURCE]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[missing_hash-MISSING_INDEPENDENT_SIGN_CALIBRATION]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[async-ASYNCHRONOUS_BILATERAL_STEPS]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[missing_pose-MISSING_LIVE_TCP_PROVENANCE]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[wrong_live_pose-LIVE_FK_MISMATCH]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[real_contact-REAL_CONTACT_NOT_ESTABLISHED]",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_wrong_moment_arm_cannot_fake_the_correct_center_result",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_archived_reference_is_fixed_not_fitted_to_live_pose",
+      "outcome": "PASSED"
+    },
+    {
+      "test": "offline/task28_p2_3_r1/tests/test_replay.py::test_wrong_action_reaction_is_rejected_by_independent_center_oracle",
+      "outcome": "PASSED"
+    }
+  ],
+  "independent_examples": {
+    "opposite_force_moment_arm_omission_nm": 0.122,
+    "notes": "synthetic example uses fixed nominal +/- 0.061m arms; direct reference algebra gate 1e-10, not the wider 0.25 Nm oracle gate"
+  },
+  "log_sha256": "6cf20a307e13a622a3af5abd8ce4665ff9eeb92c3b75aea8768c97d6b31107df",
+  "execution_authorized": false
+}

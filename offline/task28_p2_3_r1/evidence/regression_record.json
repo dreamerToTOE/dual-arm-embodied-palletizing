@@ -1,0 +1,59 @@
+{
+  "schema": "task28.g3_p2_3_r1.regression.v1",
+  "baseline_head": "244f67e9655b7b43b0640be0b13ea5eaeb20c5c1",
+  "baseline_passed": 706,
+  "baseline_exit_code": 0,
+  "baseline_elapsed_s": 98.99,
+  "final_passed": 731,
+  "final_exit_code": 0,
+  "final_elapsed_s": 98.65,
+  "focused_passed": 25,
+  "focused_exit_code": 0,
+  "replay_verification": "fresh output byte-identical to virtual_replay.json; exit 0",
+  "argv": [
+    "python3",
+    "-m",
+    "pytest",
+    "offline/task28_g1_1/tests",
+    "offline/task28_g1_2a/tests",
+    "offline/task28_g1_2b_0/tests",
+    "offline/task28_g1_2b_1/tests",
+    "offline/task28_p4_nr_0/tests",
+    "offline/task28_p5_qp_0/tests",
+    "offline/task28_p5_qp_1/tests",
+    "offline/task28_p5_qp_2/tests",
+    "offline/task28_p5_qp_3/tests",
+    "offline/task28_p2_1/tests",
+    "offline/task28_p2_2/tests",
+    "offline/task28_p2_2_r1/tests",
+    "offline/task28_p2_3/tests",
+    "offline/task28_p2_3_r1/tests",
+    "-q",
+    "-s",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "PYTHONPATH": "offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests"
+  },
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "flags": {
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "wrist_ft_sensor_required": false,
+    "dual_arm_force_control_implemented": false,
+    "production_bridge_modified": false
+  },
+  "logs": {
+    "regression_baseline.log": "a1478e90f0f08d07b3e1d0b4c43796ec5cd493d38adc86baceaca733a1c3ab1c",
+    "regression_intermediate.log": "fe471b5e8608a0a5dddaeebf1d2bfaef8b1ce3fe06454b969f8a0135eae8e36c",
+    "regression_final.log": "8f678af48766b9f129131a654b6c40961b49be11e1157add3231a8f3f72c92cc",
+    "focused_verbose.log": "6cf20a307e13a622a3af5abd8ce4665ff9eeb92c3b75aea8768c97d6b31107df"
+  }
+}

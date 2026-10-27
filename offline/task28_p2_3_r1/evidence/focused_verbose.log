@@ -1,0 +1,32 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-6.2.5, py-1.10.0, pluggy-0.13.0 -- /usr/bin/python3
+rootdir: /home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2
+collecting ... collected 25 items
+
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_ideal_opposing_fx_is_a_couple_not_pure_internal PASSED [  4%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_action_reaction_rejected_by_independent_force_oracle PASSED [  8%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_moment_arm_caught_by_direct_reference_comparison PASSED [ 12%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_estimated_actual_tcp_direct_net_catches_omitted_arms PASSED [ 16%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_wrong_weighted_split_detected_even_if_reconstructs_and_is_null PASSED [ 20%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_observation_only_ignores_missing_oracles PASSED [ 24%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[identity-ARM_SOURCE_OR_JOINT_ORDER_MISMATCH] PASSED [ 28%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[order-ARM_SOURCE_OR_JOINT_ORDER_MISMATCH] PASSED [ 32%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_bad_archived_observation_rejected[duplicate-STALE_DUPLICATE_OR_OUT_OF_ORDER_OBSERVATION] PASSED [ 36%]
+offline/task28_p2_3_r1/tests/test_independent_oracle.py::test_oracle_bad_point_rejected_only_after_estimation_input_parsed PASSED [ 40%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_nonclosing_synthetic_object_still_produces_virtual_mechanics PASSED [ 44%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[arm-ARM_IDENTITY_MISMATCH] PASSED [ 48%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[frame-INVALID_CUBE_OR_GRASP_FRAME] PASSED [ 52%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[order-JOINT_ORDER_MISMATCH] PASSED [ 56%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[sign-UNSUPPORTED_OR_UNCALIBRATED_SIGN] PASSED [ 60%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[stale-STALE_OBSERVATION] PASSED [ 64%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[calibration-UNCALIBRATED_ARM_SOURCE] PASSED [ 68%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[missing_hash-MISSING_INDEPENDENT_SIGN_CALIBRATION] PASSED [ 72%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[async-ASYNCHRONOUS_BILATERAL_STEPS] PASSED [ 76%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[missing_pose-MISSING_LIVE_TCP_PROVENANCE] PASSED [ 80%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[wrong_live_pose-LIVE_FK_MISMATCH] PASSED [ 84%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_replay_rejects_bad_provenance_and_state[real_contact-REAL_CONTACT_NOT_ESTABLISHED] PASSED [ 88%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_wrong_moment_arm_cannot_fake_the_correct_center_result PASSED [ 92%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_archived_reference_is_fixed_not_fitted_to_live_pose PASSED [ 96%]
+offline/task28_p2_3_r1/tests/test_replay.py::test_wrong_action_reaction_is_rejected_by_independent_center_oracle PASSED [100%]
+
+============================== 25 passed in 0.91s ==============================
