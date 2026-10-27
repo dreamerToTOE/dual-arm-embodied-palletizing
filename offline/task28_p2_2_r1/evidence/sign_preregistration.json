@@ -1,0 +1,158 @@
+{
+  "arm": "left_fixture_kinematics_virtual_tcp_single_isolated_fr3",
+  "base_world_m": [
+    0.65,
+    -0.6,
+    0.0
+  ],
+  "configurations_rad": {
+    "home": [
+      0.0,
+      -0.7853981634,
+      0.0,
+      -2.3561944902,
+      0.0,
+      1.5707963268,
+      0.7853981634
+    ]
+  },
+  "control": "USD native position drives, with explicit per-joint position target; initial q and dq set only once per reset; gains, DOFs and solver settings recorded without changing USD or frozen config",
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "flags": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "gravity_m_s2": [
+    0,
+    0,
+    -9.81
+  ],
+  "independent_sign_control": {
+    "axis_origin_world_m": [
+      0.65,
+      -0.6,
+      0
+    ],
+    "expected": "joint1 loaded-unloaded position error and applied moment share sign; loaded-unloaded measured effort opposes moment for both polarities; direct-sign residual must exceed calibrated residual",
+    "independent_of": "G1 RobotModel Jacobian; no fitting from archived P2-2 measurements; original FK is used only to choose and record load application point",
+    "max_abs_velocity_rad_s": 0.01,
+    "max_q1_effort_plus_moment_error_nm": 0.02,
+    "min_abs_moment_nm": 0.05,
+    "moment_formula": "((p_world - axis_origin_world) cross force_on_robot_world) dot q1_axis_world",
+    "q1_axis_world": [
+      0,
+      0,
+      1
+    ]
+  },
+  "interpretation": "Known static force and q1 world axis form independent one-axis equilibrium control; run and analyze this config before six-axis experiment. No wrench estimator is used. Positive and negative load signs must both pass.",
+  "joint_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7"
+  ],
+  "loads": [
+    {
+      "force_world_n": [
+        1,
+        0,
+        0
+      ],
+      "id": "positive_fx",
+      "offset_from_virtual_tcp_world_m": [
+        0,
+        0,
+        0
+      ],
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "force_world_n": [
+        -1,
+        0,
+        0
+      ],
+      "id": "negative_fx",
+      "offset_from_virtual_tcp_world_m": [
+        0,
+        0,
+        0
+      ],
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "force_world_n": [
+        0,
+        1,
+        0
+      ],
+      "id": "positive_fy",
+      "offset_from_virtual_tcp_world_m": [
+        0,
+        0,
+        0
+      ],
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "force_world_n": [
+        0,
+        -1,
+        0
+      ],
+      "id": "negative_fy",
+      "offset_from_virtual_tcp_world_m": [
+        0,
+        0,
+        0
+      ],
+      "torque_world_nm": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "max_steps": 4800,
+  "moment_magnitude_rationale": "0.3 Nm independent pure couple is 3.75 times the unchanged 0.08 Nm absolute moment tolerance; it is an isolated simulation research choice, not a validated hardware limit. Posture, joint velocity and convergence remain independently gated; no claim of physical hardware safety.",
+  "observation_window_steps": 60,
+  "oracle_wrench": "Known external wrench acts ON link7: global force at virtual TCP and independent global pure couple; moment about TCP = torque + offset cross force. The applied load is an evaluation oracle, never an estimator input.",
+  "physics_dt_s": 0.008333333333333333,
+  "sampling": "one observation per physics step in final window; unloaded and loaded both reset to identical initial q/zero dq and target; load applied every physics step before world.step",
+  "schema": "task28.p2_2_r1.independent_q1_sign_control_preregistration.v1",
+  "settle_steps_each_condition": 600,
+  "status": "FROZEN_BEFORE_R1_PHYSICS_RUN",
+  "thresholds": {
+    "max_abs_torque_error_nm": 0.1,
+    "max_abs_velocity_rad_s": 0.01,
+    "max_force_error_n": 0.3,
+    "max_link7_fk_position_difference_m": 0.0001,
+    "max_link7_fk_rotation_difference_rad": 0.0001,
+    "max_moment_error_nm": 0.08,
+    "max_pair_mean_q_difference_rad": 0.002,
+    "max_window_effort_std_nm": 0.05,
+    "max_window_q_range_rad": 0.002,
+    "minimum_jacobian_singular_value": 0.05,
+    "zero_delta_tau_inf_nm": 0.05
+  },
+  "wall_timeout_s": 300
+}

@@ -1,0 +1,115 @@
+{
+  "cases": [
+    {
+      "delta_measured_effort_q1_nm": 0.10958064398188677,
+      "delta_q1_rad": -1.1535000165470895e-05,
+      "equilibrium_residual_nm": 4.938289979440624e-05,
+      "failures": [],
+      "input_sha256": {
+        "loaded": "6b63db1db3fd959767cf8dc4a36f71e7acc634afc4c179c09bfbf14173e2422b",
+        "unloaded": "3094bf80dec28a17a2a3a4b299af21a154b7a072604965091c92b5787fa9cad9"
+      },
+      "load_id": "positive_fx",
+      "moment_external_on_robot_q1_nm": -0.10963002688168118,
+      "observation_times_s": {
+        "loaded": [
+          4.52500023599714,
+          5.016666928306222
+        ],
+        "unloaded": [
+          4.52500023599714,
+          5.016666928306222
+        ]
+      },
+      "opposite_hypothesis_residual_nm": 0.21921067086356794,
+      "status": "PASS"
+    },
+    {
+      "delta_measured_effort_q1_nm": -0.10958575369398509,
+      "delta_q1_rad": 1.1536347013437383e-05,
+      "equilibrium_residual_nm": 4.9789116040699355e-05,
+      "failures": [],
+      "input_sha256": {
+        "loaded": "d04f8382b7c4e81cb2525099119caa8eaf0683b6a85492b454cc222358a49497",
+        "unloaded": "85b462674db4e19f78c84ab13096f888141a723cf6c7d4c578136f467dd223bc"
+      },
+      "load_id": "negative_fx",
+      "moment_external_on_robot_q1_nm": 0.10963554281002579,
+      "observation_times_s": {
+        "loaded": [
+          4.52500023599714,
+          5.016666928306222
+        ],
+        "unloaded": [
+          4.52500023599714,
+          5.016666928306222
+        ]
+      },
+      "opposite_hypothesis_residual_nm": 0.21922129650401087,
+      "status": "PASS"
+    },
+    {
+      "delta_measured_effort_q1_nm": -0.41651080647091776,
+      "delta_q1_rad": 4.2635298677851095e-05,
+      "equilibrium_residual_nm": 4.7113805398069086e-05,
+      "failures": [],
+      "input_sha256": {
+        "loaded": "3c76a96a913ac673b64359193b0bc6d5522a68dc8b999b812dcd7deed069460c",
+        "unloaded": "ab0ae9ac9e067705ddcdd94ba14f5e4bdb08c17946d362d734c72406affa1ed5"
+      },
+      "load_id": "positive_fy",
+      "moment_external_on_robot_q1_nm": 0.41655792027631583,
+      "observation_times_s": {
+        "loaded": [
+          4.52500023599714,
+          5.016666928306222
+        ],
+        "unloaded": [
+          4.52500023599714,
+          5.016666928306222
+        ]
+      },
+      "opposite_hypothesis_residual_nm": 0.8330687267472336,
+      "status": "PASS"
+    },
+    {
+      "delta_measured_effort_q1_nm": 0.4165194054545888,
+      "delta_q1_rad": -4.264556035498875e-05,
+      "equilibrium_residual_nm": 4.6740590592619924e-05,
+      "failures": [],
+      "input_sha256": {
+        "loaded": "30f9238960c28ceaa82419b066dbe23bc1f8b2b23accbb6d6b4f4978071c5932",
+        "unloaded": "28d2e69dd7b1e016a805f6265cf1c7d519a56efb71344b73c263738119aa2b7d"
+      },
+      "load_id": "negative_fy",
+      "moment_external_on_robot_q1_nm": -0.41656614604518144,
+      "observation_times_s": {
+        "loaded": [
+          4.52500023599714,
+          5.016666928306222
+        ],
+        "unloaded": [
+          4.52500023599714,
+          5.016666928306222
+        ]
+      },
+      "opposite_hypothesis_residual_nm": 0.8330855514997703,
+      "status": "PASS"
+    }
+  ],
+  "collector_status_sha256": "1049e7c61c19075cf30a6993ef9e1b2b08cfa3c9560eadedc19860e7c404d244",
+  "config_sha256": "9f27b78b1223cae4efcb0d8006a6587f826b872f3158fdf4f12882f10287dad7",
+  "flags": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "global_failures": [],
+  "method": "direct world +Z lever-arm moment about joint1; no Jacobian or wrench estimation",
+  "schema": "task28.p2_2_r1.sign_control.v1",
+  "script_sha256": "817a801595ba15d3dea7eb07820ffbf1e97eb600b2a33b2f005e091ce82acd18",
+  "source_kind": "ISAAC_SINGLE_ARTICULATION_STANDALONE",
+  "status": "SIGN_CONTROL_PASS"
+}
