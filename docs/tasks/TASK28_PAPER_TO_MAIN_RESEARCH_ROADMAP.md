@@ -100,3 +100,11 @@ G0-A 审计交付：[TASK28_G0A_INTERFACE_AUDIT.md](TASK28_G0A_INTERFACE_AUDIT.m
 - **停点**：NR-0、R1 与延期决定均已归档；G2-P5-QP-0 需单独交给 Codex 英文工单才真正启动。未授权 Isaac Sim、ROS、实体 FR3、吸附、P2/P3、PCS/RSS、SVM 或 RL 执行。
 
 关联证据：[Task24](TASK24_SIDE_SUCTION_TIGHT_OFFLINE.md) · [Task26](TASK26_TRUCK_BOX_PUSH_IN.md) · [Task27](TASK27_FIVE_CUBE_CENTER_INSERT.md)；论文复现结果不能代替本工程的物理验收。
+
+### 4.4 G3-P2-2 B-only 静态观测验证（2026-10-27）
+
+- Task28 采用 **B-only** 路线：未来 FR3 外力观测以七维关节力矩和模型外力估计为主，不新增腕部六轴 F/T 传感器。已知施加载荷只作事后验证 oracle，不得进入估计器。
+- `TASK28_G3_P2_2_B_ONLY_TORQUE_WRENCH_VALIDATION.md` 的结果为 `G3_P2_2_PARTIAL`：独立 CPU `J_TCP(q)^T w_ext` 估计器、输入契约、rank/残差诊断和 Isaac 单 FR3 API/DOF 记录已建立；2 构型 × 5 载荷 × loaded/unloaded 的隔离静态探针完成并保留原始记录。
+- 八个非零载荷的 solver effort 差分与预声明 wrench-on-robot 方向相反：相反号残差约 `1.15e-4–5.99e-4 N·m`，直接符号比较和估计力误差失败。不得在 estimator 中自动翻号；Isaac solver effort 与 FR3 `tau_J`/`tau_ext_hat_filtered` 的符号及 application-point 语义仍需独立校准。
+- 当前矩阵只实际激励 `Fx/Fy/Mz`；Jacobian 数值满秩不等于六维物理观测已验证。原始 FR3 资产还出现无效惯量/负质量警告。尚未实现动态 observer、双臂同步、有限吸附内力控制或生产执行。
+- 在上述符号、惯量、Fz/Mx/My 激励和在线模型补偿缺口解决前，G3-P2-2 不授予 ROS、Isaac 生产场景、机器人、吸盘或物理实验授权；G3-P2-3 及双臂内力控制保持未启动。

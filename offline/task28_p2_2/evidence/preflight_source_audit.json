@@ -1,0 +1,120 @@
+{
+  "schema": "task28_p2_2_preflight_source_audit_v1",
+  "method": "read-only file inspection and nvidia-smi; no Isaac run by this preflight",
+  "sources": {
+    "isaac_version": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/VERSION",
+      "sha256": "ae03a4157cfcbea2052862857e805daf1d4ab73c3ef5fa8bda59c90b84522f9d",
+      "size_bytes": 37
+    },
+    "isaac_single_articulation": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_articulation.py",
+      "sha256": "e7e3fc2909dfa9c9ff82ecf67983b2ead0594a99e201492c7201dac40bf4091e",
+      "size_bytes": 46676
+    },
+    "isaac_articulation_view": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a",
+      "size_bytes": 291642
+    },
+    "isaac_rigid_prim_view": {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py",
+      "sha256": "7ef84ae25326242c93514ac94f3085f06a131f4e267b44c92cd14e083755c8a3",
+      "size_bytes": 125459
+    },
+    "libfranka_robot_state": {
+      "path": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/src/libfranka/include/franka/robot_state.h",
+      "sha256": "1fe6786683c6c1813b5e585d872c48431243976a1f7f265c7e8c15c0ff503243",
+      "size_bytes": 13573
+    },
+    "frozen_fr3_usd": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+      "sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+      "size_bytes": 17462793
+    },
+    "frozen_fixture_manifest": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json",
+      "sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+      "size_bytes": 25754
+    },
+    "prior_usd_inspection": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/fixtures/task28_g1_0_new_single_cube_v0/assets/fr3_offline_asset_inspection.json",
+      "sha256": "9c0dc052cd7514368457aa0094c69dc8ed94e2568024b311bd6416e4bf836f82",
+      "size_bytes": 33307
+    },
+    "g3_p2_0_audit": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/docs/tasks/TASK28_G3_P2_0_OBSERVABILITY_AUDIT.md",
+      "sha256": "156806f864375ea01735bd61f93429653de5c252cdd21bd904f47e8a3dd6dfec",
+      "size_bytes": 14071
+    },
+    "g3_p2_1_report": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/docs/tasks/TASK28_G3_P2_1_GRASP_WRENCH_BASELINE.md",
+      "sha256": "37f217691e5c678c7a0ce26b1a3a1a11d032abbbfad0fbf71b6e68f7377a7466",
+      "size_bytes": 7906
+    },
+    "g0_a_audit": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/docs/tasks/TASK28_G0A_INTERFACE_AUDIT.md",
+      "sha256": "170b714636bdd4ff5e2039ca1b9dd8c333e2b7b410cb8c2f335b85ce46710b37",
+      "size_bytes": 71452
+    },
+    "p2_1_grasp": {
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/offline/task28_p2_1/grasp.py",
+      "sha256": "ff28a183c1f4844c48d522225bd7073d17bb752b645190ec495681d403639ad6",
+      "size_bytes": 10020
+    }
+  },
+  "isaac_version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+  "gpu_nvidia_smi": "NVIDIA GeForce RTX 3070, 580.178.04, 8192 MiB",
+  "libfranka_origin": "https://github.com/frankarobotics/libfranka.git",
+  "libfranka_checkout_commit": "95b406f47c97cedfbe426c04d8fb7f83a9885e1c",
+  "frozen_usd": {
+    "frozen_asset_identity": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Robots/Franka/FR3/fr3.usd",
+    "expected_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+    "matches_frozen_sha256": true,
+    "static_usd_inspection": "physics geometry embedded; no sublayers/references/payloads; external OmniPBR.mdl visual material identity remains UNKNOWN; see prior_usd_inspection; no claim of runtime PhysX equivalence"
+  },
+  "api_semantics": {
+    "get_measured_joint_efforts": {
+      "source_lines": "single_articulation.py:598-631; articulation.py:1279-1347",
+      "meaning": "solver-measured joint force projected along DOF motion; revolute DOF entries are torque, not a separately measured external torque",
+      "backend": "get_dof_projected_joint_forces",
+      "fallback_policy": "never substitute get_measured_joint_forces"
+    },
+    "get_measured_joint_forces": {
+      "source_lines": "single_articulation.py:667-726",
+      "meaning": "incoming reaction force and torque per link; shape (num_joints+1,6), row 0 base, rows for joint metadata index+1; first 3 force, last 3 torque; not the 7-DOF torque measurement"
+    },
+    "get_applied_joint_efforts": {
+      "source_lines": "single_articulation.py:633-665",
+      "meaning": "effort specified by set_joint_efforts; different from measured solver projected effort"
+    },
+    "apply_forces_and_torques_at_pos": {
+      "source_lines": "rigid_prim.py:935-1005",
+      "meaning": "applies force/torque and optional position in local or global coordinates; must determine actual application point and static simulation behavior independently"
+    },
+    "tau_J": {
+      "source_lines": "robot_state.h:211-215",
+      "meaning": "real link-side measured joint torque sensor signals, N*m"
+    },
+    "tau_ext_hat_filtered": {
+      "source_lines": "robot_state.h:293-299",
+      "meaning": "low-pass-filtered external joint torque estimated as error between tau_J and expected model torques; configured end-effector/load and robot mass/dynamics excluded, N*m"
+    },
+    "O_F_ext_hat_K": {
+      "source_lines": "robot_state.h:301-309",
+      "meaning": "estimated force-then-torque at stiffness frame K, expressed in base frame O; force applied by robot to environment positive, environment on robot negative; returns zero near/in singularity; N,N*m"
+    }
+  },
+  "known_unknowns": [
+    "Static file inspection finds fr3_joint1..7 and fixed fr3_joint8, but actual articulation DOF names, indices, order, effective controller settings, solver settings and timestamps require runtime measurement.",
+    "Solver projected joint effort is not yet shown equivalent to FR3 hardware tau_J or model-derived tau_ext_hat_filtered.",
+    "Action-reaction sign, effect of position-hold controller and loaded versus unloaded matching remain unverified until actual isolated paired probe.",
+    "Dynamic compensation, actuator tracking, online external torque observation and suction-contact wrench remain unvalidated.",
+    "Known applied load is an independent validation oracle, never an estimator measurement channel."
+  ],
+  "execution_authorized": false,
+  "physical_robot_tested": false,
+  "wrist_ft_sensor_required": false,
+  "dual_arm_force_control_implemented": false,
+  "production_bridge_modified": false
+}

@@ -1,0 +1,189 @@
+#!/usr/bin/env python3
+"""Bounded standalone FR3 static data collector. No estimator or robot bridge.
+
+Use only with the preregistered JSON and a fresh output directory. Applied loads
+are oracles recorded here; this collector does not call a wrench estimator.
+No production scene, ROS, suction, or physical robot is involved.
+"""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import time
+import traceback
+
+ROOT = Path(__file__).resolve().parents[2]
+CONFIG = Path(__file__).resolve().parent / 'evidence/static_probe_preregistration.json'
+
+
+def digest(path):
+    h = hashlib.sha256()
+    with path.open('rb') as f:
+        for block in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+
+def dump(path, data):
+    # Fail if a filename already exists; partial evidence is never overwritten.
+    with path.open('x', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, sort_keys=True, allow_nan=False)
+        f.write('\n')
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--asset', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    config = json.loads(CONFIG.read_text(encoding='utf-8'))
+    if not args.asset.is_file() or digest(args.asset) != config['fixture_usd_sha256']:
+        raise SystemExit('MISSING_OR_WRONG_FROZEN_ASSET')
+    args.output.mkdir(parents=False, exist_ok=False)
+    config_hash = digest(CONFIG)
+    started = time.monotonic()
+    app = None
+    active = None
+    state = {'status': 'STARTED', 'config_sha256': config_hash,
+             'asset': str(args.asset.resolve()), 'asset_sha256': digest(args.asset),
+             'collector_sha256': digest(Path(__file__)), 'flags': config['flags'],
+             'command': sys.argv, 'completed_condition_files': []}
+    try:
+        from isaacsim import SimulationApp
+        app = SimulationApp({'headless': True, 'renderer': 'RaytracedLighting',
+                             'multi_gpu': False, 'anti_aliasing': 0,
+                             'sync_loads': False, 'fast_shutdown': True})
+        import numpy as np
+        from scipy.spatial.transform import Rotation
+        from isaacsim.core.api import World
+        from isaacsim.core.prims import SingleArticulation, RigidPrim
+        from isaacsim.core.utils.stage import add_reference_to_stage
+        from isaacsim.core.utils.types import ArticulationAction
+        from pxr import UsdPhysics, PhysxSchema
+        sys.path.insert(0, str(ROOT / 'offline/task28_g1_1'))
+        from task28_validator.model import RobotModel
+
+        model = RobotModel()
+        world = World(stage_units_in_meters=1.0, physics_dt=config['physics_dt_s'],
+                      rendering_dt=config['physics_dt_s'], backend='numpy', device='cpu')
+        add_reference_to_stage(usd_path=str(args.asset.resolve()), prim_path='/World/ProbeFR3')
+        robot = world.scene.add(SingleArticulation('/World/ProbeFR3', name='probe_fr3',
+                                position=np.asarray(config['base_world_m'])))
+        link = world.scene.add(RigidPrim('/World/ProbeFR3/fr3_link7', name='probe_link7'))
+        world.reset()
+        names = list(robot.dof_names)
+        requested = config['joint_names']
+        if len(names) != len(set(names)) or any(names.count(n) != 1 for n in requested):
+            raise ValueError('DOF_NAMES_MISSING_OR_AMBIGUOUS:' + repr(names))
+        indices = np.array([robot.get_dof_index(n) for n in requested], dtype=np.int32)
+        if len(set(indices.tolist())) != 7 or any(names[i] != n for i, n in zip(indices, requested)):
+            raise ValueError('DOF_INDEX_MAPPING_INVALID')
+        stiffness, damping = robot.get_articulation_controller().get_gains()
+        if (np.asarray(stiffness).shape != (len(names),) or
+                np.asarray(damping).shape != (len(names),) or
+                not np.isfinite(np.r_[stiffness, damping]).all() or
+                np.any(np.asarray(stiffness)[indices] <= 0)):
+            raise ValueError('POSITION_HOLD_GAINS_INVALID')
+        stage = world.stage
+        root = stage.GetPrimAtPath('/World/ProbeFR3')
+        api = PhysxSchema.PhysxArticulationAPI(root)
+        props = {}
+        for name in ('GetSolverPositionIterationCountAttr', 'GetSolverVelocityIterationCountAttr',
+                     'GetEnabledSelfCollisionsAttr', 'GetSleepThresholdAttr', 'GetStabilizationThresholdAttr'):
+            method = getattr(api, name, None)
+            props[name] = method().Get() if method is not None else None
+        state['runtime'] = {'all_dof_names': names, 'ordered_joint_names': requested,
+                            'ordered_dof_indices': indices.tolist(),
+                            'dof_stiffness': np.asarray(stiffness).tolist(),
+                            'dof_damping': np.asarray(damping).tolist(),
+                            'physics_dt_s': world.get_physics_dt(),
+                            'physics_gravity': world.get_physics_context().get_gravity(),
+                            'asset_physx_articulation_properties': props,
+                            'force_application_api': 'RigidPrim.apply_forces_and_torques_at_pos(is_global=True)',
+                            'observation_source': 'SingleArticulation.get_measured_joint_efforts only',
+                            'force_frame': 'world', 'position_argument_frame': 'world',
+                            'reference_point': 'frozen left nominal side-suction TCP; applied to link7 without a physical tool'}
+        gravity = world.get_physics_context().get_gravity()
+        gravity_vec = np.asarray(gravity[0], float) * float(gravity[1])
+        if not np.allclose(gravity_vec, config['gravity_m_s2'], atol=1e-6, rtol=0):
+            raise ValueError('RUNTIME_GRAVITY_MISMATCH:' + repr(gravity))
+        if abs(world.get_physics_dt() - config['physics_dt_s']) > 1e-12:
+            raise ValueError('PHYSICS_DT_MISMATCH')
+        total_steps = 0
+        for config_id, q0 in config['configurations_rad'].items():
+            q0 = np.asarray(q0, dtype=float)
+            if not model.within_limits(q0):
+                raise ValueError('CONFIG_JOINT_LIMIT')
+            for load in config['loads']:
+                for condition in ('unloaded', 'loaded'):
+                    if time.monotonic() - started >= config['wall_timeout_s']:
+                        raise TimeoutError('PREREGISTERED_WALL_BUDGET')
+                    world.reset()
+                    robot.set_joint_positions(q0, joint_indices=indices)
+                    robot.set_joint_velocities(np.zeros(7), joint_indices=indices)
+                    target = ArticulationAction(joint_positions=q0, joint_indices=indices)
+                    force = np.asarray(load['force_world_n'] if condition == 'loaded' else [0, 0, 0], float)
+                    offset = np.asarray(load['offset_from_virtual_tcp_world_m'] if condition == 'loaded' else [0, 0, 0], float)
+                    obs = []
+                    active = {'configuration': config_id, 'load': load,
+                              'condition': condition, 'target_q_rad': q0.tolist(),
+                              'observations': obs, 'config_sha256': config_hash}
+                    for step in range(config['settle_steps_each_condition']):
+                        if total_steps >= config['max_steps'] or time.monotonic() - started >= config['wall_timeout_s']:
+                            raise TimeoutError('PREREGISTERED_BUDGET')
+                        robot.apply_action(target)
+                        q_pre = np.asarray(robot.get_joint_positions(joint_indices=indices), float)
+                        tcp_pre = model.fk('left', q_pre)[:3, 3]
+                        point = tcp_pre + offset
+                        # Called on every step; a zero force is still explicit for the control.
+                        link.apply_forces_and_torques_at_pos(forces=force[None, :],
+                            torques=np.zeros((1, 3)), positions=point[None, :], is_global=True)
+                        world.step(render=False)
+                        total_steps += 1
+                        if step >= config['settle_steps_each_condition'] - config['observation_window_steps']:
+                            q = np.asarray(robot.get_joint_positions(joint_indices=indices), float)
+                            dq = np.asarray(robot.get_joint_velocities(joint_indices=indices), float)
+                            tau = np.asarray(robot.get_measured_joint_efforts(joint_indices=indices), float)
+                            if q.shape != (7,) or dq.shape != (7,) or tau.shape != (7,) or not np.isfinite(np.r_[q, dq, tau]).all():
+                                raise ValueError('MALFORMED_OR_NONFINITE_ACTUAL_OBSERVATION')
+                            pos, quat_wxyz = link.get_world_poses()
+                            observed_r = Rotation.from_quat(np.asarray(quat_wxyz[0])[[1, 2, 3, 0]]).as_matrix()
+                            expected_link = model._chain('left', q)[0]['left_fr3_link7']
+                            obs.append({'physics_step': int(world.current_time_step_index),
+                                'simulation_time_s': float(world.current_time), 'q_rad': q.tolist(),
+                                'dq_rad_s': dq.tolist(), 'effort_nm': tau.tolist(),
+                                'link7_position_world_m': np.asarray(pos[0]).tolist(),
+                                'link7_orientation_world_wxyz': np.asarray(quat_wxyz[0]).tolist(),
+                                'link7_fk_translation_error_m': float(np.linalg.norm(pos[0]-expected_link[:3, 3])),
+                                'link7_fk_rotation_error_rad': float(np.linalg.norm(Rotation.from_matrix(expected_link[:3,:3].T @ observed_r).as_rotvec())),
+                                'applied_force_world_n': force.tolist(), 'application_point_world_m': point.tolist(),
+                                'q_pre_step_rad': q_pre.tolist(), 'tcp_pre_step_world_m': tcp_pre.tolist()})
+                    file_name = config_id + '_' + load['id'] + '_' + condition + '.json'
+                    dump(args.output / file_name, {'configuration': config_id, 'load': load,
+                         'condition': condition, 'target_q_rad': q0.tolist(), 'observations': obs,
+                         'oracle_separate_from_estimator': True, 'config_sha256': config_hash})
+                    state['completed_condition_files'].append(file_name)
+                    active = None
+        state['status'] = 'COLLECTION_COMPLETE_NOT_EVALUATED'
+        state['actual_physics_steps'] = total_steps
+    except BaseException as exc:
+        state['status'] = 'COLLECTION_FAILED'
+        state['failure'] = {'type': type(exc).__name__, 'message': str(exc), 'traceback': traceback.format_exc()}
+        if active is not None:
+            dump(args.output / 'partial_condition.json', active)
+            state['partial_condition_file'] = 'partial_condition.json'
+    finally:
+        state['elapsed_wall_s'] = time.monotonic() - started
+        if app is not None:
+            app.close()
+        dump(args.output / 'collector_status.json', state)
+    return 0 if state['status'] == 'COLLECTION_COMPLETE_NOT_EVALUATED' else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

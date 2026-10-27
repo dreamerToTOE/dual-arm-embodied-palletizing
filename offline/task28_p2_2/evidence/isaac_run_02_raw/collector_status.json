@@ -1,0 +1,120 @@
+{
+  "actual_physics_steps": 12000,
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "collector_sha256": "267ff8ea99ed6d9436d2219c0169749d72c8d007f4ab273630053885c245d9ee",
+  "command": [
+    "offline/task28_p2_2/static_isaac_probe.py",
+    "--asset",
+    "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+    "--output",
+    "/tmp/task28_p2_2_run_f6023c/raw"
+  ],
+  "completed_condition_files": [
+    "home_zero_unloaded.json",
+    "home_zero_loaded.json",
+    "home_positive_x_unloaded.json",
+    "home_positive_x_loaded.json",
+    "home_negative_x_unloaded.json",
+    "home_negative_x_loaded.json",
+    "home_positive_y_unloaded.json",
+    "home_positive_y_loaded.json",
+    "home_offset_y_unloaded.json",
+    "home_offset_y_loaded.json",
+    "offset_zero_unloaded.json",
+    "offset_zero_loaded.json",
+    "offset_positive_x_unloaded.json",
+    "offset_positive_x_loaded.json",
+    "offset_negative_x_unloaded.json",
+    "offset_negative_x_loaded.json",
+    "offset_positive_y_unloaded.json",
+    "offset_positive_y_loaded.json",
+    "offset_offset_y_unloaded.json",
+    "offset_offset_y_loaded.json"
+  ],
+  "config_sha256": "c4aad0a00b82baf2dbd597950a9fb75fef813d5c52e294f37f473392937261f2",
+  "elapsed_wall_s": 52.91284436600108,
+  "flags": {
+    "dual_arm_force_control_implemented": false,
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "production_bridge_modified": false,
+    "wrist_ft_sensor_required": false
+  },
+  "runtime": {
+    "all_dof_names": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ],
+    "asset_physx_articulation_properties": {
+      "GetEnabledSelfCollisionsAttr": false,
+      "GetSleepThresholdAttr": 4.999999873689376e-05,
+      "GetSolverPositionIterationCountAttr": 32,
+      "GetSolverVelocityIterationCountAttr": 16,
+      "GetStabilizationThresholdAttr": 9.999999747378752e-06
+    },
+    "dof_damping": [
+      343774.6875,
+      343774.6875,
+      343774.6875,
+      343774.6875,
+      343774.6875,
+      343774.6875,
+      343774.6875,
+      6000.0,
+      0.0
+    ],
+    "dof_stiffness": [
+      3437746.75,
+      3437746.75,
+      3437746.75,
+      3437746.75,
+      3437746.75,
+      3437746.75,
+      3437746.75,
+      60000.0,
+      0.0
+    ],
+    "force_application_api": "RigidPrim.apply_forces_and_torques_at_pos(is_global=True)",
+    "force_frame": "world",
+    "observation_source": "SingleArticulation.get_measured_joint_efforts only",
+    "ordered_dof_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "ordered_joint_names": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7"
+    ],
+    "physics_dt_s": 0.008333333333333333,
+    "physics_gravity": [
+      [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      9.8100004196167
+    ],
+    "position_argument_frame": "world",
+    "reference_point": "frozen left nominal side-suction TCP; applied to link7 without a physical tool"
+  },
+  "source_kind": "ISAAC_SINGLE_ARTICULATION_STANDALONE",
+  "status": "COLLECTION_COMPLETE_NOT_EVALUATED"
+}

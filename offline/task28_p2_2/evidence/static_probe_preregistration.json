@@ -1,0 +1,43 @@
+{
+  "schema": "task28.p2_2.static_probe_preregistration.v1",
+  "status": "FROZEN_BEFORE_FIRST_PHYSICS_RUN",
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "arm": "left_fixture_kinematics_virtual_tcp_single_isolated_fr3",
+  "joint_names": ["fr3_joint1", "fr3_joint2", "fr3_joint3", "fr3_joint4", "fr3_joint5", "fr3_joint6", "fr3_joint7"],
+  "base_world_m": [0.65, -0.6, 0.0],
+  "configurations_rad": {
+    "home": [0.0, -0.7853981634, 0.0, -2.3561944902, 0.0, 1.5707963268, 0.7853981634],
+    "offset": [0.2, -0.5, -0.2, -2.0, 0.3, 1.3, 0.4]
+  },
+  "loads": [
+    {"id": "zero", "force_world_n": [0, 0, 0], "offset_from_virtual_tcp_world_m": [0, 0, 0]},
+    {"id": "positive_x", "force_world_n": [1, 0, 0], "offset_from_virtual_tcp_world_m": [0, 0, 0]},
+    {"id": "negative_x", "force_world_n": [-1, 0, 0], "offset_from_virtual_tcp_world_m": [0, 0, 0]},
+    {"id": "positive_y", "force_world_n": [0, 1, 0], "offset_from_virtual_tcp_world_m": [0, 0, 0]},
+    {"id": "offset_y", "force_world_n": [0, 1, 0], "offset_from_virtual_tcp_world_m": [0.04, 0, 0]}
+  ],
+  "oracle_wrench": "force on robot; moment about virtual TCP is offset cross force, world axes; compare expected robot external generalized torque J_world.T @ wrench; do not expose oracle to estimator",
+  "physics_dt_s": 0.008333333333333333,
+  "gravity_m_s2": [0, 0, -9.81],
+  "control": "USD native position drives, with explicit per-joint position target; initial q and dq set only once per reset; gains, DOFs and solver settings recorded without changing USD or frozen config",
+  "settle_steps_each_condition": 600,
+  "observation_window_steps": 60,
+  "max_steps": 12000,
+  "wall_timeout_s": 300,
+  "sampling": "one observation per physics step in final window; unloaded and loaded both reset to identical initial q/zero dq and target; load applied every physics step before world.step",
+  "thresholds": {
+    "max_abs_velocity_rad_s": 0.01,
+    "max_pair_mean_q_difference_rad": 0.002,
+    "max_window_q_range_rad": 0.002,
+    "max_window_effort_std_nm": 0.05,
+    "max_link7_fk_position_difference_m": 0.0001,
+    "max_link7_fk_rotation_difference_rad": 0.0001,
+    "minimum_jacobian_singular_value": 0.05,
+    "max_abs_torque_error_nm": 0.10,
+    "max_force_error_n": 0.30,
+    "max_moment_error_nm": 0.08,
+    "zero_delta_tau_inf_nm": 0.05
+  },
+  "interpretation": "fixed tolerances are provisional preregistered experimental gates; failure remains a failure, not a reason to tune; static paired differencing is not a deployable observer",
+  "flags": {"execution_authorized": false, "physical_robot_tested": false, "wrist_ft_sensor_required": false, "dual_arm_force_control_implemented": false, "production_bridge_modified": false}
+}
