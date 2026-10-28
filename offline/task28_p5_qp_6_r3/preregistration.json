@@ -1,0 +1,18 @@
+{
+  "identity": "task28_qp6_r3_original_scene_v1",
+  "starting_commit": "33e12b488209e0ffd865740bfae692ca5e7435ed",
+  "scope": "bounded development-only original scene startup under frozen position drives; no robot commands, no gripper, no ROS",
+  "original_scene_hz": 60,
+  "physics_dt_tolerance_s": 1e-8,
+  "maximum_explicit_steps": 180,
+  "settle_max_arm_speed_rad_s": 0.01,
+  "settle_max_home_error_rad": 0.01,
+  "settle_consecutive_samples": 10,
+  "fcl_policy": "frozen detached FCL; only Cube_01 versus task28_table contact is classified as expected source support, not an ACM change; all other contacts reject",
+  "collision_policy_scope": "FCL mesh and primitive overlap, not an Isaac contact sensor or continuous collision guarantee",
+  "closure_policy": "FREE_HOME does not require nominal attached grasp closure",
+  "command_policy": "no explicit arm/finger commands in this development run",
+  "maximum_development_runs": 4,
+  "cube_move_or_teleport": false,
+  "suction_closure": false
+}

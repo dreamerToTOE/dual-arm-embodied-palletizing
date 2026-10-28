@@ -1,0 +1,172 @@
+{
+  "run": "offline/task28_p5_qp_6_r3/evidence/dev_01",
+  "frames": 181,
+  "status": "REJECTED",
+  "first_failure": {
+    "last_frame_index": 180,
+    "message": "NATIVE_DRIVE_SETTLE_TIMEOUT",
+    "phase": "PLAY_NATIVE_DRIVES",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r3/runtime_dev.py\", line 98, in main\n    else: raise RuntimeError('NATIVE_DRIVE_SETTLE_TIMEOUT')\nRuntimeError: NATIVE_DRIVE_SETTLE_TIMEOUT\n",
+    "type": "RuntimeError"
+  },
+  "callback_dt_unique_s": [
+    0.01666666753590107
+  ],
+  "sides": {
+    "left": {
+      "last_q": [
+        1.8516155250836164e-05,
+        -0.784332275390625,
+        6.924563058419153e-05,
+        -2.356692314147949,
+        0.00010101984662469476,
+        1.5707885026931763,
+        0.7853949069976807,
+        2.2847697067618356e-08,
+        1.6612100139923314e-08
+      ],
+      "last_dq": [
+        -0.0001893522567115724,
+        -0.010724863037467003,
+        -0.0006966578657738864,
+        0.005007283296436071,
+        -0.0010150318266823888,
+        6.819550617365167e-05,
+        2.775590110104531e-05,
+        -3.1733790706311993e-07,
+        -3.1733790706311993e-07
+      ],
+      "last_position_finite_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "last_acceleration_finite_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "M_symmetry_inf": 0.0,
+      "M_min_eigenvalue": 0.009008665614589293,
+      "Maa_shape": [
+        7,
+        7
+      ],
+      "Maf_shape": [
+        7,
+        2
+      ],
+      "Maf_times_finger_acceleration_Nm": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "arm_equation_diagnostic_residual_using_solver_projected_effort_not_torque_sensor_Nm": [
+        -5.182824085636639e-05,
+        0.006915136000316124,
+        0.00018493029529054184,
+        -0.003694370563607663,
+        -0.00024571266112616286,
+        -0.0005475584912346676,
+        -2.3537365905212937e-06
+      ],
+      "residual_scope": "post-state finite difference and solver-projected joint effort; timing/sensor independence unqualified",
+      "position_velocity_inconsistency_inf_rad_s": 0.010724863037467003
+    },
+    "right": {
+      "last_q": [
+        1.710735341475811e-05,
+        -0.7843459844589233,
+        5.438336302177049e-05,
+        -2.356705904006958,
+        8.91408053576015e-05,
+        1.5707899332046509,
+        0.7853959798812866,
+        3.721022423519571e-08,
+        3.1071046180386475e-08
+      ],
+      "last_dq": [
+        -0.00017319079779554158,
+        -0.010585268028080463,
+        -0.0005470351316034794,
+        0.0051315100863575935,
+        -0.0008947708993218839,
+        5.531012357096188e-05,
+        1.9185823475709185e-05,
+        -5.002183911528846e-07,
+        -5.002184479963034e-07
+      ],
+      "last_position_finite_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "last_acceleration_finite_difference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "M_symmetry_inf": 0.0,
+      "M_min_eigenvalue": 0.008927285527963097,
+      "Maa_shape": [
+        7,
+        7
+      ],
+      "Maf_shape": [
+        7,
+        2
+      ],
+      "Maf_times_finger_acceleration_Nm": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "arm_equation_diagnostic_residual_using_solver_projected_effort_not_torque_sensor_Nm": [
+        -1.0695582602693321e-05,
+        0.001060861919540912,
+        3.4394779959256994e-05,
+        -0.0006186217215145007,
+        -3.855188515444752e-05,
+        -0.0001305715268244967,
+        9.753782705956837e-07
+      ],
+      "residual_scope": "post-state finite difference and solver-projected joint effort; timing/sensor independence unqualified",
+      "position_velocity_inconsistency_inf_rad_s": 0.010585268028080463
+    }
+  },
+  "arm_subsystem_status": "PARTIAL_NOT_QUALIFIED",
+  "finger_constraint_model": "UNVALIDATED",
+  "full_articulation_constrained_dynamics": "UNVALIDATED"
+}

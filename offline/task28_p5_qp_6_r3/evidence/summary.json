@@ -1,0 +1,40 @@
+{
+  "ORIGINAL_SCENE_RUNTIME_PHYSICS_VERIFIED": "PARTIAL: original fixture built; actual 60 Hz physics callback and time verified; initialized CCD and Cube mass not independently reread after start",
+  "ORIGINAL_L_SUCTION_TOOL_PRESERVED": "VERIFIED_PRIM_AND_LINK8_TCP_GEOMETRY",
+  "ORIGINAL_SCENE_ARM_DYNAMICS_SOURCE_STATUS": "ARM_SUBSYSTEM_SOURCE_PARTIAL_NOT_QUALIFIED",
+  "NATIVE_FINGER_CONSTRAINT_MODEL_UNVALIDATED": true,
+  "MOUNTED_TOOL_INERTIA_UNKNOWN": true,
+  "FULL_ARTICULATION_CONSTRAINED_DYNAMICS_VALIDATED": false,
+  "EXCLUSIVE_ARM_TORQUE_ACTUATION_VERIFIED": false,
+  "ORIGINAL_SCENE_STATIC_TORQUE_PASS": false,
+  "ORIGINAL_SCENE_SHORT_TRACKING_PASS": false,
+  "VIRTUAL_COOPERATIVE_HQP_READY_OR_BLOCKED": "BLOCKED_SOURCE_AND_APPROACH",
+  "ACTUAL_CUBE_SUCTION_UNTESTED": true,
+  "physics_dt_s": 0.01666666753590107,
+  "actual_effort_command_writes": 0,
+  "previous_tests_passed": 971,
+  "new_focused_tests_passed": 7,
+  "total_tests_passed": 978,
+  "formal_static": "SKIPPED_STATE_FRESHNESS_AND_SETTLE_GATE",
+  "A_S05": "SKIPPED_STATIC_PREREQUISITE",
+  "A_S10": "SKIPPED_STATIC_PREREQUISITE",
+  "B_S05": "SKIPPED_ARM_SUBSYSTEM_SOURCE",
+  "B_S10": "SKIPPED_ARM_SUBSYSTEM_SOURCE",
+  "virtual_hqp": "SKIPPED_UNQUALIFIED_SOURCE_AND_APPROACH_COLLISION",
+  "ros_bridge_started": false,
+  "ros_graph_execution": false,
+  "ros2_extension_loaded_by_original_scene_builder": true,
+  "frozen_criteria": {
+    "g1_translation_m": 0.0001,
+    "g1_rotation_rad": 0.001,
+    "FREE_HOME_grasp_closure_applied": false
+  },
+  "dev01_posthoc_first_source_inconsistency": {
+    "row": 127,
+    "physics_step": 129,
+    "time_s": 2.150000112131238,
+    "additional_rows_before_registered_timeout": 53,
+    "qualification": "post-hoc diagnostic not registered in dev01; not a fail-closed stop at that new gate"
+  },
+  "implicit_steps_not_prechecked": "Two initialization callbacks per run precede first sampled state; no per-step FCL proof for those steps."
+}

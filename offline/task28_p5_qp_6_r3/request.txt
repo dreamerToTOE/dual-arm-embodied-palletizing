@@ -1,0 +1,389 @@
+# Task28 G2-P5-QP-6-R3 — Original L-Suction Scene Torque Runtime and Cooperative Control Bring-up
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected starting HEAD: 33e12b488209e0ffd865740bfae692ca5e7435ed
+
+## Research decision
+
+The owner requires all new control research to use the EXISTING Task28 double-FR3 L-shaped side-suction environment.
+
+Do not rebuild or replace its robots, tooling, Cube, table, collisions, grasp geometry, physics configuration, or previous controller sources.
+
+R2 established the original scene identity, but torque execution remained blocked.
+
+R3 must advance from stopped-stage inspection to actual, bounded Isaac simulation and qualified torque-controlled arm movement.
+
+Do not spend this task constructing another disabled CPU-only adapter.
+
+Do not interpret this instruction as permission to run ROS, physical hardware, Cube suction attachment, or internal-force control.
+
+Complete all independently eligible phases within this ONE task.
+
+## Phase 0 — source and previous work audit
+
+Verify the expected branch and HEAD.
+
+Read the following original sources:
+
+- Task28 frozen G1-0B fixture manifest, scene, bridge, URDF and contracts.
+- Task28 G1 FK, IK, nominal grasp and FCL validators.
+- QP-4 and QP-5 reference and torque-control sources.
+- QP-6 mathematical HQP and runtime code.
+- QP-6-R1 constraint-aware dynamics findings.
+- QP-6-R2 scene identity and disabled adapter.
+- Original Task24/26 L-tool scene and bridge, read-only.
+- Installed Isaac Sim 4.5 articulation and physics APIs.
+
+Cross-check the installed API against the Isaac Sim 4.5 documentation.
+
+Record source hashes, implementation details and discovered inconsistencies.
+
+Create all new code under:
+
+offline/task28_p5_qp_6_r3/
+
+Do not edit the existing fixture, bridge, original USD, MoveIt files, ACM or historical reports.
+
+## Phase 1 — execute the original scene safely
+
+Start a NEW independent Isaac Sim process and anonymous stage.
+
+Use the original function:
+
+fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene()
+
+Do not hand-create replacement FR3 robots or replacement tools.
+
+Verify:
+
+- Original Task28 fixture identity.
+- Exactly the original two FR3 articulations.
+- Original 0.8 kg Cube_01 in its frozen source pose.
+- Original table and collision geometry.
+- Original mirrored L-shaped four-cup tools mounted on fr3_link8.
+- Original actual side_suction_tcp transforms.
+- Original native finger/mimic DOFs.
+- Original TGS, CCD, gravity and 60-Hz physics configuration.
+- Original FR3 USD SHA-256.
+
+Avoid creating a second conflicting PhysicsScene.
+
+The source stage must remain unchanged on disk.
+
+Do not start the legacy command-enabled bridge.
+
+Do not allow the original position-command sink and new torque controller to command the same arm simultaneously.
+
+If the fixture's ROSGraph is present, verify it cannot introduce a competing command sink or unexpected external execution. Any temporary research-session suppression must be explicitly logged and must not modify the frozen source files.
+
+## Phase 2 — measure actual physics and settle state
+
+Actually advance Isaac physics using the installed simulator.
+
+First record the actual physics step count and time difference.
+
+Verify the active scene uses the declared 60-Hz physics stepping. If the effective dt differs, reject rather than silently changing it.
+
+During initial settle, retain the scene's original startup drive policy.
+
+Log:
+
+- Both actual arm q and dq.
+- Both native finger q and dq.
+- Actual link8 world poses.
+- Actual side_suction_tcp world poses.
+- Cube_01 world pose.
+- Robot/tool/Cube/table collision and clearance status.
+- Drive modes and gains.
+- Physics time and step.
+- Source identities and hashes.
+
+Do not assume the initial authored USD transforms represent a valid suction grasp.
+
+The initial TCPs are far from the Cube and must be classified as FREE_HOME or FREE_APPROACH.
+
+Apply the existing frozen G1 closure threshold only to states for which a nominal common-object grasp is legitimately required.
+
+A distant FREE_HOME state is not a failed attached-grasp state.
+
+Never move the Cube to fit the selected joint configuration.
+
+Stop if the original scene develops unintended collisions, nonfinite states, invalid identities or unexpected actuation.
+
+## Phase 3 — characterize mounted-tool arm dynamics
+
+The control target is the 14 revolute arm joints.
+
+Each Isaac articulation may still expose nine DOFs.
+
+Preserve all original native finger state and constraint semantics, including mimic and upper-limit behavior.
+
+Do NOT delete, hide further, lock or replace native finger joints beyond the original fixture behavior.
+
+Read for each side:
+
+    q9, dq9
+    M9x9, c9, g9
+    applied effort source
+    solver-projected effort source
+
+Inspect whether the original L-tool geometry contributes mass or inertia to the articulation.
+
+Determine whether tool collision shapes are simply attached geometric colliders or have source-valid effective inertial properties.
+
+Do not invent tool inertia.
+
+For each arm, partition the runtime dynamics:
+
+    M = [[Maa, Maf],
+         [Mfa, Mff]]
+
+Evaluate the arm equation, accounting for observed or bounded finger acceleration:
+
+    Maa*qdd_arm + Maf*qdd_finger + c_arm + g_arm
+        = tau_arm + external_arm_generalized_effort
+
+For a verified free-space, no-contact state, assess whether the external arm term is negligible.
+
+Do not assume it is zero when collisions or contacts are present.
+
+Use actual pre/post measurements and source-identified finite-difference acceleration, with numerical limitations disclosed.
+
+Retain the original finger constraint failures as historical negative evidence.
+
+A valid arm subsystem must be justified by measured residuals, explicit finger coupling, current finger status and independent negative controls.
+
+Do not demand that independently constrained native fingers satisfy the free nine-coordinate acceleration equation as a prerequisite for every seven-arm torque operation.
+
+However, do not silently declare full nine-DOF constrained dynamics validated.
+
+Record separate qualification statuses:
+
+- ARM_SUBSYSTEM_SOURCE_VALIDATED
+- ARM_SUBSYSTEM_SOURCE_PARTIAL
+- NATIVE_FINGER_CONSTRAINT_MODEL_UNVALIDATED
+- MOUNTED_TOOL_INERTIA_UNKNOWN
+- FULL_ARTICULATION_CONSTRAINED_DYNAMICS_VALIDATED
+
+Only claim each status if its actual evidence supports it.
+
+## Phase 4 — implement the real exclusive effort adapter
+
+Extend the R2 design in task-scoped code to create a working Isaac research adapter.
+
+Requirements:
+
+1. Only connect to the original Task28 scene articulations.
+2. Exact original DOF names and indices.
+3. Explicit joint effort commands for the seven arm joints.
+4. Preserve the original finger behavior and monitor it.
+5. No position-field substitution.
+6. No simultaneous native arm position drive.
+7. Arm effort mode must be actual force/effort mode.
+8. Verify native arm drive stiffness and damping are zero in the active research session.
+9. Do not persist runtime drive-mode changes to the frozen USD.
+10. Validate both arms before either effort write.
+11. Record full pre-command and post-step state.
+12. Reject source-invalid or unsafe torque commands before actuation.
+
+If full nine-DOF effort commands prove necessary, implement a physically justified finger policy with independent evidence. Do not zero-pad effort blindly.
+
+The default interface must remain disabled until all runtime ownership prerequisites pass.
+
+A claimed successful controller test must include actual Isaac actuator writes and physical time advancement.
+
+## Phase 5 — original-scene static effort experiment
+
+If the previous phases pass:
+
+Use the settled, verified collision-free original-scene posture.
+
+Register the exact source state before switching modes.
+
+Transition from native arm position drives to exclusive arm torque actuation, with no overlap.
+
+Attempt a bounded explicit-gravity-plus-PD static hold, using the actual runtime dynamics and measured state.
+
+Keep the original Cube and L tools in the scene.
+
+Suction remains OPEN; no D6 attachment is created.
+
+Do not teleport the arms or Cube into a convenient posture.
+
+Record every step:
+
+- q/dq.
+- Actual TCP transforms.
+- Gravity and torque commands.
+- Native finger state.
+- Tool clearance and contacts.
+- Effort bounds and rate activity.
+- Exact physics time.
+- First failed gate.
+
+This experiment is FREE-SPACE STATIC TORQUE CONTROL.
+
+It is NOT bilateral grasp closure and must not be judged by requiring the HOME posture to satisfy the already-attached G1 grasp geometry.
+
+## Phase 6 — bounded movement and controller comparisons
+
+If the original-scene source and static effort tests pass, conduct a preregistered short-motion benchmark.
+
+Construct small C2 smooth joint trajectories from the ACTUAL collision-free settled configuration.
+
+The candidate motions must pass the original joint-limit, tool, Cube, table and FCL checks BEFORE physics.
+
+Do not import the archived QP-4 midpoint q14 as if it were the current physical state.
+
+Register two modest duration profiles:
+
+- SHORT_S05: 0.50 seconds.
+- SHORT_S10: 1.00 second.
+
+Determine one source-valid small motion amplitude and joint direction before formal runs, based on offline clearance and dynamic feasibility, not on formal tracking outcomes.
+
+Compare:
+
+A — actual-scene gravity+PD torque baseline.
+
+B — validated arm-subsystem computed-torque tracking with explicit finger coupling assumptions and source-valid dynamics.
+
+Potentially run four independent cells:
+
+A/S05
+A/S10
+B/S05
+B/S10
+
+Use fresh scene resets and the same settled source state.
+
+Run one formal attempt per registered cell.
+
+Stop only the failing cell on a geometry or safety rejection; independent eligible cells may continue after complete reset.
+
+Do not tune gains after formal failures.
+
+If B cannot qualify its dynamics source, mark B cells SKIPPED_WITH_REASON while still preserving A evidence.
+
+## Phase 7 — optional object-centered readiness
+
+Inspect whether a safe, collision-free approach path exists from the real Task28 state to the original Cube's frozen nominal bilateral pre-contact poses.
+
+Reuse the existing G1 FK/IK, NR and FCL validators.
+
+Do not bypass or relax geometry, collision or object identity requirements.
+
+Do not teleport either arm to a saved QP-4 waypoint.
+
+Separate the following states:
+
+    FREE_HOME
+    FREE_APPROACH
+    PRE_CONTACT_READY
+    ATTACHED
+    RELEASED
+
+The frozen 0.100 mm absolute and relative grasp precision is a requirement at the appropriate grasp-ready/attached phases, not at a distant home configuration.
+
+Only if a valid approach and synchronized nominal grasp-ready state can be established without suction may a separately registered virtual object-centered cooperative HQP no-contact motion test be considered.
+
+It must not touch, attach or move the actual Cube.
+
+No physical Cube movement or D6 closure is authorized in R3.
+
+The original QP-6 ideal coupled-contact mathematical results remain offline evidence only.
+
+## Phase 8 — safety and evidence
+
+Use per-step pre-command and post-step fail-closed gates.
+
+Record:
+
+- Scene, USD, fixture and controller source hashes.
+- Actual physics dt and time stamps.
+- Driver ownership.
+- Actuator mode and arm/finger DOF identity.
+- Full current q/dq and M/c/g source.
+- Actual left/right side_suction_tcp.
+- Actual Cube pose.
+- Collision and clearance validation.
+- Joint motion and torque bounds.
+- Tracking and task-space errors.
+- First failing physics step and gate.
+- Whether the simulation continued after a failure.
+- Numerical solver status when applicable.
+- All skipped and aborted tests.
+
+Do not claim that exiting the simulation loop is a certified hardware emergency stop.
+
+Do not treat command readback as an independently calibrated torque sensor.
+
+Do not infer physically measured internal suction forces from native finger constraint reactions.
+
+Save scientific result JSON BEFORE SimulationApp.close(), so startup or shutdown failures cannot erase the only evidence.
+
+Never count a result without a valid artifact as a PASS.
+
+## Scope and budgets
+
+Within this ONE task, allow:
+
+- Complete CPU source and mathematical verification.
+- Bounded mounted-scene physics source characterization.
+- Up to FOUR clearly labeled development-only Isaac runs.
+- One formally frozen original-scene static torque test.
+- Up to FOUR distinct registered A/B short-motion cells.
+- One optional virtual cooperative no-contact cell only if the complete approach and source prerequisites pass.
+
+Do not run an unlimited tuning loop.
+
+Do not execute actual suction closure, Cube lift/transport, ROS commands, or hardware.
+
+## Deliverables
+
+Create:
+
+docs/tasks/TASK28_G2_P5_QP_6_R3_ORIGINAL_SCENE_TORQUE_RUNTIME.md
+
+Archive all code, preregistration, raw states, dynamics checks, controller output, failures, negative controls and test records under:
+
+offline/task28_p5_qp_6_r3/
+
+Run previous 971 software tests and new focused tests, reporting distinct test suites without double-counting.
+
+Report these dimensions independently:
+
+- ORIGINAL_SCENE_RUNTIME_PHYSICS_VERIFIED
+- ORIGINAL_L_SUCTION_TOOL_PRESERVED
+- ORIGINAL_SCENE_ARM_DYNAMICS_SOURCE_STATUS
+- EXCLUSIVE_ARM_TORQUE_ACTUATION_VERIFIED
+- ORIGINAL_SCENE_STATIC_TORQUE_PASS
+- ORIGINAL_SCENE_SHORT_TRACKING_PASS
+- VIRTUAL_COOPERATIVE_HQP_READY_OR_BLOCKED
+- ACTUAL_CUBE_SUCTION_UNTESTED
+
+An overall PASS is possible only for the dimensions actually demonstrated.
+
+Do not promote isolated free-space motion into successful Cube transport.
+
+## Final report
+
+Provide a Chinese summary first, using simple language.
+
+Then include:
+
+1. Whether the original scene remained unchanged.
+2. Actual measured physics dt.
+3. Whether arm torque commands were truly executed.
+4. What happened to the native fingers and L-tool inertia.
+5. Static tracking and short-motion results.
+6. Which controllers ran and which were skipped.
+7. First failure of every rejected run.
+8. Current readiness for genuine Cube-centered HQP.
+9. Original frozen 0.100 mm criterion and where it applied.
+10. Tests, final commit SHA, remote HEAD and worktree state.
+
+Commit and push task-scoped additions only.
+
+STOP after R3. Do not autonomously proceed to physical suction or production ROS integration.

@@ -1,0 +1,83 @@
+{
+  "scope": "bounded offline endpoint IK and 51-point straight-joint-space FCL screen; no execution or continuous collision proof",
+  "source": "dev_03 last saved state, not qualified for actuation",
+  "cube_world": [
+    [
+      0.9999999999997699,
+      5.874317036127687e-08,
+      6.763190795728412e-07,
+      0.6500006318092346
+    ],
+    [
+      -5.8743266218092783e-08,
+      0.9999999999999886,
+      1.417331049275573e-07,
+      4.6240853635026724e-07
+    ],
+    [
+      -6.763190712469813e-07,
+      -1.4173314465671638e-07,
+      0.9999999999997616,
+      0.2600000202655792
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "results": {
+    "left": {
+      "success": true,
+      "q": [
+        0.6004242373228201,
+        -0.6288982080463044,
+        0.9944908387810119,
+        -2.6738365755298967,
+        0.6485795416449938,
+        2.1861842453287705,
+        1.0817953350710279
+      ],
+      "translation_error_m": 8.296567956055924e-11,
+      "rotation_error_rad": 6.680878962037129e-10,
+      "reason": "IK_VERIFIED",
+      "attempts": 1,
+      "function_evaluations": 269,
+      "reach_bound_excess_m": null
+    },
+    "right": {
+      "success": true,
+      "q": [
+        -0.20754820839356167,
+        -1.2937208557231974,
+        -1.250684202297453,
+        -2.6021644594996047,
+        -1.1576870975806464,
+        1.650114661121666,
+        -0.718594354901032
+      ],
+      "translation_error_m": 1.9491883250077476e-11,
+      "rotation_error_rad": 1.8058197369756974e-10,
+      "reason": "IK_VERIFIED",
+      "attempts": 1,
+      "function_evaluations": 42,
+      "reach_bound_excess_m": null
+    }
+  },
+  "validated_continuous_approach": false,
+  "straight_joint_interpolation": {
+    "samples_checked": 47,
+    "expected_support_exception_is_reporting_classification_not_acm": true,
+    "first_unexpected_collision": {
+      "sample": 46,
+      "fraction": 0.92,
+      "reasons": [
+        "COLLISION:left_fr3_side_suction/3|Cube_01/box",
+        "COLLISION:left_fr3_side_suction/5|Cube_01/box"
+      ]
+    },
+    "all_sampled_clear": false,
+    "continuous_and_dynamic_safety_proven": false
+  }
+}

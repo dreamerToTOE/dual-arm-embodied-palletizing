@@ -1,0 +1,16 @@
+{
+  "installed_version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+  "installed_articulation_source": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+  "articulation_sha256": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a",
+  "simulation_context_source": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.api/isaacsim/core/api/simulation_context/simulation_context.py",
+  "simulation_context_sha256": "0be3b0eaa44e6110cec520be9ac2c08cea17ba97db14b1b0aa60d87824deceb3",
+  "documentation": "https://docs.isaacsim.omniverse.nvidia.com/4.5.0/py/source/extensions/isaacsim.core.prims/docs/index.html",
+  "api_findings": {
+    "effort": "no drive or zero stiffness/damping required",
+    "applied": "command buffer not physical torque sensor",
+    "mass_matrix": "state-based 9x9 fixed base",
+    "save_to_usd": "set_gains false uses running simulation",
+    "important_implementation_inconsistency": "set_joint_efforts allocates a zero full-DOF buffer, assigns selected indices, then calls set_dof_actuation_forces; indexed seven-DOF write can clear finger actuation buffer",
+    "physics_context": "set_defaults=False reuses existing scene; installed code may set CPU broadphase/disable GPU dynamics, and SimulationContext sets timeCodesPerSecond in anonymous stage; resulting settings were not separately captured after context init"
+  }
+}
