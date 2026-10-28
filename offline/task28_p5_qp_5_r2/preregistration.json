@@ -1,0 +1,47 @@
+{
+  "acceptance": "G2_P5_QP_5_R2_DIAGNOSTIC_PASS_ONLY",
+  "all_frames": {
+    "QP5": 75,
+    "R1": 2
+  },
+  "formal_run_authorized": false,
+  "inputs": {
+    "frozen_g1_rotation_tolerance_rad": 0.001,
+    "frozen_g1_translation_tolerance_m": 0.0001,
+    "qp4_reference": "offline/task28_p5_qp_4/evidence/contract_v1/accepted_reference_sequence.json",
+    "qp5_pre_step_observations": "offline/task28_p5_qp_5/evidence/formal_run_v1/tracking_observations.json",
+    "r1_post_step_observations": "offline/task28_p5_qp_5_r1/evidence/formal_run_v1/tracking_observations.json"
+  },
+  "isaac_sim_authorized": false,
+  "new_derived_trajectory_identity": null,
+  "objective": "separate time-parameterization, common object error, differential grasp error, and unobserved dynamic causes of the archived QP-5-R1 failure",
+  "optional_Isaac_run_selected": false,
+  "original_reference_identity": "task28_qp3_seed28_transport40_5step",
+  "original_reference_immutable": true,
+  "phase3_decision": "diagnostic-only stop; no differentiable trajectory/model evidence for a new controller",
+  "phase5": "No new sink/controller or optional physics run. Pre-command checks remain a mandatory future integration prerequisite; original R1 post-step code unchanged.",
+  "physical_robot_authorized": false,
+  "planned_tests": {
+    "common_differential_decomposition": true,
+    "effort_saturation_and_rate_flags": true,
+    "historical_regressions": [
+      789,
+      53,
+      5,
+      6
+    ],
+    "negative_scope_controls": true,
+    "reference_boundary_jumps": true
+  },
+  "protocol_note": "Historical outcomes were known before this protocol; this is not preregistration of unseen scientific data.",
+  "rules": [
+    "do not tune Kp/Kd after inspecting formal outcomes",
+    "do not promote finite-difference qdd to measured or validated acceleration",
+    "do not call virtual relative-pose correction an internal wrench",
+    "do not relax frozen closure gates",
+    "do not run Isaac Sim, ROS, robot, suction, Cube, table, D6, or physical experiments"
+  ],
+  "schema": "task28.g2_p5_qp_5_r2.preregistration.v1",
+  "source_binding_sha256": "64c36d0b62df8502384a920671f820ec05f1d125ecca92b848f26de7ccb0b28b",
+  "status": "POSTHOC_ARCHIVE_DIAGNOSTIC_PROTOCOL_NO_NEW_PHYSICS"
+}
