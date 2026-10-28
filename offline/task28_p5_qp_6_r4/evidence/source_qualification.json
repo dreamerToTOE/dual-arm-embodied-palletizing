@@ -1,0 +1,365 @@
+{
+  "approach_negative_preserved": true,
+  "arm_dynamics_status": "ARM_DYNAMICS_SOURCE_PARTIAL",
+  "cpu_context_backend_adaptation_recorded": true,
+  "cube_suction_status": "CUBE_SUCTION_UNTESTED",
+  "exclusive_torque_status": "EXCLUSIVE_TORQUE_COMMAND_BLOCKED",
+  "historical_r3_preserved": true,
+  "moving_status": "MOVING_SOURCE_NOT_QUALIFIED",
+  "original_scene_status": "ORIGINAL_SCENE_UNCHANGED",
+  "reason": "All six registered cells hit FROZEN_Q_NONZERO_DQ before the source contract window completed.",
+  "robot_command_writes": 0,
+  "run_summaries": [
+    {
+      "borrowed_previous_dq_mutation_max": null,
+      "borrowed_previous_q_mutation_max": null,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": null,
+      "callback_immediate_q_max_abs_rad": null,
+      "configuration": "A",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": null,
+      "dynamic_control_q_max_abs_rad": null,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "CANONICAL_COPIED",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 0,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "df13582d56f53290f19307479e670f5de9b50f2f0926b5459a8191aebcf4aab9",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    },
+    {
+      "borrowed_previous_dq_mutation_max": null,
+      "borrowed_previous_q_mutation_max": null,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": null,
+      "callback_immediate_q_max_abs_rad": null,
+      "configuration": "B",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": 0.0,
+      "dynamic_control_q_max_abs_rad": 0.0,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "R3_REPRODUCTION",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 0,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "dff401d4a0e9d870daac3b3b3f90ee878bbce55c3e49ac207895dfbef39ba695",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    },
+    {
+      "borrowed_previous_dq_mutation_max": null,
+      "borrowed_previous_q_mutation_max": null,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": 0.0,
+      "callback_immediate_q_max_abs_rad": 0.0,
+      "configuration": "C",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": null,
+      "dynamic_control_q_max_abs_rad": null,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "POST_CALLBACK_VS_FETCH",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 128,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "db00b6ac611249c6b81bed9d7210a248fcccf22176f26c5b5a296736432792c1",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    },
+    {
+      "borrowed_previous_dq_mutation_max": 4.164207402616739,
+      "borrowed_previous_q_mutation_max": 0.08762110769748688,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": null,
+      "callback_immediate_q_max_abs_rad": null,
+      "configuration": "D",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": null,
+      "dynamic_control_q_max_abs_rad": null,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "BORROWED_VS_COPIED",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 0,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "d1c8a49b45bcaf8173b050c1e381e886d8172938370a7fcc7dd676aa23a40f10",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    },
+    {
+      "borrowed_previous_dq_mutation_max": null,
+      "borrowed_previous_q_mutation_max": null,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": null,
+      "callback_immediate_q_max_abs_rad": null,
+      "configuration": "E",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": 0.0,
+      "dynamic_control_q_max_abs_rad": 0.0,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "PHYSX_TENSOR_VS_TRANSFORMS",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 0,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "6aa1aa1a0d59f700da70c1ddcc4f8b1ae61885abe05ab39d476deb16e374bc5e",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    },
+    {
+      "borrowed_previous_dq_mutation_max": null,
+      "borrowed_previous_q_mutation_max": null,
+      "callback_dt_max_error_s": 8.692344032057431e-10,
+      "callback_immediate_dq_max_abs_rad_s": null,
+      "callback_immediate_q_max_abs_rad": null,
+      "configuration": "F",
+      "dt_max_error_s": 8.692344032057431e-10,
+      "dynamic_control_dq_max_abs_rad_s": null,
+      "dynamic_control_q_max_abs_rad": null,
+      "explicit_physics_steps": 128,
+      "fd_velocity_max_abs_rad_s": 2.7388305829181223,
+      "fd_velocity_tail_max_abs_rad_s": 0.010724863037467003,
+      "first_failure": {
+        "last_frame_index": 128,
+        "message": "FROZEN_Q_NONZERO_DQ",
+        "phase": "OBSERVE",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+        "type": "RuntimeError"
+      },
+      "fk_max_rotation_error_rad": 1.0068924708610813e-06,
+      "fk_max_translation_error_m": 6.984703960513676e-07,
+      "integral_error_max_rad": 0.021979537555127136,
+      "label": "RENDER_REFRESH",
+      "phase": "OBSERVE",
+      "physics_backend_adaptation": {
+        "expected_from_cpu_context": {
+          "physxScene:broadphaseType": "MBP",
+          "physxScene:enableGPUDynamics": "False"
+        },
+        "observed": {
+          "after": {
+            "physxScene:broadphaseType": "MBP",
+            "physxScene:enableGPUDynamics": "False"
+          },
+          "before": {
+            "physxScene:broadphaseType": "GPU",
+            "physxScene:enableGPUDynamics": "True"
+          }
+        },
+        "scene_source_unchanged": true,
+        "source": "installed isaacsim.core.api PhysicsContext.__init__ CPU-device branch"
+      },
+      "post_callback_count": 0,
+      "recorded_frames": 129,
+      "render_added_physics_steps": false,
+      "robot_command_writes": 0,
+      "source_qualification": "BLOCKED",
+      "source_sha256": "3aa7b2c0b84cdbeda801f1a3ae04222faac40f8168b810fc15d0796c0649bb0d",
+      "status": "REJECTED",
+      "step_monotonic": true,
+      "suction_commands": 0,
+      "terminal_q_frozen_nonzero_dq": true,
+      "time_monotonic": true,
+      "unexpected_collisions": []
+    }
+  ],
+  "scene_identity_statuses": [
+    "SCENE_IDENTITY_VERIFIED",
+    "SCENE_IDENTITY_VERIFIED",
+    "SCENE_IDENTITY_VERIFIED",
+    "SCENE_IDENTITY_VERIFIED",
+    "SCENE_IDENTITY_VERIFIED",
+    "SCENE_IDENTITY_VERIFIED"
+  ],
+  "settled_status": "NATIVE_SETTLE_UNRESOLVED",
+  "static_torque_status": "STATIC_TORQUE_HOLD_SKIPPED",
+  "status": "JOINT_STATE_SOURCE_BLOCKED",
+  "suction_commands": 0,
+  "torque_commands": 0,
+  "tracking_status": "SHORT_TORQUE_TRACKING_SKIPPED",
+  "virtual_cooperative_qp_status": "BLOCKED_SOURCE_PREREQUISITE"
+}

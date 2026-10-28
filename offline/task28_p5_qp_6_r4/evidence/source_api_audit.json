@@ -1,0 +1,58 @@
+{
+  "installed_release": "Isaac Sim 4.5.0",
+  "observed_r4": {
+    "borrowed_tensor_previous_q_mutation_max_rad": 0.08762110769748688,
+    "dynamic_control_vs_wrapper_max_dq_rad_s": 0.0,
+    "dynamic_control_vs_wrapper_max_q_rad": 0.0,
+    "interpretation": "Dynamic Control is corroborating access to the same PhysX-backed state, not an independent sensor; borrowed tensor references are mutable and were excluded from certificates.",
+    "post_callback_vs_fetch_max_dq_rad_s": 0.0,
+    "post_callback_vs_fetch_max_q_rad": 0.0,
+    "wrapper_copy_policy": "R4 converts each returned value to a new float64 array before journaling",
+    "wrapper_dtype": "float32"
+  },
+  "python_interpreter": "/home/ubuntu2004/isaacsim-4.5.0/python.sh",
+  "source_files": {
+    "articulation_view": {
+      "behavior": "calls _physics_view.get_dof_positions/get_dof_velocities; clone defaults True",
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "positions_line": 1460,
+      "velocities_line": 1532
+    },
+    "dynamic_control": {
+      "behavior": "deprecated articulation state wrapper used only in B/E as same-backend corroboration",
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/omni.isaac.dynamic_control/omni/isaac/dynamic_control/_dynamic_control.py"
+    },
+    "numpy_clone": {
+      "behavior": "clone_tensor uses np.copy",
+      "line": 42,
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.utils/isaacsim/core/utils/numpy/tensor.py"
+    },
+    "physics_step": {
+      "behavior": "simulate followed by fetch_results",
+      "line": 560,
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.api/isaacsim/core/api/physics_context/physics_context.py"
+    },
+    "simulation_step": {
+      "behavior": "step(render=False) calls PhysicsContext._step; render refreshes app and may update kinematic articulations only on CUDA",
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.api/isaacsim/core/api/simulation_context/simulation_context.py",
+      "render_line": 663,
+      "step_line": 625
+    },
+    "single_articulation_wrapper": {
+      "behavior": "delegates to ArticulationView and returns row zero",
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_articulation.py",
+      "positions_line": 464,
+      "velocities_line": 489
+    }
+  },
+  "source_limitations": [
+    "The R3 archive had no pointer/dtype metadata, so historical aliasing remains unknown.",
+    "Link transforms corroborate pose evolution but do not independently measure joint velocity.",
+    "The CPU SimulationContext selects MBP and disables GPU dynamics from its device branch; this runtime adaptation is recorded, while the frozen builder and authored scene identity remain unchanged."
+  ],
+  "unavailable_or_not_used_as_repair": [
+    "No installed CPU API was found that turns a stale reported velocity into a certified independent measurement.",
+    "omni.physics.tensors.flush was not used as a repair; installed documentation marks it deprecated/no-op for this path.",
+    "update_articulations_kinematic was not used to rewrite physical state; it is a kinematic update path, not a velocity-source validator."
+  ]
+}

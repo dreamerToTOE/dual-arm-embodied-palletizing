@@ -1,0 +1,358 @@
+# Task28 G2-P5-QP-6-R4 — Isaac Joint-State Consistency Recovery and Original L-Suction Torque Bring-up
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected HEAD: d997eb0c0ee61697d0befe7cf42d85b670abaf78
+
+## Primary decision
+
+Keep the original Task28 dual-FR3, L-shaped suction and Cube scene unchanged.
+
+QP6-R3 completed actual scene physics stepping but revealed an apparent inconsistency between reported joint position and velocity.
+
+The next objective is to identify and verify the cause of that inconsistency, recover trustworthy joint state feedback, and then perform actual explicit torque-control experiments if all prerequisites pass.
+
+Do not redesign the scene or change research direction.
+
+Codex may execute multiple bounded diagnostics and independently eligible experiments within this single task without stopping for routine approvals.
+
+## Historical facts
+
+QP6-R3 status:
+QP6_R3_ORIGINAL_SCENE_RUNTIME_PARTIAL_SOURCE_BLOCKED
+
+Confirmed:
+
+- Frozen original Task28 builder was invoked.
+- Original two FR3 robots and mirrored L-shaped suction tools were preserved.
+- Cube_01 and table were preserved.
+- Real physics callback dt was approximately 0.01666666753590107 s.
+- 496 callback steps were recorded, including initialization.
+- No explicit torque commands were submitted.
+- Native position drives moved the arms toward HOME.
+- At later steps, recorded q differences approached zero while reported joint velocities remained approximately 0.0107 rad/s.
+- The two queried APIs agreed, but may share the same PhysX state backend.
+- Explicit wake-up did not resolve the issue.
+- Static torque and cooperative tracking were skipped.
+- The previous 978 software tests passed.
+
+Do not overwrite or reinterpret these historical outcomes.
+
+## Phase 0 — research and source review
+
+Before coding, inspect:
+
+1. QP6-R3 complete source, raw evidence and evaluation.
+2. QP6-R2 original-scene adapter and fixture identity.
+3. Installed Isaac Sim 4.5 SimulationContext and SingleArticulation implementation.
+4. Installed articulation tensor-view implementation.
+5. Installed Dynamic Control API.
+6. NVIDIA Isaac Sim 4.5 articulation state and physics-step documentation.
+7. NVIDIA PhysX documentation for articulation sleep, wake, drive and state integration.
+8. Relevant public reports of stale articulation-state caching.
+
+Do not assume a bug found in a newer Isaac Lab GPU backend also applies to the installed Isaac Sim 4.5 CPU backend.
+
+Document the source code path of every state-reading API and what its returned arrays represent.
+
+Distinguish published documentation, source implementation and observed simulator behavior.
+
+## Phase 1 — independently reconstruct the QP6-R3 state anomaly
+
+Read the archived R3 run 02 and run 03 data.
+
+For every relevant recorded physics step, calculate:
+
+- Delta q / actual delta t.
+- Reported dq.
+- Integral of reported dq over the previous step.
+- Per-joint discrepancy.
+- Link8 pose evolution.
+- Actual tool TCP pose evolution.
+- Dynamic Control versus SingleArticulation q/dq.
+- Physics step and callback timestamps.
+- Native position-drive targets and gains, where recorded.
+- Source buffer datatypes and possible aliasing.
+
+Explicitly test whether any archived arrays were shared mutable buffers.
+
+Do not infer that cached data are independent just because they originate from separate wrappers.
+
+Do not repair bad velocity observations by replacing them with numerical derivatives and then claim a valid physical source.
+
+Determine what the historical archive proves and what remains unknown.
+
+## Phase 2 — new source-state diagnostic matrix
+
+Create new work only under:
+
+offline/task28_p5_qp_6_r4/
+
+Preserve the original scene builder:
+
+fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py
+
+For every Isaac run:
+
+- Use a fresh independent process.
+- Construct a fresh stage using the original builder.
+- Preserve the exact frozen USD and scene physics.
+- Do not create a replacement FR3 or TCP.
+- Do not modify Cube pose.
+- Do not start the command-enabled ROS bridge.
+- Do not alter the native finger, mimic, suction, tools or collision setup.
+- Do not issue torque before source qualification.
+
+Register up to SIX separate bounded diagnostic configurations.
+
+Use them to distinguish:
+
+A. Canonical installed SimulationContext initialization and source-read sequence.
+
+B. Original R3 initialization and reading order, for reproducibility.
+
+C. Physics callback post-step readings versus readings immediately after an explicit step.
+
+D. Fresh copied snapshots versus reused array/buffer references.
+
+E. Native PhysX tensor and separately sourced link-transform observations, with explicit source limitations.
+
+F. A documented simulation lifecycle or state-refresh variation supported by the installed APIs, without modifying physics dt, geometry or safety settings.
+
+These are candidate investigations, not permission to alter all six conditions arbitrarily.
+
+Before each run, register exactly which single diagnostic dimension is being changed.
+
+For each frame capture actual source values and immediate copies.
+
+Use immutable per-frame numeric snapshots. Save evidence before SimulationApp.close().
+
+Do not let shutdown failure destroy run results.
+
+## Phase 3 — discriminate physical freeze from stale state
+
+For each diagnostic run, record:
+
+- Full nine-DOF left/right q and dq.
+- Actual source dtype, shape and object/buffer identity.
+- Independent immediate snapshot copy.
+- Simulation time and physics step.
+- Actual callback dt.
+- Link7 and link8 world transforms.
+- Actual L-shaped side_suction_tcp world transforms.
+- Reported joint velocities and finite-difference velocities.
+- Native drive targets and reported gains.
+- Articulation sleep/wake status if the installed API supports reliable querying.
+- Stage timeline and physics activity.
+- Cube transform and unexpected collisions.
+- Actual M/c/g, only when their timestamps are meaningful.
+
+Distinguish:
+
+- Physics really stopped advancing.
+- Articulation stopped moving but simulation continued.
+- The position getter returned a stale state.
+- The velocity getter returned a stale state.
+- Both getters returned temporally inconsistent states.
+- A buffer alias or delayed serialization corrupted observations.
+- A drive/solver constraint caused unusual motion without invalid source data.
+
+Do not claim a unique cause without evidence that rules out the alternatives.
+
+Use an independently checked relationship between joint motion and link pose to corroborate the result.
+
+A published sleep mechanism does not by itself explain persistently nonzero joint velocity.
+
+## Phase 4 — state-source qualification
+
+Define and freeze an explicit source-validity contract.
+
+It must include:
+
+- Identical correct articulation and DOF identity.
+- Monotonic actual physics step.
+- Fresh q/dq observations.
+- A consistent physical timestamp.
+- Correct finite units and frame identity.
+- Independent position/velocity consistency over a meaningful time window.
+- Reasonable link-pose/FK agreement.
+- No unexplained source-buffer aliasing.
+- No unintended collision.
+- No competing active control sink.
+
+Do not simply increase the velocity tolerance beyond the old 0.01 rad/s native settle gate.
+
+A settled state and a trustworthy moving state are different claims. Record both.
+
+If the state source remains unexplained or unqualified, stop the dependent torque experiments after completing the registered diagnostics.
+
+## Phase 5 — arm dynamics validation
+
+Only after the actual source is qualified:
+
+Read current M9/c9/g9 for both original FR3 articulations.
+
+Control only the seven arm joints per robot, but retain all native finger state and mimic/constraint behavior.
+
+Investigate actual finger coupling contribution and tool inertia provenance.
+
+Validate the arm dynamics against independently recorded state transitions.
+
+Do not change the original L-tool mass or inertia.
+
+Do not assume that native fingers are suction actuators.
+
+Do not silently treat M[:7,:7] as a certified reduced model.
+
+Declare a scoped, source-valid arm subsystem only when the actual data support it.
+
+No claim of full nine-DOF unconstrained dynamics PASS is required for an appropriately validated 14-arm controller, but finger constraints and possible coupling must remain explicitly handled.
+
+## Phase 6 — actual exclusive torque actuation
+
+Only after valid joint state, scene and arm dynamics prerequisites:
+
+Integrate the R3 explicit effort adapter into the original scene for a bounded simulation test.
+
+Verify:
+
+- Both actual original articulation paths.
+- Original L-tool TCPs.
+- Exact full-DOF names.
+- No legacy position bridge command sink.
+- Exclusive arm force-mode control.
+- Arm drive Kp/Kd disabled in the live session only.
+- Native finger drives and controls preserved.
+- Proper full effort-buffer treatment.
+- Both-arm pre-command acceptance.
+- Command buffer readback.
+- Actual physics advancement and post-step state changes.
+- Research-only effort and rate limits.
+- No unexpected collision.
+
+First perform a clearly registered stationary explicit-torque hold.
+
+Do not teleport either robot to a new posture or adjust the Cube to create a favorable initial state.
+
+Failure of any shared state/source prerequisite must prevent effort writes.
+
+A PASS requires real Isaac actuator writes and successful actual state measurements, not mocked interface tests.
+
+## Phase 7 — conditional movement benchmark
+
+If static effort control passes:
+
+Use the original scene and validated, collision-free FREE_HOME region.
+
+Generate one or two bounded smooth arm motions from the actual measured starting state.
+
+Register motion endpoints, duration and limits before experiments.
+
+Compare:
+
+A. Gravity+PD torque tracking.
+
+B. Validated model-based computed-torque tracking.
+
+If the model is qualified, optionally add:
+
+C. Cooperative task-space QP for a no-contact virtual object reference.
+
+Every controller must use the same valid state source, original L-tool TCPs, frozen fixture and safety gates.
+
+Suggested maximum formal run budget:
+
+- One original-scene static effort run.
+- Up to four independent A/B motion cells.
+- Up to one additional no-contact cooperative-QP cell if all prerequisites are met.
+
+Independent cells may continue after safe fresh resets.
+
+No repeated formal tuning to force PASS.
+
+No Cube suction closure, D6 attachment, payload transport, ROS command path or physical robot execution in R4.
+
+Do not apply the attached-grasp 0.100 mm closure gate to a distant free-space HOME state.
+
+Continue to enforce original G1 collision and joint constraints in their proper phases.
+
+## Phase 8 — approach-path evaluation
+
+Retain R3's negative result:
+
+Straight joint interpolation toward the nominal suction grasp produced left suction-tool versus Cube collision at fraction 0.92.
+
+Investigate which original collision components were involved.
+
+Do not classify every Cup contact as forbidden or every tool contact as authorized.
+
+Check the original G1 finite contact-mode semantics and the original 1 mm nominal approach gap.
+
+Search for a safe approach only with the existing frozen G1 IK, NR and FCL algorithms.
+
+No ACM expansion or blanket collision removal.
+
+Do not call successful endpoint IK a safe approach trajectory.
+
+This evaluation remains separate from torque-source qualification.
+
+## Phase 9 — negative controls and historical preservation
+
+Add source fault-injection tests for:
+
+- Stale joint q.
+- Stale joint dq.
+- Shared mutable source arrays.
+- Wrong step/time.
+- Wrong robot identity.
+- Unexpected physics pause.
+- Position sink still active.
+- Joint effort mode mismatch.
+- Invalid mass source.
+- Wrong TCP frame.
+- Unexpected collision.
+- Attempting torque command after a latched rejection.
+
+Run previous 978 nonoverlapping tests and new focused tests.
+
+Preserve previous QP-6/R1/R2/R3 statuses.
+
+## Deliverables
+
+Create:
+
+docs/tasks/TASK28_G2_P5_QP_6_R4_STATE_SOURCE_RECOVERY.md
+
+Archive full registered diagnostic configurations, raw q/dq and link-pose histories, negative controls, source explanation, independent evaluation, torque controller attempts and failed/skipped cells under:
+
+offline/task28_p5_qp_6_r4/
+
+Report separate outcomes:
+
+- ORIGINAL_SCENE_UNCHANGED
+- JOINT_STATE_SOURCE_VALIDATED / PARTIAL / BLOCKED
+- NATIVE_SETTLE_VERIFIED / UNRESOLVED
+- ARM_DYNAMICS_SOURCE_VALIDATED / PARTIAL
+- EXCLUSIVE_TORQUE_COMMAND_EXECUTED / BLOCKED
+- STATIC_TORQUE_HOLD_PASS / REJECTED / SKIPPED
+- SHORT_TORQUE_TRACKING_PASS / REJECTED / SKIPPED
+- VIRTUAL_COOPERATIVE_QP_STATUS
+- CUBE_SUCTION_UNTESTED
+
+Never label an offline calculation or CPU mock as an executed torque controller.
+
+## Final Chinese report
+
+Begin with a SHORT, PLAIN-LANGUAGE SUMMARY stating:
+
+- What was completed.
+- Whether the joint-state problem was actually solved.
+- Whether real torque commands were sent.
+- What remains blocked.
+- What to do next.
+
+Then provide detailed research evidence, all experiment cells, first failures, test counts, commit SHA, verified remote HEAD and worktree status.
+
+Commit/push only task-scoped additions.
+
+STOP at R4. Do not automatically initiate actual suction attachment, ROS or hardware operation.

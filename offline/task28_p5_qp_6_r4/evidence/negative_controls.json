@@ -1,0 +1,98 @@
+{
+  "cases": [
+    {
+      "commands": 0,
+      "expected": "STALE_Q_NONZERO_DQ",
+      "name": "stale_joint_q",
+      "outcome": "REJECTED",
+      "reason": "STALE_Q_NONZERO_DQ"
+    },
+    {
+      "commands": 0,
+      "expected": "STALE_DQ",
+      "name": "stale_joint_dq",
+      "outcome": "REJECTED",
+      "reason": "STALE_DQ"
+    },
+    {
+      "commands": 0,
+      "expected": "SHARED_MUTABLE_BUFFER",
+      "name": "shared_mutable_source_array",
+      "outcome": "REJECTED",
+      "reason": "SHARED_MUTABLE_BUFFER"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_PHYSICS_STEP",
+      "name": "wrong_physics_step",
+      "outcome": "REJECTED",
+      "reason": "WRONG_PHYSICS_STEP"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_PHYSICS_TIME",
+      "name": "wrong_physics_time",
+      "outcome": "REJECTED",
+      "reason": "WRONG_PHYSICS_TIME"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_ROBOT_IDENTITY",
+      "name": "wrong_robot_identity",
+      "outcome": "REJECTED",
+      "reason": "WRONG_ROBOT_IDENTITY"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_PHYSICS_STEP",
+      "name": "unexpected_physics_pause",
+      "outcome": "REJECTED",
+      "reason": "WRONG_PHYSICS_STEP"
+    },
+    {
+      "commands": 0,
+      "expected": "POSITION_SINK_ACTIVE",
+      "name": "position_sink_active",
+      "outcome": "REJECTED",
+      "reason": "POSITION_SINK_ACTIVE"
+    },
+    {
+      "commands": 0,
+      "expected": "JOINT_EFFORT_MODE_MISMATCH",
+      "name": "joint_effort_mode_mismatch",
+      "outcome": "REJECTED",
+      "reason": "JOINT_EFFORT_MODE_MISMATCH"
+    },
+    {
+      "commands": 0,
+      "expected": "INVALID_MASS_SOURCE",
+      "name": "invalid_mass_source",
+      "outcome": "REJECTED",
+      "reason": "INVALID_MASS_SOURCE"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_TCP_FRAME",
+      "name": "wrong_tcp_frame",
+      "outcome": "REJECTED",
+      "reason": "WRONG_TCP_FRAME"
+    },
+    {
+      "commands": 0,
+      "expected": "UNEXPECTED_COLLISION",
+      "name": "unexpected_collision",
+      "outcome": "REJECTED",
+      "reason": "UNEXPECTED_COLLISION"
+    },
+    {
+      "commands": 0,
+      "expected": "LATCHED_REJECTION:UNEXPECTED_COLLISION",
+      "name": "torque_after_latched_rejection",
+      "outcome": "REJECTED",
+      "reason": "LATCHED_REJECTION:UNEXPECTED_COLLISION"
+    }
+  ],
+  "robot_command_writes": 0,
+  "status": "ALL_NEGATIVE_CONTROLS_REJECTED",
+  "suction_commands": 0
+}

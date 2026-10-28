@@ -1,0 +1,8 @@
+{
+ "A":{"label":"CANONICAL_COPIED","single_dimension":"Native SimulationContext.play, immediate float32 and float64 copies after fetch; baseline."},
+ "B":{"label":"R3_REPRODUCTION","single_dimension":"Retain R3 read/serialization sequence and add independent copied snapshots; same lifecycle, no wake."},
+ "C":{"label":"POST_CALLBACK_VS_FETCH","single_dimension":"Install PhysX post-step callback and compare callback snapshot with immediately-after-fetch snapshot."},
+ "D":{"label":"BORROWED_VS_COPIED","single_dimension":"Retain tensor backing buffers across next step, compare borrowed references to immutable copies; no writes."},
+ "E":{"label":"PHYSX_TENSOR_VS_TRANSFORMS","single_dimension":"Add raw tensor getter and physical link7/link8 observations to wrapper readings; same scene, no source mutation."},
+ "F":{"label":"RENDER_REFRESH","single_dimension":"Call documented SimulationContext.render after explicit fetch; log extra callbacks and reject unexpected physics advancement; other controls unchanged."}
+}

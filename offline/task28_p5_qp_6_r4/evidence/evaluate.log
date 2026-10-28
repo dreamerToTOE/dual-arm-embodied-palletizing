@@ -1,0 +1,72 @@
+{
+  "borrowed_alias_mutation_max": 0.08762110769748688,
+  "callback_immediate_agreement_max_q_rad": 0.0,
+  "diagnostic_configurations": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "dynamic_control_agreement_max_q_rad": 0.0,
+  "first_failures": {
+    "A": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    },
+    "B": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    },
+    "C": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    },
+    "D": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    },
+    "E": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    },
+    "F": {
+      "last_frame_index": 128,
+      "message": "FROZEN_Q_NONZERO_DQ",
+      "phase": "OBSERVE",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/runtime_diagnostic.py\", line 144, in main\n    if stale>=cfg['source_discrepancy_stop_consecutive']:raise RuntimeError('FROZEN_Q_NONZERO_DQ')\nRuntimeError: FROZEN_Q_NONZERO_DQ\n",
+      "type": "RuntimeError"
+    }
+  },
+  "historical_r3_preserved": true,
+  "max_terminal_fd_error_rad_s": 0.010724863037467003,
+  "outcomes": {
+    "arm_dynamics_status": "ARM_DYNAMICS_SOURCE_PARTIAL",
+    "cube_suction_status": "CUBE_SUCTION_UNTESTED",
+    "exclusive_torque_status": "EXCLUSIVE_TORQUE_COMMAND_BLOCKED",
+    "original_scene_status": "ORIGINAL_SCENE_UNCHANGED",
+    "settled_status": "NATIVE_SETTLE_UNRESOLVED",
+    "static_torque_status": "STATIC_TORQUE_HOLD_SKIPPED",
+    "status": "JOINT_STATE_SOURCE_BLOCKED",
+    "tracking_status": "SHORT_TORQUE_TRACKING_SKIPPED",
+    "virtual_cooperative_qp_status": "BLOCKED_SOURCE_PREREQUISITE"
+  },
+  "r4_status": "QP6_R4_ORIGINAL_SCENE_SOURCE_BLOCKED",
+  "torque_commands": 0
+}
