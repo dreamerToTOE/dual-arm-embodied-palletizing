@@ -1,0 +1,317 @@
+{
+  "acceptance": "G2_P5_QP_5_R1_FAIL_CLOSED_DIAGNOSTIC_PASS",
+  "artifact_hashes": {
+    "failed_runs/runtime_gate_none/collector_status.json": "450b5a0130624c89e30280b73a02c0139e4f32bf73066f9963ef781344950f0e",
+    "failed_runs/runtime_gate_none/console.log": "fd1d7b2e56b0c59f96a9cc509fe39904418a02f064500194ba1127eb54e558ad",
+    "failed_runs/runtime_gate_none/partial_observations.json": "69153b6180f9f65e62d3ce808fb8cfe94b1b0835d2c942e4bd798c1799b08ad9",
+    "failed_runs/startup_1_finger_q/collector_status.json": "2aa44fcb13e20379aebec98ef46cdef2009894e7eb5b043e3904f8f37ec1e1c4",
+    "failed_runs/startup_1_finger_q/console.log": "423941b93f124ed9d75eefd1970d55da83b0723ee5c9700ece55d22f9f46e190",
+    "failed_runs/startup_2_gravity/collector_status.json": "e3ce06314e6e52e63f1e6674f7422222f2c34d50f0131d132b5e8c40c2c36adb",
+    "failed_runs/startup_2_gravity/console.log": "f9714158d56376b2dfd935d8caf7d1abae3b2acedb98f1168c945f118ca1ad05",
+    "forensic_replay/replay.json": "09fa8b34ff581ce593459e123ce9605901bfd3cc484f39c6a31e58cc74af48ba",
+    "formal_run_v1/collector_status.json": "4e5771d0669940821d734f4902405b0b66f3cc8cd7e62b54c05dbcba5d45fcd3",
+    "formal_run_v1/console.log": "77349e7209e3b00d6d823825b298ca7413e591774190fc89c4d15414229de7f1",
+    "formal_run_v1/independent_evaluation.json": "4e63a2d81f492b4772ae2b86e5479591ac37ea073ea1b9911b800fe3d000b921",
+    "formal_run_v1/static_hold_observations.json": "d6627c6fb83072b88a77574fa52758a8422cdbe14bab505db3898421a471dae1",
+    "formal_run_v1/tracking_observations.json": "ea99976750df4b34ed723df21931445b070580a7ca88bc35819f641773ce1e22",
+    "regression_historical_789.log": "4d28b3e77d8b6bf4e78ed6c4a1fe93a5ddf96dc537687fd037c2768d26d11189",
+    "regression_qp4_53.log": "6b5e3c2fbbf8faad222d1532b03fb5b297248724a4d988ac33bde07168fdb435",
+    "regression_qp5_5.log": "f889e7e1797f13ea812ac687e605cdcd9bc7d4e48a5afa31059472b0a510c1b9",
+    "regression_r1_6.log": "75593f1e04b68d4245a46bc63ea8f2af80baaff5a8305f912493c0d05301102c"
+  },
+  "continuous_safety_certified": false,
+  "execution_authorized": false,
+  "fail_closed_proof": {
+    "continued_after_first_failure": false,
+    "final_hold_steps_executed": 0,
+    "moving_steps_before_stop": 2,
+    "no_zero_torque_fallback": true,
+    "remaining_moving_steps_not_executed": 10,
+    "static_steps": 240
+  },
+  "forensic_first_violations": {
+    "left_absolute_rotation": {
+      "frame_index": 10,
+      "reason": [
+        "relative_translation",
+        "relative_rotation",
+        "left_absolute_translation",
+        "right_absolute_translation",
+        "left_absolute_rotation"
+      ],
+      "time_s": 0.08333333767950535
+    },
+    "left_absolute_translation": {
+      "frame_index": 2,
+      "reason": [
+        "left_absolute_translation"
+      ],
+      "time_s": 0.01666666753590107
+    },
+    "relative_rotation": {
+      "frame_index": 10,
+      "reason": [
+        "relative_translation",
+        "relative_rotation",
+        "left_absolute_translation",
+        "right_absolute_translation",
+        "left_absolute_rotation"
+      ],
+      "time_s": 0.08333333767950535
+    },
+    "relative_translation": {
+      "frame_index": 3,
+      "reason": [
+        "relative_translation",
+        "left_absolute_translation",
+        "right_absolute_translation"
+      ],
+      "time_s": 0.025000001303851604
+    },
+    "right_absolute_rotation": {
+      "frame_index": 18,
+      "reason": [
+        "relative_translation",
+        "relative_rotation",
+        "left_absolute_translation",
+        "right_absolute_translation",
+        "left_absolute_rotation",
+        "right_absolute_rotation"
+      ],
+      "time_s": 0.15000000782310963
+    },
+    "right_absolute_translation": {
+      "frame_index": 3,
+      "reason": [
+        "relative_translation",
+        "left_absolute_translation",
+        "right_absolute_translation"
+      ],
+      "time_s": 0.025000001303851604
+    }
+  },
+  "forensic_replay": {
+    "first_left_absolute_translation_failure": {
+      "frame_index": 2,
+      "reason": [
+        "left_absolute_translation"
+      ],
+      "time_s": 0.01666666753590107
+    },
+    "first_recorded_closure_failure_frame": {
+      "frame_index": 3,
+      "reason": [
+        "relative_translation",
+        "left_absolute_translation",
+        "right_absolute_translation"
+      ],
+      "time_s": 0.025000001303851604
+    },
+    "first_right_absolute_translation_failure": {
+      "frame_index": 3,
+      "reason": [
+        "relative_translation",
+        "left_absolute_translation",
+        "right_absolute_translation"
+      ],
+      "time_s": 0.025000001303851604
+    },
+    "matched_q_mismatch_max": 0.0017921098665403257,
+    "max_left_absolute_translation_m": 0.0012328036620884175,
+    "max_reference_geometry_translation_m": 5.8785074337285e-07,
+    "max_relative_translation_m": 0.0012279597908452782,
+    "max_right_absolute_translation_m": 0.0006792517246001114,
+    "original_recorded_q_mismatch_max": 0.0017234453157590757
+  },
+  "formal_run": {
+    "collector_status_sha256": "4e5771d0669940821d734f4902405b0b66f3cc8cd7e62b54c05dbcba5d45fcd3",
+    "console_sha256": "77349e7209e3b00d6d823825b298ca7413e591774190fc89c4d15414229de7f1",
+    "first_failure_index": 1,
+    "first_failure_reasons": [
+      "LEFT_ABSOLUTE_TRANSLATION"
+    ],
+    "first_failure_time_s": 0.01666666753590107,
+    "independent_evaluation": {
+      "first_failure": {
+        "index": 1,
+        "runtime_reasons": [
+          "LEFT_ABSOLUTE_TRANSLATION"
+        ],
+        "time_s": 0.01666666753590107
+      },
+      "reasons": [],
+      "schema": "task28.g2_p5_qp_5_r1.evaluation.v1",
+      "source_status": "REJECTED",
+      "static": {
+        "maxima": {
+          "left_absolute_rotation_rad": 1.3670830484356129e-06,
+          "left_absolute_translation_m": 2.5617266796980093e-07,
+          "position_error_inf": 6.133693331022982e-08,
+          "relative_rotation_rad": 1.850611731078659e-06,
+          "relative_translation_m": 1.9321745339187524e-07,
+          "right_absolute_rotation_rad": 8.390721568784008e-07,
+          "right_absolute_translation_m": 3.6455851047683685e-07,
+          "velocity_error_inf": 1.9818489818135276e-06
+        },
+        "reasons": [],
+        "sample_count": 240
+      },
+      "status": "PASS",
+      "tracking": {
+        "maxima": {
+          "left_absolute_rotation_rad": 0.00015509124443777956,
+          "left_absolute_translation_m": 0.00015406338914891624,
+          "position_error_inf": 0.00035039853700613577,
+          "relative_rotation_rad": 0.00010677538289166395,
+          "relative_translation_m": 9.825311248463801e-05,
+          "right_absolute_rotation_rad": 0.0002062646532195057,
+          "right_absolute_translation_m": 8.219647998736787e-05,
+          "velocity_error_inf": 0.023225433901481365
+        },
+        "reasons": [
+          [
+            1,
+            "LEFT_ABSOLUTE_TRANSLATION"
+          ]
+        ],
+        "sample_count": 2
+      }
+    },
+    "physics_steps": 242,
+    "status": "REJECTED",
+    "tracking_observations_sha256": "ea99976750df4b34ed723df21931445b070580a7ca88bc35819f641773ce1e22",
+    "tracking_steps_executed": 2
+  },
+  "limitations": [
+    "no Cube/suction/D6/table or payload contact",
+    "no ROS or production bridge",
+    "actual isolated torque tracking remains rejected by frozen absolute grasp geometry gate",
+    "no physical robot, internal-force regulation or continuous collision certificate"
+  ],
+  "negative_controls": [
+    {
+      "id": "time_mismatch",
+      "passed": true,
+      "reasons": [
+        "REFERENCE_TIME_MISMATCH"
+      ]
+    },
+    {
+      "id": "one_step_offset",
+      "passed": true,
+      "reasons": [
+        "ONE_STEP_SAMPLING_OFFSET"
+      ]
+    },
+    {
+      "id": "wrong_conversion",
+      "passed": true,
+      "reasons": [
+        "INCORRECT_20MS_STEP_CONVERSION"
+      ]
+    },
+    {
+      "id": "wrong_mapping",
+      "passed": true,
+      "reasons": [
+        "WRONG_SIDE_OR_DOF_MAPPING"
+      ]
+    },
+    {
+      "id": "stale_clock",
+      "passed": true,
+      "reasons": [
+        "STALE_OR_DISCONTINUOUS_CLOCK"
+      ]
+    },
+    {
+      "id": "closure",
+      "passed": true,
+      "reasons": [
+        "POST_STEP_CLOSURE_FAILURE"
+      ]
+    },
+    {
+      "id": "tracking",
+      "passed": true,
+      "reasons": [
+        "TRACKING_ERROR_LIMIT"
+      ]
+    },
+    {
+      "id": "saturation",
+      "passed": true,
+      "reasons": [
+        "COMMAND_SATURATION"
+      ]
+    },
+    {
+      "id": "rate",
+      "passed": true,
+      "reasons": [
+        "EFFORT_RATE_VIOLATION"
+      ]
+    },
+    {
+      "id": "continuation",
+      "passed": true,
+      "reasons": [
+        "ILLEGAL_CONTINUATION_AFTER_FAILURE"
+      ]
+    },
+    {
+      "id": "qdd",
+      "passed": true,
+      "reasons": [
+        "UNSUPPORTED_ACCELERATION_PROMOTION"
+      ]
+    }
+  ],
+  "physical_robot_tested": false,
+  "regression": {
+    "regression_historical_789.log": {
+      "passed": 789,
+      "sha256": "4d28b3e77d8b6bf4e78ed6c4a1fe93a5ddf96dc537687fd037c2768d26d11189"
+    },
+    "regression_qp4_53.log": {
+      "passed": 53,
+      "sha256": "6b5e3c2fbbf8faad222d1532b03fb5b297248724a4d988ac33bde07168fdb435"
+    },
+    "regression_qp5_5.log": {
+      "passed": 5,
+      "sha256": "f889e7e1797f13ea812ac687e605cdcd9bc7d4e48a5afa31059472b0a510c1b9"
+    },
+    "regression_r1_6.log": {
+      "passed": 6,
+      "sha256": "75593f1e04b68d4245a46bc63ea8f2af80baaff5a8305f912493c0d05301102c"
+    }
+  },
+  "reproduction": {
+    "forensic_command": "PYTHONPATH=.:offline python3 offline/task28_p5_qp_5_r1/forensic.py --input offline/task28_p5_qp_5/evidence/formal_run_v1 --output offline/task28_p5_qp_5_r1/evidence/forensic_replay/replay.json",
+    "formal_command": "OMNI_KIT_ACCEPT_EULA=YES PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONPATH=.:offline /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p5_qp_5_r1/collector.py --asset <fr3.usd> --output <fresh-directory> --prereg-sha256 <sha256(preregistration.json)>",
+    "generated_utc": "2026-10-28T05:21:15Z",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]"
+  },
+  "schema": "task28.g2_p5_qp_5_r1.evidence.v1",
+  "scope": "ISOLATED_CPU/ISAAC_SIM_VIRTUAL_GEOMETRY_ONLY",
+  "source_hashes": {
+    "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+    "offline/task28_g1_1/task28_validator/closed_chain.py": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+    "offline/task28_g1_1/task28_validator/model.py": "38ec5d2cd2fc348ce9c67737a3a59b8194eaaf84331165ff5b2e3a4adb5b4dfa",
+    "offline/task28_p5_qp_3/evidence/experiments_v1/handoff_records.json": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+    "offline/task28_p5_qp_4/reference.py": "193cd93ff99688ea05d691189a1bea2209f07d3614086d3ece145a09434bad2d",
+    "offline/task28_p5_qp_5/collector.py": "81b344a7d38c30e9496450a9e117c6b406ee865286272499381611aa1fc301e9",
+    "offline/task28_p5_qp_5/controller.py": "e9307f910504f3b5bb81239f103ef1d2a62eb79339a2734baffbb0afc0d91a46",
+    "offline/task28_p5_qp_5/evaluate.py": "04ba5ec07f1ebfd943d76850f6e23c94f71ce25819efe2b95622b9349743f73b",
+    "offline/task28_p5_qp_5/evidence/formal_run_v1/tracking_observations.json": "bf2edd193f5c8f3fbd420f52ac79fd2bd1ac4f99253a064c3d53c424b6235cc9",
+    "offline/task28_p5_qp_5_r1/collector.py": "375131a59932380971f59ea5638ba6c9654dd2f5da8b531e1366bf5e621d8507",
+    "offline/task28_p5_qp_5_r1/contract.py": "c817797e008abe90a22539223442d601f386c0777010303c4f6a937a48530fc6",
+    "offline/task28_p5_qp_5_r1/controls.py": "18b67be43130fb83139a2e0a0cf1824261a8f75d8add3633e28e62877a8a18e1",
+    "offline/task28_p5_qp_5_r1/evaluate.py": "5dff28e34ed3e95cfc31891c6ccc42719fd53c9d0ac980de89295db2b134fd1d",
+    "offline/task28_p5_qp_5_r1/forensic.py": "4803686668c75dee675e9d04cb58671ec452c86e0146a4d267b546e0c39bc9dd",
+    "offline/task28_p5_qp_5_r1/preregistration.json": "0e012bf596bffd409ac33b13716b8d5d1bcf58cf1f0a3c1b8d1979b610b74065",
+    "offline/task28_p5_qp_5_r1/runtime_gate.py": "92b6ba6e2e8efee7bcfc0cfef72eed7421b37b6b3aa99e247aa3d5f883eb5b58",
+    "offline/task28_p5_qp_5_r1/tests/test_r1.py": "46aba54618b901df1b2c7199b68bf91560cbfc08743856f8c2c55dc8fb5ab611"
+  }
+}

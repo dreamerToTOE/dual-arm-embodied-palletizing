@@ -1,0 +1,95 @@
+{
+  "schema": "task28.g2_p5_qp_5_r1.preregistration.v1",
+  "status": "FROZEN_BEFORE_R1_FORMAL_PHYSICS",
+  "scope": "VIRTUAL_GEOMETRY_ONLY; isolated two-FR3 Isaac scene; no Cube/suction/D6/table/ROS/production bridge",
+  "source_qp5_formal_run": "offline/task28_p5_qp_5/evidence/formal_run_v1",
+  "source_qp4_archive": "offline/task28_p5_qp_3/evidence/experiments_v1/handoff_records.json",
+  "fixture_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "physics_dt_s": 0.008333333333333333,
+  "gravity_m_s2": [
+    0.0,
+    0.0,
+    -9.81
+  ],
+  "tracking_horizon_s": 0.1,
+  "interval_duration_s": 0.02,
+  "static_hold_steps": 240,
+  "final_hold_steps": 60,
+  "expected_all_dof_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1",
+    "fr3_finger_joint2"
+  ],
+  "finger_q_m": [
+    0.04,
+    0.04
+  ],
+  "pd_kp": [
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+    3.0,
+    3.0,
+    2.0,
+    20.0,
+    20.0
+  ],
+  "pd_kd": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.8,
+    0.8,
+    0.5,
+    2.0,
+    2.0
+  ],
+  "effort_bounds": [
+    60.0,
+    60.0,
+    60.0,
+    60.0,
+    60.0,
+    60.0,
+    60.0,
+    10.0,
+    10.0
+  ],
+  "effort_rate_bounds_per_step": [
+    100.0,
+    100.0,
+    100.0,
+    100.0,
+    100.0,
+    100.0,
+    100.0,
+    10.0,
+    10.0
+  ],
+  "arm_speed_limit_rad_s": 3.0,
+  "q1_abs_limit_rad": 1.2,
+  "closure_translation_tolerance_m": 0.0001,
+  "closure_rotation_tolerance_rad": 0.001,
+  "link7_fk_position_tolerance_m": 0.0001,
+  "link7_fk_rotation_tolerance_rad": 0.0001,
+  "tracking_position_tolerance_rad": 0.05,
+  "tracking_velocity_tolerance_rad_s": 3.0,
+  "command_readback_tolerance": 1e-05,
+  "failure_policy": "STOP_AFTER_FIRST_PRE_OR_POST_GATE_FAILURE_PRESERVE_FRAME_NO_ZERO_TORQUE_FALLBACK",
+  "temporal_contract": "pre-step controller samples q,dq,q_ref,dq_ref,object_ref at cursor t; one physics step; post-step state is evaluated against reference/object at t+dt; shared cursor and source identity",
+  "authorization": {
+    "execution_authorized": false,
+    "physical_robot_tested": false,
+    "cube_or_suction_present": false,
+    "continuous_safety_certified": false
+  }
+}
