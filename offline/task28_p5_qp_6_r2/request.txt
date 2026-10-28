@@ -1,0 +1,279 @@
+# Task28 G2-P5-QP-6-R2 — Scene-Preserving L-Shaped Suction Torque-Control Integration
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected HEAD: 069c03ed39001e107d1ee48ef7a8a74d33fd8787
+
+## Mandatory research correction
+
+The actual Task28 project uses TWO FR3 robots carrying the previously established, mirrored L-shaped side-suction tools.
+
+Do NOT replace the L-shaped suction tooling with a two-finger gripper.
+
+Do NOT create an alternative simplified two-FR3 scene and describe it as the original Task28 environment.
+
+The previous QP-6 tests used bare FR3 articulations at /World/QP6_left and /World/QP6_right. Those tests remain valid only within their stated isolated scope.
+
+We must now develop the torque controller for the EXISTING scene and tooling, not redesign the scene to accommodate the controller.
+
+## Phase 1 — read and freeze the actual original environment
+
+Inspect these files BEFORE writing implementation code:
+
+- docs/tasks/TASK24_SIDE_SUCTION_TIGHT_OFFLINE.md
+- docs/tasks/TASK26_TRUCK_BOX_PUSH_IN.md
+- docs/tasks/TASK27_FIVE_CUBE_CENTER_INSERT.md
+- docs/tasks/TASK28_PAPER_TO_MAIN_RESEARCH_ROADMAP.md
+- docs/tasks/TASK28_G0A_INTERFACE_AUDIT.md
+- docs/tasks/TASK28_G1_0_BASELINE_FREEZE.md
+- fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json
+- fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py
+- fixtures/task28_g1_0_new_single_cube_v0/scene/task28_g1_0_scene_contract.json
+- fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py
+- fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_g1_0_bridge_contract.json
+- Frozen Task28 MoveIt URDF and SRDF
+- ros_ws/src/fr3_dual_side_suction_description/urdf/dual_side_suction.xacro
+- isaac/scripts/task24_side_suction_tight_scene.py
+- isaac/scripts/task24_side_suction_tight_bridge.py
+- isaac/scripts/task26_truck_box_scene.py
+- isaac/scripts/task26_truck_box_bridge.py
+
+Also inspect the existing QP-4, QP-5, QP-6, QP-6-R1 and G3 algorithms and evidence.
+
+Produce an exact scene/control provenance map.
+
+The Task28 single-Cube frozen fixture is the current scientific starting point. Historical Task24/26/27 implementations must remain unchanged and must not be confused with this newer fixture.
+
+Do not claim the newer Task28 fixture has already passed physical suction testing.
+
+## Phase 2 — mandatory scene identity and suction-tool invariants
+
+Verify the original scene structure:
+
+    /World/Task28G10SingleCube
+    /World/Task28G10SingleCube/left_fr3
+    /World/Task28G10SingleCube/right_fr3
+    /World/Task28G10SingleCube/Supply/Cube_01
+
+The existing L-shaped tool is attached at each:
+
+    fr3_link8/side_suction_tool
+
+Its physical TCP is:
+
+    fr3_link8/side_suction_tool/side_suction_tcp
+
+Preserve all frozen parameters:
+
+- Vertical support: 0.080 m.
+- Lateral support: 0.130 m.
+- Manifold: 0.070 x 0.070 m.
+- Four cup shapes per arm.
+- Link8-to-TCP translation:
+  left [0, -0.155, 0.080] m
+  right [0, +0.155, 0.080] m.
+- Local TCP rotations: left Rz(-90 degrees), right Rz(+90 degrees).
+- Original one-Surface-Gripper-per-arm setup.
+- Original D6 stiffness, damping, bend, capture and break parameters.
+- Original Cube, table, bases, fixtures, collision geometry and ACM.
+
+The link8-to-TCP transform is NOT the same as the object-to-TCP nominal grasp transform, which belongs to the G1 closed-chain model.
+
+Preserve both correctly.
+
+Do not silently substitute a link7 TCP approximation for the real frozen side_suction_tcp.
+
+Inspect whether the L-tool's physical mass and inertia are included in the actual installed Isaac articulation dynamics. Record UNKNOWN if this cannot be established.
+
+Do not invent additional tool inertia or silently apply a new payload parameter.
+
+The existing Task28 scene specifies 60 physics steps per second.
+
+Previous QP-6 robot-only tests used 120 Hz.
+
+Do not carry the old 120 Hz assumption into the actual scene. Read and validate the real scene physics step before constructing the controller.
+
+## Phase 3 — arm and legacy-finger dynamics boundary
+
+The original USD contains seven arm joints and two native mimic-finger joints per articulation.
+
+The L-shaped suction tool itself is FIXED and has no active opening/closing finger motion.
+
+The existing scene hides/disables collision and visual components of the original Franka Hand, but that does not automatically remove its generalized coordinates or inertia.
+
+Therefore:
+
+1. The primary collaborative controller controls the 14 arm joints.
+2. Explicitly inspect and preserve any remaining native finger state and physical constraints.
+3. Never treat the native fingers as the active suction device.
+4. Never remove or redesign the original finger joints in the frozen scene.
+5. Never force an arbitrary new 0.02 m diagnostic finger configuration into the original operating scene.
+6. Do not assume a raw 7x7 slice of the 9x9 mass matrix is always a validated arm model.
+7. Derive and validate an appropriate arm-control subsystem under the existing actual tool and finger conditions.
+8. Maintain explicit and justified native finger handling if full nine-dimensional Isaac effort input is required.
+
+Distinguish:
+- The physically modeled FR3 articulation.
+- The fixed L-shaped suction geometry.
+- The Surface Gripper/D6 attachment.
+- The active 14-joint collaborative control subsystem.
+
+If the arm dynamics cannot be qualified, stop the dependent online controller experiments without changing the scene.
+
+## Phase 4 — new torque-controller adapter only
+
+Create new task-scoped code under:
+
+offline/task28_p5_qp_6_r2/
+
+Develop an opt-in controller adapter for the existing scene.
+
+Do NOT edit or overwrite:
+
+- Original Isaac scene scripts.
+- Original ROS bridges.
+- Original MoveIt descriptions.
+- Frozen USD or meshes.
+- Gripper parameters.
+- Cube/table geometry.
+- Historical task code and evidence.
+
+The new adapter must:
+
+- Find the existing left/right articulations by their original scene paths.
+- Find the original side_suction_tcp frames.
+- Validate Cube_01 identity and the original scene manifest.
+- Read synchronized actual bilateral q/dq.
+- Read current state-consistent dynamics data where supported.
+- Use the existing Cube-centered nominal grasp transforms.
+- Compute coordinated torque/effort commands.
+- Preserve all original frame, joint name and unit semantics.
+- Use the original G1 closure and collision gates.
+- Reject source, model, timing or geometry mismatches.
+
+IMPORTANT:
+
+The original Task28 bridge uses position ArticulationAction commands.
+
+The new torque adapter MUST NOT encode torque commands into its position-message fields.
+
+Do not activate both old position-command handling and new torque actuation for the same articulation.
+
+Implement explicit actuator ownership and opt-in controller activation.
+
+Any runtime drive mode changes must be scoped to a fresh, isolated research session and must not save changes into the frozen USD.
+
+Default activation must remain disabled.
+
+## Phase 5 — retain the intended cooperative task-space HQP
+
+The controller goal remains:
+
+    Desired Cube trajectory
+      -> desired left/right side_suction_tcp motion
+      -> cooperative task-space inverse-dynamics QP
+      -> coordinated left/right arm torque commands
+
+Preserve the mathematical distinction between:
+
+- Robot joint dynamics.
+- Rigid body kinematics.
+- Actual Cube dynamics.
+- Actual contact wrench.
+- Predicted internal wrench.
+- Native finger constraint reactions.
+
+Do not interpret finger mimic constraint forces as Cube suction/contact forces.
+
+Use correct original nominal grasps and actual L-tool TCPs.
+
+QP hard constraints should include qualified dynamics, research torque/rate bounds, joint limits, valid grasp acceleration compatibility and source integrity.
+
+Do not invent physical suction capacity constraints.
+
+## Phase 6 — bounded validation using the ORIGINAL scene
+
+Start with CPU-only exact scene/source matching, frame checks and negative controls.
+
+After those checks, create a NEW isolated research run by invoking the EXISTING Task28 scene builder without changing its source or parameters.
+
+Do not recreate the robot/tool/table/Cube by hand.
+
+Do not manipulate an already-running user scene, interrupt existing bridges, delete foreign prims or silently change scene metadata.
+
+Verify the original root identities and runtime parameters.
+
+Do not teleport Cube_01 or alter its pose merely to align it with an archived midpoint QP reference.
+
+A valid approach, nominal contact pose and real Cube state must precede any attempted grasp-dependent tracking.
+
+Stage the experiments:
+
+A. Read-only scene and source identity validation.
+
+B. Bounded static explicit-effort validation with the original L tools mounted and suction not activated.
+
+C. Source-valid short synchronized no-contact torque-control experiment, only if the current scene geometry permits it without undesired contact.
+
+D. Design and CPU-validate the torque-compatible suction state interface, preserving all existing Surface Gripper parameters.
+
+Do not execute actual suction closure or moving Cube transport in this task unless a separate explicit runtime authorization and independent attachment prerequisites are established.
+
+In particular, do not call start_bridge(enable_robot_commands=True) merely to activate the gripper if that also enables the competing position-command sink.
+
+If any prerequisite fails, report it and stop that dependent runtime stage.
+
+Each independent source-valid test may proceed after a clean reset; no automatic parameter-tuning loop.
+
+## Phase 7 — acceptance and regression
+
+Compare the new scene-preserving source evidence against the earlier QP-6 bare-FR3 experiments.
+
+Identify which conclusions transfer and which do not.
+
+Report separately:
+
+- SCENE_IDENTITY_VERIFIED
+- L_SUCTION_GEOMETRY_AND_TCP_VERIFIED
+- EXCLUSIVE_TORQUE_ADAPTER_VALIDATED
+- ARM_DYNAMICS_SOURCE_VALIDATED
+- ORIGINAL_SCENE_STATIC_TORQUE_PASS
+- NO_CONTACT_COOPERATIVE_TRACKING_PASS
+- CUBE_D6_RUNTIME_NOT_YET_AUTHORIZED
+
+Do not elevate any condition to PASS based only on offline calculations.
+
+The original frozen G1 0.100 mm and 0.001 rad gates must remain unchanged.
+
+Record actual physics dt, controller activation state, observed bilateral geometry, q/dq, commands, M/c/g provenance, effort/rate limits, and first-failure evidence.
+
+Preserve every previous historical test and QP-6-R1 result.
+
+Run all previous 959 tests, plus new task-focused tests.
+
+Deliver:
+
+docs/tasks/TASK28_G2_P5_QP_6_R2_SCENE_PRESERVING_L_SUCTION_TORQUE.md
+
+And task-scoped evidence under:
+
+offline/task28_p5_qp_6_r2/
+
+Commit/push only new task-scoped files. Do not update existing scene or bridge files.
+
+In the Chinese report, explicitly answer:
+
+1. Which original L-shaped suction scene and asset are actually used?
+2. Are the link8, suction TCP and Cube transforms consistent?
+3. Why did prior isolated FR3 dynamics differ from this scene?
+4. How are native hidden finger joints handled without changing the existing robot?
+5. Is the controller truly producing torque commands, rather than position commands?
+6. Did the actual frozen scene remain byte-identical?
+7. Which simulations were completed, rejected or skipped?
+8. Is real Cube/D6 force control still blocked, and why?
+9. Which step is needed to achieve actual Cube-moving cooperative HQP?
+10. What are the new commit SHA, remote HEAD and worktree status?
+
+STOP after this task.
+
+No ROS, physical FR3, production bridge replacement, unapproved Cube attachment experiment or unrelated planning tasks.

@@ -1,0 +1,54 @@
+{
+  "overall": "QP6_R2_SCENE_VERIFIED_CONTROL_BLOCKED",
+  "SCENE_IDENTITY_VERIFIED": true,
+  "L_SUCTION_GEOMETRY_AND_TCP_VERIFIED": "PARTIAL_STATIC_AND_STOPPED_STAGE",
+  "EXCLUSIVE_TORQUE_ADAPTER_VALIDATED": false,
+  "ARM_DYNAMICS_SOURCE_VALIDATED": false,
+  "ORIGINAL_SCENE_STATIC_TORQUE_PASS": false,
+  "NO_CONTACT_COOPERATIVE_TRACKING_PASS": false,
+  "CUBE_D6_RUNTIME_NOT_YET_AUTHORIZED": true,
+  "actual_physics_dt_runtime_measured_s": null,
+  "scene_authored_physics_rate_hz": 60,
+  "stopped_scene_physics_steps": 0,
+  "stopped_scene_robot_commands": 0,
+  "grasp_closure_in_authored_prephysics_pose": {
+    "scope": "stopped USD authored transforms before physics or drive convergence; not a runtime sample",
+    "cube_position_m": [
+      0.65,
+      0.0,
+      0.26
+    ],
+    "left_tcp_position_m": [
+      0.7379999771714211,
+      -0.44500004982948094,
+      0.8459999990463256
+    ],
+    "right_tcp_position_m": [
+      0.7379999771714211,
+      0.44499995017051897,
+      0.8459999990463257
+    ],
+    "left_absolute_translation_error_m": 0.7061133288173422,
+    "right_absolute_translation_error_m": 0.7061132746205989,
+    "relative_translation_error_m": 0.7679999999999999,
+    "relative_rotation_error_rad": 4.440892098500626e-16,
+    "valid": false,
+    "reasons": [
+      "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+      "LEFT_GRASP_TRANSLATION_MISMATCH",
+      "RIGHT_GRASP_TRANSLATION_MISMATCH"
+    ],
+    "translation_gate_m": 0.0001,
+    "rotation_gate_rad": 0.001
+  },
+  "tool_mass_inertia_in_isaac_articulation": "UNKNOWN",
+  "static_torque_test": "SKIPPED_CURRENT_STATE_COLLISION_AND_SOURCE_UNQUALIFIED",
+  "no_contact_tracking": "SKIPPED_SOURCE_AND_GEOMETRY_PRECONDITIONS",
+  "suction_interface": "CPU_DESIGN_ONLY_CLOSURE_DISABLED",
+  "previous_tests_passed": 959,
+  "new_tests_passed": 12,
+  "total_tests_passed": 971,
+  "frozen_git_tracked_files_unchanged": true,
+  "old_artifacts_preserved": true,
+  "unrecorded_isaac_attempts": "Three earlier startups produced no result artifact because app.close preceded evidence write; extent of work cannot be independently established; logs available for one startup."
+}

@@ -1,0 +1,29 @@
+
+==================================== ERRORS ====================================
+_______ ERROR collecting offline/task28_p5_qp_6_r1/tests/test_archive.py _______
+ImportError while importing test module '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r1/tests/test_archive.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+offline/task28_p5_qp_6_r1/tests/test_archive.py:6: in <module>
+    from offline.task28_p5_qp_6_r1.dynamics import constrained_prediction
+offline/task28_p5_qp_6_r1/dynamics.py:7: in <module>
+    from offline.task28_p5_qp_6.solver import qp
+offline/task28_p5_qp_6/solver.py:11: in <module>
+    import osqp
+E   ModuleNotFoundError: No module named 'osqp'
+______ ERROR collecting offline/task28_p5_qp_6_r1/tests/test_dynamics.py _______
+ImportError while importing test module '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r1/tests/test_dynamics.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+offline/task28_p5_qp_6_r1/tests/test_dynamics.py:3: in <module>
+    from offline.task28_p5_qp_6_r1.dynamics import mimic_basis,reduced_mimic_model,constrained_prediction,arm_effort_with_fingers,reaction_structure,evaluate_R_step
+offline/task28_p5_qp_6_r1/dynamics.py:7: in <module>
+    from offline.task28_p5_qp_6.solver import qp
+offline/task28_p5_qp_6/solver.py:11: in <module>
+    import osqp
+E   ModuleNotFoundError: No module named 'osqp'
+=========================== short test summary info ============================
+ERROR offline/task28_p5_qp_6_r1/tests/test_archive.py
+ERROR offline/task28_p5_qp_6_r1/tests/test_dynamics.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 0.13s

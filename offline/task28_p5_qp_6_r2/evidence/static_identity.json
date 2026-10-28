@@ -1,0 +1,75 @@
+{
+  "dynamics_boundary": {
+    "arbitrary_7x7_mass_slice_allowed": false,
+    "arm_control_dofs": 14,
+    "hidden_hand_visual_collision": true,
+    "native_finger_dofs_per_arm": 2,
+    "native_fingers_active_suction_device": false,
+    "native_usd_bodies_and_inertia_retained": true,
+    "tool_mass_inertia_in_articulation": "UNKNOWN_UNTIL_RUNTIME_SOURCE_READ"
+  },
+  "failures": [],
+  "fixture_id": "task28_g1_0_new_single_cube_v0",
+  "hashes": {
+    "docs/tasks/TASK28_G0A_INTERFACE_AUDIT.md": "170b714636bdd4ff5e2039ca1b9dd8c333e2b7b410cb8c2f335b85ce46710b37",
+    "docs/tasks/TASK28_G1_0_BASELINE_FREEZE.md": "e62356b95614011feae56058995cc40781d790b136f5ef2ed9a9bbfe4949eb01",
+    "docs/tasks/TASK28_G2_P5_QP_6_R1_CONSTRAINT_AWARE_DYNAMICS.md": "626236391a055c8501f37154e566c97cdce0c49ac7f879fd4d283a1f409a357b",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_g1_0_bridge_contract.json": "5d51cb13eaa16247ad38b391242c0f3fda7f7444d7e428ddcc72130dbdb85bfe",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py": "15759cde17b389dd4ae29c90c1c2b107d76f67ccaffee14e2cbb8876445e108b",
+    "fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+    "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_g1_0_scene_contract.json": "239c00e3ad82ae86313bcb841fbcecddfd4925d2f08b7b7ed96cfab3a888c5a9",
+    "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py": "acb5ba60138685ce37351fde4da338183dcb15c8012d4d25c01d04b2adb37c87",
+    "ros_ws/src/fr3_dual_side_suction_description/urdf/dual_side_suction.xacro": "a0630156df03502e6624f593041db3e5f281f52958512672049b60b31ed49f1d"
+  },
+  "legacy_sources": {
+    "current_fixture": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/fixtures/task28_g1_0_new_single_cube_v0",
+    "historical_results_transfer": false,
+    "task24": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task24_side_suction_tight_scene.py",
+    "task26": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+    "task27": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/docs/tasks/TASK27_FIVE_CUBE_CENTER_INSERT.md"
+  },
+  "scene_identity": {
+    "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+    "cube": "/World/Task28G10SingleCube/Supply/Cube_01",
+    "left_articulation": "/World/Task28G10SingleCube/left_fr3",
+    "physics_dt_s": 0.016666666666666666,
+    "right_articulation": "/World/Task28G10SingleCube/right_fr3",
+    "root": "/World/Task28G10SingleCube"
+  },
+  "status": "SCENE_IDENTITY_VERIFIED",
+  "suction": {
+    "bend_angle_rad": 0.0,
+    "damping": 1000.0,
+    "disable_gravity": false,
+    "force_break_N": 1000000.0,
+    "grip_threshold_m": 0.003,
+    "one_surface_gripper_per_arm": true,
+    "retry_close": true,
+    "stiffness": 10000.0,
+    "torque_break_Nm": 1000000.0
+  },
+  "task": "Task28 G2-P5-QP-6-R2",
+  "tool_geometry": {
+    "asset": "existing mirrored L-shaped side-suction tool authored by the Task28 fixture",
+    "cups_per_arm": 4,
+    "lateral_support_m": 0.13,
+    "link8_to_tcp_left_m": [
+      0.0,
+      -0.155,
+      0.08
+    ],
+    "link8_to_tcp_right_m": [
+      0.0,
+      0.155,
+      0.08
+    ],
+    "local_rz_left_rad": -1.5707963267948966,
+    "local_rz_right_rad": 1.5707963267948966,
+    "manifold_m": [
+      0.07,
+      0.07
+    ],
+    "nominal_grasp_world_quaternions_are_distinct": true,
+    "vertical_support_m": 0.08
+  }
+}

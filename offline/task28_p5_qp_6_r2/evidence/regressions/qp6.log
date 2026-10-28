@@ -1,0 +1,27 @@
+
+==================================== ERRORS ====================================
+___ ERROR collecting offline/task28_p5_qp_6/tests/test_gates_and_sources.py ____
+ImportError while importing test module '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/tests/test_gates_and_sources.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+offline/task28_p5_qp_6/tests/test_gates_and_sources.py:9: in <module>
+    from offline.task28_p5_qp_6.controllers import no_contact
+offline/task28_p5_qp_6/controllers.py:10: in <module>
+    from .solver import hqp
+offline/task28_p5_qp_6/solver.py:11: in <module>
+    import osqp
+E   ModuleNotFoundError: No module named 'osqp'
+__________ ERROR collecting offline/task28_p5_qp_6/tests/test_math.py __________
+ImportError while importing test module '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/tests/test_math.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+offline/task28_p5_qp_6/tests/test_math.py:8: in <module>
+    from offline.task28_p5_qp_6.solver import qp,hqp
+offline/task28_p5_qp_6/solver.py:11: in <module>
+    import osqp
+E   ModuleNotFoundError: No module named 'osqp'
+=========================== short test summary info ============================
+ERROR offline/task28_p5_qp_6/tests/test_gates_and_sources.py
+ERROR offline/task28_p5_qp_6/tests/test_math.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 0.18s
