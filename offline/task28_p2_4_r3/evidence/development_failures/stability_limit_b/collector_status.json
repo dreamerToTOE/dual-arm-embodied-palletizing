@@ -1,0 +1,118 @@
+{
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "collector_sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+  "completed_cases": [],
+  "elapsed_wall_s": 13.041399399000511,
+  "execution_authorized": false,
+  "failure": {
+    "message": "BOUNDED_MOTION_LIMIT",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/offline/task28_p2_4_r3/collector.py\", line 52, in main\n    if abs(q[0])>c['q1_abs_limit_rad'] or np.max(np.abs(dq[:7]))>c['arm_speed_limit_rad_s']: raise RuntimeError('BOUNDED_MOTION_LIMIT')\nRuntimeError: BOUNDED_MOTION_LIMIT\n",
+    "type": "RuntimeError"
+  },
+  "frozen_usd_modified": false,
+  "physical_robot_tested": false,
+  "physics_steps": 40,
+  "preregistration_sha256": "fd64b678f56d4f1e8a6a4c2c283d6755e8321b3d1449449c9b01235b9b104c80",
+  "runtime": {
+    "all_dof_names": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ],
+    "applied_readback_api": "get_applied_joint_efforts -> get_dof_actuation_forces",
+    "controller_kd": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      0.8,
+      0.5,
+      2.0,
+      2.0
+    ],
+    "controller_kp": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      3.0,
+      3.0,
+      2.0,
+      20.0,
+      20.0
+    ],
+    "effort_bounds": [
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      5.0,
+      5.0
+    ],
+    "effort_mode": [
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force"
+    ],
+    "effort_rate_bounds": [
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      5.0,
+      5.0
+    ],
+    "physics_dt_s": 0.008333333333333333,
+    "pre_gains": {
+      "kds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "kps": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "projected_readback_api": "get_measured_joint_efforts -> get_dof_projected_joint_forces",
+    "runtime_drive_gains_zero": true,
+    "set_effort_api": "set_joint_efforts -> set_dof_actuation_forces",
+    "source_asset_unchanged": true
+  },
+  "schema": "task28.g3_p2_4_r3.collector.v1",
+  "stage": "stability",
+  "status": "COLLECTION_FAILED"
+}

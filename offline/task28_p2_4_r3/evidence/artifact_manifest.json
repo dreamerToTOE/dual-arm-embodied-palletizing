@@ -1,0 +1,206 @@
+{
+  "commands": {
+    "new_tests": "PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 PYTHONPATH=offline:offline/task28_g1_1 python3 -m pytest offline/task28_p2_4_r3/tests -q -p no:cacheprovider",
+    "online_collection": "same collector --stage online --stability-gate <stability_evaluation>",
+    "online_evaluation": "PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 PYTHONPATH=offline:offline/task28_g1_1 python3 offline/task28_p2_4_r3/online_evaluate.py --input <online> --output <online_evaluation.json>",
+    "stability_collection": "OMNI_KIT_ACCEPT_EULA=YES PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p2_4_r3/collector.py --stage stability --asset <frozen-fr3.usd> --output <isolated> --prereg-sha256 18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "stability_evaluation": "PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 python3 offline/task28_p2_4_r3/evaluate.py --input <stability> --output <evaluation.json>"
+  },
+  "execution_authorized": false,
+  "exit_codes": {
+    "cross_task_regression": 0,
+    "new_tests": 0,
+    "online_collection": 0,
+    "online_evaluation": 0,
+    "p2_4_focused": 0,
+    "r1_focused": 0,
+    "r2_focused": 0,
+    "stability_collection": 0,
+    "stability_evaluation": 0
+  },
+  "files": [
+    {
+      "bytes": 69,
+      "path": "offline/task28_p2_4_r3/__init__.py",
+      "sha256": "71b3f2819e6973aa5eb28c78cf03909ae4df7829695f4d227dd601be1e46912b"
+    },
+    {
+      "bytes": 7530,
+      "path": "offline/task28_p2_4_r3/collector.py",
+      "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+    },
+    {
+      "bytes": 2814,
+      "path": "offline/task28_p2_4_r3/evaluate.py",
+      "sha256": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb"
+    },
+    {
+      "bytes": 297,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/README.md",
+      "sha256": "8acb6d441e91ebeabf049cb83b38f49ca68d73266f2df645241d103fa1f0d6f8"
+    },
+    {
+      "bytes": 3270,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_initial_bug/collector_status.json",
+      "sha256": "da7042ad52a42c5d03e6532297280bfc56e136da01ee4f30cc0fe0527f337368"
+    },
+    {
+      "bytes": 6496,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_initial_bug/zero_load_hold_observations.json",
+      "sha256": "5d553de34248050f87b750315f2c7ffec189f7d5790cb39d25ac1cf55bd30be1"
+    },
+    {
+      "bytes": 2759,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_limit_a/collector_status.json",
+      "sha256": "4b606ac9f82386a7229f9a4c9825f408348ef6f3ed8fbc0231a548a84d589ec3"
+    },
+    {
+      "bytes": 38006,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_limit_a/partial_observations.json",
+      "sha256": "efb8e47e4eac0268fcebc86ccd638864cc628455fee4e2d2aae5daaabc060a35"
+    },
+    {
+      "bytes": 2761,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_limit_b/collector_status.json",
+      "sha256": "93563d97b1206e505c09aa07ee1bfeab27022b970dc84026fb05f1f8d33ff600"
+    },
+    {
+      "bytes": 245816,
+      "path": "offline/task28_p2_4_r3/evidence/development_failures/stability_limit_b/partial_observations.json",
+      "sha256": "b37fd87c98067b20ed9b752b95d234cd338fb534fe325c2f493b72aa419d06be"
+    },
+    {
+      "bytes": 2378,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/collector_status.json",
+      "sha256": "28e32418bbba65c31a1e8918cbae093bc7504b199218de267874988cb5bf3b54"
+    },
+    {
+      "bytes": 40075,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/console.log",
+      "sha256": "5eb72baaf68ab761cf705deffd4d687a49126c54c0319b6c8dde1a6544a854fe"
+    },
+    {
+      "bytes": 344923,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/evaluation.json",
+      "sha256": "851750e4555c2d3069552392d1d8e92627d125fdbb02e8d2eef2094b12cbf097"
+    },
+    {
+      "bytes": 770228,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/negative_fx_observations.json",
+      "sha256": "6905634fb91ad9d9fe8dd51c4d7a1c3e30b9d03dba068813a1e6ccbdd85562c7"
+    },
+    {
+      "bytes": 11042,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/negative_fx_oracle.json",
+      "sha256": "66846cadb3a7dce5690586385a7f4507503fe902450e2da5839675f1424a0524"
+    },
+    {
+      "bytes": 771402,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/positive_fx_observations.json",
+      "sha256": "438a3a36ba2df18580111af05b4d27b6efa5f01393dd5ba66eb449fd96f7703a"
+    },
+    {
+      "bytes": 10561,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/positive_fx_oracle.json",
+      "sha256": "a9714d7ffd712674c9ba9e743852e55ae6bdd6653983fdf6f7745cc2936d525d"
+    },
+    {
+      "bytes": 773749,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/zero_external_observations.json",
+      "sha256": "02b47b2bc35fa57166969a996969a30ce93c87e14939633ce19233042188342b"
+    },
+    {
+      "bytes": 5523,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/zero_external_oracle.json",
+      "sha256": "c13a04d3ff295d64cc73d31ef11b18b00d4382f482cef7af7b0b5d629335f919"
+    },
+    {
+      "bytes": 98,
+      "path": "offline/task28_p2_4_r3/evidence/r3_focused.log",
+      "sha256": "f87e1ec159e73ceaff96b34a3bc29b017111816d05b56b64e23a829128ce891b"
+    },
+    {
+      "bytes": 2344,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/collector_status.json",
+      "sha256": "5574388fa95759db1a5b8a75635c34abbcf8eab17bdff3d72b6253de73e7af2d"
+    },
+    {
+      "bytes": 38564,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/console.log",
+      "sha256": "7be3fea0c790bceca06f982ff3a8afe093d4dc2efb44e7e3dfd6a8723c604ff7"
+    },
+    {
+      "bytes": 350,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/evaluation.json",
+      "sha256": "964a11c89c9c48d0e95807938664b65ab5726830f22cf94b46eb99204f5a2c7d"
+    },
+    {
+      "bytes": 1547525,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/zero_load_hold_observations.json",
+      "sha256": "c79a62ba76e90309236bfef0b2aa221862a53586ff64cb125a5c8b0356e7a6e4"
+    },
+    {
+      "bytes": 10924,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/zero_load_hold_oracle.json",
+      "sha256": "264940b736f28617ef3963b470efccd13cd51e841d54b126f2593cc736cda64a"
+    },
+    {
+      "bytes": 2210,
+      "path": "offline/task28_p2_4_r3/experiment_preregistration.json",
+      "sha256": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5"
+    },
+    {
+      "bytes": 4962,
+      "path": "offline/task28_p2_4_r3/online_evaluate.py",
+      "sha256": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b"
+    },
+    {
+      "bytes": 680,
+      "path": "offline/task28_p2_4_r3/tests/test_online_evidence.py",
+      "sha256": "3c6d3664c8f46fa8fc348312fd6bd191b7679d1a979f59d343c9dead4ba05223"
+    },
+    {
+      "bytes": 1188,
+      "path": "offline/task28_p2_4_r3/tests/test_r3.py",
+      "sha256": "101db5a0b267decc007c1c56cc605cfa36ffa583c861147d0beef49f45559708"
+    }
+  ],
+  "frozen_usd_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "metrics": {
+    "max_condition": 8.677330062429972,
+    "max_force_error_n": 0.04735265154046725,
+    "max_joint_error_inf_nm": 0.017520006349249606,
+    "max_moment_error_nm": 0.011788771637107695,
+    "min_rank": 6,
+    "online_cases": 3,
+    "online_steps_each": 120,
+    "stability_steps": 240
+  },
+  "notes": [
+    "Development failures are archived separately and not used as formal pass evidence.",
+    "Applied readback is input provenance, not hardware-equivalent torque sensing.",
+    "artifact_manifest.json excludes itself from files."
+  ],
+  "physical_robot_tested": false,
+  "schema": "task28.g3_p2_4_r3.artifact_manifest.v1",
+  "source_hashes": {
+    "docs/tasks/TASK28_G3_P2_4_R3_STABLE_EXPLICIT_ONLINE_OBSERVER.md": "1a21463b65d2a6edfabd8a3b6c92e39f20ef14192aa4aa35804664250eb2b558",
+    "offline/task28_p2_4_r1/evidence/source_semantics.json": "1b47d0771fb34a6c95271af176d375998c187a9d075dacd61f6a9207fc73991e",
+    "offline/task28_p2_4_r2/collector.py": "f9aab9acd72f47204ff498059c187d97f7e385ae6153f67ff972cef4bc8b0ac7",
+    "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+    "offline/task28_p2_4_r3/evaluate.py": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb",
+    "offline/task28_p2_4_r3/experiment_preregistration.json": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "offline/task28_p2_4_r3/online_evaluate.py": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b",
+    "offline/task28_p2_4_r3/tests/test_online_evidence.py": "3c6d3664c8f46fa8fc348312fd6bd191b7679d1a979f59d343c9dead4ba05223",
+    "offline/task28_p2_4_r3/tests/test_r3.py": "101db5a0b267decc007c1c56cc605cfa36ffa583c861147d0beef49f45559708"
+  },
+  "starting_head": "def302dcd7446de6c8dd62c0e0c3562bd4ce92d9",
+  "status": "G3_P2_4_R3_ONLINE_EXPLICIT_CANDIDATE_PASS",
+  "test_counts": {
+    "cross_task_regression": 731,
+    "new_r3": 4,
+    "p2_4_focused": 46,
+    "r1_focused": 5,
+    "r2_focused": 3
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "collector_sha256": "9e4aa6be5ec897abdb8bc5c1e76125ed278d8962b5c6638d518f105e2d169418",
+  "completed_cases": [
+    "zero_load_hold"
+  ],
+  "elapsed_wall_s": 113.37721438199969,
+  "execution_authorized": false,
+  "failure": {
+    "message": "'NoneType' object is not subscriptable",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/p5-qp-2/offline/task28_p2_4_r3/collector.py\", line 51, in main\n    active['samples'].append({'step':k,'sim_time_s':t,'q_rad_or_m':q.tolist(),'dq_rad_s_or_m_s':dq.tolist(),'commanded_effort':cmd.tolist(),'gravity_feedforward_pre':g_pre.tolist(),'feedback_pre':fb.tolist(),'applied_effort_readback':applied.tolist(),'measured_projected_effort':projected.tolist(),'mass_matrix':M[0].tolist(),'coriolis_compensation':cor[0].tolist(),'gravity_compensation':grav[0].tolist(),'position_error':(qref-q).tolist(),'velocity_error':(-dq).tolist(),'saturated':sat,'source_read_duration_s':read_end-read_start,'physics_step_index':int(world.current_time_step_index)})\nTypeError: 'NoneType' object is not subscriptable\n",
+    "type": "TypeError"
+  },
+  "frozen_usd_modified": false,
+  "physical_robot_tested": false,
+  "physics_steps": 2,
+  "preregistration_sha256": "fd64b678f56d4f1e8a6a4c2c283d6755e8321b3d1449449c9b01235b9b104c80",
+  "runtime": {
+    "all_dof_names": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ],
+    "applied_readback_api": "get_applied_joint_efforts -> get_dof_actuation_forces",
+    "controller_kd": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      0.8,
+      0.5,
+      2.0,
+      2.0
+    ],
+    "controller_kp": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      3.0,
+      3.0,
+      2.0,
+      20.0,
+      20.0
+    ],
+    "effort_bounds": [
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      5.0,
+      5.0
+    ],
+    "effort_mode": [
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force",
+      "force"
+    ],
+    "effort_rate_bounds": [
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      10.0,
+      5.0,
+      5.0
+    ],
+    "physics_dt_s": 0.008333333333333333,
+    "pre_gains": {
+      "kds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "kps": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "projected_readback_api": "get_measured_joint_efforts -> get_dof_projected_joint_forces",
+    "runtime_drive_gains_zero": true,
+    "set_effort_api": "set_joint_efforts -> set_dof_actuation_forces",
+    "source_asset_unchanged": true
+  },
+  "schema": "task28.g3_p2_4_r3.collector.v1",
+  "stage": "stability",
+  "status": "COLLECTION_FAILED"
+}

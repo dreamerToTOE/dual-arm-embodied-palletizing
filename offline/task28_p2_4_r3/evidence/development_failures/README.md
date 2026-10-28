@@ -1,0 +1,1 @@
+Development runs before the final frozen stability configuration are retained here. The first had a collector bookkeeping bug; the next two stopped at the registered bounded-motion gate under lower effort bounds. They were not used as formal PASS evidence. The formal run is `../stability_pass/`.
