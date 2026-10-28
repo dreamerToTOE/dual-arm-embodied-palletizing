@@ -1,0 +1,180 @@
+{
+  "schema": "task28.qp6.preregistration.v1",
+  "starting_head": "ce185a38efff2a93a1f8b9c29d564535bbb019c9",
+  "status": "FROZEN_BEFORE_SOURCE_AND_FORMAL",
+  "physics_dt_s": 0.008333333333333333,
+  "expected_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1",
+    "fr3_finger_joint2"
+  ],
+  "profiles": {
+    "S05": 0.1,
+    "S10": 0.2
+  },
+  "initial_hold_steps": 120,
+  "final_hold_steps": 60,
+  "maximum_development_runs": 4,
+  "maximum_formal_cells": 10,
+  "no_formal_rerun": true,
+  "g1_translation_m": 0.0001,
+  "g1_rotation_rad": 0.001,
+  "fk_translation_m": 0.0001,
+  "fk_rotation_rad": 0.0001,
+  "command_readback_tolerance": 1e-05,
+  "source_mass_symmetry_inf": 1e-05,
+  "source_acceleration_error_arm_rad_s2": 0.02,
+  "source_acceleration_error_finger_m_s2": 0.002,
+  "source_min_mass_eigenvalue": 1e-06,
+  "source_gravity_hold_speed_arm_rad_s": 0.0001,
+  "source_gravity_hold_speed_finger_m_s": 0.0001,
+  "source_inverse_dynamics_steps": 18,
+  "source_gravity_steps": 12,
+  "baseline_kp": [
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    2,
+    20,
+    20
+  ],
+  "baseline_kd": [
+    1,
+    1,
+    1,
+    1,
+    0.8,
+    0.8,
+    0.5,
+    2,
+    2
+  ],
+  "joint_acceleration_kp": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "joint_acceleration_kd": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20
+  ],
+  "object_acceleration_kp": 100.0,
+  "object_acceleration_kd": 20.0,
+  "relative_acceleration_kp": 100.0,
+  "relative_acceleration_kd": 20.0,
+  "task_rotation_length_m": 0.2,
+  "effort_bounds_per_robot": [
+    60,
+    60,
+    60,
+    60,
+    12,
+    12,
+    12,
+    10,
+    10
+  ],
+  "effort_rate_bounds_per_s_per_robot": [
+    12000,
+    12000,
+    12000,
+    12000,
+    12000,
+    12000,
+    12000,
+    1200,
+    1200
+  ],
+  "limits_label": "SIMULATION_RESEARCH_LIMITS_ONLY",
+  "finger_position_range_m": [
+    0,
+    0.04
+  ],
+  "finger_velocity_max_m_s": 0.2,
+  "full_model_dof": 18,
+  "source_label_policy": {
+    "applied": "COMMAND_BUFFER_READBACK_NOT_SENSOR",
+    "measured": "SOLVER_PROJECTED_NOT_ACTUATOR_ONLY",
+    "dynamics": "ISAAC_SAME_PRE_STEP_FULL_9_DOF_PER_ROBOT"
+  },
+  "source_failure_policy": "Block B/C/D/E on failed M/c/g sign/dynamics; block all cells on shared state/geometry/effort source failure. A needs valid gravity/state source.",
+  "failure_policy": "LATCH_FIRST_FAILURE_NO_EFFORT_ON_REJECTION_NO_FALLBACK",
+  "cells": [
+    {
+      "controller": "A",
+      "profile": "S05",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "A",
+      "profile": "S10",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "B",
+      "profile": "S05",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "B",
+      "profile": "S10",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "C",
+      "profile": "S05",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "C",
+      "profile": "S10",
+      "physical_level": "A_NO_CUBE"
+    },
+    {
+      "controller": "D",
+      "profile": "S05",
+      "physical_level": "B_IDEAL_ATTACHMENT"
+    },
+    {
+      "controller": "D",
+      "profile": "S10",
+      "physical_level": "B_IDEAL_ATTACHMENT"
+    },
+    {
+      "controller": "E",
+      "profile": "S05",
+      "physical_level": "B_IDEAL_ATTACHMENT"
+    },
+    {
+      "controller": "E",
+      "profile": "S10",
+      "physical_level": "B_IDEAL_ATTACHMENT"
+    }
+  ],
+  "hardware": false,
+  "ROS": false,
+  "suction_calibrated": false,
+  "continuous_safety_certified": false
+}

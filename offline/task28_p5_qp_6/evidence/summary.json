@@ -1,0 +1,217 @@
+{
+  "status": "QP6_PARTIAL",
+  "validation_dimensions": {
+    "QP6_COUPLED_MATH_PASS": true,
+    "QP6_NO_CONTACT_TRACKING_PASS": false,
+    "QP6_IDEAL_ATTACHMENT_TRACKING_PASS": false,
+    "QP6_INTERNAL_WRENCH_MODEL_PASS": false
+  },
+  "math_scope": "IDEAL_MATHEMATICAL_MODEL_ONLY_NOT_ACTUAL_ARTICULATION_DYNAMICS_PASS",
+  "complete_articulation_dynamics": "SOURCE_BLOCKED",
+  "gravity_state_command_source_pass": true,
+  "formal_cells_run": 2,
+  "formal_pass": 0,
+  "formal_rejected": 2,
+  "skipped": 8,
+  "development_only_Isaac_runs_used": 0,
+  "bounded_source_runs": 1,
+  "source_controlled_steps": 30,
+  "formal_controlled_steps": 259,
+  "known_World_reset_initialization_steps_total": 6,
+  "total_known_physics_steps_including_reset": 295,
+  "matrix": [
+    {
+      "actual_physics_steps": 127,
+      "cell": "A/S05",
+      "completed_final_hold": false,
+      "completed_movement": false,
+      "final_hold_steps": 0,
+      "first_failure": {
+        "metrics": {
+          "common_error_vector_m": [
+            -7.336518399031489e-05,
+            4.383884763925483e-05,
+            -2.7280097273624238e-05
+          ],
+          "common_translation_m": 8.971342425484023e-05,
+          "differential_error_vector_m": [
+            -9.157261583914167e-05,
+            -3.134303605753508e-06,
+            1.517454982308264e-05
+          ],
+          "left_rotation_rad": 0.00010740263828890236,
+          "left_translation_m": 0.00012795226276162287,
+          "phase": "movement",
+          "physics_step": 129,
+          "relative_rotation_rad": 9.886703585570709e-05,
+          "relative_translation_m": 9.287429565304535e-05,
+          "right_rotation_rad": 0.0001316194534169278,
+          "right_translation_m": 6.354551781017423e-05,
+          "time_s": 0.058333336375653744
+        },
+        "reasons": [
+          "left_translation_m"
+        ],
+        "row": 126
+      },
+      "movement_steps": 7,
+      "status": "REJECTED"
+    },
+    {
+      "actual_physics_steps": 132,
+      "cell": "A/S10",
+      "completed_final_hold": false,
+      "completed_movement": false,
+      "final_hold_steps": 0,
+      "first_failure": {
+        "metrics": {
+          "common_error_vector_m": [
+            -5.808718118366363e-05,
+            3.810246847442064e-05,
+            -1.7153815567549913e-05
+          ],
+          "common_translation_m": 7.155537792670445e-05,
+          "differential_error_vector_m": [
+            -9.145503904506302e-05,
+            1.2134959149340263e-07,
+            2.8635047812808345e-05
+          ],
+          "left_rotation_rad": 8.982496207086441e-05,
+          "left_translation_m": 0.0001106434007854209,
+          "phase": "movement",
+          "physics_step": 134,
+          "relative_rotation_rad": 0.00010641744843134675,
+          "relative_translation_m": 9.583321373980515e-05,
+          "right_rotation_rad": 7.459574576206239e-05,
+          "right_translation_m": 5.0895820171732335e-05,
+          "time_s": 0.10000000521540642
+        },
+        "reasons": [
+          "left_translation_m"
+        ],
+        "row": 131
+      },
+      "movement_steps": 12,
+      "status": "REJECTED"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "B/S05",
+      "physical_level": "A_NO_CUBE",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "B/S10",
+      "physical_level": "A_NO_CUBE",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "C/S05",
+      "physical_level": "A_NO_CUBE",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "C/S10",
+      "physical_level": "A_NO_CUBE",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "D/S05",
+      "physical_level": "B_IDEAL_ATTACHMENT",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed; actual Cube/D6 attachment and contact-wrench source not independently established; no contact attempt eligible",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "D/S10",
+      "physical_level": "B_IDEAL_ATTACHMENT",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed; actual Cube/D6 attachment and contact-wrench source not independently established; no contact attempt eligible",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "E/S05",
+      "physical_level": "B_IDEAL_ATTACHMENT",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed; actual Cube/D6 attachment and contact-wrench source not independently established; no contact attempt eligible",
+      "status": "SKIPPED_WITH_REASON"
+    },
+    {
+      "actual_physics_steps": 0,
+      "cell": "E/S10",
+      "physical_level": "B_IDEAL_ATTACHMENT",
+      "reason": "SOURCE_BLOCKED_FULL_18DOF_DYNAMICS; finger acceleration gate failed; actual Cube/D6 attachment and contact-wrench source not independently established; no contact attempt eligible",
+      "status": "SKIPPED_WITH_REASON"
+    }
+  ],
+  "tests": {
+    "historical": {
+      "passed": 789,
+      "exit_code": 0,
+      "accepted": true
+    },
+    "qp4": {
+      "passed": 53,
+      "exit_code": 0,
+      "accepted": true
+    },
+    "qp5": {
+      "passed": 5,
+      "exit_code": 0,
+      "accepted": true
+    },
+    "r1": {
+      "passed": 6,
+      "exit_code": 0,
+      "accepted": true
+    },
+    "r2": {
+      "passed": 22,
+      "exit_code": 0,
+      "accepted": true
+    },
+    "qp6_new": {
+      "passed": 54,
+      "exit_code": 0
+    }
+  },
+  "historical_nonoverlap_total": 875,
+  "new_focused_total": 54,
+  "all_nonoverlap_total": 929,
+  "physical_Cube_or_D6_attempted": false,
+  "physical_contact_attempt_reason": "Failed shared full-dynamics prerequisite blocks D/E; actual Cube/D6 source/geometry/contact semantics were not reached. No old blocked state was reused.",
+  "internal_wrench_observation": "UNAVAILABLE; synthetic allocation/null-space validation only",
+  "hardware_or_ROS_run": false,
+  "research_limits_only": true,
+  "continuous_safety_certified": false,
+  "canonical_math": "math_final",
+  "canonical_profile_geometry": "profiles_v2",
+  "independent_evaluation": "evaluation_v1",
+  "math": {
+    "cases": 12,
+    "maximum_equality_inf": 1.0876410883042809e-11,
+    "maximum_internal_null_residual": 1.2890527670515572e-15,
+    "maximum_nullspace_oracle_difference_inf": 1.7396491592547303e-06,
+    "maximum_priority3_squared_objective_gap": 6.002143226879753e-16,
+    "observed_physical_contact_wrench": false,
+    "offline_hqp_wall_s": {
+      "p50": 0.007766323498799466,
+      "p95": 0.008410198900310206,
+      "p99": 0.00842556457988394,
+      "peak": 0.008429405999777373
+    },
+    "oracle_acceptance": "priority1 task <=2e-7; physical equalities <=2e-7; absolute P3 squared objective gap <=1e-8; full decision vector difference <=2e-6",
+    "pointwise_solution_equivalence_claimed": true,
+    "pointwise_solution_gate_inf": 2e-06,
+    "real_time_certification": false,
+    "scope": "IDEAL_MATHEMATICAL_MODEL_ONLY_NOT_ACTUAL_ARTICULATION_DYNAMICS_PASS",
+    "status": "QP6_COUPLED_MATH_PASS"
+  }
+}

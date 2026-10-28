@@ -1,0 +1,45 @@
+{
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "numpy": "1.24.4",
+  "scipy": "1.8.0",
+  "osqp": "1.0.5",
+  "source_command": "OMNI_KIT_ACCEPT_EULA=YES PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 timeout 240 /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p5_qp_6/source_probe.py --output offline/task28_p5_qp_6/evidence/source_v1 --prereg-sha c3edf8ab060bc0662fde312259dcaf5b4fb97e3ef8bcd554db193e568fe370b0",
+  "formal_commands": [
+    "same environment and timeout; /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p5_qp_6/runtime.py --controller A --profile S05 --output offline/task28_p5_qp_6/evidence/formal_A_S05 --registration-sha a9b460e998a02c1d9080707318d7831c19cf4caca58da88ee363f9abe582e2a8",
+    "same environment and timeout; /home/ubuntu2004/isaacsim-4.5.0/python.sh offline/task28_p5_qp_6/runtime.py --controller A --profile S10 --output offline/task28_p5_qp_6/evidence/formal_A_S10 --registration-sha a9b460e998a02c1d9080707318d7831c19cf4caca58da88ee363f9abe582e2a8"
+  ],
+  "formal_source_hashes_preserved": true,
+  "fresh_Isaac_process_per_formal_cell": true,
+  "development_physics_runs": 0,
+  "formal_reruns": 0,
+  "literature": [
+    {
+      "url": "https://ieeexplore.ieee.org/abstract/document/10341854",
+      "access": "publisher abstract/metadata only, full text not retrieved",
+      "doi": "10.1109/IROS55552.2023.10341854",
+      "supports": [
+        "full coupled dynamical model",
+        "HQP with lower-priority objectives in higher-priority solution space",
+        "joint torque/internal-load inequalities",
+        "14DOF simulation in abstract"
+      ],
+      "not_transferred": [
+        "paper controller weights/equations/full implementation",
+        "real hardware validation",
+        "Task28 contact or suction calibration",
+        "paper computation time as Task28 timing"
+      ]
+    },
+    {
+      "url": "https://cris.fau.de/publications/306133864/",
+      "access": "institutional author metadata",
+      "authors": [
+        "Maximilian Dio",
+        "Andreas V\u00f6lz",
+        "Knut Graichen"
+      ],
+      "year": 2023,
+      "pages": "643\u2013648"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "cell": "A/S10",
+  "exception": {
+    "message": "POST_STEP",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/runtime.py\", line 92, in main\n    if not postgate['valid']: result['first_failure']=postgate; raise Rejection('POST_STEP')\noffline.task28_p5_qp_6.gates.Rejection: POST_STEP\n",
+    "type": "Rejection"
+  },
+  "final_hold_steps": 0,
+  "first_failure": {
+    "metrics": {
+      "common_translation_m": 7.155537792665754e-05,
+      "left_fk_rotation_rad": 5.262000809995974e-07,
+      "left_fk_translation_m": 3.524123417405906e-07,
+      "left_rotation_rad": 8.982496207086441e-05,
+      "left_translation_m": 0.00011064340078537465,
+      "relative_rotation_rad": 0.00010641744843134675,
+      "relative_translation_m": 9.58332137397841e-05,
+      "right_fk_rotation_rad": 7.146854715691558e-07,
+      "right_fk_translation_m": 3.448623660634832e-07,
+      "right_rotation_rad": 7.459574576206239e-05,
+      "right_translation_m": 5.089582017170088e-05
+    },
+    "reasons": [
+      "LEFT_GRASP_TRANSLATION_MISMATCH"
+    ],
+    "valid": false
+  },
+  "initial_hold_steps": 120,
+  "internal_wrench_observed": false,
+  "limits_label": "SIMULATION_RESEARCH_LIMITS_ONLY",
+  "model_level": "A_NO_CUBE_VIRTUAL_OBJECT",
+  "moving_steps": 12,
+  "physical_contact": false,
+  "physical_cube_present": false,
+  "physics_steps": 132,
+  "prereg_sha": "c3edf8ab060bc0662fde312259dcaf5b4fb97e3ef8bcd554db193e568fe370b0",
+  "registration_sha": "a9b460e998a02c1d9080707318d7831c19cf4caca58da88ee363f9abe582e2a8",
+  "source_time_scope": "sequential reads at shared synchronous World CPU physics cursor; no API native per-state timestamp",
+  "status": "REJECTED",
+  "unexecuted_registered_steps": 168
+}

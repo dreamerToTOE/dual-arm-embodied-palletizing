@@ -1,0 +1,8 @@
+{
+  "source_test": "The fixed bounded 30-step source sequence was evaluated after collection for acceleration error; first failure is row 18 right, 11 later source rows are diagnostic only. It is not a demonstrated per-step fail-closed dynamics source probe. No dependent B/C/D/E formal cell ran.",
+  "source_initialization": "Every World reset advances two initialization physics steps before the explicitly recorded source/formal control loop; both counts are disclosed separately.",
+  "profile_preflight_v1": "Wrong attachment-mode enum produced INVALID_ATTACHMENT_MODE without FCL pair queries. Exact source snapshot and rejected output retained; v2 corrects only the adapter enum.",
+  "reference_velocity_audit": "Before formal A runs, profile q positions, G1/FCL and derivative/timing checks passed; sampled qdot values were saved. Independent explicit qdot-versus-effective-bound summary was added after the formal runs. This does not retrospectively establish that check before execution. Actual state velocity gates operated pre/post every formal step.",
+  "math_development": "v1/v2 full-vector comparison failed at ~0.00168169. v3 explored objective-only comparison and is superseded. v4/v5 stricter refinement still failed independent KKT checks. v6/final disable polishing for refinement, retain original weights/constraints and restore original full-vector <=2e-6 acceptance; final passes. These are CPU development checks, no physical formal tuning.",
+  "Kit_exit_status": "Normal process exit code 0 can coexist with SOURCE_BLOCKED/REJECTED because app.close terminates Kit. Independent JSON status and raw evaluator determine scientific acceptance."
+}

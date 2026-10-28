@@ -1,0 +1,477 @@
+{
+  "asset_sha": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "cube_inertia_status": "ANALYTIC_UNIFORM_CUBOID_ASSUMPTION_ONLY_NOT_ACTUAL_CUBE_STAGE_VALIDATED",
+  "physics_launched": false,
+  "pxr_version": [
+    0,
+    22,
+    11
+  ],
+  "records": [
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-inf, -inf, -inf)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link0",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "87.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-157.20242309570312",
+        "physics:upperLimit": "157.20242309570312",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link0/fr3_joint1",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link0"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link1"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(4.128e-7, -0.018125132, -0.038603596)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "2.9274654388427734"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link1",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "87.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-102.19847869873047",
+        "physics:upperLimit": "102.19847869873047",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link1/fr3_joint2",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link1"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link2"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0031828864, -0.074322164, 0.008814609)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "2.935537099838257"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link2",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "87.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-166.19786071777344",
+        "physics:upperLimit": "166.19786071777344",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link2/fr3_joint3",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link2"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link3"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.040701568, -0.0048200567, -0.028973082)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "2.244901418685913"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link3",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "87.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-174.2994842529297",
+        "physics:upperLimit": "-8.69749927520752",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link3/fr3_joint4",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link3"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link4"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.045910098, 0.063049294, -0.008518787)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "2.615595579147339"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link4",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "12.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-160.80059814453125",
+        "physics:upperLimit": "160.80059814453125",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link4/fr3_joint5",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link4"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link5"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.0016039605, 0.029253626, -0.097296596)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "2.327120780944824"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link5",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "12.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "31.19754981994629",
+        "physics:upperLimit": "258.7992858886719",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link5/fr3_joint6",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link5"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link6"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.05971312, -0.04102947, -0.010169272)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "1.8170377016067505"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link6",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:angular:physics:maxForce": "12.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "-172.79832458496094",
+        "physics:upperLimit": "172.79832458496094",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:angular, PhysicsDriveAPI:angular])",
+      "path": "/fr3/fr3_link6/fr3_joint7",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_link6"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_link7"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0045225816, 0.008626192, -0.016163325)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.6271432638168335"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link7",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-inf, -inf, -inf)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_link8",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.01, 0, 0.03)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.7300000190734863"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_hand",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "drive:linear:physics:maxForce": "100.0",
+        "physics:axis": "X",
+        "physics:lowerLimit": "0.0",
+        "physics:upperLimit": "0.03999999910593033",
+        "physxJoint:jointFriction": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear])",
+      "path": "/fr3/fr3_hand/fr3_finger_joint1",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_hand"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_leftfinger"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "type": "PhysicsPrismaticJoint"
+    },
+    {
+      "attributes": {
+        "drive:linear:physics:maxForce": "inf",
+        "physics:axis": "X",
+        "physics:lowerLimit": "0.0",
+        "physics:upperLimit": "0.03999999910593033",
+        "physxJoint:jointFriction": "0.0",
+        "physxMimicJoint:rotX:gearing": "-1.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear, PhysxMimicJointAPI:rotX])",
+      "path": "/fr3/fr3_hand/fr3_finger_joint2",
+      "relationships": {
+        "physics:body0": [
+          "/fr3/fr3_hand"
+        ],
+        "physics:body1": [
+          "/fr3/fr3_rightfinger"
+        ],
+        "physxMimicJoint:rotX:referenceJoint": [
+          "/fr3/fr3_hand/fr3_finger_joint1"
+        ],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "type": "PhysicsPrismaticJoint"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-inf, -inf, -inf)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_leftfinger",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-inf, -inf, -inf)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_rightfinger",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-inf, -inf, -inf)",
+        "physics:diagonalInertia": "(0, 0, 0)",
+        "physics:mass": "0.0"
+      },
+      "authored_api_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysicsRigidBodyAPI, PhysicsMassAPI])",
+      "path": "/fr3/fr3_hand_tcp",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      },
+      "schemas": [
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI"
+      ],
+      "type": "Xform"
+    }
+  ],
+  "uniform_cube_com_local_m": [
+    0,
+    0,
+    0
+  ],
+  "uniform_cube_inertia_com_kg_m2": [
+    0.00192,
+    0.00192,
+    0.00192
+  ],
+  "uniform_cube_mass_kg": 0.8
+}

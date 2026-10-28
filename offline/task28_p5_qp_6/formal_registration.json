@@ -1,0 +1,66 @@
+{
+  "schema": "task28.qp6.formal_registration.v1",
+  "freeze_before_any_formal": true,
+  "full_dynamics_source_pass": false,
+  "cell_eligibility": {
+    "A/S05": {
+      "eligible": true,
+      "reason": "GRAVITY_AND_GEOMETRY_PASS"
+    },
+    "A/S10": {
+      "eligible": true,
+      "reason": "GRAVITY_AND_GEOMETRY_PASS"
+    },
+    "B/S05": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; no arm-only substitution authorized by evidence"
+    },
+    "B/S10": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; no arm-only substitution authorized by evidence"
+    },
+    "C/S05": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; no arm-only substitution authorized by evidence"
+    },
+    "C/S10": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; no arm-only substitution authorized by evidence"
+    },
+    "D/S05": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; attachment/contact source not reached"
+    },
+    "D/S10": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; attachment/contact source not reached"
+    },
+    "E/S05": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; attachment/contact source not reached"
+    },
+    "E/S10": {
+      "eligible": false,
+      "reason": "SOURCE_BLOCKED_FULL_9_DOF_FINGER_ACCELERATION; attachment/contact source not reached"
+    }
+  },
+  "files": {
+    "offline/task28_p5_qp_6/runtime.py": "48a9a04fc734d9cc079e9830a3408285d713d76fdced100000a48de121a99e4a",
+    "offline/task28_p5_qp_6/source_probe.py": "de8c02404d48121a3762489d2f9453e858a712e5c6ba849c4b03be3ae14581b2",
+    "offline/task28_p5_qp_6/controllers.py": "79968978f7233e6de46d39a34d48efd8af0a763de9eb2ec45defdc876b56c593",
+    "offline/task28_p5_qp_6/gates.py": "5fb151e1ee1bf69aa37c2116c77ab0cd76c4abf394b291e5d8a145d820cc4230",
+    "offline/task28_p5_qp_6/preflight.py": "a9f65c2602cd0193749cfff540b3175e89da3129eccc9db75dd90f8ab793b407",
+    "offline/task28_p5_qp_6/common.py": "43436a48a514f2ebda86422f71345e28837ee7850dee0a809875573e0c42211c",
+    "offline/task28_p5_qp_6/solver.py": "08ce3713e4c51dee43ec5692a24fa5c689f239412bc860f1dae42e0c0cfe234a",
+    "offline/task28_p5_qp_6/model.py": "8fed272f37b1d368ddefe163c7270743c59d393ddcfb8bdef267bb20eac168cb",
+    "offline/task28_p5_qp_6/profiles.py": "31cd9cfd557bc6b09d493612614c7dd510ea2ea58042494ed69fe4cf1aeadd68",
+    "offline/task28_p5_qp_6/__init__.py": "06c069080063e543a2699a51f34057f1a971bed2cfcaff1eafd2f4aad6f3134a",
+    "offline/task28_p5_qp_6/preregistration.json": "c3edf8ab060bc0662fde312259dcaf5b4fb97e3ef8bcd554db193e568fe370b0",
+    "offline/task28_p5_qp_6/evidence/source_v1/result.json": "1f33f0c1794546ee66824f7b90626f79f74430ff8f84bc6475a747c4a5b5c6e1",
+    "offline/task28_p5_qp_6/evidence/source_v1/observations.json": "904290455b573b8ad3fc4f854dc921851069c5198fc4f6d3c4215dad6142b4a6",
+    "offline/task28_p5_qp_6/evidence/profiles_v2/result.json": "50c8363ee29be141fe7ec96eea3bea8613d468e0b483f73a7d1dbf28da5264de"
+  },
+  "development_runs_used": 0,
+  "registered_limits_label": "SIMULATION_RESEARCH_LIMITS_ONLY",
+  "source_failure_not_tuned_or_rerun": true
+}

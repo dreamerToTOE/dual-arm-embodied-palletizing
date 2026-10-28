@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/math_audit.py", line 60, in <module>
+    if __name__=='__main__': main()
+  File "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/math_audit.py", line 53, in main
+    if diff>2e-6 or np.max(np.abs(E@x-b))>2e-7: raise ValueError('INDEPENDENT_ORACLE_MISMATCH:'+str(diff))
+ValueError: INDEPENDENT_ORACLE_MISMATCH:0.0016816888707985034
