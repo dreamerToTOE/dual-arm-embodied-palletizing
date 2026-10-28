@@ -1,0 +1,17 @@
+{
+  "version": "R5_TGS_SEMANTIC_CONTRACT_V1",
+  "physics_dt_s": 0.016666666666666666,
+  "dt_tolerance_s": 1e-8,
+  "fk_translation_tolerance_m": 0.001,
+  "fk_rotation_tolerance_rad": 0.002,
+  "minimum_moving_samples": 10,
+  "minimum_settle_samples": 10,
+  "reported_end_velocity_is_not_frame_average": true,
+  "finite_difference_is_estimator_only": true,
+  "r4_contract_preserved": "R4 remains BLOCKED under its original fd(q)/dt=dq contract",
+  "max_explicit_steps_per_live_cell": 150,
+  "native_position_drive_writes": 0,
+  "torque_before_qualification": 0,
+  "backend_variants": "A/B/C/E CPU; D CUDA only if supported; C is NON_BASELINE_DIAGNOSTIC",
+  "source_validity_policy": "TGS semantics can explain a bounded discrepancy but cannot alone qualify torque control"
+}

@@ -1,0 +1,56 @@
+{
+  "interpretation": {
+    "historical_aliasing": "R3 pointer/dtype metadata unavailable; R4 live D run found borrowed buffers mutable",
+    "r4_contract_result": "BLOCKED under exact fd(q)/dt=dq source contract",
+    "r5_solver_hypothesis": "R5 tests end-step solver velocity as a separate quantity; finite difference is retained as an estimator only"
+  },
+  "r3": {},
+  "r4": {
+    "all_fd_minus_dq_max": 2.7388305829181223,
+    "frames": 129,
+    "moving_samples": 196,
+    "path": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/evidence/run_A/frames.jsonl",
+    "sha256": "df13582d56f53290f19307479e670f5de9b50f2f0926b5459a8191aebcf4aab9",
+    "tail_end_dq_left": [
+      -0.0001893522567115724,
+      -0.010724863037467003,
+      -0.0006966578657738864,
+      0.005007283296436071,
+      -0.0010150318266823888,
+      6.819550617365167e-05,
+      2.775590110104531e-05
+    ],
+    "tail_end_dq_right": [
+      -0.00017319079779554158,
+      -0.010585268028080463,
+      -0.0005470351316034794,
+      0.0051315100863575935,
+      -0.0008947708993218839,
+      5.531012357096188e-05,
+      1.9185823475709185e-05
+    ],
+    "tail_fd_minus_dq_max": 0.010724863037467003
+  },
+  "source_archives": {
+    "dev_02": {
+      "archive_aliasing_verdict": "UNKNOWN_NO_ARCHIVED_POINTERS; installed wrapper clone and float64 conversion suggest copies, must test live",
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/evidence/historical/dev_02.json",
+      "records": 127,
+      "sha256": "2655363913aff4a3eeabab7ed2cf219d430412b84b275ddb25d1a669beb5f080",
+      "tail_left_fd_minus_dq_max": 0.010724863037467003,
+      "tail_left_integral_error_max": 0.00017874772661353663,
+      "tail_right_fd_minus_dq_max": 0.010585268028080463,
+      "tail_right_integral_error_max": 0.0001764211430024202
+    },
+    "dev_03": {
+      "archive_aliasing_verdict": "UNKNOWN_NO_ARCHIVED_POINTERS; installed wrapper clone and float64 conversion suggest copies, must test live",
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r4/evidence/historical/dev_03.json",
+      "records": 180,
+      "sha256": "bc6f868293013f9ef8e26c29ed920219521e2e0223d13c245dfbd1d7ee637dae",
+      "tail_left_fd_minus_dq_max": 0.010699780657887459,
+      "tail_left_integral_error_max": 0.00017832977230331556,
+      "tail_right_fd_minus_dq_max": 0.010580936446972444,
+      "tail_right_integral_error_max": 0.00017634481335553672
+    }
+  }
+}

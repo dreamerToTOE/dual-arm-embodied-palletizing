@@ -1,0 +1,29 @@
+{
+  "isaac_sim_release": "4.5.0",
+  "physx_extension": "omni.physx-106.5.7",
+  "physx_scene_api": {
+    "GetEnableExternalForcesEveryIterationAttr": true,
+    "CreateEnableExternalForcesEveryIterationAttr": true,
+    "GetSolverTypeAttr": true,
+    "GetMinPositionIterationCountAttr": true,
+    "GetMaxPositionIterationCountAttr": true,
+    "GetMinVelocityIterationCountAttr": true,
+    "GetMaxVelocityIterationCountAttr": true
+  },
+  "omni_physx_python_toggle_method": false,
+  "r5_c_support": "stage PhysxSceneAPI attribute set before SimulationContext construction",
+  "r5_d_cuda_host": true,
+  "r5_d_result": "REJECTED_CUDA_ILLEGAL_MEMORY_ACCESS_BEFORE_FIRST_FRAME",
+  "source_paths": {
+    "physics_context": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.api/isaacsim/core/api/physics_context/physics_context.py",
+    "simulation_context": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.api/isaacsim/core/api/simulation_context/simulation_context.py",
+    "articulation_view": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+    "numpy_clone": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.utils/isaacsim/core/utils/numpy/tensor.py"
+  },
+  "references": [
+    "https://nvidia-omniverse.github.io/PhysX/physx/5.7.0/docs/Simulation.html",
+    "https://forums.developer.nvidia.com/t/dof-velocity-offset-at-rest/205799",
+    "https://nvidia-omniverse.github.io/PhysX/physx/5.1.1/docs/RigidBodyDynamics.html",
+    "https://docs.isaacsim.omniverse.nvidia.com/4.5.0/py/source/extensions/isaacsim.core.prims/docs/index.html?highlight=UsdGeom%2520Xformable"
+  ]
+}

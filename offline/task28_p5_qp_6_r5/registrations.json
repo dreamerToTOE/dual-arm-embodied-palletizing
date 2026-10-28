@@ -1,0 +1,7 @@
+{
+  "A": {"label":"ORIGINAL_CPU_TGS_BASELINE","scene":"original builder","backend":"CPU numpy","solver":"authored TGS","mutation":"none","torque_writes":0},
+  "B": {"label":"TGS_SETTINGS_AND_DRIVES","scene":"original builder","backend":"CPU numpy","solver":"authored TGS","mutation":"none; inspect solver attrs/iterations/gravity/gains/targets","torque_writes":0},
+  "C": {"label":"NON_BASELINE_EXTERNAL_FORCES_EVERY_TGS_ITERATION","scene":"fresh anonymous diagnostic stage","backend":"CPU numpy","solver":"TGS + EnableExternalForcesEveryIteration=True","mutation":"temporary stage-only PhysxSceneAPI attribute; not original frozen configuration","torque_writes":0},
+  "D": {"label":"GPU_BACKEND_DIAGNOSTIC","scene":"fresh anonymous diagnostic stage","backend":"CUDA torch if supported","solver":"authored solver; record effective scene differences","mutation":"backend-only diagnostic; not equivalent original-scene evidence","torque_writes":0},
+  "E": {"label":"ORIGINAL_MOTION_SETTLE","scene":"original builder","backend":"CPU numpy","solver":"authored TGS","mutation":"none; moving-versus-settle analysis","torque_writes":0}
+}

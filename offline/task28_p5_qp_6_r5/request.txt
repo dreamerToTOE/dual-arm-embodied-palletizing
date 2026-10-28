@@ -1,0 +1,339 @@
+# Task28 G2-P5-QP-6-R5 — PhysX TGS Velocity Semantics, State Qualification and Original-Scene Torque Validation
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected HEAD: c35b6f4537a93a3119801941934462a84b8bfae1
+
+## Primary research correction
+
+QP6-R4 found frozen joint positions with persistent nonzero joint velocity readings.
+
+New external evidence suggests that this discrepancy MAY be an expected property of the PhysX Temporal Gauss-Seidel solver under gravity and joint drives, rather than a stale articulation state.
+
+The goal of R5 is to TEST this hypothesis, independently qualify control-relevant joint-state semantics, and proceed to actual explicit torque actuation if justified.
+
+Do not automatically label a joint-state source invalid solely because the end-of-step solver velocity differs from the finite difference of position over a complete physics timestep.
+
+Do not automatically declare the source valid because the behavior resembles PhysX documentation.
+
+Both interpretations require evidence.
+
+## Mandatory literature and source review
+
+Read these references before implementation:
+
+1. PhysX SDK Simulation — "TGS Steady-State Velocity and Position Discrepancy":
+   https://nvidia-omniverse.github.io/PhysX/physx/5.7.0/docs/Simulation.html
+
+2. NVIDIA Developer Forums — "DOF Velocity Offset at Rest":
+   https://forums.developer.nvidia.com/t/dof-velocity-offset-at-rest/205799
+
+3. PhysX 5.1.1 Rigid Body Dynamics:
+   https://nvidia-omniverse.github.io/PhysX/physx/5.1.1/docs/RigidBodyDynamics.html
+
+4. Isaac Sim 4.5 Core Prims API:
+   https://docs.isaacsim.omniverse.nvidia.com/4.5.0/py/source/extensions/isaacsim.core.prims/docs/index.html
+
+5. Original QP6-R3/R4 evidence, source gates and installed Isaac 4.5 implementation.
+
+The published PhysX example may involve a different SDK version and a simpler system than the actual FR3 articulation.
+
+Verify which solver semantics, flags and behaviors are present in the INSTALLED Isaac Sim 4.5 runtime.
+
+Do not assume a newer PhysX option is implemented or identical in Isaac Sim 4.5.
+
+## Frozen scene requirements
+
+Use only the existing Task28 scene builder:
+
+fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py
+
+Preserve:
+
+- Two original FR3 robots.
+- Both mirrored L-shaped side-suction tools.
+- Four suction cups per arm.
+- Frozen link8-to-side_suction_tcp transforms.
+- Original Cube_01 and table.
+- Original 60 Hz physics timestep.
+- Original joint, collision, ACM and grasp constraints.
+- Original USD identity and hash.
+- Native mimic finger joints and their original drives.
+
+No changes to existing scene, bridge, URDF, USD, fixtures or previous evidence.
+
+New code only under:
+
+offline/task28_p5_qp_6_r5/
+
+No ROS, hardware commands, suction closure or Cube movement.
+
+## Phase 1 — diagnose the TGS hypothesis
+
+Independently reprocess R3/R4 evidence.
+
+Separate:
+
+- Whole-step displacement velocity: (q[k+1]-q[k])/dt.
+- Reported end-of-step solver velocity.
+- Integrated reported velocity.
+- True observed link-pose evolution.
+- Drive target and drive stiffness/damping.
+- Gravitational and model-based effort.
+- Contact and joint-limit state.
+- Position and velocity source timestamps.
+
+Explain why these velocities need not be mathematically identical in an iterative substep solver.
+
+Investigate whether the observed near-steady-state velocity could arise from the installed TGS integration and drive-force sequence.
+
+Determine whether the discrepancy grows, remains bounded, depends on gravity/drive state, or changes with actual motion.
+
+Never assume that an end-of-step velocity is a certified average velocity over the previous physics step.
+
+Preserve R4 as a valid negative result UNDER ITS ORIGINAL REGISTERED CONTRACT.
+
+Do not rewrite its original source gate or historical outcome.
+
+## Phase 2 — bounded independent physical diagnostics
+
+Create a new preregistration BEFORE any new Isaac experiment.
+
+Allow up to SIX bounded development-only diagnostics.
+
+Prioritize the following:
+
+A. Original scene, existing CPU-TGS runtime and unchanged native drives.
+   Reproduce the original steady-state discrepancy.
+
+B. Same original scene, inspect and record the installed TGS solver settings,
+   iteration counts, gravity compensation and joint-drive parameters.
+
+C. A documented TGS force-application variant ONLY IF the installed runtime
+   explicitly supports it. Use a new, temporary diagnostic stage identity.
+   Do not persist changes or call this the original frozen physics configuration.
+
+D. Alternative CPU/GPU physics backend investigation ONLY IF supported on the
+   actual host. Record every effective physics-scene difference.
+   This is a backend diagnostic, not an equivalent original-scene experiment.
+   GPU-specific CCD limitations must be disclosed.
+
+E. A controlled original-scene native-drive motion-versus-settle comparison
+   using only the original startup behavior, with independent link-pose
+   and joint-state observations.
+
+F. A source-validity control demonstrating detection of genuinely stale,
+   delayed, malformed or inconsistent joint states.
+
+Do not force all six runs if a proposed feature is unavailable, unsafe, or redundant.
+
+Do not modify the original L-tool, Cube, joint limits, solver type or drive parameters in the ORIGINAL-scene baseline.
+
+All temporary physics-setting variants must be explicitly labeled NON_BASELINE_DIAGNOSTIC.
+
+Record exact backend, CPU/GPU adaptation, physics dt, solver options, source files, feature support and output hashes.
+
+## Phase 3 — establish a physically meaningful state contract
+
+Create a NEW, source-identified state qualification scheme.
+
+Separate:
+
+A. Source integrity:
+   correct robot identity, DOF names, finite q/dq, monotonic physics clock,
+   fresh copied arrays, valid link transforms and no competing command sink.
+
+B. Kinematic consistency:
+   observed link8/TCP transforms agree with FK,
+   joint positions evolve consistently with independently observed movement,
+   and moving-state source behavior is reproducible.
+
+C. Solver semantics:
+   explicitly account for the documented possibility that end-of-step
+   solver velocity differs from frame-average displacement velocity.
+
+D. Settled-state validity:
+   distinguish negligible actual displacement from nonzero internal solver
+   velocity and determine whether the resulting state is usable for a
+   model-based torque controller.
+
+E. Moving-state validity:
+   demonstrate meaningful and reproducible joint/link movement,
+   signed response, source timestamps and bounded model residuals.
+
+Do not simply increase the historical 0.01 rad/s tolerance.
+
+Do not silently replace solver dq with numerical differentiation.
+
+If any alternative estimated velocity is proposed for control, label it as
+an estimator, characterize filtering delay and uncertainty, and validate it
+independently against genuine moving trajectories.
+
+A result may be SOLVER_SEMANTICS_EXPLAINED but still CONTROL_SOURCE_BLOCKED.
+
+A result may qualify a bounded controller use without proving every internal
+PhysX solver quantity is physically measured.
+
+## Phase 4 — original-scene arm dynamics qualification
+
+Only after the required joint-state source is qualified:
+
+Read current left/right 9x9 M and 9D c/g.
+
+Preserve native finger drives and full articulation state.
+
+Evaluate the seven-arm dynamics with explicit finger coupling:
+
+    Maa*qdd_arm + Maf*qdd_finger + c_arm + g_arm
+        = tau_arm + external_arm_generalized_effort
+
+Validate the model using actual dynamics response where an independent excitation
+and source-qualified transition are available.
+
+Account for joint-drive and constraint contributions.
+
+Do not substitute solver-projected effort for a calibrated motor torque sensor.
+
+Do not invent mounted L-tool inertia.
+
+Do not claim that all nine unconstrained accelerations are independently
+controllable.
+
+Use independent numerical checks and failure controls.
+
+## Phase 5 — real exclusive torque actuation
+
+If the ORIGINAL-scene state and arm dynamics qualifications support it:
+
+Integrate and complete the R3 task-scoped effort adapter.
+
+Keep the original fixture builder unchanged.
+
+Verify:
+
+- Exclusive ownership of both arm actuators.
+- Original arm and finger DOF identities.
+- Zero competing arm position-drive gains in the active research session.
+- Original finger drive behavior retained.
+- Valid full-DOF effort-buffer semantics.
+- Live pre-command state and collision gates.
+- Research torque and torque-rate bounds.
+- Actual effort command execution and command readback.
+- Post-step source consistency and first-failure detection.
+
+Perform one independently registered static explicit-effort hold.
+
+Use the actual original-scene FREE_HOME state.
+
+Do not teleport the robots or Cube into an artificial grasp pose.
+
+Do not apply the already-attached 0.100 mm grasp closure criterion to FREE_HOME.
+
+A real static torque PASS requires actual Isaac actuator writes and measured
+physical response. CPU mocks and command construction do not count.
+
+Do not tune the test after inspecting its formal result.
+
+## Phase 6 — conditional motion and QP benchmark
+
+If the static effort experiment passes:
+
+Generate bounded C2 smooth joint references from the actual valid free-space
+state, with unchanged tools and Cube.
+
+Independently validate collision, original joint limits, timestep, and reference
+smoothness.
+
+Run up to FOUR preregistered formal cells:
+
+1. Gravity+PD / 0.50 s
+2. Gravity+PD / 1.00 s
+3. Computed torque / 0.50 s
+4. Computed torque / 1.00 s
+
+Only execute computed-torque cells if the required dynamics model qualifies.
+
+If actual short joint tracking is qualified and the source-valid task Jacobians
+are available, perform one additional bounded virtual object-centered
+cooperative-QP test.
+
+This remains NO-CONTACT virtual coordination; actual Cube is not attached.
+
+Every cell requires fresh independent reset, frozen configuration, fail-closed
+pre-command/post-step gates, complete raw logs and independent evaluation.
+
+Other independent registered cells may continue after a failed cell only after
+a safe fresh reset and all shared source gates remain valid.
+
+No post-result gain or threshold tuning.
+
+## Phase 7 — original grasp-path readiness
+
+Preserve R3's rejected direct joint interpolation near the Cube.
+
+Reuse original G1/NR/FCL checks to identify possible safe approach alternatives.
+
+Do not expand ACM, ignore tool collisions or teleport the Cube.
+
+Distinguish:
+
+FREE_HOME
+FREE_APPROACH
+PRE_CONTACT_READY
+ATTACHED
+
+Original 0.100 mm / 0.001 rad grasp thresholds remain frozen and apply to the
+relevant grasp-ready and attached geometry.
+
+Do not execute Cube/D6 attachment in R5.
+
+## Tests and evidence
+
+Add negative controls for genuine stale buffers, stale solver states, broken
+time synchronization, unsafe source qualification, invalid effort commands,
+unexpected contacts and actuation after a latched failure.
+
+Run all previous 990 tests plus focused R5 tests.
+
+Create:
+
+docs/tasks/TASK28_G2_P5_QP_6_R5_TGS_SEMANTICS_AND_TORQUE.md
+
+Archive new code, exact source binding, literature review, preregistration,
+diagnostic variants, physics traces, first failures, dynamic source evidence,
+controller commands and independent evaluations under:
+
+offline/task28_p5_qp_6_r5/
+
+Report separate scientific outcomes:
+
+- ORIGINAL_SCENE_PRESERVED
+- TGS_VELOCITY_SEMANTICS_SUPPORTED / INCONCLUSIVE / REJECTED
+- STATE_SOURCE_VALID_FOR_CONTROL / PARTIAL / BLOCKED
+- ARM_DYNAMICS_QUALIFIED / PARTIAL / BLOCKED
+- EXCLUSIVE_TORQUE_ACTUATION_VERIFIED / BLOCKED
+- STATIC_TORQUE_HOLD_PASS / REJECTED / SKIPPED
+- SHORT_TRACKING_PASS / REJECTED / SKIPPED
+- COOPERATIVE_QP_STATUS
+- CUBE_D6_NOT_TESTED
+
+Do not promote a TGS diagnostic-only change into a successful original-scene
+control result.
+
+Commit and push task-scoped additions only.
+
+In the final Chinese report:
+
+FIRST give a short, simple conclusion.
+
+THEN explain whether the R4 failure was an overly strict source contract,
+a real source problem, an unresolved solver issue, or a combination.
+
+Report all experimental configurations and their physics model differences,
+all actual torque writes, skipped cells, measured errors, test counts,
+commit SHA, verified remote HEAD and worktree status.
+
+STOP after R5.
+
+Do not automatically start suction closure, Cube transport, ROS or physical
+hardware execution.

@@ -1,0 +1,98 @@
+{
+  "cases": [
+    {
+      "commands": 0,
+      "expected": "STALE_SOLVER_STATE",
+      "name": "stale_solver_q",
+      "outcome": "REJECTED",
+      "reason": "STALE_SOLVER_STATE"
+    },
+    {
+      "commands": 0,
+      "expected": "DELAYED_SOURCE",
+      "name": "delayed_solver_state",
+      "outcome": "REJECTED",
+      "reason": "DELAYED_SOURCE"
+    },
+    {
+      "commands": 0,
+      "expected": "TIME_SYNC",
+      "name": "broken_time_sync",
+      "outcome": "REJECTED",
+      "reason": "TIME_SYNC"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_IDENTITY",
+      "name": "wrong_identity",
+      "outcome": "REJECTED",
+      "reason": "WRONG_IDENTITY"
+    },
+    {
+      "commands": 0,
+      "expected": "INVALID_EFFORT_MODE",
+      "name": "invalid_effort_command_mode",
+      "outcome": "REJECTED",
+      "reason": "INVALID_EFFORT_MODE"
+    },
+    {
+      "commands": 0,
+      "expected": "INVALID_MASS",
+      "name": "invalid_mass",
+      "outcome": "REJECTED",
+      "reason": "INVALID_MASS"
+    },
+    {
+      "commands": 0,
+      "expected": "INVALID_MASS",
+      "name": "nonfinite_or_negative_mass",
+      "outcome": "REJECTED",
+      "reason": "INVALID_MASS"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_TCP",
+      "name": "wrong_tcp",
+      "outcome": "REJECTED",
+      "reason": "WRONG_TCP"
+    },
+    {
+      "commands": 0,
+      "expected": "UNEXPECTED_CONTACT",
+      "name": "unexpected_contact",
+      "outcome": "REJECTED",
+      "reason": "UNEXPECTED_CONTACT"
+    },
+    {
+      "commands": 0,
+      "expected": "COMPETING_SINK",
+      "name": "competing_position_sink",
+      "outcome": "REJECTED",
+      "reason": "COMPETING_SINK"
+    },
+    {
+      "commands": 0,
+      "expected": "NOT_FRESH_COPY",
+      "name": "nonfresh_copy",
+      "outcome": "REJECTED",
+      "reason": "NOT_FRESH_COPY"
+    },
+    {
+      "commands": 0,
+      "expected": "SEMANTICS_UNDECLARED",
+      "name": "semantics_not_declared",
+      "outcome": "REJECTED",
+      "reason": "SEMANTICS_UNDECLARED"
+    },
+    {
+      "commands": 0,
+      "expected": "LATCHED:PRE_COMMAND_REJECTED",
+      "name": "actuation_after_latched_failure",
+      "outcome": "REJECTED",
+      "reason": "LATCHED:PRE_COMMAND_REJECTED"
+    }
+  ],
+  "robot_command_writes": 0,
+  "status": "ALL_R5_NEGATIVE_CONTROLS_REJECTED",
+  "suction_commands": 0
+}

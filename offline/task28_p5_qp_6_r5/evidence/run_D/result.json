@@ -1,0 +1,365 @@
+{
+  "backend_requested": "torch/cuda",
+  "callback_dts_s": [
+    0.01666666753590107,
+    0.01666666753590107
+  ],
+  "configuration": "D",
+  "configured_dt_s": 0.016666666666666666,
+  "cube_mass_kg": 0.800000011920929,
+  "effective_backend": "GPU_CUDA",
+  "explicit_physics_steps": 0,
+  "first_failure": {
+    "last_frame_index": -1,
+    "message": "CUDA error: an illegal memory access was encountered\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+    "phase": "NATIVE_DRIVES_PLAY",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r5/runtime_diagnostic.py\", line 90, in main\n    cube=SingleRigidPrim(CUBE_PATH);cube.initialize()\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_rigid_prim.py\", line 110, in __init__\n    self._rigid_prim_view = RigidPrim(\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 196, in __init__\n    RigidPrim._on_physics_ready(self, None)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 2262, in _on_physics_ready\n    linear_velocities = self.get_linear_velocities()\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 635, in get_linear_velocities\n    velocities = self._backend_utils.clone_tensor(linear_velocities, device=self._device)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.utils/isaacsim/core/utils/torch/tensor.py\", line 46, in clone_tensor\n    return torch.clone(data)\nRuntimeError: CUDA error: an illegal memory access was encountered\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n\n",
+    "type": "RuntimeError"
+  },
+  "graph_suppression": "fresh anonymous stage only; original builder still loads ROS2 bridge extension; no bridge/node/command graph intentionally run",
+  "non_baseline_diagnostic": true,
+  "phase": "NATIVE_DRIVES_PLAY",
+  "physics_after_context": {
+    "physics:gravityMagnitude": "9.8100004196167",
+    "physxScene:broadphaseType": "GPU",
+    "physxScene:enableCCD": "True",
+    "physxScene:enableExternalForcesEveryIteration": "False",
+    "physxScene:enableGPUDynamics": "True",
+    "physxScene:enableStabilization": "True",
+    "physxScene:maxPositionIterationCount": "255",
+    "physxScene:maxVelocityIterationCount": "255",
+    "physxScene:minPositionIterationCount": "1",
+    "physxScene:minVelocityIterationCount": "0",
+    "physxScene:solverType": "TGS",
+    "physxScene:timeStepsPerSecond": "60"
+  },
+  "physics_backend_adaptation": {
+    "observed": {
+      "after": {
+        "physics:gravityMagnitude": "9.8100004196167",
+        "physxScene:broadphaseType": "GPU",
+        "physxScene:enableCCD": "True",
+        "physxScene:enableExternalForcesEveryIteration": "False",
+        "physxScene:enableGPUDynamics": "True",
+        "physxScene:enableStabilization": "True",
+        "physxScene:maxPositionIterationCount": "255",
+        "physxScene:maxVelocityIterationCount": "255",
+        "physxScene:minPositionIterationCount": "1",
+        "physxScene:minVelocityIterationCount": "0",
+        "physxScene:solverType": "TGS",
+        "physxScene:timeStepsPerSecond": "60"
+      },
+      "before": {
+        "physics:gravityMagnitude": "9.8100004196167",
+        "physxScene:broadphaseType": "GPU",
+        "physxScene:enableCCD": "True",
+        "physxScene:enableExternalForcesEveryIteration": "False",
+        "physxScene:enableGPUDynamics": "True",
+        "physxScene:enableStabilization": "True",
+        "physxScene:maxPositionIterationCount": "255",
+        "physxScene:maxVelocityIterationCount": "255",
+        "physxScene:minPositionIterationCount": "1",
+        "physxScene:minVelocityIterationCount": "0",
+        "physxScene:solverType": "TGS",
+        "physxScene:timeStepsPerSecond": "60"
+      }
+    },
+    "scene_source_unchanged": true,
+    "source": "installed isaacsim.core.api PhysicsContext device branch"
+  },
+  "physics_before_context": {
+    "physics:gravityMagnitude": "9.8100004196167",
+    "physxScene:broadphaseType": "GPU",
+    "physxScene:enableCCD": "True",
+    "physxScene:enableExternalForcesEveryIteration": "False",
+    "physxScene:enableGPUDynamics": "True",
+    "physxScene:enableStabilization": "True",
+    "physxScene:maxPositionIterationCount": "255",
+    "physxScene:maxVelocityIterationCount": "255",
+    "physxScene:minPositionIterationCount": "1",
+    "physxScene:minVelocityIterationCount": "0",
+    "physxScene:solverType": "TGS",
+    "physxScene:timeStepsPerSecond": "60"
+  },
+  "physics_scenes": [
+    "/World/Task28G10SingleCube/physicsScene"
+  ],
+  "post_callback_count": 0,
+  "recorded_frames": 0,
+  "registration": {
+    "backend": "CUDA torch if supported",
+    "label": "GPU_BACKEND_DIAGNOSTIC",
+    "mutation": "backend-only diagnostic; not equivalent original-scene evidence",
+    "scene": "fresh anonymous diagnostic stage",
+    "solver": "authored solver; record effective scene differences",
+    "torque_writes": 0
+  },
+  "result_written_before_close": true,
+  "robot_command_writes": 0,
+  "ros_graph_suppressed": true,
+  "scene_before": {
+    "asset": {
+      "expected_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+      "match": true,
+      "path": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+      "sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f"
+    },
+    "cube_world_transform_usd_row_vector": [
+      [
+        0.11999999731779099,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.11999999731779099,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.11999999731779099,
+        0.0
+      ],
+      [
+        0.65,
+        0.0,
+        0.26,
+        1.0
+      ]
+    ],
+    "failures": [],
+    "fingers": {
+      "left": {
+        "joint_names": [
+          "/World/Task28G10SingleCube/left_fr3/fr3_hand/fr3_finger_joint1",
+          "/World/Task28G10SingleCube/left_fr3/fr3_hand/fr3_finger_joint2"
+        ],
+        "limits": [
+          {
+            "lower_m": 0.0,
+            "upper_m": 0.03999999910593033
+          },
+          {
+            "lower_m": 0.0,
+            "upper_m": 0.03999999910593033
+          }
+        ],
+        "mimic_gearing": -1.0,
+        "mimic_offset_m": 0.0,
+        "mimic_reference": [
+          "/World/Task28G10SingleCube/left_fr3/fr3_hand/fr3_finger_joint1"
+        ],
+        "native_state_retained": true,
+        "visual_collision_policy": "hidden_by_frozen_fixture"
+      },
+      "right": {
+        "joint_names": [
+          "/World/Task28G10SingleCube/right_fr3/fr3_hand/fr3_finger_joint1",
+          "/World/Task28G10SingleCube/right_fr3/fr3_hand/fr3_finger_joint2"
+        ],
+        "limits": [
+          {
+            "lower_m": 0.0,
+            "upper_m": 0.03999999910593033
+          },
+          {
+            "lower_m": 0.0,
+            "upper_m": 0.03999999910593033
+          }
+        ],
+        "mimic_gearing": -1.0,
+        "mimic_offset_m": 0.0,
+        "mimic_reference": [
+          "/World/Task28G10SingleCube/right_fr3/fr3_hand/fr3_finger_joint1"
+        ],
+        "native_state_retained": true,
+        "visual_collision_policy": "hidden_by_frozen_fixture"
+      }
+    },
+    "physics": {
+      "gravity_magnitude": 9.8100004196167,
+      "solver": "TGS",
+      "time_steps_per_second": 60.0
+    },
+    "prim_paths": [
+      "/World/Task28G10SingleCube",
+      "/World/Task28G10SingleCube/left_fr3",
+      "/World/Task28G10SingleCube/right_fr3",
+      "/World/Task28G10SingleCube/Supply/Cube_01"
+    ],
+    "status": "SCENE_IDENTITY_VERIFIED",
+    "tools": {
+      "left": {
+        "cups": [
+          "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool/cup_r1_c1",
+          "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool/cup_r1_c2",
+          "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool/cup_r2_c1",
+          "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool/cup_r2_c2"
+        ],
+        "lateral_scale_m": [
+          0.017999999225139618,
+          0.12999999523162842,
+          0.017999999225139618
+        ],
+        "link8_world_transform_usd_row_vector": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            1.2246467991473532e-16,
+            0.0
+          ],
+          [
+            0.0,
+            -1.2246467991473532e-16,
+            -1.0,
+            0.0
+          ],
+          [
+            0.7379999771714211,
+            -0.600000049829481,
+            0.9259999990463257,
+            1.0
+          ]
+        ],
+        "local_rz_deg": -90.0,
+        "local_translation_m": [
+          0.0,
+          -0.155,
+          0.08
+        ],
+        "manifold_scale_m": [
+          0.07000000029802322,
+          0.014000000432133675,
+          0.07000000029802322
+        ],
+        "tcp": "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool/side_suction_tcp",
+        "tcp_world_transform_usd_row_vector": [
+          [
+            2.220446049250313e-16,
+            1.0,
+            -1.2246467991473532e-16,
+            0.0
+          ],
+          [
+            1.0,
+            -2.220446049250313e-16,
+            2.719262146893782e-32,
+            0.0
+          ],
+          [
+            0.0,
+            -1.2246467991473532e-16,
+            -1.0,
+            0.0
+          ],
+          [
+            0.7379999771714211,
+            -0.44500004982948094,
+            0.8459999990463256,
+            1.0
+          ]
+        ],
+        "tool": "/World/Task28G10SingleCube/left_fr3/fr3_link8/side_suction_tool",
+        "vertical_scale_m": [
+          0.02800000086426735,
+          0.02800000086426735,
+          0.07999999821186066
+        ]
+      },
+      "right": {
+        "cups": [
+          "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool/cup_r1_c1",
+          "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool/cup_r1_c2",
+          "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool/cup_r2_c1",
+          "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool/cup_r2_c2"
+        ],
+        "lateral_scale_m": [
+          0.017999999225139618,
+          0.12999999523162842,
+          0.017999999225139618
+        ],
+        "link8_world_transform_usd_row_vector": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            1.2246467991473532e-16,
+            0.0
+          ],
+          [
+            0.0,
+            -1.2246467991473532e-16,
+            -1.0,
+            0.0
+          ],
+          [
+            0.7379999771714211,
+            0.599999950170519,
+            0.9259999990463257,
+            1.0
+          ]
+        ],
+        "local_rz_deg": 90.0,
+        "local_translation_m": [
+          0.0,
+          0.155,
+          0.08
+        ],
+        "manifold_scale_m": [
+          0.07000000029802322,
+          0.014000000432133675,
+          0.07000000029802322
+        ],
+        "tcp": "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool/side_suction_tcp",
+        "tcp_world_transform_usd_row_vector": [
+          [
+            2.220446049250313e-16,
+            -1.0,
+            1.2246467991473532e-16,
+            0.0
+          ],
+          [
+            -1.0,
+            -2.220446049250313e-16,
+            2.719262146893782e-32,
+            0.0
+          ],
+          [
+            0.0,
+            -1.2246467991473532e-16,
+            -1.0,
+            0.0
+          ],
+          [
+            0.7379999771714211,
+            0.44499995017051897,
+            0.8459999990463257,
+            1.0
+          ]
+        ],
+        "tool": "/World/Task28G10SingleCube/right_fr3/fr3_link8/side_suction_tool",
+        "vertical_scale_m": [
+          0.02800000086426735,
+          0.02800000086426735,
+          0.07999999821186066
+        ]
+      }
+    }
+  },
+  "status": "REJECTED",
+  "suction_commands": 0
+}

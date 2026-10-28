@@ -1,0 +1,357 @@
+{
+  "A": {
+    "backend_requested": "numpy/cpu",
+    "configuration": "A",
+    "dynamic_control_max_dq": null,
+    "dynamic_control_max_q": null,
+    "effective_backend": "CPU_NUMPY",
+    "explicit_physics_steps": 150,
+    "first_failure": null,
+    "fk_max_rotation_rad": 1.0068924708610813e-06,
+    "fk_max_translation_m": 6.984703960513676e-07,
+    "frames": 151,
+    "label": "ORIGINAL_CPU_TGS_BASELINE",
+    "moving_samples": {
+      "left": 98,
+      "right": 98
+    },
+    "non_baseline_diagnostic": false,
+    "phase": "COMPLETE",
+    "robot_command_writes": 0,
+    "signed_movement": {
+      "left": {
+        "max_delta_q": 0.08760550618171692,
+        "min_delta_q": -0.044030606746673584
+      },
+      "right": {
+        "max_delta_q": 0.08762110769748688,
+        "min_delta_q": -0.04400309920310974
+      }
+    },
+    "solver_after": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "MBP",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "False",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "solver_before": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "source_sha256": "c21444ad3884b3742db004f5d745dd56ed88812b1290c42725be89af104207e7",
+    "status": "BOUNDED_OBSERVATION_COMPLETE_PENDING_EVALUATION",
+    "suction_commands": 0,
+    "tail_fd_minus_dq_max": {
+      "left": 0.010724863037467003,
+      "right": 0.010585268028080463
+    },
+    "tail_fd_minus_dq_mean": {
+      "left": 0.0025327342414779457,
+      "right": 0.0024883428668263847
+    },
+    "tail_integral_error_max": {
+      "left": 0.00017874772661353663,
+      "right": 0.0001764211430024202
+    },
+    "unexpected_collisions": []
+  },
+  "B": {
+    "backend_requested": "numpy/cpu",
+    "configuration": "B",
+    "dynamic_control_max_dq": 0.0,
+    "dynamic_control_max_q": 0.0,
+    "effective_backend": "CPU_NUMPY",
+    "explicit_physics_steps": 150,
+    "first_failure": null,
+    "fk_max_rotation_rad": 1.0068924708610813e-06,
+    "fk_max_translation_m": 6.984703960513676e-07,
+    "frames": 151,
+    "label": "TGS_SETTINGS_AND_DRIVES",
+    "moving_samples": {
+      "left": 98,
+      "right": 98
+    },
+    "non_baseline_diagnostic": false,
+    "phase": "COMPLETE",
+    "robot_command_writes": 0,
+    "signed_movement": {
+      "left": {
+        "max_delta_q": 0.08760550618171692,
+        "min_delta_q": -0.044030606746673584
+      },
+      "right": {
+        "max_delta_q": 0.08762110769748688,
+        "min_delta_q": -0.04400309920310974
+      }
+    },
+    "solver_after": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "MBP",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "False",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "solver_before": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "source_sha256": "4ce5af273911948dc71aa4642a160aa96ac10dcaf47fce38ee1622ec0e4a6a5a",
+    "status": "BOUNDED_OBSERVATION_COMPLETE_PENDING_EVALUATION",
+    "suction_commands": 0,
+    "tail_fd_minus_dq_max": {
+      "left": 0.010724863037467003,
+      "right": 0.010585268028080463
+    },
+    "tail_fd_minus_dq_mean": {
+      "left": 0.0025327342414779457,
+      "right": 0.0024883428668263847
+    },
+    "tail_integral_error_max": {
+      "left": 0.00017874772661353663,
+      "right": 0.0001764211430024202
+    },
+    "unexpected_collisions": []
+  },
+  "C": {
+    "backend_requested": "numpy/cpu",
+    "configuration": "C",
+    "dynamic_control_max_dq": null,
+    "dynamic_control_max_q": null,
+    "effective_backend": "CPU_NUMPY",
+    "explicit_physics_steps": 150,
+    "first_failure": null,
+    "fk_max_rotation_rad": 9.265946866076983e-07,
+    "fk_max_translation_m": 7.590659105502089e-07,
+    "frames": 151,
+    "label": "NON_BASELINE_EXTERNAL_FORCES_EVERY_TGS_ITERATION",
+    "moving_samples": {
+      "left": 99,
+      "right": 99
+    },
+    "non_baseline_diagnostic": true,
+    "phase": "COMPLETE",
+    "robot_command_writes": 0,
+    "signed_movement": {
+      "left": {
+        "max_delta_q": 0.08760717511177063,
+        "min_delta_q": -0.043909430503845215
+      },
+      "right": {
+        "max_delta_q": 0.08762112259864807,
+        "min_delta_q": -0.043898820877075195
+      }
+    },
+    "solver_after": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "MBP",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "True",
+      "physxScene:enableGPUDynamics": "False",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "solver_before": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "source_sha256": "b469142af253ad07c9e7846a36955d4f34f3d1162e6f7540647ab58e4099c4f6",
+    "status": "BOUNDED_OBSERVATION_COMPLETE_PENDING_EVALUATION",
+    "suction_commands": 0,
+    "tail_fd_minus_dq_max": {
+      "left": 0.0005725139053538442,
+      "right": 0.0018450460629537702
+    },
+    "tail_fd_minus_dq_mean": {
+      "left": 0.00010956548823060075,
+      "right": 0.0002942587546743068
+    },
+    "tail_integral_error_max": {
+      "left": 9.541898920212852e-06,
+      "right": 3.075076931967368e-05
+    },
+    "unexpected_collisions": []
+  },
+  "D": {
+    "backend_requested": "torch/cuda",
+    "configuration": "D",
+    "dynamic_control_max_dq": null,
+    "dynamic_control_max_q": null,
+    "effective_backend": "GPU_CUDA",
+    "explicit_physics_steps": 0,
+    "first_failure": {
+      "last_frame_index": -1,
+      "message": "CUDA error: an illegal memory access was encountered\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+      "phase": "NATIVE_DRIVES_PLAY",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r5/runtime_diagnostic.py\", line 90, in main\n    cube=SingleRigidPrim(CUBE_PATH);cube.initialize()\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_rigid_prim.py\", line 110, in __init__\n    self._rigid_prim_view = RigidPrim(\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 196, in __init__\n    RigidPrim._on_physics_ready(self, None)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 2262, in _on_physics_ready\n    linear_velocities = self.get_linear_velocities()\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/rigid_prim.py\", line 635, in get_linear_velocities\n    velocities = self._backend_utils.clone_tensor(linear_velocities, device=self._device)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.utils/isaacsim/core/utils/torch/tensor.py\", line 46, in clone_tensor\n    return torch.clone(data)\nRuntimeError: CUDA error: an illegal memory access was encountered\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n\n",
+      "type": "RuntimeError"
+    },
+    "fk_max_rotation_rad": 0.0,
+    "fk_max_translation_m": 0.0,
+    "frames": 0,
+    "label": "GPU_BACKEND_DIAGNOSTIC",
+    "moving_samples": {},
+    "non_baseline_diagnostic": true,
+    "phase": "NATIVE_DRIVES_PLAY",
+    "robot_command_writes": 0,
+    "signed_movement": {},
+    "solver_after": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "solver_before": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "source_sha256": null,
+    "status": "REJECTED",
+    "suction_commands": 0,
+    "tail_fd_minus_dq_max": {},
+    "tail_fd_minus_dq_mean": {},
+    "tail_integral_error_max": {},
+    "unexpected_collisions": []
+  },
+  "E": {
+    "backend_requested": "numpy/cpu",
+    "configuration": "E",
+    "dynamic_control_max_dq": 0.0,
+    "dynamic_control_max_q": 0.0,
+    "effective_backend": "CPU_NUMPY",
+    "explicit_physics_steps": 150,
+    "first_failure": null,
+    "fk_max_rotation_rad": 1.0068924708610813e-06,
+    "fk_max_translation_m": 6.984703960513676e-07,
+    "frames": 151,
+    "label": "ORIGINAL_MOTION_SETTLE",
+    "moving_samples": {
+      "left": 98,
+      "right": 98
+    },
+    "non_baseline_diagnostic": false,
+    "phase": "COMPLETE",
+    "robot_command_writes": 0,
+    "signed_movement": {
+      "left": {
+        "max_delta_q": 0.08760550618171692,
+        "min_delta_q": -0.044030606746673584
+      },
+      "right": {
+        "max_delta_q": 0.08762110769748688,
+        "min_delta_q": -0.04400309920310974
+      }
+    },
+    "solver_after": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "MBP",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "False",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "solver_before": {
+      "physics:gravityMagnitude": "9.8100004196167",
+      "physxScene:broadphaseType": "GPU",
+      "physxScene:enableCCD": "True",
+      "physxScene:enableExternalForcesEveryIteration": "False",
+      "physxScene:enableGPUDynamics": "True",
+      "physxScene:enableStabilization": "True",
+      "physxScene:maxPositionIterationCount": "255",
+      "physxScene:maxVelocityIterationCount": "255",
+      "physxScene:minPositionIterationCount": "1",
+      "physxScene:minVelocityIterationCount": "0",
+      "physxScene:solverType": "TGS",
+      "physxScene:timeStepsPerSecond": "60"
+    },
+    "source_sha256": "44952b6ff220bbde0e4640c8e976a55801e95363caa3a070e7a7f9dfde6cf9e5",
+    "status": "BOUNDED_OBSERVATION_COMPLETE_PENDING_EVALUATION",
+    "suction_commands": 0,
+    "tail_fd_minus_dq_max": {
+      "left": 0.010724863037467003,
+      "right": 0.010585268028080463
+    },
+    "tail_fd_minus_dq_mean": {
+      "left": 0.0025327342414779457,
+      "right": 0.0024883428668263847
+    },
+    "tail_integral_error_max": {
+      "left": 0.00017874772661353663,
+      "right": 0.0001764211430024202
+    },
+    "unexpected_collisions": []
+  }
+}
