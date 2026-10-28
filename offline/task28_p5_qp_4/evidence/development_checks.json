@@ -1,0 +1,30 @@
+{
+  "acceptance_uses": "regression_historical/record.json with durable full log; no historical tests modified",
+  "runs": [
+    {
+      "durable_full_log": null,
+      "exit_code": 0,
+      "result": "7 passed in 0.15s",
+      "scope": "initial focused draft"
+    },
+    {
+      "durable_full_log": null,
+      "exit_code": 2,
+      "result": "4 import errors during collection",
+      "scope": "historical launch with PYTHONPATH=offline only"
+    },
+    {
+      "cause": "test_contact_pipeline missing from import path",
+      "durable_full_log": null,
+      "exit_code": 1,
+      "result": "5 failed, 567 passed in 102.27s",
+      "scope": "historical launch with module paths but missing G1-2A test-helper path"
+    },
+    {
+      "durable_full_log": null,
+      "exit_code": null,
+      "result": "UNKNOWN completion; session unavailable after interruption",
+      "scope": "interrupted third historical launch session 55213"
+    }
+  ]
+}

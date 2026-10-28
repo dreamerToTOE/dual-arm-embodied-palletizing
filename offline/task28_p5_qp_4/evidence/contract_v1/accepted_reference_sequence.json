@@ -1,0 +1,943 @@
+{
+  "execution_authorized": false,
+  "references": [
+    {
+      "acceleration_rad_s2": null,
+      "contact_mode": "bilateral_transitioning",
+      "cube_id": "Cube_01",
+      "execution_authorized": false,
+      "fixture_id": "task28_g1_0_new_single_cube_v0",
+      "frame_id": "task28_g1_0_dual_sync",
+      "geometry_status": {
+        "closure": {
+          "implied_left_object": [
+            [
+              0.999958781607493,
+              -0.008820682597729626,
+              -0.002151893252060611,
+              0.7318599131373252
+            ],
+            [
+              0.008816025050173471,
+              0.9999587957663162,
+              -0.002164364085247512,
+              -0.041009354285439496
+            ],
+            [
+              0.0021708957535701316,
+              0.002145303728823571,
+              0.9999953424309225,
+              0.3899652277498201
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "implied_right_object": [
+            [
+              0.9999587830753555,
+              -0.008820386155436856,
+              -0.0021524261945471417,
+              0.7318596312470814
+            ],
+            [
+              0.008815729575491302,
+              0.9999588004749759,
+              -0.0021633919429474182,
+              -0.041009107560172155
+            ],
+            [
+              0.0021714194679526805,
+              0.0021443275673225454,
+              0.999995343387547,
+              0.3899649013124915
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "left_object_rotation_error_rad": 7.626012024401642e-07,
+          "left_object_translation_error_m": 1.0019235588921772e-07,
+          "reasons": [],
+          "right_object_rotation_error_rad": 5.382333992053477e-07,
+          "right_object_translation_error_m": 4.065473698839475e-07,
+          "rotation_error_rad": 1.1470538213457013e-06,
+          "translation_error_m": 4.968871064561555e-07,
+          "valid": true
+        },
+        "current_state_valid": true,
+        "predicted_state_valid": true,
+        "qp_status": "FEASIBLE_TRACKING_OK",
+        "sampled_edge_status": "sampled_edge_valid",
+        "scope": "HASH_BOUND_ARCHIVED_ACCEPTANCE_NOT_LIVE_FEEDBACK"
+      },
+      "left_joint_names": [
+        "left_fr3_joint1",
+        "left_fr3_joint2",
+        "left_fr3_joint3",
+        "left_fr3_joint4",
+        "left_fr3_joint5",
+        "left_fr3_joint6",
+        "left_fr3_joint7"
+      ],
+      "left_q_rad": [
+        0.47949815369499377,
+        -0.86169217722308,
+        0.6906095864535938,
+        -2.545799725151701,
+        0.5171142839606009,
+        1.786091012189815,
+        0.8450779429461148
+      ],
+      "left_qdot_rad_s": [
+        -0.0030440030441593177,
+        0.0028804968821861017,
+        -0.01613833268893602,
+        -0.010286594627322976,
+        -0.008684161511865901,
+        0.017965059104532215,
+        -0.03668589215778563
+      ],
+      "object_frame": "world",
+      "object_pose_world": [
+        [
+          0.9999587802525739,
+          -0.008820704297396415,
+          -0.0021524338508865327,
+          0.7318598428873924
+        ],
+        [
+          0.008816046757005314,
+          0.9999587967379565,
+          -0.0021638266928523725,
+          -0.041009341891190786
+        ],
+        [
+          0.0021714316389990075,
+          0.0021447615429918436,
+          0.9999953424304341,
+          0.3899651573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "phase": "A_STAGE_TRANSPORT_REFERENCE_UNCONFIRMED",
+      "provenance": "NR0_SEED28_MIDPOINT40_INITIAL_NODE_THEN_QP2_SYNTHETIC_FIXED_TWIST",
+      "right_joint_names": [
+        "right_fr3_joint1",
+        "right_fr3_joint2",
+        "right_fr3_joint3",
+        "right_fr3_joint4",
+        "right_fr3_joint5",
+        "right_fr3_joint6",
+        "right_fr3_joint7"
+      ],
+      "right_q_rad": [
+        0.04897979693542452,
+        -1.0618314992073126,
+        -1.056530723400194,
+        -2.2877376401573235,
+        -0.8607485191357642,
+        1.567526861508203,
+        -0.6757588378437014
+      ],
+      "right_qdot_rad_s": [
+        0.014891038851383613,
+        0.0025233122328816135,
+        -0.003867789834670494,
+        0.02240088228370393,
+        0.010001575589861776,
+        -0.012748725715265764,
+        -0.023946783571370856
+      ],
+      "safety_status": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+      "sequence": 0,
+      "source_identity": "task28_qp3_seed28_transport40_5step",
+      "source_model": {
+        "fixture_id": "task28_g1_0_new_single_cube_v0",
+        "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+        "grasp_source_sha256": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+        "model_path": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "nr0_seed28_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+        "qp3_record_sha256": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+        "robot_urdf_sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+        "source_binding_sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+      },
+      "source_step_index": 0,
+      "stamp_s": 0.02,
+      "synchronization": {
+        "left_stamp_s": 0.02,
+        "pair_sequence": 0,
+        "phase_confirmation": "NOT_RUN",
+        "release_authorized": false,
+        "right_stamp_s": 0.02,
+        "source_computation_time_s": 0.0,
+        "time_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+        "velocity_semantics": "interval_start_qdot_used_for_Euler_update_not_smooth_endpoint_derivative"
+      },
+      "time_s": 0.0
+    },
+    {
+      "acceleration_rad_s2": null,
+      "contact_mode": "bilateral_transitioning",
+      "cube_id": "Cube_01",
+      "execution_authorized": false,
+      "fixture_id": "task28_g1_0_new_single_cube_v0",
+      "frame_id": "task28_g1_0_dual_sync",
+      "geometry_status": {
+        "closure": {
+          "implied_left_object": [
+            [
+              0.999954954255173,
+              -0.009220737311981234,
+              -0.0022511028316257457,
+              0.7319598762128425
+            ],
+            [
+              0.00921541138344734,
+              0.9999547406064425,
+              -0.002364937998350025,
+              -0.041069407930292116
+            ],
+            [
+              0.002272807420118524,
+              0.002344086629296593,
+              0.9999946697879473,
+              0.39000517413215324
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "implied_right_object": [
+            [
+              0.9999549555012844,
+              -0.009220480857421463,
+              -0.002251599693928116,
+              0.731959656971347
+            ],
+            [
+              0.009215155703250544,
+              0.9999547449795955,
+              -0.0023640850570831222,
+              -0.04106907251441613
+            ],
+            [
+              0.002273295798752296,
+              0.002343229726296118,
+              0.9999946706861297,
+              0.3900049137142421
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "left_object_rotation_error_rad": 5.14366658005189e-07,
+          "left_object_translation_error_m": 7.584121328311987e-08,
+          "reasons": [],
+          "right_object_rotation_error_rad": 7.586744374092473e-07,
+          "right_object_translation_error_m": 4.0805490597603777e-07,
+          "rotation_error_rad": 1.019396925319977e-06,
+          "translation_error_m": 4.77899708768662e-07,
+          "valid": true
+        },
+        "current_state_valid": true,
+        "predicted_state_valid": true,
+        "qp_status": "FEASIBLE_TRACKING_OK",
+        "sampled_edge_status": "sampled_edge_valid",
+        "scope": "HASH_BOUND_ARCHIVED_ACCEPTANCE_NOT_LIVE_FEEDBACK"
+      },
+      "left_joint_names": [
+        "left_fr3_joint1",
+        "left_fr3_joint2",
+        "left_fr3_joint3",
+        "left_fr3_joint4",
+        "left_fr3_joint5",
+        "left_fr3_joint6",
+        "left_fr3_joint7"
+      ],
+      "left_q_rad": [
+        0.4794370672351858,
+        -0.8616341477174425,
+        0.6902868616987846,
+        -2.546005098569582,
+        0.516940680848804,
+        1.786450439112166,
+        0.8443442329054379
+      ],
+      "left_qdot_rad_s": [
+        -0.003054322990398021,
+        0.0029014752818747247,
+        -0.016136237740458182,
+        -0.010268670894050971,
+        -0.008680155589848183,
+        0.017971346117553574,
+        -0.03668550203384489
+      ],
+      "object_frame": "world",
+      "object_pose_world": [
+        [
+          0.9999549516930403,
+          -0.009220911442276446,
+          -0.0022515276465746074,
+          0.7319598428873924
+        ],
+        [
+          0.0092155850441734,
+          0.9999547395535012,
+          -0.0023647064898482074,
+          -0.04106934189119079
+        ],
+        [
+          0.0022732304905578858,
+          0.002343850819318068,
+          0.9999946693790291,
+          0.3900051573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "phase": "A_STAGE_TRANSPORT_REFERENCE_UNCONFIRMED",
+      "provenance": "NR0_SEED28_MIDPOINT40_INITIAL_NODE_THEN_QP2_SYNTHETIC_FIXED_TWIST",
+      "right_joint_names": [
+        "right_fr3_joint1",
+        "right_fr3_joint2",
+        "right_fr3_joint3",
+        "right_fr3_joint4",
+        "right_fr3_joint5",
+        "right_fr3_joint6",
+        "right_fr3_joint7"
+      ],
+      "right_q_rad": [
+        0.0492777762644825,
+        -1.0617809170874564,
+        -1.0566082484452461,
+        -2.2872894008577807,
+        -0.8605485876785037,
+        1.5672718165445516,
+        -0.6762377780248386
+      ],
+      "right_qdot_rad_s": [
+        0.014898966452899037,
+        0.002529105992806107,
+        -0.003876252252610835,
+        0.022411964977139286,
+        0.009996572863025919,
+        -0.012752248182571983,
+        -0.023947009056860705
+      ],
+      "safety_status": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+      "sequence": 1,
+      "source_identity": "task28_qp3_seed28_transport40_5step",
+      "source_model": {
+        "fixture_id": "task28_g1_0_new_single_cube_v0",
+        "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+        "grasp_source_sha256": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+        "model_path": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "nr0_seed28_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+        "qp3_record_sha256": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+        "robot_urdf_sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+        "source_binding_sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+      },
+      "source_step_index": 1,
+      "stamp_s": 0.04,
+      "synchronization": {
+        "left_stamp_s": 0.04,
+        "pair_sequence": 1,
+        "phase_confirmation": "NOT_RUN",
+        "release_authorized": false,
+        "right_stamp_s": 0.04,
+        "source_computation_time_s": 0.02,
+        "time_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+        "velocity_semantics": "interval_start_qdot_used_for_Euler_update_not_smooth_endpoint_derivative"
+      },
+      "time_s": 0.02
+    },
+    {
+      "acceleration_rad_s2": null,
+      "contact_mode": "bilateral_transitioning",
+      "cube_id": "Cube_01",
+      "execution_authorized": false,
+      "fixture_id": "task28_g1_0_new_single_cube_v0",
+      "frame_id": "task28_g1_0_dual_sync",
+      "geometry_status": {
+        "closure": {
+          "implied_left_object": [
+            [
+              0.9999509569912626,
+              -0.009620812278941031,
+              -0.002350230488996532,
+              0.7320598406677231
+            ],
+            [
+              0.009614777800923516,
+              0.9999504857587526,
+              -0.0025655562113581732,
+              -0.041129459716715736
+            ],
+            [
+              0.002374796853817588,
+              0.0025428334448297724,
+              0.999993947150669,
+              0.3900451220236875
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "implied_right_object": [
+            [
+              0.9999509580023902,
+              -0.009620594290576063,
+              -0.002350692578458979,
+              0.7320596814870453
+            ],
+            [
+              0.009614560391858635,
+              0.9999504897437469,
+              -0.0025648176762085874,
+              -0.041129039142788926
+            ],
+            [
+              0.0023752512653591883,
+              0.0025420910166679732,
+              0.9999939479590312,
+              0.39004492501227467
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "left_object_rotation_error_rad": 4.5443032736894007e-07,
+          "left_object_translation_error_m": 1.230402064863146e-07,
+          "reasons": [],
+          "right_object_rotation_error_rad": 9.840256116280845e-07,
+          "right_object_translation_error_m": 4.14376972986861e-07,
+          "rotation_error_rad": 8.976228182854248e-07,
+          "translation_error_m": 4.90952556696438e-07,
+          "valid": true
+        },
+        "current_state_valid": true,
+        "predicted_state_valid": true,
+        "qp_status": "FEASIBLE_TRACKING_OK",
+        "sampled_edge_status": "sampled_edge_valid",
+        "scope": "HASH_BOUND_ARCHIVED_ACCEPTANCE_NOT_LIVE_FEEDBACK"
+      },
+      "left_joint_names": [
+        "left_fr3_joint1",
+        "left_fr3_joint2",
+        "left_fr3_joint3",
+        "left_fr3_joint4",
+        "left_fr3_joint5",
+        "left_fr3_joint6",
+        "left_fr3_joint7"
+      ],
+      "left_q_rad": [
+        0.4793757748936977,
+        -0.8615756987535047,
+        0.6899641787447457,
+        -2.546210113519557,
+        0.5167671579708678,
+        1.7868099913389133,
+        0.8436105307961356
+      ],
+      "left_qdot_rad_s": [
+        -0.0030646170744066553,
+        0.002922448196887866,
+        -0.01613414770194781,
+        -0.010250747498759125,
+        -0.00867614389680589,
+        0.017977611337362767,
+        -0.03668510546511898
+      ],
+      "object_frame": "world",
+      "object_pose_world": [
+        [
+          0.9999509531387146,
+          -0.00962113683118794,
+          -0.002350541012636709,
+          0.7320598428873923
+        ],
+        [
+          0.00961510139819661,
+          0.9999504824687659,
+          -0.0025656257686582757,
+          -0.04112934189119079
+        ],
+        [
+          0.002375108856226582,
+          0.002542899242589969,
+          0.9999939462423577,
+          0.3900451573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "phase": "A_STAGE_TRANSPORT_REFERENCE_UNCONFIRMED",
+      "provenance": "NR0_SEED28_MIDPOINT40_INITIAL_NODE_THEN_QP2_SYNTHETIC_FIXED_TWIST",
+      "right_joint_names": [
+        "right_fr3_joint1",
+        "right_fr3_joint2",
+        "right_fr3_joint3",
+        "right_fr3_joint4",
+        "right_fr3_joint5",
+        "right_fr3_joint6",
+        "right_fr3_joint7"
+      ],
+      "right_q_rad": [
+        0.04957591424577294,
+        -1.0617302191580809,
+        -1.0566859425533244,
+        -2.286840939832776,
+        -0.860348756065208,
+        1.5670167008858837,
+        -0.6767167226839105
+      ],
+      "right_qdot_rad_s": [
+        0.014906899064522082,
+        0.002534896468770101,
+        -0.0038847054039079522,
+        0.022423051250241573,
+        0.009991580664789123,
+        -0.012755782933394584,
+        -0.023947232953593654
+      ],
+      "safety_status": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+      "sequence": 2,
+      "source_identity": "task28_qp3_seed28_transport40_5step",
+      "source_model": {
+        "fixture_id": "task28_g1_0_new_single_cube_v0",
+        "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+        "grasp_source_sha256": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+        "model_path": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "nr0_seed28_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+        "qp3_record_sha256": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+        "robot_urdf_sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+        "source_binding_sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+      },
+      "source_step_index": 2,
+      "stamp_s": 0.06,
+      "synchronization": {
+        "left_stamp_s": 0.06,
+        "pair_sequence": 2,
+        "phase_confirmation": "NOT_RUN",
+        "release_authorized": false,
+        "right_stamp_s": 0.06,
+        "source_computation_time_s": 0.04,
+        "time_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+        "velocity_semantics": "interval_start_qdot_used_for_Euler_update_not_smooth_endpoint_derivative"
+      },
+      "time_s": 0.04
+    },
+    {
+      "acceleration_rad_s2": null,
+      "contact_mode": "bilateral_transitioning",
+      "cube_id": "Cube_01",
+      "execution_authorized": false,
+      "fixture_id": "task28_g1_0_new_single_cube_v0",
+      "frame_id": "task28_g1_0_dual_sync",
+      "geometry_status": {
+        "closure": {
+          "implied_left_object": [
+            [
+              0.9999467898150219,
+              -0.010020907371343143,
+              -0.0024492762374441817,
+              0.7321598064494214
+            ],
+            [
+              0.01001412417520186,
+              0.9999460312196203,
+              -0.0027662185621383758,
+              -0.04118950971623806
+            ],
+            [
+              0.0024768640729728336,
+              0.002741544014755759,
+              0.9999931745170959,
+              0.39008507137016585
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "implied_right_object": [
+            [
+              0.9999467905788715,
+              -0.010020726388854359,
+              -0.0024497048096210785,
+              0.7321597048451101
+            ],
+            [
+              0.010013943575457287,
+              0.9999460347673574,
+              -0.002765589829710689,
+              -0.0411890073755148
+            ],
+            [
+              0.0024772858297184134,
+              0.0027409114685365854,
+              0.9999931752063309,
+              0.39008493525684645
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "left_object_rotation_error_rad": 6.292086188040577e-07,
+          "left_object_translation_error_m": 1.9207602423494652e-07,
+          "reasons": [],
+          "right_object_rotation_error_rad": 1.2112868299172966e-06,
+          "right_object_translation_error_m": 4.246194197338338e-07,
+          "rotation_error_rad": 7.817789400475421e-07,
+          "translation_error_m": 5.30279618745734e-07,
+          "valid": true
+        },
+        "current_state_valid": true,
+        "predicted_state_valid": true,
+        "qp_status": "FEASIBLE_TRACKING_OK",
+        "sampled_edge_status": "sampled_edge_valid",
+        "scope": "HASH_BOUND_ARCHIVED_ACCEPTANCE_NOT_LIVE_FEEDBACK"
+      },
+      "left_joint_names": [
+        "left_fr3_joint1",
+        "left_fr3_joint2",
+        "left_fr3_joint3",
+        "left_fr3_joint4",
+        "left_fr3_joint5",
+        "left_fr3_joint6",
+        "left_fr3_joint7"
+      ],
+      "left_q_rad": [
+        0.4793142771817871,
+        -0.8615168304310525,
+        0.6896415374944386,
+        -2.546414770000412,
+        0.5165937154413948,
+        1.7871696684392675,
+        0.8428768367442523
+      ],
+      "left_qdot_rad_s": [
+        -0.003074885595531132,
+        0.002943416122610646,
+        -0.016132062515356173,
+        -0.010232824042738672,
+        -0.008672126473653839,
+        0.017983855017713594,
+        -0.03668470259416402
+      ],
+      "object_frame": "world",
+      "object_pose_world": [
+        [
+          0.9999467845904364,
+          -0.010021380380083563,
+          -0.0024494739282800325,
+          0.7321598428873923
+        ],
+        [
+          0.010014595735176508,
+          0.9999460254846444,
+          -0.00276658448708953,
+          -0.041189341891190785
+        ],
+        [
+          0.0024770667146106393,
+          0.0027419067710073783,
+          0.9999931730205716,
+          0.3900851573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "phase": "A_STAGE_TRANSPORT_REFERENCE_UNCONFIRMED",
+      "provenance": "NR0_SEED28_MIDPOINT40_INITIAL_NODE_THEN_QP2_SYNTHETIC_FIXED_TWIST",
+      "right_joint_names": [
+        "right_fr3_joint1",
+        "right_fr3_joint2",
+        "right_fr3_joint3",
+        "right_fr3_joint4",
+        "right_fr3_joint5",
+        "right_fr3_joint6",
+        "right_fr3_joint7"
+      ],
+      "right_q_rad": [
+        0.04987421097944932,
+        -1.0616794054859688,
+        -1.0567638055489568,
+        -2.2863922570111557,
+        -0.8601490240949863,
+        1.5667615142945772,
+        -0.6771956717922353
+      ],
+      "right_qdot_rad_s": [
+        0.01491483668381888,
+        0.0025406836056057988,
+        -0.003893149781623794,
+        0.0224341410810046,
+        0.009986598511086745,
+        -0.01275932956532615,
+        -0.023947455416239573
+      ],
+      "safety_status": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+      "sequence": 3,
+      "source_identity": "task28_qp3_seed28_transport40_5step",
+      "source_model": {
+        "fixture_id": "task28_g1_0_new_single_cube_v0",
+        "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+        "grasp_source_sha256": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+        "model_path": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "nr0_seed28_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+        "qp3_record_sha256": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+        "robot_urdf_sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+        "source_binding_sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+      },
+      "source_step_index": 3,
+      "stamp_s": 0.08,
+      "synchronization": {
+        "left_stamp_s": 0.08,
+        "pair_sequence": 3,
+        "phase_confirmation": "NOT_RUN",
+        "release_authorized": false,
+        "right_stamp_s": 0.08,
+        "source_computation_time_s": 0.06,
+        "time_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+        "velocity_semantics": "interval_start_qdot_used_for_Euler_update_not_smooth_endpoint_derivative"
+      },
+      "time_s": 0.06
+    },
+    {
+      "acceleration_rad_s2": null,
+      "contact_mode": "bilateral_transitioning",
+      "cube_id": "Cube_01",
+      "execution_authorized": false,
+      "fixture_id": "task28_g1_0_new_single_cube_v0",
+      "frame_id": "task28_g1_0_dual_sync",
+      "geometry_status": {
+        "closure": {
+          "implied_left_object": [
+            [
+              0.9999424527257896,
+              -0.010421022463271094,
+              -0.0025482400891506333,
+              0.7322597735074705
+            ],
+            [
+              0.010413450380252827,
+              0.9999413769856009,
+              -0.002966924892615045,
+              -0.041249557997553137
+            ],
+            [
+              0.002579009094587845,
+              0.0029402181824491717,
+              0.999992351885318,
+              0.3901250221194395
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "implied_right_object": [
+            [
+              0.9999424532309517,
+              -0.010420877085099273,
+              -0.002548636349859926,
+              0.7322597270944115
+            ],
+            [
+              0.010413305187075984,
+              0.9999413800503331,
+              -0.002966401543383676,
+              -0.04124897714563712
+            ],
+            [
+              0.0025793994547940653,
+              0.0029396911084372673,
+              0.9999923524280773,
+              0.3901249444961434
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "left_object_rotation_error_rad": 9.065523879790085e-07,
+          "left_object_translation_error_m": 2.642251682875556e-07,
+          "reasons": [],
+          "right_object_rotation_error_rad": 1.43929013163101e-06,
+          "right_object_translation_error_m": 4.379191073078206e-07,
+          "rotation_error_rad": 6.720605947872355e-07,
+          "translation_error_m": 5.8785074337285e-07,
+          "valid": true
+        },
+        "current_state_valid": true,
+        "predicted_state_valid": true,
+        "qp_status": "FEASIBLE_TRACKING_OK",
+        "sampled_edge_status": "sampled_edge_valid",
+        "scope": "HASH_BOUND_ARCHIVED_ACCEPTANCE_NOT_LIVE_FEEDBACK"
+      },
+      "left_joint_names": [
+        "left_fr3_joint1",
+        "left_fr3_joint2",
+        "left_fr3_joint3",
+        "left_fr3_joint4",
+        "left_fr3_joint5",
+        "left_fr3_joint6",
+        "left_fr3_joint7"
+      ],
+      "left_q_rad": [
+        0.4792525746050077,
+        -0.8614575428403737,
+        0.6893189378519329,
+        -2.5466190680032876,
+        0.5164203533741946,
+        1.7875294699873066,
+        0.8421431508731086
+      ],
+      "left_qdot_rad_s": [
+        -0.0030851288389687486,
+        0.0029643795339429086,
+        -0.016129982125286275,
+        -0.010214900143781297,
+        -0.00866810336000891,
+        0.017990077401947354,
+        -0.036684293557182605
+      ],
+      "object_frame": "world",
+      "object_pose_world": [
+        [
+          0.9999424460490812,
+          -0.010421642004912175,
+          -0.002548326372728664,
+          0.7322598428873923
+        ],
+        [
+          0.010414067971219285,
+          0.9999413686020726,
+          -0.0029675826029406395,
+          -0.04124934189119079
+        ],
+        [
+          0.0025791040442989083,
+          0.0029408733627787156,
+          0.9999923497138331,
+          0.3901251573947371
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "phase": "A_STAGE_TRANSPORT_REFERENCE_UNCONFIRMED",
+      "provenance": "NR0_SEED28_MIDPOINT40_INITIAL_NODE_THEN_QP2_SYNTHETIC_FIXED_TWIST",
+      "right_joint_names": [
+        "right_fr3_joint1",
+        "right_fr3_joint2",
+        "right_fr3_joint3",
+        "right_fr3_joint4",
+        "right_fr3_joint5",
+        "right_fr3_joint6",
+        "right_fr3_joint7"
+      ],
+      "right_q_rad": [
+        0.050172666565606004,
+        -1.0616284761389325,
+        -1.0568418372661341,
+        -2.2859433523221804,
+        -0.8599493915762108,
+        1.5665062565407464,
+        -0.6776746253241285
+      ],
+      "right_qdot_rad_s": [
+        0.014922779307833945,
+        0.0025464673518164277,
+        -0.003901585858862572,
+        0.022445234448771112,
+        0.009981625938778195,
+        -0.012762887691545476,
+        -0.02394767659465911
+      ],
+      "safety_status": "NOT_CERTIFIED_FINITE_SAMPLING_ONLY",
+      "sequence": 4,
+      "source_identity": "task28_qp3_seed28_transport40_5step",
+      "source_model": {
+        "fixture_id": "task28_g1_0_new_single_cube_v0",
+        "fixture_manifest_sha256": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+        "grasp_source_sha256": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+        "model_path": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf",
+        "nr0_seed28_sha256": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+        "qp3_record_sha256": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+        "robot_urdf_sha256": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+        "source_binding_sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+      },
+      "source_step_index": 4,
+      "stamp_s": 0.1,
+      "synchronization": {
+        "left_stamp_s": 0.1,
+        "pair_sequence": 4,
+        "phase_confirmation": "NOT_RUN",
+        "release_authorized": false,
+        "right_stamp_s": 0.1,
+        "source_computation_time_s": 0.08,
+        "time_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+        "velocity_semantics": "interval_start_qdot_used_for_Euler_update_not_smooth_endpoint_derivative"
+      },
+      "time_s": 0.08
+    }
+  ],
+  "schema": "task28.g2_p5_qp_4.sequence.v1",
+  "validation": {
+    "count": 5,
+    "execution_authorized": false,
+    "first_stamp_s": 0.02,
+    "last_stamp_s": 0.1,
+    "valid": true
+  }
+}

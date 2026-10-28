@@ -1,0 +1,113 @@
+{
+  "algorithms_modified": false,
+  "categories": {
+    "A": "control-mode-independent reuse unchanged",
+    "B": "downstream interface modification",
+    "C": "missing dynamics or torque prerequisite",
+    "D": "old position-only interface"
+  },
+  "execution_authorized": false,
+  "rows": [
+    {
+      "category": "A",
+      "finding": "几何 (T_WO,q14) 节点与父边回溯；合成验证时间不构成执行时间参数化。",
+      "module": "NR-0 planner/projection",
+      "sources": [
+        "offline/task28_p4_nr_0/planner.py:171",
+        "offline/task28_p4_nr_0/planner.py:222",
+        "offline/task28_p4_nr_0/projection.py"
+      ]
+    },
+    {
+      "category": "A",
+      "finding": "B/C 速度映射、14-DOF 约束和速度 QP 不依赖低层控制模式；不求 torque。",
+      "module": "QP-0 kinematic core",
+      "sources": [
+        "offline/task28_p5_qp_0/core.py:63",
+        "offline/task28_p5_qp_0/core.py:182"
+      ]
+    },
+    {
+      "category": "A",
+      "finding": "数值积分、独立限位与后验几何门可保留；无物理执行和动态可行性保证。",
+      "module": "QP-1 multi-step numerical driver",
+      "sources": [
+        "offline/task28_p5_qp_1/driver.py:202",
+        "offline/task28_p5_qp_1/driver.py:241"
+      ]
+    },
+    {
+      "category": "A",
+      "finding": "world-centre 误差微分与仿射兼容性仍适用于运动参考；不自动约束实际 torque 跟踪误差。",
+      "module": "QP-2 SE3 feedback",
+      "sources": [
+        "offline/task28_p5_qp_2/feedback.py:65",
+        "offline/task28_p5_qp_2/driver.py:195"
+      ]
+    },
+    {
+      "category": "B",
+      "finding": "保留 q_next=q+dt*qdot 和冻结几何门；新的下游仅序列化 motion reference。",
+      "module": "QP-3 qdot to q_next numerical adapter",
+      "sources": [
+        "offline/task28_p5_qp_3/handoff.py:90",
+        "offline/task28_p5_qp_3/run_handoff.py:38"
+      ]
+    },
+    {
+      "category": "D",
+      "finding": "JointState-like position targets 属于旧接口；不转发到 torque backend 或旧桥。",
+      "module": "QP-3 position-target sink schema",
+      "sources": [
+        "offline/task28_p5_qp_3/handoff.py:50"
+      ]
+    },
+    {
+      "category": "A",
+      "finding": "继续提供冻结 FK/闭链/碰撞门，不能提供 M,c,g 或动态接触能力。",
+      "module": "G1 model/grasp/geometry",
+      "sources": [
+        "offline/task28_g1_1/task28_validator/model.py:48",
+        "offline/task28_g1_1/task28_validator/closed_chain.py:46",
+        "offline/task28_g1_2b_0/task28_edge/checker.py"
+      ]
+    },
+    {
+      "category": "A",
+      "finding": "G 的 12 维 contact-wrench null space 数学可复用，不能替换 14 维 joint-velocity null space。",
+      "module": "P2-1 grasp-wrench decomposition",
+      "sources": [
+        "offline/task28_p2_1/grasp.py:132",
+        "offline/task28_p2_1/grasp.py:203"
+      ]
+    },
+    {
+      "category": "C",
+      "finding": "当前 request_physical_estimate 明确 BLOCKED，仍缺标定的双侧接触 wrench。",
+      "module": "P2-1 physical internal wrench",
+      "sources": [
+        "offline/task28_p2_1/grasp.py:85"
+      ]
+    },
+    {
+      "category": "C",
+      "finding": "单臂静态已知负载候选可作后续接口研究依据；运动跟踪、逐步施力点、完整秩/条件数/新鲜度门仍缺。",
+      "module": "R3 single-FR3 observer/stabilizer evidence",
+      "sources": [
+        "offline/task28_p2_4_r3/collector.py:45",
+        "offline/task28_p2_4_r3/collector.py:54",
+        "offline/task28_p2_4_r3/online_evaluate.py:23"
+      ]
+    },
+    {
+      "category": "D",
+      "finding": "只处理 name/position；side 名称不自动改名；fixture 默认关闭命令处理。",
+      "module": "Legacy and fixture position bridges",
+      "sources": [
+        "isaac/scripts/task24_side_suction_tight_bridge.py:211",
+        "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py:242",
+        "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py:261"
+      ]
+    }
+  ]
+}

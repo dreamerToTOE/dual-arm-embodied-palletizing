@@ -1,0 +1,170 @@
+{
+  "branch": "side-suction-palletizing",
+  "commands": {
+    "focused": "PYTHONDONTWRITEBYTECODE=1 python3 -m offline.task28_p5_qp_4.run_checks --suite focused --output offline/task28_p5_qp_4/evidence/regression_focused",
+    "generation": "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=offline:. python3 -m offline.task28_p5_qp_4.generate_evidence --output offline/task28_p5_qp_4/evidence/contract_v1",
+    "historical": "PYTHONDONTWRITEBYTECODE=1 python3 -m offline.task28_p5_qp_4.run_checks --suite historical --output offline/task28_p5_qp_4/evidence/regression_historical",
+    "repeat_policy": "use fresh output paths; all generators refuse existing directories",
+    "reproduction": "exact argv and environment in evidence/reproducibility_record.json"
+  },
+  "environment": {
+    "fcl_pkg_config": "0.7.0",
+    "numpy": "1.24.4",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "pytest": "6.2.5",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "scipy": "1.8.0"
+  },
+  "execution_authorized": false,
+  "files": [
+    {
+      "bytes": 17826,
+      "path": "docs/tasks/TASK28_G2_P5_QP_4_UNIFIED_TORQUE_REFERENCE.md",
+      "sha256": "9ef32c94fce172293aafdd069ff36b6bba2321056d2a2609756d2fc0eaaa29f2"
+    },
+    {
+      "bytes": 1866,
+      "path": "offline/task28_p5_qp_4/README.md",
+      "sha256": "adde394ef84f9aabaa7d1d02ad151be8386aee249f07dad075c86a178dd662af"
+    },
+    {
+      "bytes": 414,
+      "path": "offline/task28_p5_qp_4/__init__.py",
+      "sha256": "917c553b50521f34795b4e38de7742ff28fb8461e57b689186b77cacc18f51f8"
+    },
+    {
+      "bytes": 4463,
+      "path": "offline/task28_p5_qp_4/controls.py",
+      "sha256": "13ae46686b9f2327501221c1975d97252cd0e853370cdf397de6687de2a40c06"
+    },
+    {
+      "bytes": 1127,
+      "path": "offline/task28_p5_qp_4/evidence/acceptance.json",
+      "sha256": "a91ba63a796150b43e40270c219895b12204cd455ca0bf5b417a20feee44fbad"
+    },
+    {
+      "bytes": 4661,
+      "path": "offline/task28_p5_qp_4/evidence/baseline_verification.json",
+      "sha256": "d729308bc020e2caf797532d991565e4c0041780a43cd86c6d52252e3949ad5f"
+    },
+    {
+      "bytes": 30028,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/accepted_reference_sequence.json",
+      "sha256": "1307bb0564c566971870480c3202f5026187b6e89b5d11676501d0c7e343d56f"
+    },
+    {
+      "bytes": 487262,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/independent_recheck.json",
+      "sha256": "f4f84f742cb53a585bad440c533446d483694ea0769d4172433c4eec448bcb53"
+    },
+    {
+      "bytes": 9290,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/negative_controls.json",
+      "sha256": "9caa9de2b932a6c2845146f0b3e581520fc42cf38cc9a829b0a6d47e0043c0f7"
+    },
+    {
+      "bytes": 20645,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/original_negative.json",
+      "sha256": "5bd5688d8731e3d0258a0cb296bafaca9a8f0459312bfb58631e3c9f449d0271"
+    },
+    {
+      "bytes": 4598,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/reference_contract.json",
+      "sha256": "d32c9eeb913ef51d0b8e764a95277604be30a506f37fc3a7ecf554a8ada71480"
+    },
+    {
+      "bytes": 2559,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/source_hashes.json",
+      "sha256": "4064cfd3fe375c90e722cf50dc1c98f0c39e45452515fc21794f578a10e24e64"
+    },
+    {
+      "bytes": 773,
+      "path": "offline/task28_p5_qp_4/evidence/contract_v1/summary.json",
+      "sha256": "61c6a66fb28dfb0832829cfcf9191b0f18ad942e8fb51792e4bb95655c948142"
+    },
+    {
+      "bytes": 942,
+      "path": "offline/task28_p5_qp_4/evidence/development_checks.json",
+      "sha256": "10dd89e497db94c4cac360479360fbe6a4770b4028a79c9390e09d58365756b3"
+    },
+    {
+      "bytes": 73,
+      "path": "offline/task28_p5_qp_4/evidence/regression_focused/pytest.log",
+      "sha256": "6b5e3c2fbbf8faad222d1532b03fb5b297248724a4d988ac33bde07168fdb435"
+    },
+    {
+      "bytes": 1767,
+      "path": "offline/task28_p5_qp_4/evidence/regression_focused/record.json",
+      "sha256": "9f9492ab5360992415c59ac190cffe8be4a778ee9755b4bef8968617e39882c1"
+    },
+    {
+      "bytes": 31213,
+      "path": "offline/task28_p5_qp_4/evidence/regression_historical/pytest.log",
+      "sha256": "6f778071efc4e9f058af8141851ba746b1e83a0400edb837e71eb87c5fc4dfc0"
+    },
+    {
+      "bytes": 19592,
+      "path": "offline/task28_p5_qp_4/evidence/regression_historical/record.json",
+      "sha256": "4da98418b57f11237a38441d22d11ad5d50a1da2a7ef7bd493bf0eef0bbaf03e"
+    },
+    {
+      "bytes": 3529,
+      "path": "offline/task28_p5_qp_4/evidence/reproducibility_record.json",
+      "sha256": "2f2281da310dfa15149f7858952e26732ae7bfe4efd5a0bb76a63482571f916b"
+    },
+    {
+      "bytes": 737,
+      "path": "offline/task28_p5_qp_4/evidence/reproduction.log",
+      "sha256": "0c5fd80229c0e824216df18351ed692032f0d335e1b3f2cd3c3d2dc007e8d490"
+    },
+    {
+      "bytes": 3577,
+      "path": "offline/task28_p5_qp_4/generate_evidence.py",
+      "sha256": "b74becc1cd3ac3e38ff0a70d11d5f5da30188b3721023134b8dcdc92f87f5dd2"
+    },
+    {
+      "bytes": 4126,
+      "path": "offline/task28_p5_qp_4/migration_matrix.json",
+      "sha256": "65abe8afcaebc4e9ed9990d567c87a2716b8c545f56f3e3253c999b01fe38bdd"
+    },
+    {
+      "bytes": 4339,
+      "path": "offline/task28_p5_qp_4/recheck.py",
+      "sha256": "082ab632c0dadc0dffa445049f71fbecb05aa9aedbf21fd7563c88404329b5eb"
+    },
+    {
+      "bytes": 14726,
+      "path": "offline/task28_p5_qp_4/reference.py",
+      "sha256": "193cd93ff99688ea05d691189a1bea2209f07d3614086d3ece145a09434bad2d"
+    },
+    {
+      "bytes": 1926,
+      "path": "offline/task28_p5_qp_4/run_checks.py",
+      "sha256": "3015b135323afdfd44901f609aa24c7761d6d49251df58bed1a8aeaa51a9a4ef"
+    },
+    {
+      "bytes": 3331,
+      "path": "offline/task28_p5_qp_4/source_binding.json",
+      "sha256": "caf2cd9a64f38e901eb5031c6a3cbfbd652f24b3b4703f90e7268c5ace1491ce"
+    },
+    {
+      "bytes": 6628,
+      "path": "offline/task28_p5_qp_4/tests/test_reference.py",
+      "sha256": "7956953fd790396a29bb943d09f78a164f6eaa894a33a35e39d11709f0dde338"
+    },
+    {
+      "bytes": 9069,
+      "path": "offline/task28_p5_qp_4/torque_backend_contract.json",
+      "sha256": "c6748da8266fa2ad562b666639dea517c3de4af4e20dc7aa6bef57bfe827a9e2"
+    }
+  ],
+  "official_api_semantics_source": {
+    "consulted_on_client_date": "2026-10-28",
+    "scope": "API semantics only; installed physical controller version UNKNOWN",
+    "url": "https://frankarobotics.github.io/libfranka/0.20.2/classfranka_1_1Torques.html"
+  },
+  "schema": "task28.g2_p5_qp_4.artifact_manifest.v1",
+  "self_hash_policy": "manifest excluded; Git commit binds manifest",
+  "starting_commit": "44710179f2ff24ba5c8eea62c3b2818d66026821",
+  "status": "G2_P5_QP_4_TORQUE_REFERENCE_PASS_OFFLINE"
+}

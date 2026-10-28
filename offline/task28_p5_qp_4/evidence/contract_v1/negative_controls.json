@@ -1,0 +1,345 @@
+{
+  "cases": [
+    {
+      "case": "wrong_cube",
+      "expected_rejection": "INCORRECT_CUBE_ID",
+      "mutation_path": [
+        "raw_qp2",
+        "request",
+        "cube_id"
+      ],
+      "mutation_value": "Cube_02",
+      "observed_rejection": "INCORRECT_CUBE_ID",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_identity",
+      "expected_rejection": "SOURCE_IDENTITY_MISMATCH",
+      "mutation_path": [
+        "identity"
+      ],
+      "mutation_value": "unknown",
+      "observed_rejection": "SOURCE_IDENTITY_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "missing_identity",
+      "expected_rejection": "SOURCE_IDENTITY_MISMATCH",
+      "mutation_path": [
+        "identity"
+      ],
+      "mutation_value": null,
+      "observed_rejection": "SOURCE_IDENTITY_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "qp_infeasible",
+      "expected_rejection": "UPSTREAM_QP_NOT_ACCEPTED",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "qp",
+        "status"
+      ],
+      "mutation_value": "INFEASIBLE",
+      "observed_rejection": "UPSTREAM_QP_NOT_ACCEPTED",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "qp_missing_qdot",
+      "expected_rejection": "QP_QDOT_INVALID",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "qp",
+        "qdot"
+      ],
+      "mutation_value": null,
+      "observed_rejection": "QP_QDOT_INVALID",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "current_geometry_rejected",
+      "expected_rejection": "UPSTREAM_GEOMETRY_INVALID:current_state",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "current_state",
+        "valid"
+      ],
+      "mutation_value": false,
+      "observed_rejection": "UPSTREAM_GEOMETRY_INVALID:current_state",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "predicted_geometry_rejected",
+      "expected_rejection": "UPSTREAM_GEOMETRY_INVALID:predicted_state",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "predicted_state",
+        "valid"
+      ],
+      "mutation_value": false,
+      "observed_rejection": "UPSTREAM_GEOMETRY_INVALID:predicted_state",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "edge_inconclusive",
+      "expected_rejection": "UPSTREAM_EDGE_INVALID",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "sampled_edge",
+        "status"
+      ],
+      "mutation_value": "edge_inconclusive",
+      "observed_rejection": "UPSTREAM_EDGE_INVALID",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "invalid_bounds",
+      "expected_rejection": "UPSTREAM_BOUNDS_INVALID",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "frozen_bounds",
+        "valid"
+      ],
+      "mutation_value": false,
+      "observed_rejection": "UPSTREAM_BOUNDS_INVALID",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "async_right_stamp",
+      "expected_rejection": "ASYNC_REFERENCE_PAIR",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "stamp_s"
+      ],
+      "mutation_value": 0.021,
+      "observed_rejection": "ASYNC_REFERENCE_PAIR",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "async_right_source_time",
+      "expected_rejection": "ASYNC_REFERENCE_PAIR",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "time_s"
+      ],
+      "mutation_value": 0.001,
+      "observed_rejection": "ASYNC_REFERENCE_PAIR",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_order",
+      "expected_rejection": "JOINT_ORDER_MISMATCH",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "left",
+        "joint_names"
+      ],
+      "mutation_value": [
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x"
+      ],
+      "observed_rejection": "JOINT_ORDER_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_frame",
+      "expected_rejection": "INCORRECT_REFERENCE_FRAME",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "frame_id"
+      ],
+      "mutation_value": "base",
+      "observed_rejection": "INCORRECT_REFERENCE_FRAME",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_pair_step",
+      "expected_rejection": "PAIR_SOURCE_STEP_MISMATCH",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "source_step_index"
+      ],
+      "mutation_value": 1,
+      "observed_rejection": "PAIR_SOURCE_STEP_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_q",
+      "expected_rejection": "Q_TARGET_MISMATCH",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "positions_rad",
+        0
+      ],
+      "mutation_value": 0.5,
+      "observed_rejection": "Q_TARGET_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "wrong_qdot",
+      "expected_rejection": "QDOT_TARGET_MISMATCH",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "source_qdot_rad_s",
+        0
+      ],
+      "mutation_value": 0.5,
+      "observed_rejection": "QDOT_TARGET_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "broken_q_chain",
+      "expected_rejection": "DISCONTINUOUS_Q_INITIAL",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        1,
+        "q_initial",
+        0
+      ],
+      "mutation_value": 0.5,
+      "observed_rejection": "DISCONTINUOUS_Q_INITIAL",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "changed_provenance",
+      "expected_rejection": "UPSTREAM_ARCHIVE_CONTENT_MISMATCH",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "provenance"
+      ],
+      "mutation_value": "MEASURED",
+      "observed_rejection": "UPSTREAM_ARCHIVE_CONTENT_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "false_phase",
+      "expected_rejection": "UPSTREAM_CONTACT_MODE_MISMATCH",
+      "mutation_path": [
+        "raw_qp2",
+        "steps",
+        0,
+        "predicted_state",
+        "waypoint",
+        "mode"
+      ],
+      "mutation_value": "bilateral_airborne",
+      "observed_rejection": "UPSTREAM_CONTACT_MODE_MISMATCH",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "fake_confirmation",
+      "expected_rejection": "SYNTHETIC_PHASE_CONFIRMATION_FORBIDDEN",
+      "mutation_path": [
+        "raw_qp2",
+        "phase_confirmation_observations_generated"
+      ],
+      "mutation_value": 3,
+      "observed_rejection": "SYNTHETIC_PHASE_CONFIRMATION_FORBIDDEN",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "execution_enabled",
+      "expected_rejection": "EXECUTION_MUST_REMAIN_DISABLED",
+      "mutation_path": [
+        "position_targets",
+        0,
+        "right",
+        "execution_authorized"
+      ],
+      "mutation_value": true,
+      "observed_rejection": "EXECUTION_MUST_REMAIN_DISABLED",
+      "passed": true,
+      "scope": "ARCHIVE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "original_qp3_payload_table",
+      "expected_rejection": "UPSTREAM_STATUS_NOT_ACCEPTED",
+      "observed_rejection": "UPSTREAM_STATUS_NOT_ACCEPTED",
+      "passed": true,
+      "scope": "ORIGINAL_ARCHIVED_GEOMETRY_FAILURE"
+    },
+    {
+      "case": "acceleration_zeros",
+      "expected_rejection": "ACCELERATION_MUST_BE_UNAVAILABLE",
+      "observed_rejection": "ACCELERATION_MUST_BE_UNAVAILABLE",
+      "passed": true,
+      "scope": "REFERENCE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "duplicate_stamp",
+      "expected_rejection": "STALE_OR_OUT_OF_ORDER_REFERENCE",
+      "observed_rejection": "STALE_OR_OUT_OF_ORDER_REFERENCE",
+      "passed": true,
+      "scope": "REFERENCE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "stale_replay",
+      "expected_rejection": "STALE_OR_FUTURE_REFERENCE",
+      "observed_rejection": "STALE_OR_FUTURE_REFERENCE",
+      "passed": true,
+      "scope": "REFERENCE_CONTRACT_FAULT_INJECTION"
+    },
+    {
+      "case": "future_replay",
+      "expected_rejection": "STALE_OR_FUTURE_REFERENCE",
+      "observed_rejection": "STALE_OR_FUTURE_REFERENCE",
+      "passed": true,
+      "scope": "REFERENCE_CONTRACT_FAULT_INJECTION"
+    }
+  ],
+  "passed": 26,
+  "scope": "CONTRACT_FAULT_INJECTION_PLUS_ORIGINAL_ARCHIVED_NEGATIVE"
+}

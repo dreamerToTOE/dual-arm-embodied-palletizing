@@ -1,0 +1,72 @@
+{
+  "acceleration_rad_s2": null,
+  "contract": {
+    "acceleration_status": "UNAVAILABLE_NO_VALID_TIME_PARAMETERIZATION",
+    "command_semantics": "motion_reference_only_no_torque_no_position_publish",
+    "cube_id": "Cube_01",
+    "execution_authorized": false,
+    "fixture_id": "task28_g1_0_new_single_cube_v0",
+    "joint_units": "radians_and_radians_per_second",
+    "left_joint_names": [
+      "left_fr3_joint1",
+      "left_fr3_joint2",
+      "left_fr3_joint3",
+      "left_fr3_joint4",
+      "left_fr3_joint5",
+      "left_fr3_joint6",
+      "left_fr3_joint7"
+    ],
+    "reference_frame": "task28_g1_0_dual_sync",
+    "right_joint_names": [
+      "right_fr3_joint1",
+      "right_fr3_joint2",
+      "right_fr3_joint3",
+      "right_fr3_joint4",
+      "right_fr3_joint5",
+      "right_fr3_joint6",
+      "right_fr3_joint7"
+    ],
+    "timestamp_semantics": "synthetic_monotonic_qp3_candidate_time_not_ros_or_servo_time",
+    "world_frame": "world"
+  },
+  "execution_authorized": false,
+  "interpolation": "NONE_PROVIDED",
+  "missing_future_time_parameterization": true,
+  "schema": "task28.g2_p5_qp_4.contract.v1",
+  "scope": "EXACT_REGISTERED_FIVE_STEP_ARCHIVE_ONLY",
+  "source_binding": {
+    "model_hash_paths": {
+      "fixture_manifest_sha256": "fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json",
+      "grasp_source_sha256": "offline/task28_g1_1/task28_validator/closed_chain.py",
+      "robot_urdf_sha256": "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf"
+    },
+    "nr0_path": "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz",
+    "schema": "task28.g2_p5_qp_4.source_binding.v1",
+    "scope": "REGISTERED_FIVE_STEP_ARCHIVE_ONLY_NO_NEW_PLANNING",
+    "source_commit_verified": true,
+    "source_hashes": {
+      "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_g1_0_bridge_contract.json": "5d51cb13eaa16247ad38b391242c0f3fda7f7444d7e428ddcc72130dbdb85bfe",
+      "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py": "15759cde17b389dd4ae29c90c1c2b107d76f67ccaffee14e2cbb8876445e108b",
+      "fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+      "fixtures/task28_g1_0_new_single_cube_v0/moveit/task28_single_cube_description/urdf/task28_single_cube_frozen.urdf": "7e0a76da5da7d54caf11db7c3c995dfaaaeb91ab88bd95d6d016556c866497f8",
+      "offline/task28_g1_1/task28_validator/closed_chain.py": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+      "offline/task28_g1_1/task28_validator/model.py": "38ec5d2cd2fc348ce9c67737a3a59b8194eaaf84331165ff5b2e3a4adb5b4dfa",
+      "offline/task28_g1_1/task28_validator/state.py": "fcc86443650e6efd913478915719e5ce64494521654f9c906ab61f15ab3c7988",
+      "offline/task28_p2_1/grasp.py": "ff28a183c1f4844c48d522225bd7073d17bb752b645190ec495681d403639ad6",
+      "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+      "offline/task28_p2_4_r3/evidence/online_known_load/collector_status.json": "28e32418bbba65c31a1e8918cbae093bc7504b199218de267874988cb5bf3b54",
+      "offline/task28_p2_4_r3/online_evaluate.py": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b",
+      "offline/task28_p4_nr_0/evidence/experiments_v1/seed_28/result.json.gz": "55a79af891b1cb7f3e72f44aae36585c9438ecaf64f2a678e3a2718f591729db",
+      "offline/task28_p5_qp_0/core.py": "cbf03201f6f874323a59fdc2e61601f314481a109f116f1cc5a2b6e28d79f091",
+      "offline/task28_p5_qp_2/driver.py": "43454cdd55a83134a765e19c9999e4a90122fb871ac631523795c5144425247b",
+      "offline/task28_p5_qp_2/evidence/preregistration.json": "98afb3b5de55b3b1f931552b175adab7b2db9c870b7a692b09fecce9f41a5816",
+      "offline/task28_p5_qp_2/feedback.py": "de65e572c27f1a7ffd6a39239f3210da58e9010ecddba6b5bbe1141c01fea969",
+      "offline/task28_p5_qp_3/evidence/experiments_v1/handoff_records.json": "f268da9a2d14d0cae05119d6a5926e42ad397c5d6fcb65c495ba6d729fd473a7",
+      "offline/task28_p5_qp_3/evidence/experiments_v1/static_interface_contract.json": "58567be07aa9fb8fc8d594caf56b7544093d7498b938d0a03c55c68b8111947e",
+      "offline/task28_p5_qp_3/handoff.py": "e0928b441638cd7a7b90667e3efda810f2f30dd686de579a80e028d238340b3b",
+      "offline/task28_p5_qp_3/run_handoff.py": "f3db38195ff03f6fe6fa796558a92c687f8dd9aec5dd98847dfaebf1230bd69d"
+    },
+    "source_node_identity": "seed28:transport:midpoint40",
+    "starting_commit": "44710179f2ff24ba5c8eea62c3b2818d66026821"
+  }
+}
