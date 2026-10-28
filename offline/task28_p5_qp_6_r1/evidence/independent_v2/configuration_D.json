@@ -1,0 +1,4511 @@
+{
+  "F_fail_records": 16,
+  "K_fail_records": 0,
+  "configuration": "D",
+  "controlled_steps": 20,
+  "expected_steps": 20,
+  "first_failure": null,
+  "first_failure_is_last_recorded_step": true,
+  "identity": "QP6R1_SOURCE_D_INTERIOR_MIMIC_NULL_FORCE_NEGATIVE",
+  "initialization_steps": 2,
+  "maximum_K_oracle_difference_inf": 1.2399146928372347e-17,
+  "peak_F_acceleration_error_per_dof": [
+    0.0001548508455853348,
+    0.00015675741086567567,
+    0.0003879621215152803,
+    0.00028751929265532545,
+    0.003617712140232152,
+    0.0038371091146146416,
+    0.0007923187468532413,
+    0.06676733461651081,
+    0.06676734627160784
+  ],
+  "peak_M_af_common_column": 3.958120942115784e-09,
+  "peak_actual_arm_finger_coupling_Nm": 6.952446068385646e-17,
+  "peak_arm_residual_Nm": 5.438203384500184e-06,
+  "raw_sha": "bcaef178d6ef2180f5902d4a04f5738c11a6bc947c6148aea9fd41d06bd57db9",
+  "records": [
+    {
+      "F_acceleration_error": [
+        3.575605118690419e-06,
+        -2.6825727439204896e-06,
+        -3.5771806050162517e-06,
+        -3.576188332137514e-06,
+        1.7722652287340885e-06,
+        -2.2394466362421996e-09,
+        -8.905984818097938e-07,
+        -1.3969851213323957e-08,
+        -1.3969851213323957e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.575605118690419e-06,
+        -2.6825727439204896e-06,
+        -3.5771806050162517e-06,
+        -3.576188332137514e-06,
+        1.7722652287340885e-06,
+        -2.2394466362421996e-09,
+        -8.905984818097938e-07,
+        -1.3969851213323957e-08,
+        -1.3969851213323957e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -4.656612873077393e-10,
+          -8.731149137020111e-11,
+          -9.313225746154785e-10,
+          4.656612873077393e-10,
+          2.3283064365386963e-10,
+          1.1204974725842476e-09,
+          -1.8553691916167736e-10
+        ],
+        "arm_finger_coupling_term": [
+          6.505218893487259e-18,
+          1.2197285436374284e-18,
+          1.3010437799448984e-17,
+          -6.505218900723492e-18,
+          -3.2526094485436273e-18,
+          -1.56531829770873e-17,
+          2.5919231552671475e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.2369577746686843e-06,
+          -1.960581968329933e-06,
+          -9.867190833290351e-07,
+          -1.5884113189201798e-06,
+          -8.619947011734297e-08,
+          -5.151291952998349e-07,
+          -5.623852591301118e-10,
+          5.152631942911338e-09,
+          -5.5755105108064936e-09
+        ],
+        "mimic_force_algebraic_witness_N": -5.364071226858916e-09,
+        "observed_qdd": [
+          3.575605118690419e-06,
+          -2.6825727439204896e-06,
+          -3.5771806050162517e-06,
+          -3.576188332137514e-06,
+          1.7722652287340885e-06,
+          -2.2394466362421996e-09,
+          -8.905984818097938e-07,
+          -1.3969851213323957e-08,
+          -1.3969851213323957e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -2.1143928394757797e-10,
+          -2.1143928394757797e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 3,
+      "post_time_s": 0.025000001303851604,
+      "registered_configuration_gate_valid": true,
+      "row": 0,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        5.810515072473048e-06,
+        3.8720637175528225e-09,
+        -1.0000219297343239e-08,
+        8.933223614561234e-06,
+        -3.586947724952615e-06,
+        -2.0464649493510605e-05,
+        -1.781030270302472e-06,
+        -1.065814048053616e-13,
+        -1.065814048053616e-13
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        5.810515072473048e-06,
+        3.8720637175528225e-09,
+        -1.0000219297343239e-08,
+        8.933223614561234e-06,
+        -3.586947724952615e-06,
+        -2.0464649493510605e-05,
+        -1.781030270302472e-06,
+        -1.065814048053616e-13,
+        -1.065814048053616e-13
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          1.862645149230957e-09,
+          4.0745362639427185e-10,
+          9.313225746154785e-10,
+          -2.3283064365386963e-09,
+          1.0186340659856796e-09,
+          -2.3283064365386963e-10,
+          -1.6370904631912708e-10
+        ],
+        "arm_finger_coupling_term": [
+          -1.9852333664697773e-22,
+          -4.342697988841472e-23,
+          -9.926166833638946e-23,
+          2.481541708177855e-22,
+          -1.0856744973418654e-22,
+          2.481541706432615e-23,
+          1.7448340136038576e-23
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          -1.281662209227461e-06,
+          -1.8075017749197286e-07,
+          -4.5246093804962584e-07,
+          5.438203384500184e-06,
+          -8.587706610274637e-07,
+          -6.025017338373573e-07,
+          1.8819735908830616e-09,
+          -2.497413300576136e-08,
+          2.4974121197942505e-08
+        ],
+        "mimic_force_algebraic_witness_N": 2.4974127101851933e-08,
+        "observed_qdd": [
+          5.810515072473048e-06,
+          3.8720637175528225e-09,
+          -1.0000219297343239e-08,
+          8.933223614561234e-06,
+          -3.586947724952615e-06,
+          -2.0464649493510605e-05,
+          -1.781030270302472e-06,
+          -1.065814048053616e-13,
+          -1.065814048053616e-13
+        ],
+        "unexplained_finger_residual_N": [
+          -5.903909427854882e-15,
+          -5.903909427854882e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 3,
+      "post_time_s": 0.025000001303851604,
+      "registered_configuration_gate_valid": true,
+      "row": 0,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.954161744698057e-07,
+        -2.6814809240096637e-06,
+        -1.7863350399824444e-06,
+        -1.7883193725771105e-06,
+        3.174804253780189e-08,
+        4.4788901499823054e-09,
+        -9.010119113848968e-07,
+        -2.7939689103972312e-08,
+        -2.7939689103972312e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.954161744698057e-07,
+        -2.6814809240096637e-06,
+        -1.7863350399824444e-06,
+        -1.7883193725771105e-06,
+        3.174804253780189e-08,
+        4.4788901499823054e-09,
+        -9.010119113848968e-07,
+        -2.7939689103972312e-08,
+        -2.7939689103972312e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.6020863187636468e-17,
+          -6.5052157979376014e-18,
+          1.3010431594054159e-17,
+          -2.6020863196016156e-17,
+          1.3010431595551197e-17,
+          -4.634966255748346e-17,
+          9.046315718491445e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0591534097224873e-07,
+          -2.057181536674335e-06,
+          -1.0239449927951227e-06,
+          -3.9664186246568534e-07,
+          -2.1004608385943868e-07,
+          -9.349449392459519e-08,
+          6.172278226176074e-10,
+          8.172964605629356e-09,
+          -9.01872507193797e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.595844838783663e-09,
+        "observed_qdd": [
+          8.954161744698057e-07,
+          -2.6814809240096637e-06,
+          -1.7863350399824444e-06,
+          -1.7883193725771105e-06,
+          3.174804253780189e-08,
+          4.4788901499823054e-09,
+          -9.010119113848968e-07,
+          -2.7939689103972312e-08,
+          -2.7939689103972312e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288023315430694e-10,
+          -4.2288023315430694e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 4,
+      "post_time_s": 0.03333333507180214,
+      "registered_configuration_gate_valid": true,
+      "row": 1,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.5773080763763987e-06,
+        -3.5805308461758776e-06,
+        9.050524182697386e-07,
+        8.206768170012842e-09,
+        -1.0717118366699256e-05,
+        -8.15530214126043e-06,
+        3.568471092359772e-06,
+        -1.0903277711588492e-10,
+        -1.0903277711588492e-10
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.5773080763763987e-06,
+        -3.5805308461758776e-06,
+        9.050524182697386e-07,
+        8.206768170012842e-09,
+        -1.0717118366699256e-05,
+        -8.15530214126043e-06,
+        3.568471092359772e-06,
+        -1.0903277711588492e-10,
+        -1.0903277711588492e-10
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          -4.3156491848981965e-19,
+          -3.17327145953491e-20,
+          -2.2847554508049706e-19,
+          3.807925751391729e-19,
+          -2.1578245924073614e-19,
+          -2.5386171663189187e-20,
+          5.156566121537266e-21
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.053856198766885e-06,
+          -7.692600014763684e-07,
+          -6.83628289976923e-07,
+          -6.842108426496907e-07,
+          -4.98540371762779e-07,
+          -3.9123821604647446e-07,
+          -6.3769787544325305e-09,
+          -7.3896598097135185e-09,
+          7.386350987653926e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.388005398683722e-09,
+        "observed_qdd": [
+          3.5773080763763987e-06,
+          -3.5805308461758776e-06,
+          9.050524182697386e-07,
+          8.206768170012842e-09,
+          -1.0717118366699256e-05,
+          -8.15530214126043e-06,
+          3.568471092359772e-06,
+          -1.0903277711588492e-10,
+          -1.0903277711588492e-10
+        ],
+        "unexplained_finger_residual_N": [
+          -1.654411029796321e-12,
+          -1.654411029796321e-12
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 4,
+      "post_time_s": 0.03333333507180214,
+      "registered_configuration_gate_valid": true,
+      "row": 1,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881396763286088e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881396763286088e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052953924453135e-07,
+          -2.056890238133491e-06,
+          -1.0281328783889876e-06,
+          -4.0128628953084444e-07,
+          -2.1301139485618847e-07,
+          -9.36987603061823e-08,
+          6.172292208318341e-10,
+          8.265694758665234e-09,
+          -9.111454814581302e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688574786623268e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881396763286088e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002795803437e-10,
+          -4.2288002795803437e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 5,
+      "post_time_s": 0.041666668839752674,
+      "registered_configuration_gate_valid": true,
+      "row": 2,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940695184200899e-07,
+        0.0,
+        -1.0728834647366698e-05,
+        -8.046626625013453e-06,
+        3.576278606587384e-06,
+        -2.1827871704138056e-10,
+        -2.1827871704138056e-10
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940695184200899e-07,
+        0.0,
+        -1.0728834647366698e-05,
+        -8.046626625013453e-06,
+        3.576278606587384e-06,
+        -2.1827871704138056e-10,
+        -2.1827871704138056e-10
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          -8.639735611404224e-19,
+          -6.352746773175244e-20,
+          -4.573977676637312e-19,
+          7.623296127834952e-19,
+          -4.319867805642859e-19,
+          -5.0821974221630523e-20,
+          1.0323213506264243e-20
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680009345415784e-06,
+          -7.671657229479933e-07,
+          -6.787174164912813e-07,
+          -6.79634943878682e-07,
+          -4.99740468229426e-07,
+          -3.803980606065238e-07,
+          -6.37697958753348e-09,
+          -7.101971046164944e-09,
+          7.095355251465966e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.098663148815455e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940695184200899e-07,
+          0.0,
+          -1.0728834647366698e-05,
+          -8.046626625013453e-06,
+          3.576278606587384e-06,
+          -2.1827871704138056e-10,
+          -2.1827871704138056e-10
+        ],
+        "unexplained_finger_residual_N": [
+          -3.3078973494889597e-12,
+          -3.3078973494889597e-12
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 5,
+      "post_time_s": 0.041666668839752674,
+      "registered_configuration_gate_valid": true,
+      "row": 2,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052971228081707e-07,
+          -2.056890511692444e-06,
+          -1.0281329245742654e-06,
+          -4.0128565359509594e-07,
+          -2.130113420095725e-07,
+          -9.36986568333964e-08,
+          6.172277670522461e-10,
+          8.265693064033521e-09,
+          -9.111453120042763e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688573092038142e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.228800280046212e-10,
+          -4.228800280046212e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 6,
+      "post_time_s": 0.05000000260770321,
+      "registered_configuration_gate_valid": true,
+      "row": 3,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728837205320415e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728837205320415e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680005805843885e-06,
+          -7.67165726500707e-07,
+          -6.787175479416874e-07,
+          -6.796345175530405e-07,
+          -4.997407262452569e-07,
+          -3.803980384020633e-07,
+          -6.376980436328256e-09,
+          -7.098666334207367e-09,
+          7.098658012068002e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.0986621731376846e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728837205320415e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.1610696821774845e-15,
+          -4.1610696821774845e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 6,
+      "post_time_s": 0.05000000260770321,
+      "registered_configuration_gate_valid": true,
+      "row": 3,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.94070051327114e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.94070051327114e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0053014084528477e-07,
+          -2.05689069376902e-06,
+          -1.0281326545680258e-06,
+          -4.0128548306483935e-07,
+          -2.1301129349282633e-07,
+          -9.369869191644398e-08,
+          6.172245184843817e-10,
+          8.265691097368707e-09,
+          -9.11145115348637e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688571125427538e-09,
+        "observed_qdd": [
+          8.94070051327114e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.228800280588313e-10,
+          -4.228800280588313e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 7,
+      "post_time_s": 0.058333336375653744,
+      "registered_configuration_gate_valid": true,
+      "row": 4,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940698381643044e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940698381643044e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680009509902396e-06,
+          -7.671656483410061e-07,
+          -6.787170576671997e-07,
+          -6.796347342685749e-07,
+          -4.997405318452053e-07,
+          -3.8039799044042866e-07,
+          -6.376981647653133e-09,
+          -7.098666556550127e-09,
+          7.098658221283446e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.098662388916787e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940698381643044e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.167633340485758e-15,
+          -4.167633340485758e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 7,
+      "post_time_s": 0.058333336375653744,
+      "registered_configuration_gate_valid": true,
+      "row": 4,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822097276557227e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822097276557227e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0053008049057976e-07,
+          -2.056891442947517e-06,
+          -1.0281328712835602e-06,
+          -4.012851064771894e-07,
+          -2.1301133557027896e-07,
+          -9.369859865770991e-08,
+          6.172289858039082e-10,
+          8.26569282974929e-09,
+          -9.111452885985537e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688572857867414e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822097276557227e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.228800281181236e-10,
+          -4.228800281181236e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 8,
+      "post_time_s": 0.06666667014360428,
+      "registered_configuration_gate_valid": true,
+      "row": 5,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.0466232144085e-06,
+        3.5762776473547407e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.0466232144085e-06,
+        3.5762776473547407e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680012951746136e-06,
+          -7.671657460406323e-07,
+          -6.787166633159814e-07,
+          -6.796342191250915e-07,
+          -4.997405608220262e-07,
+          -3.803975738847498e-07,
+          -6.3769917949181056e-09,
+          -7.098657000497211e-09,
+          7.098648649982243e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.098652825239727e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.0466232144085e-06,
+          3.5762776473547407e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.175257484043994e-15,
+          -4.175257484043994e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 8,
+      "post_time_s": 0.06666667014360428,
+      "registered_configuration_gate_valid": true,
+      "row": 5,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052971727208746e-07,
+          -2.0568905103601764e-06,
+          -1.0281329245742654e-06,
+          -4.012856571478096e-07,
+          -2.1301134089934948e-07,
+          -9.369865816566403e-08,
+          6.172276884746936e-10,
+          8.265693026099998e-09,
+          -9.111453082466688e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688573054283343e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002818334513e-10,
+          -4.2288002818334513e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 9,
+      "post_time_s": 0.07500000391155481,
+      "registered_configuration_gate_valid": true,
+      "row": 6,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728832089412983e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728832089412983e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.068001328781353e-06,
+          -7.671656874208566e-07,
+          -6.787170185873492e-07,
+          -6.796352138849215e-07,
+          -4.9974021865129e-07,
+          -3.80398025079387e-07,
+          -6.376978708381043e-09,
+          -7.098667767254976e-09,
+          7.098659399384303e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.09866358331964e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728832089412983e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.183935336588614e-15,
+          -4.183935336588614e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 9,
+      "post_time_s": 0.07500000391155481,
+      "registered_configuration_gate_valid": true,
+      "row": 6,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052971968467446e-07,
+          -2.056890509471998e-06,
+          -1.0281329210215517e-06,
+          -4.012856607005233e-07,
+          -2.1301134034423796e-07,
+          -9.369865860975324e-08,
+          6.172276540512747e-10,
+          8.265693008336023e-09,
+          -9.111453064848403e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688573036592213e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002825618997e-10,
+          -4.2288002825618997e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 10,
+      "post_time_s": 0.08333333767950535,
+      "registered_configuration_gate_valid": true,
+      "row": 7,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680007662705176e-06,
+          -7.671657389352049e-07,
+          -6.787174093858539e-07,
+          -6.796346383453056e-07,
+          -4.99740583137509e-07,
+          -3.8039802063849493e-07,
+          -6.376976574129067e-09,
+          -7.09866657990452e-09,
+          7.098658192548701e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.09866238622661e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.193677909547933e-15,
+          -4.193677909547933e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 10,
+      "post_time_s": 0.08333333767950535,
+      "registered_configuration_gate_valid": true,
+      "row": 7,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.005297224716746e-07,
+          -2.056890509027909e-06,
+          -1.0281329210215517e-06,
+          -4.012856607005233e-07,
+          -2.1301133967810415e-07,
+          -9.369865949793166e-08,
+          6.172276155620975e-10,
+          8.265692988014008e-09,
+          -9.111453044683936e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688573016348972e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002833496403e-10,
+          -4.2288002833496403e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 11,
+      "post_time_s": 0.09166667144745588,
+      "registered_configuration_gate_valid": true,
+      "row": 8,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576280205308456e-06,
+        8.940691986758756e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576280205308456e-06,
+        8.940691986758756e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0679997232857594e-06,
+          -7.671673483145014e-07,
+          -6.787185640177995e-07,
+          -6.796339171444288e-07,
+          -4.997406632956114e-07,
+          -3.8039808902823324e-07,
+          -6.376968861494282e-09,
+          -7.098667950012499e-09,
+          7.098659541060728e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.0986637455366136e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576280205308456e-06,
+          8.940691986758756e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.204475885559531e-15,
+          -4.204475885559531e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 11,
+      "post_time_s": 0.09166667144745588,
+      "registered_configuration_gate_valid": true,
+      "row": 8,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052972563310055e-07,
+          -2.0568905081397304e-06,
+          -1.0281329210215517e-06,
+          -4.0128566425323697e-07,
+          -2.1301133901197034e-07,
+          -9.369866038611008e-08,
+          6.172275729529521e-10,
+          8.26569296513226e-09,
+          -9.111453021973289e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688572993552774e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002842051436e-10,
+          -4.2288002842051436e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 12,
+      "post_time_s": 0.10000000521540642,
+      "registered_configuration_gate_valid": true,
+      "row": 9,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680009313834563e-06,
+          -7.671657638042007e-07,
+          -6.78717441360277e-07,
+          -6.796345246584679e-07,
+          -4.99740609560817e-07,
+          -3.803980064276402e-07,
+          -6.376973280783653e-09,
+          -7.09866630473062e-09,
+          7.098657872072091e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.0986620884013556e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.216329264623408e-15,
+          -4.216329264623408e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 12,
+      "post_time_s": 0.10000000521540642,
+      "registered_configuration_gate_valid": true,
+      "row": 9,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822071697020073e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822071697020073e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.005289986556005e-07,
+          -2.05688864252096e-06,
+          -1.0281330204975347e-06,
+          -4.012867620417637e-07,
+          -2.1301134978113367e-07,
+          -9.369877984610753e-08,
+          6.172249921723109e-10,
+          8.265693362797288e-09,
+          -9.111453419817888e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688573391307588e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822071697020073e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2288002851029985e-10,
+          -4.2288002851029985e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 13,
+      "post_time_s": 0.10833333898335695,
+      "registered_configuration_gate_valid": true,
+      "row": 10,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680008950157647e-06,
+          -7.671657797914122e-07,
+          -6.787174591238454e-07,
+          -6.79634457156908e-07,
+          -4.997406252149617e-07,
+          -3.803979966576776e-07,
+          -6.376971342257273e-09,
+          -7.0986661352427156e-09,
+          7.098657676758152e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.098661906000434e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.2292422819043e-15,
+          -4.2292422819043e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 13,
+      "post_time_s": 0.10833333898335695,
+      "registered_configuration_gate_valid": true,
+      "row": 10,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        8.940696250014948e-07,
+        -2.6822088750044842e-06,
+        -1.7881392500029896e-06,
+        -1.7881392500029896e-06,
+        0.0,
+        0.0,
+        -8.940696250014948e-07,
+        -2.7939675781296712e-08,
+        -2.7939675781296712e-08
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          2.602085078931038e-17,
+          -6.505212695537993e-18,
+          1.3010425388198382e-17,
+          -2.6020850778672597e-17,
+          1.3010425389707598e-17,
+          -4.63496404565202e-17,
+          9.046311404874022e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.0052973307917746e-07,
+          -2.0568905063633736e-06,
+          -1.028132917468838e-06,
+          -4.0128567135866433e-07,
+          -2.130113374576581e-07,
+          -9.369866216246692e-08,
+          6.172274754560718e-10,
+          8.265692911692951e-09,
+          -9.111452968911757e-09
+        ],
+        "mimic_force_algebraic_witness_N": -8.688572940302354e-09,
+        "observed_qdd": [
+          8.940696250014948e-07,
+          -2.6822088750044842e-06,
+          -1.7881392500029896e-06,
+          -1.7881392500029896e-06,
+          0.0,
+          0.0,
+          -8.940696250014948e-07,
+          -2.7939675781296712e-08,
+          -2.7939675781296712e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -4.228800286094027e-10,
+          -4.228800286094027e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 14,
+      "post_time_s": 0.11666667275130749,
+      "registered_configuration_gate_valid": true,
+      "row": 11,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "F_pass": true,
+      "K_acceleration_error": [
+        3.576278500005979e-06,
+        -3.576278500005979e-06,
+        8.940696250014948e-07,
+        0.0,
+        -1.0728835500017937e-05,
+        -8.046626625013453e-06,
+        3.576278500005979e-06,
+        0.0,
+        0.0
+      ],
+      "K_oracle_difference_inf": 0.0,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0680008551565084e-06,
+          -7.671657957786238e-07,
+          -6.787174804401275e-07,
+          -6.796343861026344e-07,
+          -4.997406424234185e-07,
+          -3.80397986887715e-07,
+          -6.376969209170814e-09,
+          -7.098665944487508e-09,
+          7.098657458061021e-09
+        ],
+        "mimic_force_algebraic_witness_N": 7.098661701274264e-09,
+        "observed_qdd": [
+          3.576278500005979e-06,
+          -3.576278500005979e-06,
+          8.940696250014948e-07,
+          0.0,
+          -1.0728835500017937e-05,
+          -8.046626625013453e-06,
+          3.576278500005979e-06,
+          0.0,
+          0.0
+        ],
+        "unexplained_finger_residual_N": [
+          -4.243213243336312e-15,
+          -4.243213243336312e-15
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.0,
+      "physics_step_post": 14,
+      "post_time_s": 0.11666667275130749,
+      "registered_configuration_gate_valid": true,
+      "row": 11,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -0.00015136516639532082,
+        -8.069664836382589e-05,
+        -0.00020488549770360034,
+        1.956849013882414e-05,
+        -0.003617029274876867,
+        -0.00050793469710719,
+        0.0007923187468532413,
+        -0.06676733461651081,
+        0.0667672659450666
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.8788101826990067e-06,
+        2.1204140270192313e-06,
+        3.765393134087659e-07,
+        -9.448057842938006e-07,
+        -4.258804926424173e-06,
+        1.7398150728654592e-06,
+        2.316420641061245e-06,
+        -3.841702755393178e-08,
+        -3.841702755393178e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          3.577864501203225e-17,
+          -8.944661253287012e-18,
+          1.7889322501488976e-17,
+          -3.5778645000464623e-17,
+          1.7889322499064878e-17,
+          -6.373071142526994e-17,
+          1.2438669554466938e-17
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.9120146923678266e-07,
+          2.002338513662494e-06,
+          1.0785390962553265e-06,
+          -2.1690219931258525e-06,
+          -2.5328921382516967e-07,
+          -3.602411693393037e-07,
+          -3.014260109796083e-09,
+          -0.0009999958432289847,
+          0.0009999947075991127
+        ],
+        "mimic_force_algebraic_witness_N": 0.0009999952754140488,
+        "observed_qdd": [
+          1.8788101826990067e-06,
+          2.1204140270192313e-06,
+          3.765393134087659e-07,
+          -9.448057842938006e-07,
+          -4.258804926424173e-06,
+          1.7398150728654592e-06,
+          2.316420641061245e-06,
+          -3.841702755393178e-08,
+          -3.841702755393178e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -5.678149359120838e-10,
+          -5.678149361289242e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.1335346005615774,
+      "physics_step_post": 15,
+      "post_time_s": 0.12500000651925802,
+      "registered_configuration_gate_valid": true,
+      "row": 12,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -3.3296871291272286e-05,
+        0.0001498036853132587,
+        -0.00038678939864434574,
+        -0.00028751929265532545,
+        -0.00041895837290920545,
+        0.0038338911610922887,
+        0.0002763251834435324,
+        -0.06674446326210667,
+        0.06674449184600435
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        3.021301451323315e-06,
+        -2.0096648629603607e-07,
+        6.208392409449467e-07,
+        1.9755068016971e-06,
+        -5.628657779407375e-06,
+        4.82948482663962e-07,
+        9.209622450619836e-07,
+        1.4297255980537108e-08,
+        1.4297255980537108e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          5.659026825598278e-17,
+          4.161049136422702e-18,
+          2.995955378329208e-17,
+          -4.9932589636977533e-17,
+          2.8295134127716e-17,
+          3.328839306632913e-18,
+          -6.761704846603076e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.5311964316292518e-06,
+          8.94351471103505e-07,
+          2.208921149104981e-06,
+          1.5295955044791754e-06,
+          -3.488618304237079e-07,
+          9.024531406609526e-07,
+          -1.949150974170778e-08,
+          -0.0009999822696163288,
+          0.00099998267420717
+        ],
+        "mimic_force_algebraic_witness_N": 0.0009999824719117494,
+        "observed_qdd": [
+          3.021301451323315e-06,
+          -2.0096648629603607e-07,
+          6.208392409449467e-07,
+          1.9755068016971e-06,
+          -5.628657779407375e-06,
+          4.82948482663962e-07,
+          9.209622450619836e-07,
+          1.4297255966210427e-08,
+          1.4297255966210427e-08
+        ],
+        "unexplained_finger_residual_N": [
+          2.0229542064924277e-10,
+          2.0229542064924277e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.13348895510811104,
+      "physics_step_post": 15,
+      "post_time_s": 0.12500000651925802,
+      "registered_configuration_gate_valid": true,
+      "row": 12,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        0.0001548508455853348,
+        8.39406384443958e-05,
+        0.0002080852198371728,
+        -2.2200031066635393e-05,
+        0.003610559583445303,
+        0.0005204999920741832,
+        -0.0007874828164095648,
+        0.06676725428996957,
+        -0.06676734627160784
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.6068690073149844e-06,
+        1.1235760535506913e-06,
+        2.8231828201636784e-06,
+        -1.6867351435174533e-06,
+        -2.2108865051395008e-06,
+        1.0825479894127675e-05,
+        2.5195098026153846e-06,
+        -4.1909513671945066e-08,
+        -4.1909513671945066e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          3.9031276176373055e-17,
+          -9.757819043704317e-18,
+          1.9515638076393907e-17,
+          -3.903127617455573e-17,
+          1.951563809330569e-17,
+          -6.952446068385646e-17,
+          1.3569467107311033e-17
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0870678454004986e-06,
+          7.124201109043327e-07,
+          2.682950196231104e-06,
+          -5.47658558502917e-07,
+          -2.5828522431936562e-08,
+          4.1629899394379777e-07,
+          -8.025741237501112e-10,
+          0.000999992532510064,
+          -0.0009999938902635756
+        ],
+        "mimic_force_algebraic_witness_N": -0.0009999932113868197,
+        "observed_qdd": [
+          1.6068690073149844e-06,
+          1.1235760535506913e-06,
+          2.8231828201636784e-06,
+          -1.6867351435174533e-06,
+          -2.2108865051395008e-06,
+          1.0825479894127675e-05,
+          2.5195098026153846e-06,
+          -4.1909513671945066e-08,
+          -4.1909513671945066e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -6.78876755809063e-10,
+          -6.78876755809063e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.1335346005615774,
+      "physics_step_post": 16,
+      "post_time_s": 0.13333334028720856,
+      "registered_configuration_gate_valid": true,
+      "row": 13,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        4.1899051357205584e-05,
+        -0.0001567573426535766,
+        0.0003879619714486623,
+        0.0002873358166038836,
+        0.00039598209594745323,
+        -0.003837108275605823,
+        -0.00026920301834426353,
+        0.06674448803674106,
+        -0.06674446707136997
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        5.580878614609989e-06,
+        -6.752690854021872e-06,
+        5.517335633716271e-07,
+        -2.158982853138957e-06,
+        -1.734761918234483e-05,
+        -3.7000629961981646e-06,
+        6.201202854206916e-06,
+        1.0477378403659586e-08,
+        1.0477378403659586e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          4.147073093480998e-17,
+          3.0493184508952042e-18,
+          2.1955092848130203e-17,
+          -3.659182141330004e-17,
+          2.073536546721689e-17,
+          2.439454761453556e-18,
+          -4.955142483006841e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          3.292505604747457e-06,
+          -1.640039959838191e-06,
+          -1.1218419508907118e-06,
+          -2.2479001451358727e-06,
+          -6.092946112090658e-07,
+          1.0112207871060264e-07,
+          -2.5041637744563057e-08,
+          0.0010000102378309764,
+          -0.001000009948872973
+        ],
+        "mimic_force_algebraic_witness_N": -0.0010000100933519748,
+        "observed_qdd": [
+          5.580878614609989e-06,
+          -6.752690854021872e-06,
+          5.517335633716271e-07,
+          -2.158982853138957e-06,
+          -1.734761918234483e-05,
+          -3.7000629961981646e-06,
+          6.201202854206916e-06,
+          1.0477378417986266e-08,
+          1.0477378417986266e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.4447900167913197e-10,
+          1.4447900167913197e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.13348895510811104,
+      "physics_step_post": 16,
+      "post_time_s": 0.13333334028720856,
+      "registered_configuration_gate_valid": true,
+      "row": 13,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -0.00015127456708532882,
+        -8.036435823908735e-05,
+        -0.00020450894133716683,
+        2.0411891816632405e-05,
+        -0.003617712140232152,
+        -0.0005061948774346709,
+        0.0007919531641082466,
+        -0.06676731016932115,
+        0.06676729039225626
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.969409492690995e-06,
+        2.4527041517577647e-06,
+        7.530956798423006e-07,
+        -1.0140410648553636e-07,
+        -4.941670281709648e-06,
+        3.4796347453846693e-06,
+        1.9508378960664703e-06,
+        -1.3969837890648356e-08,
+        -1.3969837890648356e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          1.301042539465519e-17,
+          -3.2526063477689966e-18,
+          6.505212694099191e-18,
+          -1.3010425389336298e-17,
+          6.505212694853799e-18,
+          -2.31748202282601e-17,
+          4.523155702437011e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          5.028962243105462e-07,
+          1.646648887909663e-06,
+          1.174864944886167e-06,
+          -7.820144531933693e-07,
+          -1.7534267149343918e-07,
+          -9.632789677027631e-09,
+          -1.5315392650736047e-08,
+          -0.0009999990651249496,
+          0.0009999986695364963
+        ],
+        "mimic_force_algebraic_witness_N": 0.000999998867330723,
+        "observed_qdd": [
+          1.969409492690995e-06,
+          2.4527041517577647e-06,
+          7.530956798423006e-07,
+          -1.0140410648553636e-07,
+          -4.941670281709648e-06,
+          3.4796347453846693e-06,
+          1.9508378960664703e-06,
+          -1.3969837890648356e-08,
+          -1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -1.977942265269511e-10,
+          -1.9779422674379155e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.1335346005615774,
+      "physics_step_post": 17,
+      "post_time_s": 0.1416666740551591,
+      "registered_configuration_gate_valid": true,
+      "row": 14,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -3.340552634388954e-05,
+        0.0001496048470444538,
+        -0.00038706803142664906,
+        -0.000287335750097087,
+        -0.00041743881197810206,
+        0.0038335326314783385,
+        0.00027635537070797825,
+        -0.06674446358952474,
+        0.06674449151858629
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        2.9126463987060607e-06,
+        -3.998047551009187e-07,
+        3.422064586416244e-07,
+        2.1590493599355555e-06,
+        -4.109096848303989e-06,
+        1.2441886871358692e-07,
+        9.511495095078157e-07,
+        1.3969837904975036e-08,
+        1.3969837904975036e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          5.529430791298703e-17,
+          4.065757934832156e-18,
+          2.92734571304788e-17,
+          -4.878909521814369e-17,
+          2.7647153956114296e-17,
+          3.2526063501843535e-18,
+          -6.606856644009116e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.1394483282044985e-06,
+          5.19546196287024e-07,
+          1.7934665130781013e-06,
+          1.6328962928469082e-06,
+          -2.7036106076128164e-07,
+          8.118464007722537e-07,
+          -1.310070185461202e-08,
+          -0.0009999844393039433,
+          0.0009999848339848026
+        ],
+        "mimic_force_algebraic_witness_N": 0.0009999846366443728,
+        "observed_qdd": [
+          2.9126463987060607e-06,
+          -3.998047551009187e-07,
+          3.422064586416244e-07,
+          2.1590493599355555e-06,
+          -4.109096848303989e-06,
+          1.2441886871358692e-07,
+          9.511495095078157e-07,
+          1.3969837890648356e-08,
+          1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.9734042958768905e-10,
+          1.9734042980452948e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.13348895510811104,
+      "physics_step_post": 17,
+      "post_time_s": 0.1416666740551591,
+      "registered_configuration_gate_valid": true,
+      "row": 14,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        0.0001548508455853348,
+        8.394063503379085e-05,
+        0.0002080852198371728,
+        -2.2200031066635393e-05,
+        0.0036105595828058146,
+        0.0005204999905820436,
+        -0.0007874828159832391,
+        0.06676725428996957,
+        -0.06676734627160784
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.6068690073149844e-06,
+        1.1235726429457375e-06,
+        2.8231828201636784e-06,
+        -1.6867351435174533e-06,
+        -2.2108871446279295e-06,
+        1.0825478401988008e-05,
+        2.5195102289410036e-06,
+        -4.1909513671945066e-08,
+        -4.1909513671945066e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          3.9031276176373055e-17,
+          -9.757819043704317e-18,
+          1.9515638076393907e-17,
+          -3.903127617455573e-17,
+          1.951563809330569e-17,
+          -6.952446068385646e-17,
+          1.3569467107311033e-17
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0870693359863703e-06,
+          7.124164955740753e-07,
+          2.68295053018619e-06,
+          -5.476568070150734e-07,
+          -2.5828558292140258e-08,
+          4.162990405731648e-07,
+          -8.025658313382152e-10,
+          0.0009999925325111865,
+          -0.0009999938902647007
+        ],
+        "mimic_force_algebraic_witness_N": -0.0009999932113879436,
+        "observed_qdd": [
+          1.6068690073149844e-06,
+          1.1235726429457375e-06,
+          2.8231828201636784e-06,
+          -1.6867351435174533e-06,
+          -2.2108871446279295e-06,
+          1.0825478401988008e-05,
+          2.5195102289410036e-06,
+          -4.1909513671945066e-08,
+          -4.1909513671945066e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -6.788767571101056e-10,
+          -6.788767571101056e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.1335346005615774,
+      "physics_step_post": 18,
+      "post_time_s": 0.15000000782310963,
+      "registered_configuration_gate_valid": true,
+      "row": 15,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        4.189919119200869e-05,
+        -0.00015675741086567567,
+        0.0003879621215152803,
+        0.0002873357654448093,
+        0.00039598116826290584,
+        -0.0038371091077934317,
+        -0.00026920282735038613,
+        0.06674448803674106,
+        -0.06674446707136997
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        5.581018449413094e-06,
+        -6.752759066120947e-06,
+        5.51883629989593e-07,
+        -2.1590340122132635e-06,
+        -1.7348546866892256e-05,
+        -3.700895183806885e-06,
+        6.201393848084327e-06,
+        1.0477378403659586e-08,
+        1.0477378403659586e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          4.147073093480998e-17,
+          3.0493184508952042e-18,
+          2.1955092848130203e-17,
+          -3.659182141330004e-17,
+          2.073536546721689e-17,
+          2.439454761453556e-18,
+          -4.955142483006841e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          3.2925410472203956e-06,
+          -1.6399539415345998e-06,
+          -1.1218477524721493e-06,
+          -2.248013679206906e-06,
+          -6.093456498268424e-07,
+          1.0105320491504699e-07,
+          -2.50422568875649e-08,
+          0.001000010236359922,
+          -0.0010000099474018905
+        ],
+        "mimic_force_algebraic_witness_N": -0.0010000100918809063,
+        "observed_qdd": [
+          5.581018449413094e-06,
+          -6.752759066120947e-06,
+          5.51883629989593e-07,
+          -2.1590340122132635e-06,
+          -1.7348546866892256e-05,
+          -3.700895183806885e-06,
+          6.201393848084327e-06,
+          1.0477378417986266e-08,
+          1.0477378417986266e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.444790157737602e-10,
+          1.444790157737602e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.13348895510811104,
+      "physics_step_post": 18,
+      "post_time_s": 0.15000000782310963,
+      "registered_configuration_gate_valid": true,
+      "row": 15,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -0.00015127456708532882,
+        -8.036435653378487e-05,
+        -0.00020450894133716683,
+        2.0411891816632405e-05,
+        -0.0036177121398058266,
+        -0.0005061948765820196,
+        0.0007919531641615373,
+        -0.06676731016932115,
+        0.06676729039225626
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.969409492690995e-06,
+        2.4527058570602416e-06,
+        7.530956798423006e-07,
+        -1.0140410648553636e-07,
+        -4.941669855384029e-06,
+        3.4796355980359077e-06,
+        1.9508379493571726e-06,
+        -1.3969837890648356e-08,
+        -1.3969837890648356e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          1.301042539465519e-17,
+          -3.2526063477689966e-18,
+          6.505212694099191e-18,
+          -1.3010425389336298e-17,
+          6.505212694853799e-18,
+          -2.31748202282601e-17,
+          4.523155702437011e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          5.028954637123416e-07,
+          1.6466506913559442e-06,
+          1.1748647388287736e-06,
+          -7.820152774229427e-07,
+          -1.753426455142204e-07,
+          -9.63279367383052e-09,
+          -1.5315393556505647e-08,
+          -0.000999999065125718,
+          0.000999998669537258
+        ],
+        "mimic_force_algebraic_witness_N": 0.000999998867331488,
+        "observed_qdd": [
+          1.969409492690995e-06,
+          2.4527058570602416e-06,
+          7.530956798423006e-07,
+          -1.0140410648553636e-07,
+          -4.941669855384029e-06,
+          3.4796355980359077e-06,
+          1.9508379493571726e-06,
+          -1.3969837890648356e-08,
+          -1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -1.9779422999639806e-10,
+          -1.9779422999639806e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.1335346005615774,
+      "physics_step_post": 19,
+      "post_time_s": 0.15833334159106016,
+      "registered_configuration_gate_valid": true,
+      "row": 16,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -3.340539333029634e-05,
+        0.00014960479247477454,
+        -0.00038706792228729054,
+        -0.0002873358319516059,
+        -0.00041743979423232875,
+        0.0038335321949209042,
+        0.0002763555889866953,
+        -0.06674446358952474,
+        0.06674449151858629
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        2.9127794122992577e-06,
+        -3.9985932478017904e-07,
+        3.423155980001451e-07,
+        2.158967505416665e-06,
+        -4.110079102530675e-06,
+        1.2398231127950416e-07,
+        9.513677882248571e-07,
+        1.3969837904975036e-08,
+        1.3969837904975036e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          5.529430791298703e-17,
+          4.065757934832156e-18,
+          2.92734571304788e-17,
+          -4.878909521814369e-17,
+          2.7647153956114296e-17,
+          3.2526063501843535e-18,
+          -6.606856644009116e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.139527915151809e-06,
+          5.196363588311215e-07,
+          1.7934735581093264e-06,
+          1.6328031691159595e-06,
+          -2.7041818750905833e-07,
+          8.11816262213938e-07,
+          -1.3101281147871431e-08,
+          -0.000999984439732509,
+          0.0009999848344133951
+        ],
+        "mimic_force_algebraic_witness_N": 0.000999984637072952,
+        "observed_qdd": [
+          2.9127794122992577e-06,
+          -3.9985932478017904e-07,
+          3.423155980001451e-07,
+          2.158967505416665e-06,
+          -4.110079102530675e-06,
+          1.2398231127950416e-07,
+          9.513677882248571e-07,
+          1.3969837890648356e-08,
+          1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.9734044303179599e-10,
+          1.9734044303179599e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.13348895510811104,
+      "physics_step_post": 19,
+      "post_time_s": 0.15833334159106016,
+      "registered_configuration_gate_valid": true,
+      "row": 16,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        0.0001548508455853348,
+        8.394063503379085e-05,
+        0.00020808521898452157,
+        -2.220003277193787e-05,
+        0.0036105595828058146,
+        0.0005204999905820436,
+        -0.0007874828160365298,
+        0.06676725428996957,
+        -0.06676734627160784
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.6068690073149844e-06,
+        1.1235726429457375e-06,
+        2.82318196751244e-06,
+        -1.6867368488199301e-06,
+        -2.2108871446279295e-06,
+        1.0825478401988008e-05,
+        2.5195101756503014e-06,
+        -4.1909513671945066e-08,
+        -4.1909513671945066e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          3.9031276176373055e-17,
+          -9.757819043704317e-18,
+          1.9515638076393907e-17,
+          -3.903127617455573e-17,
+          1.951563809330569e-17,
+          -6.952446068385646e-17,
+          1.3569467107311033e-17
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0870681047091483e-06,
+          7.124176413242367e-07,
+          2.6829497734581764e-06,
+          -5.476592583875117e-07,
+          -2.582882074886328e-08,
+          4.162987381484129e-07,
+          -8.025572732154717e-10,
+          0.0009999925325209643,
+          -0.000999993890274491
+        ],
+        "mimic_force_algebraic_witness_N": -0.0009999932113977277,
+        "observed_qdd": [
+          1.6068690073149844e-06,
+          1.1235726429457375e-06,
+          2.82318196751244e-06,
+          -1.6867368488199301e-06,
+          -2.2108871446279295e-06,
+          1.0825478401988008e-05,
+          2.5195101756503014e-06,
+          -4.1909513671945066e-08,
+          -4.1909513671945066e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -6.788767633984782e-10,
+          -6.788767633984782e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.1335346005615774,
+      "physics_step_post": 20,
+      "post_time_s": 0.1666666753590107,
+      "registered_configuration_gate_valid": true,
+      "row": 17,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        4.189905476781054e-05,
+        -0.0001567573426535766,
+        0.0003879619714486623,
+        0.0002873358166038836,
+        0.00039598209594745323,
+        -0.003837108268784613,
+        -0.00026920301834426353,
+        0.06674448803674106,
+        -0.06674446707136997
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        5.580882025214943e-06,
+        -6.752690854021872e-06,
+        5.517335633716271e-07,
+        -2.158982853138957e-06,
+        -1.734761918234483e-05,
+        -3.700056174988257e-06,
+        6.201202854206916e-06,
+        1.0477378403659586e-08,
+        1.0477378403659586e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          4.147073093480998e-17,
+          3.0493184508952042e-18,
+          2.1955092848130203e-17,
+          -3.659182141330004e-17,
+          2.073536546721689e-17,
+          2.439454761453556e-18,
+          -4.955142483006841e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          3.292511993318683e-06,
+          -1.6400380360437339e-06,
+          -1.1218387214739778e-06,
+          -2.247901534246921e-06,
+          -6.092941211566227e-07,
+          1.0112351933599939e-07,
+          -2.5041690098517562e-08,
+          0.0010000102378647823,
+          -0.0010000099489067237
+        ],
+        "mimic_force_algebraic_witness_N": -0.001000010093385753,
+        "observed_qdd": [
+          5.580882025214943e-06,
+          -6.752690854021872e-06,
+          5.517335633716271e-07,
+          -2.158982853138957e-06,
+          -1.734761918234483e-05,
+          -3.700056174988257e-06,
+          6.201202854206916e-06,
+          1.0477378417986266e-08,
+          1.0477378417986266e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.4447902921786715e-10,
+          1.4447902943470758e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.13348895510811104,
+      "physics_step_post": 20,
+      "post_time_s": 0.1666666753590107,
+      "registered_configuration_gate_valid": true,
+      "row": 17,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -0.00015127456708532882,
+        -8.036435653378487e-05,
+        -0.00020450893963186434,
+        2.0411895227237357e-05,
+        -0.0036177121398058266,
+        -0.0005061948765820196,
+        0.0007919531641082466,
+        -0.06676731016932115,
+        0.06676729039225626
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.969409492690995e-06,
+        2.4527058570602416e-06,
+        7.530973851447775e-07,
+        -1.0140069588058259e-07,
+        -4.941669855384029e-06,
+        3.4796355980359077e-06,
+        1.9508378960664703e-06,
+        -1.3969837890648356e-08,
+        -1.3969837890648356e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          1.301042539465519e-17,
+          -3.2526063477689966e-18,
+          6.505212694099191e-18,
+          -1.3010425389336298e-17,
+          6.505212694853799e-18,
+          -2.31748202282601e-17,
+          4.523155702437011e-18
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          5.028979199899207e-07,
+          1.6466483909738372e-06,
+          1.1748662238630914e-06,
+          -7.820103284927882e-07,
+          -1.7534211926850674e-07,
+          -9.632176833918038e-09,
+          -1.531541313386296e-08,
+          -0.0009999990651453727,
+          0.0009999986695568965
+        ],
+        "mimic_force_algebraic_witness_N": 0.0009999988673511347,
+        "observed_qdd": [
+          1.969409492690995e-06,
+          2.4527058570602416e-06,
+          7.530973851447775e-07,
+          -1.0140069588058259e-07,
+          -4.941669855384029e-06,
+          3.4796355980359077e-06,
+          1.9508378960664703e-06,
+          -1.3969837890648356e-08,
+          -1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -1.9779423801949414e-10,
+          -1.9779423823633457e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.1335346005615774,
+      "physics_step_post": 21,
+      "post_time_s": 0.17500000912696123,
+      "registered_configuration_gate_valid": true,
+      "row": 18,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        -3.340552293328458e-05,
+        0.0001496048470444538,
+        -0.00038706803142664906,
+        -0.000287335750097087,
+        -0.00041743881197810206,
+        0.0038335326314783385,
+        0.00027635537070797825,
+        -0.06674446358952474,
+        0.06674449151858629
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        2.9126498093110144e-06,
+        -3.998047551009187e-07,
+        3.422064586416244e-07,
+        2.1590493599355555e-06,
+        -4.109096848303989e-06,
+        1.2441886871358692e-07,
+        9.511495095078157e-07,
+        1.3969837904975036e-08,
+        1.3969837904975036e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          5.529430791298703e-17,
+          4.065757934832156e-18,
+          2.92734571304788e-17,
+          -4.878909521814369e-17,
+          2.7647153956114296e-17,
+          3.2526063501843535e-18,
+          -6.606856644009116e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          2.139453789621105e-06,
+          5.195481787012568e-07,
+          1.7934683285147912e-06,
+          1.632893894765175e-06,
+          -2.703605768150652e-07,
+          8.118469354556623e-07,
+          -1.3100747782906824e-08,
+          -0.0009999844392895045,
+          0.0009999848339704164
+        ],
+        "mimic_force_algebraic_witness_N": 0.0009999846366299603,
+        "observed_qdd": [
+          2.9126498093110144e-06,
+          -3.998047551009187e-07,
+          3.422064586416244e-07,
+          2.1590493599355555e-06,
+          -4.109096848303989e-06,
+          1.2441886871358692e-07,
+          9.511495095078157e-07,
+          1.3969837890648356e-08,
+          1.3969837890648356e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.9734045582538162e-10,
+          1.9734045604222206e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": -0.13348895510811104,
+      "physics_step_post": 21,
+      "post_time_s": 0.17500000912696123,
+      "registered_configuration_gate_valid": true,
+      "row": 18,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        0.0001548508455853348,
+        8.394063503379085e-05,
+        0.0002080852181318703,
+        -2.220003447724035e-05,
+        0.0036105595828058146,
+        0.0005204999905820436,
+        -0.0007874828164095648,
+        0.06676725428996957,
+        -0.06676734627160784
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        1.6068690073149844e-06,
+        1.1235726429457375e-06,
+        2.8231811148612015e-06,
+        -1.686738554122407e-06,
+        -2.2108871446279295e-06,
+        1.0825478401988008e-05,
+        2.5195098026153846e-06,
+        -4.1909513671945066e-08,
+        -4.1909513671945066e-08
+      ],
+      "K_oracle_difference_inf": 1.7999767574146275e-18,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          -9.313225746154785e-10,
+          2.3283064365386963e-10,
+          -4.656612873077393e-10,
+          9.313225746154785e-10,
+          -4.656612873077393e-10,
+          1.6589183360338211e-09,
+          -3.2378011383116245e-10
+        ],
+        "arm_finger_coupling_term": [
+          3.9031276176373055e-17,
+          -9.757819043704317e-18,
+          1.9515638076393907e-17,
+          -3.903127617455573e-17,
+          1.951563809330569e-17,
+          -6.952446068385646e-17,
+          1.3569467107311033e-17
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          1.0870668866835476e-06,
+          7.124187813012384e-07,
+          2.6829490202828765e-06,
+          -5.476616991018091e-07,
+          -2.582908142922946e-08,
+          4.1629843483548257e-07,
+          -8.025525360651296e-10,
+          0.000999992532530636,
+          -0.0009999938902841843
+        ],
+        "mimic_force_algebraic_witness_N": -0.00099999321140741,
+        "observed_qdd": [
+          1.6068690073149844e-06,
+          1.1235726429457375e-06,
+          2.8231811148612015e-06,
+          -1.686738554122407e-06,
+          -2.2108871446279295e-06,
+          1.0825478401988008e-05,
+          2.5195098026153846e-06,
+          -4.1909513671945066e-08,
+          -4.1909513671945066e-08
+        ],
+        "unexplained_finger_residual_N": [
+          -6.788767740236595e-10,
+          -6.788767742405e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.1335346005615774,
+      "physics_step_post": 22,
+      "post_time_s": 0.18333334289491177,
+      "registered_configuration_gate_valid": true,
+      "row": 19,
+      "side": "left",
+      "source_identity": "/World/QP6R1_left",
+      "temporal_valid": true
+    },
+    {
+      "F_acceleration_error": [
+        4.1899184370798786e-05,
+        -0.00015675741086567567,
+        0.0003879621215152803,
+        0.0002873357654448093,
+        0.00039598116826290584,
+        -0.0038371091146146416,
+        -0.00026920282735038613,
+        0.06674448803674106,
+        -0.06674446707136997
+      ],
+      "F_pass": false,
+      "K_acceleration_error": [
+        5.581011628203186e-06,
+        -6.752759066120947e-06,
+        5.51883629989593e-07,
+        -2.1590340122132635e-06,
+        -1.7348546866892256e-05,
+        -3.7009020050167924e-06,
+        6.201393848084327e-06,
+        1.0477378403659586e-08,
+        1.0477378403659586e-08
+      ],
+      "K_oracle_difference_inf": 1.2399146928372347e-17,
+      "K_prediction_pass": true,
+      "R_independent": {
+        "M_af_common_column": [
+          3.958120942115784e-09,
+          2.9103830456733704e-10,
+          2.0954757928848267e-09,
+          -3.4924596548080444e-09,
+          1.979060471057892e-09,
+          2.3283064365386963e-10,
+          -4.729372449219227e-11
+        ],
+        "arm_finger_coupling_term": [
+          4.147073093480998e-17,
+          3.0493184508952042e-18,
+          2.1955092848130203e-17,
+          -3.659182141330004e-17,
+          2.073536546721689e-17,
+          2.439454761453556e-18,
+          -4.955142483006841e-19
+        ],
+        "checks": {
+          "ACTUAL_ARM_FINGER_COUPLING_TERM": true,
+          "ARM_ACCELERATION_ERROR": true,
+          "ARM_EQUATION_WITH_COUPLING": true,
+          "CONSTRAINT_RESIDUAL_STRUCTURE": true,
+          "FINGER_POLICY_POSITION": false,
+          "FINGER_POLICY_VELOCITY": true,
+          "MIMIC_ACCELERATION": true,
+          "MIMIC_POSITION": true,
+          "MIMIC_VELOCITY": true,
+          "STRUCTURAL_ARM_FINGER_CANCELLATION": true,
+          "UNILATERAL_GAP_COMPLEMENTARITY": true
+        },
+        "free_residual": [
+          3.292529750967301e-06,
+          -1.6399579383374885e-06,
+          -1.1218529962775392e-06,
+          -2.2480091708132477e-06,
+          -6.093467795897922e-07,
+          1.0105142678185075e-07,
+          -2.504213596031665e-08,
+          0.0010000102363166056,
+          -0.0010000099473585248
+        ],
+        "mimic_force_algebraic_witness_N": -0.0010000100918375653,
+        "observed_qdd": [
+          5.581011628203186e-06,
+          -6.752759066120947e-06,
+          5.51883629989593e-07,
+          -2.1590340122132635e-06,
+          -1.7348546866892256e-05,
+          -3.7009020050167924e-06,
+          6.201393848084327e-06,
+          1.0477378417986266e-08,
+          1.0477378417986266e-08
+        ],
+        "unexplained_finger_residual_N": [
+          1.444790402767293e-10,
+          1.4447904049356974e-10
+        ],
+        "upper_candidates": [
+          false,
+          false
+        ],
+        "upper_force_algebraic_witness_N": [
+          0.0,
+          0.0
+        ],
+        "upper_gap_post_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "upper_gap_pre_m": [
+          0.019999999552965164,
+          0.019999999552965164
+        ],
+        "valid": false
+      },
+      "free_requested_mimic_compatibility": 0.13348895510811104,
+      "physics_step_post": 22,
+      "post_time_s": 0.18333334289491177,
+      "registered_configuration_gate_valid": true,
+      "row": 19,
+      "side": "right",
+      "source_identity": "/World/QP6R1_right",
+      "temporal_valid": true
+    }
+  ],
+  "status": "COMPLETE",
+  "unexecuted_steps": 0
+}

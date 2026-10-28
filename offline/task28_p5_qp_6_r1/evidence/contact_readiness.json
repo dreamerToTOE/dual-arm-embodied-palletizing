@@ -1,0 +1,59 @@
+{
+  "status": "NOT_READY_REVIEW_ONLY",
+  "actual_Cube_mass_inertia_source": {
+    "fixture_mass_kg": 0.8,
+    "fixture_size_m": [
+      0.12,
+      0.12,
+      0.12
+    ],
+    "uniform_cube_assumed_inertia_kg_m2": [
+      0.00192,
+      0.00192,
+      0.00192
+    ],
+    "actual_Cube_stage_inspected_in_R1": false,
+    "COM_density_inertia_status": "UNVALIDATED_ACTUAL_SOURCE"
+  },
+  "actual_grasp_attachment_geometry": {
+    "status": "NOT_ESTABLISHED",
+    "frozen_nominal_offset_m": 0.061,
+    "G1_translation_threshold_m": 0.0001,
+    "G1_rotation_threshold_rad": 0.001,
+    "no_new_anchor_or_gap": true,
+    "D6_static_or_moving_test_run": false
+  },
+  "prior_G3_P2_3": {
+    "status": "HISTORICAL_BLOCKED_UNCHANGED",
+    "zero_load_static_grasp_translation_mm": {
+      "left": 0.441309,
+      "right": 0.333326
+    },
+    "scope": "old virtual static scene, not successful physical Cube attachment"
+  },
+  "reaction_observability": {
+    "status": "UNAVAILABLE_SOURCE_VALID_CONTACT_REACTION",
+    "projected_joint_effort_not_actuator_only": true,
+    "finger_constraint_residual_not_Cube_wrench": true,
+    "D6_predicted_reaction_not_measured": true
+  },
+  "wrench_conventions": {
+    "on_Cube_sign": "f",
+    "on_robot_reaction": "-f",
+    "reference_point": "each frozen TCP origin, local contact axes; shift r cross F to Cube centre",
+    "internal_model": "G3-P2-1 metric-dependent null-space prediction only"
+  },
+  "finite_suction": {
+    "status": "UNAVAILABLE_CALIBRATION",
+    "required": [
+      "normal traction/compression range",
+      "shear/friction coupling",
+      "moment capacity versus centre of pressure",
+      "cup pressure/area and seal state",
+      "break/detach dynamics",
+      "source-valid reaction evaluation"
+    ],
+    "old_1e6_break_values_not_capacity": true
+  },
+  "physical_contact_D_E_cells_authorized_or_run": false
+}

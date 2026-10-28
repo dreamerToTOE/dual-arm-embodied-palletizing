@@ -1,0 +1,29 @@
+{
+  "review_completed_before_R1_implementation": true,
+  "installed_version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+  "installed_source_hashes": {
+    "/home/ubuntu2004/isaacsim-4.5.0/VERSION": "ae03a4157cfcbea2052862857e805daf1d4ab73c3ef5fa8bda59c90b84522f9d",
+    "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a",
+    "/home/ubuntu2004/isaacsim-4.5.0/extsPhysics/omni.physx.tests/omni/physxtests/tests/PhysxMimicJointAPI.py": "242b6539ea095fa0a5dbd3d73d7da210a967162b76ebf0775736f44d78b46529",
+    "/home/ubuntu2004/isaacsim-4.5.0/extsPhysics/omni.physx.demos/omni/physxdemos/scenes/MimicJointDemo.py": "e30d7e435fd1cb233271b49e81c054d8c51ab1bcb905cdb37f4cb9e8d259be74"
+  },
+  "primary_references": [
+    "https://docs.isaacsim.omniverse.nvidia.com/4.5.0/robot_setup/rig_closed_loop_structures.html",
+    "https://github.com/NVIDIA-Omniverse/PhysX/blob/main/ovphysx/docs/simulation_setup/articulations.md",
+    "https://github.com/stack-of-tasks/tsid",
+    "https://raw.githubusercontent.com/stack-of-tasks/tsid/devel/src/formulations/inverse-dynamics-formulation-acc-force.cpp",
+    "https://gepettoweb.laas.fr/doc/stack-of-tasks/pinocchio/master/doxygen-html/md_doc_b_examples_e_reduced_model.html",
+    "https://raw.githubusercontent.com/stack-of-tasks/pinocchio/devel/examples/simulation-closed-kinematic-chains.py",
+    "https://frankarobotics.github.io/docs/doc/libfranka/docs/overview.html",
+    "https://cris.fau.de/publications/306133864/"
+  ],
+  "findings": {
+    "mimic": "Installed tests 706/1228-1249: target+gearing*reference+offset=0; TGS mimic velocity/position error correction explicit. Frozen gearing=-1 makes qf2=qf1 if offset=0.",
+    "PhysX_online_version": "Current ovphysx main documentation is 2026 and has codeless schemas/performance envelopes not automatically equivalent to installed Isaac 4.5. Installed schema/test/source are authoritative here.",
+    "Pinocchio_reduced": "buildReducedModel fixes named joints at a specified reference configuration, not an arbitrary upper-left mass slice. Constraint examples explicitly construct constraint models/data and constrain motion. Examples reviewed only; library not used as an Isaac-identical dynamics oracle.",
+    "TSID": "AccForce formulation computes full mass/nonlinear effects, contact Jacobian/force-generator and motion/force inequalities before extracting actuator effort. Eliminating effort variables does not eliminate physical constraint reactions.",
+    "Franka": "libfranka Robot realtime arm torque and Gripper hand operations are distinct; real FCI torque gravity/friction treatment differs from raw Isaac efforts. No hardware equivalence inferred.",
+    "IROS2023": "Bibliography and earlier QP6 abstract review retained. No newly obtained full paper; cooperative HQP/load allocation already prior art.",
+    "Isaac_4_5_url": "Direct open returned404, indexed version-specific page accessible through search; mimic instructions compared with installed tests, not silently replaced by latest docs."
+  }
+}

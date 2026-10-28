@@ -1,0 +1,362 @@
+# Task28 G2-P5-QP-6-R1 — Constraint-Aware FR3 Dynamics Recovery and Cooperative HQP Continuation
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected starting HEAD: cbfea96775696defb864d48d4cef30ce689ff959
+
+## Research decision
+
+The project retains QP-based Cooperative Task-Space Inverse Dynamics Control as its primary research direction.
+
+QP-6 ended as QP6_PARTIAL.
+
+Its ideal coupled HQP mathematics passed independent synthetic tests, but the full unconstrained nine-DOF-per-arm acceleration source test failed on the finger coordinates. This prevented B/C/D/E runtime comparisons.
+
+The next task must investigate constraint-aware dynamics and, if independently justified, continue the no-contact cooperative torque-control experiments.
+
+Do NOT simply delete the fingers, loosen the acceleration tolerance, alter frozen geometry, or assume that full nine-coordinate free acceleration is valid in the presence of mimic/limit constraints.
+
+Codex is authorized to complete multiple stages and bounded experiments in ONE task without asking for approval between ordinary CPU investigations and eligible isolated simulation cells.
+
+## Existing facts to preserve
+
+QP-6 commit:
+cbfea96775696defb864d48d4cef30ce689ff959
+
+Original full dynamics source:
+SOURCE_BLOCKED
+
+QP-6 A/S05:
+REJECTED at moving step 7, left absolute grasp error 0.1279523 mm.
+
+QP-6 A/S10:
+REJECTED at moving step 12, left absolute grasp error 0.1106434 mm.
+
+Frozen G1 translation threshold:
+0.100 mm.
+
+Synthetic coupled HQP mathematics:
+QP6_COUPLED_MATH_PASS.
+
+Previous 929 software tests:
+Archived PASS only, not physical tracking proof.
+
+Never overwrite these outcomes or their original evidence.
+
+## Phase 0 — prior work and literature review
+
+Before implementation, inspect and record relevant research and reference implementations:
+
+1. Original Task28 G1, G2, G3 and QP-6 evidence.
+2. NVIDIA Isaac Sim 4.5 mimic-joint and articulation documentation.
+3. NVIDIA PhysX articulation constraint and joint-limit behavior.
+4. Pinocchio reduced-model and constrained-dynamics examples.
+5. Stack-of-Tasks TSID open-source inverse-dynamics implementation.
+6. Franka FCI architecture distinguishing arm torque commands from hand control.
+7. The IROS 2023 cooperative dual-arm HQP paper already recorded in QP-6.
+
+Relevant starting references:
+
+https://docs.isaacsim.omniverse.nvidia.com/4.5.0/robot_setup/rig_closed_loop_structures.html
+
+https://github.com/NVIDIA-Omniverse/PhysX/blob/main/ovphysx/docs/simulation_setup/articulations.md
+
+https://github.com/stack-of-tasks/tsid
+
+https://gepettoweb.laas.fr/doc/stack-of-tasks/pinocchio/master/doxygen-html/md_doc_b_examples_e_reduced_model.html
+
+https://frankarobotics.github.io/docs/overview.html
+
+Inspect the INSTALLED Isaac 4.5 version, not just current online documentation.
+
+Record implementation-relevant findings and differences from the installed runtime.
+
+## Phase 1 — independent forensic analysis of the QP-6 source failure
+
+Read:
+
+offline/task28_p5_qp_6/source_probe.py
+
+offline/task28_p5_qp_6/evidence/source_v1/
+
+offline/task28_p5_qp_6/evidence/evaluation_v1/source.json
+
+offline/task28_p5_qp_6/evidence/usd_inspection.json
+
+Independently reproduce the first failure:
+
+- Row index 18.
+- Right arm.
+- Physics post-step 21.
+- Joint 4 acceleration command approximately +0.05 rad/s².
+- Requested finger accelerations zero.
+- Observed finger accelerations approximately -0.004416 m/s² each.
+- Finger dynamic residual approximately -6.68e-5 N per coordinate.
+
+Check:
+
+- Exact pre/post q and dq.
+- Whether fingers are at or near the joint upper stop.
+- Actual mimic gearing, reference joint and offset.
+- Finger-coordinate coupling in the full 9x9 mass matrix.
+- Applied command versus projected solver effort.
+- Unmodeled generalized constraint reactions.
+- Backward acceleration difference and numerical sensitivity.
+- Exact dynamics sign and source timing.
+
+Evaluate the unconstrained residual:
+
+    r = M(q)*qdd_observed + c(q,dq) + g(q) - tau_applied
+
+Then test whether its structure is compatible with a properly constructed constraint Jacobian and reaction term:
+
+    r ≈ J_constraint.T * lambda
+
+Do not infer lambda from projected effort without independently checking the semantics.
+
+Report both the residual along permitted motion directions and the component associated with constrained directions.
+
+A plausible constraint-force explanation is NOT automatically a validated physical constraint model.
+
+## Phase 2 — compare three dynamics modeling strategies
+
+Study and independently test:
+
+### Strategy F — full free 18-coordinate dynamics
+
+Retain the original full nine-coordinate source test as the negative baseline.
+
+Do not change its historical acceptance threshold or reclassify its failure.
+
+### Strategy K — full dynamics with explicit finger constraints
+
+Represent valid mimic coupling and active finger-limit constraints, where supported.
+
+Use equations conceptually equivalent to:
+
+    M*qdd + h = tau + J_constraint.T*lambda
+
+    J_constraint*qdd + Jdot_constraint*dq = 0
+
+Treat joint-limit constraints as unilateral when applicable, not permanently active bilateral equalities.
+
+Validate constraint identities, feasible motion directions, force units, signs and complementarity assumptions.
+
+Do not invent a constraint reaction sensor.
+
+### Strategy R — verified active-arm reduced dynamics
+
+Investigate a 7-DOF-per-arm control subsystem, while retaining the actual full nine-DOF articulation state and independently defined finger actuation/constraint policy.
+
+Explicitly derive which finger coordinates are held, coupled or treated as constrained.
+
+Do not just slice M[:7,:7] and assume the reduction is valid.
+
+Account for arm/finger inertial coupling and verify when a reduced arm equation is physically justified.
+
+Continue to send full, valid, source-identified effort commands to the Isaac articulations.
+
+The arm controller may be 14D; that does NOT authorize silently discarding the four finger DOFs from the physical model.
+
+Compare all three strategies using the same recorded source where mathematically applicable.
+
+## Phase 3 — bounded source experiments
+
+Create a new task directory:
+
+offline/task28_p5_qp_6_r1/
+
+Before new physics, freeze a small independent experiment matrix.
+
+Allow up to FOUR bounded isolated source-characterization configurations, including:
+
+A. Original frozen asset and original 0.04 m finger target, preserving the original condition.
+
+B. Original frozen asset with a clearly labeled interior finger diagnostic state, such as 0.02 m, to test a joint-limit hypothesis.
+
+C. Original asset with a documented constraint-aware actuation or measurement test, if supported by the installed runtime without changing the frozen USD.
+
+D. An independent negative/control configuration targeting the identified constraint mechanism.
+
+Any diagnostic variant with changed finger state or runtime mechanism receives a NEW identity.
+
+It must NOT be silently promoted as a successful repeat of the original 0.04 m task.
+
+Use separate simulator initialization for each source configuration.
+
+Before each test, preregister:
+
+- Exact state.
+- Applied effort.
+- Proposed acceleration.
+- Constraint assumptions.
+- Duration.
+- Numerical tolerance.
+- Stop policy.
+- Source and model hashes.
+
+Preserve all failed observations and causal step ordering.
+
+Stop any source configuration when its registered safety gate fails. Independently registered diagnostic configurations may still be examined after a clean reset.
+
+Do not run unlimited tuning or alter source acceptance thresholds after seeing formal outcomes.
+
+## Phase 4 — qualify the usable dynamics model
+
+Use independently checked source qualifications.
+
+Possible labels:
+
+FULL_18D_CONSTRAINED_DYNAMICS_VALIDATED
+
+ARM14_REDUCED_DYNAMICS_VALIDATED_WITH_FINGER_POLICY
+
+UNCONSTRAINED_FULL_18D_SOURCE_STILL_BLOCKED
+
+SOURCE_PARTIAL
+
+SOURCE_BLOCKED
+
+A validated constrained/reduced model must specify EXACTLY which equations, configurations, loads and actuation directions were checked.
+
+Passing arm acceleration while failing finger acceleration is not enough by itself.
+
+Validate:
+
+- Arm dynamics residuals.
+- Finger motion/coupling assumptions.
+- Constraint-force contributions.
+- Source timing and command application.
+- Full state and actual joint identity.
+- Gravitational and Coriolis consistency.
+- Model-solver comparison.
+- Independent negative controls.
+
+Only advance to formal controller testing if the source model applicable to the ORIGINAL frozen configuration is qualified.
+
+An interior-finger test alone is not sufficient.
+
+## Phase 5 — continue no-contact controller experiments
+
+If a physically and numerically defensible model is qualified, implement the necessary adapter for the existing QP-6 controllers.
+
+Do not change original G1, NR, QP or QP-6 archived implementations.
+
+Preserve:
+
+- Two independent FR3 articulations.
+- Unified explicit torque/effort command interface.
+- QP-6 original q14 and object pose.
+- Original 0.04 m finger reference and validated finger policy.
+- Frozen G1 translation and rotation thresholds.
+- S05 and S10 source-identified smooth profiles.
+- Simulation research torque/rate limits.
+- Full pre-command and post-step fail-closed validation.
+
+Run up to FOUR independently registered formal cells:
+
+B / S05 — joint-space computed torque.
+B / S10 — joint-space computed torque.
+C / S05 — cooperative object-centered task acceleration HQP.
+C / S10 — cooperative object-centered task acceleration HQP.
+
+Retain the existing QP-6 A/S05 and A/S10 results as the frozen baselines.
+
+Do not rerun A or modify baseline gains to create an artificial improvement.
+
+For C, clearly distinguish virtual object kinematic coordination from real contact force regulation.
+
+If any eligible cell fails the frozen grasp geometry threshold, stop THAT CELL immediately and preserve its first failing state.
+
+Other independent cells may continue after a validated reset.
+
+If a shared dynamics prerequisite fails, skip all dependent cells with explicit reasons.
+
+No actual Cube, D6 contact or internal-force feedback in this phase.
+
+## Phase 6 — future coupled-contact readiness review
+
+Inspect the remaining prerequisites for the actual Cube/ideal D6 version of QP-6.
+
+Evaluate only readiness:
+
+- Actual Cube mass/inertia source.
+- Actual grasp attachment geometry.
+- Constraint reaction observability.
+- Contact wrench sign and point of application.
+- The previous G3-P2-3 bilateral static geometry blocker.
+- Finite suction model requirements.
+
+Do not run D/E physical contact cells in this R1 unless independently authorized in a later task.
+
+Keep ideal mathematical contact-force allocation separate from actual measured contact forces.
+
+## Phase 7 — controller evidence and benchmarking
+
+For each executed B/C formal cell, report:
+
+- Complete/failed/skipped.
+- Moving physics steps and final hold.
+- First invalid geometry or source gate.
+- Maximum left/right absolute grasp error.
+- Relative grasp error.
+- Common virtual-object error.
+- Per-joint q/dq tracking.
+- Actual effort, effort change and saturation.
+- Dynamics and constraint residuals.
+- HQP solver feasibility and priority residuals.
+- Runtime source and timestamp identity.
+- Solver wall-time distribution.
+- Whether controller improvement is supported relative to the frozen A baselines.
+
+Do not assert cooperative improvement based on offline mathematics alone.
+
+Do not claim real-time capability from numerical feasibility alone.
+
+## Phase 8 — regression and deliverables
+
+Deliver:
+
+docs/tasks/TASK28_G2_P5_QP_6_R1_CONSTRAINT_AWARE_DYNAMICS.md
+
+Save all code, mathematical notes, literature references, preregistration, source raw data, negative controls, controller traces, failed/skipped cases, source hashes and independent evaluation under:
+
+offline/task28_p5_qp_6_r1/
+
+Run the 929 previous software tests and new focused tests.
+
+Do not overwrite existing artifacts or change the old QP6_PARTIAL status.
+
+Overall acceptance must separately report:
+
+1. Constraint-aware/full or reduced dynamics source status.
+2. Whether B tracking passed.
+3. Whether C cooperative HQP tracking passed.
+4. Whether C provided measurable benefit over A/B.
+5. The current Cube/D6/internal-wrench readiness status.
+
+If no source model qualifies, report the source findings and BLOCK the formal moving controller cells rather than silently bypassing the prerequisite.
+
+## Strict boundaries
+
+No original frozen USD/fixture/ACM mutation.
+
+No G1 0.100 mm tolerance relaxation.
+
+No rewriting historical NR/QP or prior evidence.
+
+No dummy contact forces or fake measured internal wrench.
+
+No hardware acceleration or torque certification.
+
+No ROS or physical FR3.
+
+No production bridge modifications.
+
+No RL, unrelated planning or automated Cube attachment.
+
+Commit and push only R1 task-scoped additions.
+
+Report actual results in Chinese, including all attempted and skipped configurations, negative results, exact scientific scope, test counts, commit SHA, verified remote HEAD and worktree status.
+
+STOP after QP-6-R1.

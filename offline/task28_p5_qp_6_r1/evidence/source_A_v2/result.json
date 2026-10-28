@@ -1,0 +1,64 @@
+{
+  "Cube_D6_ROS_hardware": false,
+  "actual_mimic_and_limits": {
+    "left": {
+      "finger_lower": [
+        0.0,
+        0.0
+      ],
+      "finger_upper": [
+        0.03999999910593033,
+        0.03999999910593033
+      ],
+      "gearing": -1.0,
+      "mimic_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear, PhysxMimicJointAPI:rotX])",
+      "offset_m": 0.0,
+      "reference_joint": [
+        "/World/QP6R1_left/fr3_hand/fr3_finger_joint1"
+      ]
+    },
+    "right": {
+      "finger_lower": [
+        0.0,
+        0.0
+      ],
+      "finger_upper": [
+        0.03999999910593033,
+        0.03999999910593033
+      ],
+      "gearing": -1.0,
+      "mimic_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear, PhysxMimicJointAPI:rotX])",
+      "offset_m": 0.0,
+      "reference_joint": [
+        "/World/QP6R1_right/fr3_hand/fr3_finger_joint1"
+      ]
+    }
+  },
+  "actual_physics_dt_s": 0.008333333333333333,
+  "asset_sha": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "configuration": "A",
+  "controlled_steps": 19,
+  "exception": {
+    "message": "POST_GATE_LATCHED",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r1/source_probe.py\", line 114, in main\n    result['first_failure']={'reasons':gate['reasons']+model_fail,'row_index':len(rows)-1}; raise RuntimeError('POST_GATE_LATCHED')\nRuntimeError: POST_GATE_LATCHED\n",
+    "type": "RuntimeError"
+  },
+  "first_failure": {
+    "reasons": [
+      "right:ORIGINAL_F_ACCELERATION_GATE"
+    ],
+    "row_index": 18
+  },
+  "identity": "QP6R1_SOURCE_A_ORIGINAL_FROZEN_004_FREE_NEGATIVE_BASELINE",
+  "initialization_physics_steps": 2,
+  "numpy": "1.26.0",
+  "osqp_file": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/qp6_deps/osqp/__init__.py",
+  "osqp_version": "1.0.5",
+  "python": "3.10.15 (tags/v3.10.15-dirty:ffee63f, Oct  8 2024, 18:53:10) [GCC 7.3.1 20180303 (Red Hat 7.3.1-5)]",
+  "registration_sha": "e48e62eb2e2729719bf0253a7126c075846ea3a972253352d8c401bdb08c00f3",
+  "runtime_version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+  "source_kind": "BOUNDED_SOURCE_ONLY_NOT_FORMAL_CONTROLLER",
+  "status": "SOURCE_CONFIGURATION_REJECTED",
+  "unexecuted_steps": 11,
+  "wrapper_sha": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a"
+}

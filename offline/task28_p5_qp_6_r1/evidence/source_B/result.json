@@ -1,0 +1,56 @@
+{
+  "Cube_D6_ROS_hardware": false,
+  "actual_mimic_and_limits": {
+    "left": {
+      "finger_lower": [
+        0.0,
+        0.0
+      ],
+      "finger_upper": [
+        0.03999999910593033,
+        0.03999999910593033
+      ],
+      "gearing": -1.0,
+      "mimic_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear, PhysxMimicJointAPI:rotX])",
+      "offset_m": 0.0,
+      "reference_joint": [
+        "/World/QP6R1_left/fr3_hand/fr3_finger_joint1"
+      ]
+    },
+    "right": {
+      "finger_lower": [
+        0.0,
+        0.0
+      ],
+      "finger_upper": [
+        0.03999999910593033,
+        0.03999999910593033
+      ],
+      "gearing": -1.0,
+      "mimic_schema_metadata": "SdfTokenListOp(Explicit Items: [PhysxJointAPI, PhysicsJointStateAPI:linear, PhysicsDriveAPI:linear, PhysxMimicJointAPI:rotX])",
+      "offset_m": 0.0,
+      "reference_joint": [
+        "/World/QP6R1_right/fr3_hand/fr3_finger_joint1"
+      ]
+    }
+  },
+  "actual_physics_dt_s": 0.008333333333333333,
+  "asset_sha": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "configuration": "B",
+  "controlled_steps": 0,
+  "exception": {
+    "message": "'polishing' is an invalid keyword argument for this function",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r1/source_probe.py\", line 86, in main\n    pred,pdiag=constrained_prediction(M,h,tau,q,dq,dt,s['finger_lower'],s['finger_upper'])\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r1/dynamics.py\", line 33, in constrained_prediction\n    a,diag=qp(M,h-tau,A,l,u)\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6/solver.py\", line 22, in qp\n    backend.setup(P=sparse.csc_matrix(np.triu(P)),q=c,A=sparse.csc_matrix(A),l=l,u=u,\n  File \"/home/ubuntu2004/isaacsim-4.5.0/exts/omni.isaac.core_archive/pip_prebundle/osqp/interface.py\", line 37, in setup\n    self._model.setup(*unpacked_data, **settings)\nTypeError: 'polishing' is an invalid keyword argument for this function\n",
+    "type": "TypeError"
+  },
+  "identity": "QP6R1_SOURCE_B_INTERIOR_002_FREE_DIAGNOSTIC",
+  "initialization_physics_steps": 2,
+  "numpy": "1.26.0",
+  "python": "3.10.15 (tags/v3.10.15-dirty:ffee63f, Oct  8 2024, 18:53:10) [GCC 7.3.1 20180303 (Red Hat 7.3.1-5)]",
+  "registration_sha": "2fa7c5a9552870561ed675cd3e0de9b2f92b239c09fb3a2972b0981bd88c646a",
+  "runtime_version": "4.5.0-rc.36+release.19112.f59b3005.gl",
+  "source_kind": "BOUNDED_SOURCE_ONLY_NOT_FORMAL_CONTROLLER",
+  "status": "SOURCE_CONFIGURATION_REJECTED",
+  "unexecuted_steps": 30,
+  "wrapper_sha": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a"
+}
