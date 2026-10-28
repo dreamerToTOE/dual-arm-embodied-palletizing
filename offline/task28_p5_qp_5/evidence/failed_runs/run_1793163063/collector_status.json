@@ -1,0 +1,221 @@
+{
+  "asset": "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd",
+  "asset_sha256": "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f",
+  "collector_sha256": "18b33b899c7d08a920864346c1e345e4da1b504580099042015ff08ebbba19ec",
+  "completed_files": [
+    "static_hold_observations.json",
+    "tracking_observations.json"
+  ],
+  "elapsed_wall_s": 15.934994763998475,
+  "execution_authorized": false,
+  "physical_robot_tested": false,
+  "physics_steps": 315,
+  "preregistration_sha256": "3e20004416eccb6b001d7fab194df3242b787f4048fd1201e8ecb9275e098c2e",
+  "runtime": {
+    "arms": {
+      "left": {
+        "all_dof_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7",
+          "fr3_finger_joint1",
+          "fr3_finger_joint2"
+        ],
+        "articulation_path": "/World/Probe_left",
+        "effort_mode": [
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force"
+        ],
+        "link7_path": "/World/Probe_left/fr3_link7",
+        "ordered_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "runtime_drive_gains_zero": true
+      },
+      "right": {
+        "all_dof_names": [
+          "fr3_joint1",
+          "fr3_joint2",
+          "fr3_joint3",
+          "fr3_joint4",
+          "fr3_joint5",
+          "fr3_joint6",
+          "fr3_joint7",
+          "fr3_finger_joint1",
+          "fr3_finger_joint2"
+        ],
+        "articulation_path": "/World/Probe_right",
+        "effort_mode": [
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force",
+          "force"
+        ],
+        "link7_path": "/World/Probe_right/fr3_link7",
+        "ordered_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "runtime_drive_gains_zero": true
+      }
+    },
+    "controller": {
+      "effort_bounds": [
+        60.0,
+        60.0,
+        60.0,
+        60.0,
+        60.0,
+        60.0,
+        60.0,
+        10.0,
+        10.0
+      ],
+      "effort_rate_bounds_per_step": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        10.0,
+        10.0
+      ],
+      "finger_policy": "explicit gravity+PD hold at q=[0.04,0.04], full 9D command",
+      "kd": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.8,
+        0.8,
+        0.5,
+        2.0,
+        2.0
+      ],
+      "kp": [
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        3.0,
+        3.0,
+        2.0,
+        20.0,
+        20.0
+      ]
+    },
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.81
+    ],
+    "physics_dt_s": 0.008333333333333333,
+    "reference_semantics": "q_ref(t)=q_start[k]+(t-t_start[k])*qdot[k], interval-start qdot, final hold qdot=0, shared simulation cursor"
+  },
+  "schema": "task28.g2_p5_qp_5.collector.v1",
+  "scope": "VIRTUAL_GEOMETRY_ONLY",
+  "source_object_pose_world": [
+    [
+      0.9999624388165116,
+      -0.008420515480591343,
+      -0.0020532596463821826,
+      0.7317598428873924
+    ],
+    [
+      0.008416486620595387,
+      0.9999626540212794,
+      -0.0019629864198555274,
+      -0.04094934189119079
+    ],
+    [
+      0.002069712322927705,
+      0.0019456314554200428,
+      0.9999959653964311,
+      0.3899251573947371
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "source_q14": [
+    0.47955903375587694,
+    -0.8617497871607237,
+    0.6909323531073726,
+    -2.5455939932591547,
+    0.5172879671908382,
+    1.7857317110077244,
+    0.8458116607892705,
+    0.048681976158396846,
+    -1.0618819654519702,
+    -1.0564533676035006,
+    -2.2881856578029978,
+    -0.8609485506475615,
+    1.5677818360225082,
+    -0.675279902172274
+  ],
+  "static_gate": {
+    "first_rejected_step": null,
+    "max_closure_rotation_rad": 1.850611731078659e-06,
+    "max_closure_translation_m": 1.9321745339187524e-07,
+    "max_command_readback_error": 9.481417677648096e-07,
+    "max_link7_fk_rotation_rad": 8.179915095345552e-07,
+    "max_link7_fk_translation_m": 4.736940709126448e-07,
+    "max_position_error_rad": 0.0,
+    "max_velocity_error_rad_s": 0.0,
+    "reasons": [],
+    "sample_count": 240,
+    "status": "PASS"
+  },
+  "status": "COLLECTION_COMPLETE_NOT_EVALUATED",
+  "tracking_evaluation": {
+    "first_rejected_step": 0,
+    "max_closure_rotation_rad": 1.850611731078659e-06,
+    "max_closure_translation_m": 1.9321745339187524e-07,
+    "max_command_readback_error": 0.0,
+    "max_link7_fk_rotation_rad": 8.179915095345552e-07,
+    "max_link7_fk_translation_m": 4.736940709126448e-07,
+    "max_position_error_rad": 0.0,
+    "max_velocity_error_rad_s": 0.0,
+    "reasons": [
+      "CLOSURE_GATE:LEFT_GRASP_TRANSLATION_MISMATCH,LEFT_GRASP_ROTATION_MISMATCH,RIGHT_GRASP_TRANSLATION_MISMATCH,RIGHT_GRASP_ROTATION_MISMATCH"
+    ],
+    "sample_count": 75,
+    "status": "REJECTED"
+  }
+}
