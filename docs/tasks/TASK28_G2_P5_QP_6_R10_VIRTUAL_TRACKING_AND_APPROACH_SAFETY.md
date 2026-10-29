@@ -90,4 +90,4 @@ R10 是 centralized kinematic cooperative QP 后接 R8 gravity-plus-frozen-mass 
 - `FULL_INVERSE_DYNAMICS_HQP_STATUS = NOT_ESTABLISHED_KINEMATIC_QP_PLUS_R8_IMPEDANCE_ONLY`
 - `CUBE_D6_NOT_TESTED = PASS_NOT_TESTED`
 
-归档收尾：R10 实现与证据已提交为 `b8928159d6c3b4a269a2fe94dc0119a0da8f4d7b`（`Add R10 virtual tracking and approach safety evidence`），并已推送到 `origin/side-suction-palletizing`；推送核对时 remote HEAD 与该 SHA 一致。该提交之后只会增加本报告的收据元数据，不改变任何 R10 运行结果；当前工作树在收据提交前保持 clean。
+归档收尾：R10 实现与证据已提交为 `b8928154790b317c34895deb7eb36641f6b8486d`（`Add R10 virtual tracking and approach safety evidence`），并已推送到 `origin/side-suction-palletizing`；推送核对时 remote HEAD 与该 SHA 一致。该提交之后只会增加本报告的收据元数据，不改变任何 R10 运行结果；当前工作树在收据提交前保持 clean。
