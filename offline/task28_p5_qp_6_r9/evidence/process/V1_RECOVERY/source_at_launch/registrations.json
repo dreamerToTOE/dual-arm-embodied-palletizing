@@ -1,0 +1,9 @@
+{
+  "schema": "TASK28_R9_REGISTRATIONS_V1",
+  "V0": {"kind": "archived_reference", "source": "R8 MOVING +0.002 rad joint-2", "execute": false},
+  "V1": {"kind": "virtual_no_contact", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "strategy": "centralized_14dof_qp_to_r8_impedance", "execute": true},
+  "V1_RECOVERY": {"kind": "virtual_no_contact_recovery_after_prephysics_source_gate", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "strategy": "centralized_14dof_qp_to_r8_impedance", "execute": true, "prerequisite": "V1 failed before physics/effort; source contract repaired without changing trajectory"},
+  "V2": {"kind": "independent_repeat", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "strategy": "centralized_14dof_qp_to_r8_impedance", "execute": true},
+  "V3": {"kind": "unexecuted", "reason": "No second distinct direction needed after exact V1 repeat; four-cell bound preserved", "execute": false},
+  "physical_approach": {"kind": "cpu_only_candidate", "execute": false, "reason": "sampled path is not continuous proof and long approach is outside R8 small-motion envelope"}
+}

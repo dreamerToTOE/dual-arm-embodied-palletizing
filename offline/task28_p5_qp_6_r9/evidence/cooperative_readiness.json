@@ -1,0 +1,113 @@
+{
+  "actual_execution_cells": {
+    "V1": {
+      "accuracy": null,
+      "accuracy_status": null,
+      "no_contact_status": null,
+      "status": "NOT_ELIGIBLE"
+    },
+    "V1_RECOVERY": {
+      "accuracy": null,
+      "accuracy_status": null,
+      "no_contact_status": null,
+      "status": "NOT_ELIGIBLE"
+    },
+    "V1_RECOVERY2": {
+      "accuracy": {
+        "joint_tracking_peak_rad": {
+          "limit": 0.02,
+          "pass": true,
+          "value": 0.0008928785701672881
+        },
+        "native_dq_peak_rad_s": {
+          "limit": 0.3,
+          "pass": true,
+          "value": 0.0006754171721103342
+        },
+        "relative_tcp_rotation_peak_rad": {
+          "limit": 0.001,
+          "pass": true,
+          "value": 2.2687762825119442e-05
+        },
+        "relative_tcp_translation_peak_m": {
+          "limit": 0.00015,
+          "pass": false,
+          "value": 0.00016091133811798532
+        },
+        "virtual_object_tracking_peak_m": {
+          "limit": 0.00025,
+          "pass": false,
+          "value": 0.0010343508879409665
+        }
+      },
+      "accuracy_status": "FAIL_FROZEN_PREREG_THRESHOLDS",
+      "no_contact_status": "PASS",
+      "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL"
+    },
+    "V2": {
+      "accuracy": {
+        "joint_tracking_peak_rad": {
+          "limit": 0.02,
+          "pass": true,
+          "value": 0.0008928785701672881
+        },
+        "native_dq_peak_rad_s": {
+          "limit": 0.3,
+          "pass": true,
+          "value": 0.0006754171721103342
+        },
+        "relative_tcp_rotation_peak_rad": {
+          "limit": 0.001,
+          "pass": true,
+          "value": 2.2687762825119442e-05
+        },
+        "relative_tcp_translation_peak_m": {
+          "limit": 0.00015,
+          "pass": false,
+          "value": 0.00016091133811798532
+        },
+        "virtual_object_tracking_peak_m": {
+          "limit": 0.00025,
+          "pass": false,
+          "value": 0.0010343508879409665
+        }
+      },
+      "accuracy_status": "FAIL_FROZEN_PREREG_THRESHOLDS",
+      "no_contact_status": "PASS",
+      "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL"
+    }
+  },
+  "equality_rank": 6,
+  "fd_jacobian_pass": true,
+  "id_hqp_runtime": {
+    "reason": "R9 QP is kinematic only; no qualified same-state M(q), C(q,dq), g(q), mounted-tool inertia, object inertia or contact-wrench map was introduced.",
+    "status": "SKIPPED"
+  },
+  "independent_kkt_verified": true,
+  "inverse_dynamics": {
+    "reason": "R3/R8 M,c evidence is not a same-state cooperative model and command buffer is not a torque sensor.",
+    "status": "BLOCKED"
+  },
+  "physical_frame_identity": "ATTACHED_PHYSICAL_CUBE_CANDIDATE",
+  "physical_promotion": {
+    "left_physical_mismatch_m": 0.6881905748356175,
+    "left_physical_rotation_rad": 0.7853283773200842,
+    "promotion_allowed": false,
+    "reason": "VIRTUAL_FRAME_NEVER_PROMOTES_TO_PHYSICAL_CUBE",
+    "right_physical_mismatch_m": 0.5351227026272878,
+    "right_physical_rotation_rad": 0.7853416990233865
+  },
+  "qp_dimension": 14,
+  "qp_hard_constraints": [
+    "finite source",
+    "14D joint velocity box",
+    "virtual TCP relative twist"
+  ],
+  "qp_soft_objective": [
+    "common virtual object twist",
+    "joint smoothness"
+  ],
+  "schema": "TASK28_R9_COOPERATIVE_READINESS_V1",
+  "status": "KINEMATIC_QP_EXECUTED_NO_CONTACT_IDHQP_BLOCKED",
+  "virtual_frame_identity": "FREE_HOME_VIRTUAL_COOPERATION"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "TASK28_R9_PREREGISTRATION_V1",
+  "created_from_head": "94a0ace265ecc60d8cb0e4935f05459323a99365",
+  "virtual": {"axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "dt_s": 0.016666666666666666, "initial_state": "actual R8 ownership state; no teleport", "frame": "FREE_HOME_VIRTUAL_COOPERATION"},
+  "qp": {"dimension": 14, "hard": ["finite source", "virtual TCP relative twist", "joint velocity box", "position lookahead box"], "soft": ["common virtual object twist", "joint smoothness"], "solver": "strict SPD box/equality QP with independent primal/dual KKT"},
+  "acceptance": {"virtual_object_tracking_peak_m": 0.00025, "relative_tcp_translation_peak_m": 0.00015, "relative_tcp_rotation_peak_rad": 0.001, "joint_tracking_peak_rad": 0.02, "native_dq_peak_rad_s": 0.3, "fcl_unexpected_collisions": 0, "cube_translation_m": 1e-8, "suction_commands": 0, "D6_commands": 0, "process_exit_required": true},
+  "cells": {"V1": "execute once after CPU/FCL preflight", "V1_RECOVERY": "only if V1 is rejected before effort by a repairable R9 source-contract gate; same frozen trajectory and no tuning", "V1_RECOVERY2": "last recovery cell if V1_RECOVERY is rejected before effort by the same source-contract audit; no trajectory/controller change", "V2": "execute exact independent repeat only if the recovered V1 candidate passes all gates", "V3": "not executed"},
+  "safety": {"first_rejection_latches": true, "effort_abs_and_rate": "R8 unchanged limits", "original_g1_closure_not_applied_to_virtual_free_home": true, "continuous_collision_proof": false},
+  "physical_approach": {"endpoint": "original 1 mm nominal Cube gap", "candidate_stages": ["FREE_HOME", "HIGH_OUTER", "OUTER_CONTACT", "PRE_CONTACT_READY"], "execution": "skip unless independently qualified; no contact or suction"}
+}

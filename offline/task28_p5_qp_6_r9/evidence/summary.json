@@ -1,0 +1,80 @@
+{
+  "approach": {
+    "physical_execution": "SKIPPED",
+    "r3_direct_negative_fraction": 0.92,
+    "status": "SAMPLED_CANDIDATE_ONLY"
+  },
+  "branch": "side-suction-palletizing",
+  "cpu_approach_samples": 153,
+  "cpu_virtual_qp_samples": 211,
+  "id_hqp": "BLOCKED",
+  "isaac_cells": {
+    "V1": {
+      "commands_per_arm": 0,
+      "evaluation_status": "NOT_ELIGIBLE",
+      "robot_command_writes": 0,
+      "runtime_status": "REJECTED"
+    },
+    "V1_RECOVERY": {
+      "commands_per_arm": 0,
+      "evaluation_status": "NOT_ELIGIBLE",
+      "robot_command_writes": 0,
+      "runtime_status": "REJECTED"
+    },
+    "V1_RECOVERY2": {
+      "commands_per_arm": 210,
+      "evaluation_status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+      "robot_command_writes": 420,
+      "runtime_status": "NO_CONTACT_VIRTUAL_COOPERATION_COMPLETE"
+    },
+    "V2": {
+      "commands_per_arm": 210,
+      "evaluation_status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+      "robot_command_writes": 420,
+      "runtime_status": "NO_CONTACT_VIRTUAL_COOPERATION_COMPLETE"
+    }
+  },
+  "no_contact": {
+    "D6_commands": 0,
+    "cube_displacement_m": 0.0,
+    "physical_cube_motion": false,
+    "suction_commands": 0,
+    "unexpected_collision": false
+  },
+  "physical_suction_D6_tested": false,
+  "prior_regressions": {
+    "expected": 1034,
+    "historical": 1015,
+    "r7_focused": 4,
+    "r8_focused": 15,
+    "status": "PASS",
+    "total": 1034
+  },
+  "r9_focused_tests": 17,
+  "rejected_pre_effort_cells": [
+    "V1",
+    "V1_RECOVERY"
+  ],
+  "rejected_pre_effort_commands_total": 0,
+  "schema": "TASK28_R9_SUMMARY_V1",
+  "starting_head": "94a0ace265ecc60d8cb0e4935f05459323a99365",
+  "status": "R9_COMPLETE_WITH_EXPLICIT_BLOCKS",
+  "stop_after_R9": true,
+  "successful_full_9dof_writes_total": 840,
+  "successful_virtual_cells": [
+    "V1_RECOVERY2",
+    "V2"
+  ],
+  "successful_virtual_commands_per_arm_each": 210,
+  "virtual_accuracy": {
+    "native_dq_peak_rad_s": 0.010769423097372055,
+    "qdot_peak_rad_s": 0.0006754171721103342,
+    "relative_limit_m": 0.00015,
+    "relative_rotation_limit_rad": 0.001,
+    "relative_rotation_peak_rad": 2.2687762825119442e-05,
+    "relative_translation_peak_m": 0.00016091133811798532,
+    "status": "FROZEN_THRESHOLD_FAIL",
+    "tracking_limit_m": 0.00025,
+    "tracking_peak_m": 0.0010343508879409665
+  }
+}
