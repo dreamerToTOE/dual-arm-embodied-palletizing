@@ -1,0 +1,430 @@
+{
+  "argv": [
+    "/bin/bash",
+    "-c",
+    "set -e\nexport CARB_APP_PATH=/home/ubuntu2004/isaacsim-4.5.0/kit\nexport ISAAC_PATH=/home/ubuntu2004/isaacsim-4.5.0\nexport EXP_PATH=/home/ubuntu2004/isaacsim-4.5.0/apps\nsource /home/ubuntu2004/isaacsim-4.5.0/setup_python_env.sh\nexport LD_PRELOAD=/home/ubuntu2004/isaacsim-4.5.0/kit/libcarb.so\nexec /home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 \"$@\"",
+    "r8-worker",
+    "-m",
+    "offline.task28_p5_qp_6_r8.runtime_stabilization",
+    "--configuration",
+    "FORMAL",
+    "--output",
+    "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL",
+    "--portable-root",
+    "/tmp/task28-r8-FORMAL-efiijbzu",
+    "--/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache"
+  ],
+  "cache_isolated": true,
+  "child_pid": 110060,
+  "clean_exit": true,
+  "configuration": "FORMAL",
+  "controller_status": "FORMAL_STATIC_HOLD_COMPLETE",
+  "elapsed_s": 57.5404191130001,
+  "end_utc": "2026-10-29T12:33:08.596727+00:00",
+  "exit_code": 0,
+  "isolation_verified": true,
+  "kit_tokens": {
+    "appcache": "/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+    "cache": "/tmp/task28-r8-FORMAL-efiijbzu/cache/Kit/106.5/d02c707b",
+    "data": "/tmp/task28-r8-FORMAL-efiijbzu/data/Kit/Isaac-Sim Python/4.5",
+    "logs": "/tmp/task28-r8-FORMAL-efiijbzu/logs/Kit/Isaac-Sim Python/4.5"
+  },
+  "kvdb_lock_warning": false,
+  "normal_shutdown_marker": true,
+  "owned_samples": [
+    {
+      "elapsed_s": 0.020605723999324255,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 2.042027720999613,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 4.064182911999524,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 6.085745016000146,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 8.117188312000508,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 10.18260453199764,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 12.214216770000348,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 14.24954465799965,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 16.32436789699932,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 18.41742546399837,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 20.47912405399984,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 22.534375431998342,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 24.567614072999277,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 26.606954670998675,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 28.67600686699734,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 30.733387072999903,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 32.802355591997184,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 34.87645850099943,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 36.92418860500038,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 38.987624155997764,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 41.06720732199756,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 43.12591185799829,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 45.16033953599981,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 47.36982745699788,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 49.40059262700015,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 51.430233194998436,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 53.47118486099862,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r8.runtime_stabilization --configuration FORMAL --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r8/evidence/diagnostic/FORMAL --portable-root /tmp/task28-r8-FORMAL-efiijbzu --/app/tokens/appcache=/tmp/task28-r8-FORMAL-efiijbzu/appcache",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 55.494136908000655,
+      "members": [
+        {
+          "argv": "",
+          "pgid": 110060,
+          "pid": 110060,
+          "ppid": 110057,
+          "start_ticks": 2259422,
+          "state": "Z"
+        }
+      ]
+    }
+  ],
+  "parent_pid": 110057,
+  "pgid": 110060,
+  "portable_resources_removed": true,
+  "portable_root": "/tmp/task28-r8-FORMAL-efiijbzu",
+  "postflight_competing": [],
+  "preflight_competing": [],
+  "residual_owned": [],
+  "signal": null,
+  "signals_sent": [],
+  "source_hashes": {
+    "offline/task28_p5_qp_6_r8/__init__.py": "4a33616431aec577c4080bfad2be53692d14d66861169eb4e7797cbc9f1ebae2",
+    "offline/task28_p5_qp_6_r8/analyze_r7.py": "46a2981b4aaa89fcf2f35914f717e43cee1b4d29cd24cb7e8cf7081e951810ed",
+    "offline/task28_p5_qp_6_r8/controller.py": "3bc7d9e46fb88e4c8fe5ec43a4c3a9848810ec46711adfe828747e339715ec96",
+    "offline/task28_p5_qp_6_r8/effort_adapter.py": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33",
+    "offline/task28_p5_qp_6_r8/evaluate.py": "57b41cc9e8df1751f437c4177c0aed62b97ce173fa90037a4c96b7ffda96111a",
+    "offline/task28_p5_qp_6_r8/formal_freeze.json": "90e56f715efd16d602ce4d21a2db254ebc696f5053aa0c73b46be2860fc18dd4",
+    "offline/task28_p5_qp_6_r8/literature_and_source_review.md": "533f014364187a67787d694139205f8834aa738df63f09190880014a06e0b350",
+    "offline/task28_p5_qp_6_r8/plot_evidence.py": "84bef739aa21635462fd66a406e11178a8dfa4f4f455bf930015df1c67032a22",
+    "offline/task28_p5_qp_6_r8/preregistration.json": "1c6ee99e2f6c31489c7d98cc90b249fbc545f77139f09b7383c3ae26f4194420",
+    "offline/task28_p5_qp_6_r8/process_audit.py": "537fb1b4da70f409a349dbefe31098c2c9a1bccc9159eba373218b952c9674ec",
+    "offline/task28_p5_qp_6_r8/process_runner.py": "3bb972fd85ba2e359df0a1200e4a48f230fbd11c7a7a8cfa77ddca4463476adc",
+    "offline/task28_p5_qp_6_r8/registrations.json": "762acf9ace29b2bc04d8d202f79c01aa9dfe1a34a91eefb6ef1e7e5feff7ae8b",
+    "offline/task28_p5_qp_6_r8/run_regressions.py": "9d49f51c1998975ce7c72ff6233bc73d2fefbbbf1794e469d8705982e3435251",
+    "offline/task28_p5_qp_6_r8/runtime_stabilization.py": "50e54f50a71035e3550ff9297e4cd63c8bcdd1d8a54b582ed7898412e0c92fe6",
+    "offline/task28_p5_qp_6_r8/source_contract.json": "40afbfe40c6b87a650944ad31dd767ef369ce17159b911990965d018d9ad5a8b",
+    "offline/task28_p5_qp_6_r8/source_gate.py": "92a770b5a7c3da514f58c7eb10e6b893ce2cf2b3f5092d598eeb21f8c9c21c47"
+  },
+  "start_monotonic_s": 22594.226523991,
+  "start_utc": "2026-10-29T12:32:11.032190+00:00",
+  "status": "EXITED"
+}

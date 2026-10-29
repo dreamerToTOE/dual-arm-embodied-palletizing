@@ -1,0 +1,57 @@
+{
+  "acceptance": {
+    "all_live_source_safety_and_process_gates": true,
+    "final_TCP_translation_m": 0.0001,
+    "final_joint_tracking_rad": 0.0002,
+    "minimum_joint2_displacement_rad": 0.0018,
+    "moving_phase_TCP_translation_m": 0.0002,
+    "native_velocity_rad_s": 0.3,
+    "peak_TCP_tracking_rotation_rad": 0.01,
+    "peak_TCP_tracking_translation_m": 0.001,
+    "peak_joint_tracking_rad": 0.002
+  },
+  "acceptance_reason": "Small commanded displacement must not pass via no motion: require at least 90% signed joint2 displacement plus tighter moving/final tracking gates; initial ownership transient retains 1mm gate.",
+  "actual_cube_suction_or_attachment": false,
+  "computed_torque": "SKIPPED_MODEL_NOT_QUALIFIED",
+  "controller": "same frozen_mass_smooth gravity+impedance, no qdd feedforward or c compensation",
+  "created_utc": "2026-10-29T12:34:54.034476+00:00",
+  "dt_s": 0.016666666666666666,
+  "duration_s": 3.5,
+  "formal_pass": true,
+  "formal_result_sha256": "772f510f52e7d0dc7ecaa73a36e77fc59eaa68830064adb4f19be82d19c1efc5",
+  "gain_policy": "same-state M0 frozen per run, Kp=16M0 Kd=8M0; verify initial q/dq and matrices against formal freeze",
+  "initial_state_policy": "180 native steps, actual q0/dq0 at ownership; same .15s C2 transition then hold to t=1s",
+  "model_predictions": {
+    "left": {
+      "predicted_all_sample_TCP_peak_m": 0.0006941040717277405,
+      "predicted_final_TCP_error_m": 1.7657148683529275e-05,
+      "predicted_final_joint2_displacement_rad": 0.00203905697985729,
+      "predicted_motion_phase_TCP_peak_m": 0.00012242094143408722,
+      "scope": "same frozen-M semi-implicit approximation, not TGS certification"
+    },
+    "right": {
+      "predicted_all_sample_TCP_peak_m": 0.0003951209445692985,
+      "predicted_final_TCP_error_m": 1.0346090905204702e-05,
+      "predicted_final_joint2_displacement_rad": 0.0020390578885044475,
+      "predicted_motion_phase_TCP_peak_m": 6.968306144941847e-05,
+      "scope": "same frozen-M semi-implicit approximation, not TGS certification"
+    }
+  },
+  "motion_delta_rad": [
+    0,
+    0.002,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "post_motion_hold_s": 0.5,
+  "reference": "q0+[0,.002,0,0,0,0,0]*(10s^3-15s^4+6s^5), s=clip((t-1)/2,0,1); both arms",
+  "reference_collision_samples": 2101,
+  "reference_geometry": "frozen FK + FCL detached Cube, actual initial Cube pose, all limits; sampled path checked before first command",
+  "retune": false,
+  "runs": 1,
+  "safety": "unchanged R8 envelope relative to actual ownership; original G1 limits/FK/FCL; unchanged effort/rate",
+  "steps": 210
+}

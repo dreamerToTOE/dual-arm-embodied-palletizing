@@ -1,0 +1,22 @@
+{
+  "created_utc": "2026-10-29T12:23:21.634602+00:00",
+  "before": "D2; no control write has occurred in R8",
+  "preserved_D1": "PROCESS_ABORTED timeout SIGTERM -15, zero frames and commands; no rerun",
+  "cause_observed": "waiting for RtPso async compilation at blank startup stage; portable root leaves appcache global",
+  "correction": [
+    "explicit /app/tokens/appcache under per-run root",
+    "installed create_new_stage=False avoids unnecessary automatic blank stage; frozen build_scene still creates actual stage",
+    "previous-run rule checks verified process/resource exit; current-run cache gate still required before scene/control"
+  ],
+  "unchanged": [
+    "D1-D4 controller matrix",
+    "gains",
+    "initial-state policy",
+    "duration",
+    "bounds",
+    "60Hz CPU TGS",
+    "original scene",
+    "300-second timeout"
+  ],
+  "stop_if_D2_cannot_verify_isolation": true
+}

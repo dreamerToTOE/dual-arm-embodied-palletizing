@@ -1,0 +1,115 @@
+{
+  "D4_selection": "among source/safety/process-complete D2/D3 choose lowest worst-arm peak TCP translation (ties D2); if none skip D4; repeat selected even if performance fails to report reproducibility",
+  "acceptance": {
+    "all_samples_abs_native_dq_rad_s": 0.3,
+    "all_samples_joint_drift_rad": 0.02,
+    "all_samples_tcp_rotation_rad": 0.01,
+    "all_samples_tcp_translation_m": 0.001,
+    "execution_complete_required": true,
+    "process_exit_required": true
+  },
+  "computed_torque": "not permitted absent independent applicable current-state model qualification",
+  "controller": {
+    "Kd": "8*M0",
+    "Kp": "16*M0",
+    "baseline": "R7 S3 PD gains; S1 is damping-only",
+    "formula": "g(q)+Kp@(q_ref-q)+Kd@(dq_ref-native_end_step_dq)",
+    "initial_state": "180 native-drive observed steps; q within .005rad of official start; source-valid then capture actual q0/dq0; no teleport",
+    "mass": "freeze symmetric same-state arm block M0 at ownership, not update during run",
+    "smooth_reference": "q0+dq0*T*(s-6s^3+8s^4-3s^5), T=.15s, 0<=s<=1, then q0; analytic dq_ref",
+    "wn_rad_s": 4,
+    "zeta": 1
+  },
+  "created_utc": "2026-10-29T12:02:03.000052+00:00",
+  "expected_start_head": "fc6d7ca75988d69d2d9409cfc5bb2fcc4cbf71e8",
+  "forbidden": [
+    "scene edits",
+    "ROS commands",
+    "suction",
+    "D6",
+    "Cube manipulation",
+    "GPU retry",
+    "hardware",
+    "automatic gain search"
+  ],
+  "formal_prerequisite": "selected diagnostic and D4 both all-sample acceptance PASS with same strategy and initial policy; freeze exact controller rule; one fresh 60-step run, no retune",
+  "limits": {
+    "arm_effort_rate_max_Nm_s": [
+      2400,
+      600,
+      240,
+      2400,
+      240,
+      240,
+      240
+    ],
+    "research_effort_abs_max_Nm": [
+      35,
+      12,
+      8,
+      35,
+      4,
+      4,
+      4
+    ],
+    "source_effort_abs_max_Nm": [
+      87,
+      87,
+      87,
+      87,
+      12,
+      12,
+      12
+    ]
+  },
+  "matrix": {
+    "D1": {
+      "steps": 30,
+      "strategy": "r7_pd"
+    },
+    "D2": {
+      "steps": 30,
+      "strategy": "frozen_mass_hold"
+    },
+    "D3": {
+      "steps": 30,
+      "strategy": "frozen_mass_smooth"
+    },
+    "D4": {
+      "steps": 30,
+      "strategy": "selected_D2_or_D3"
+    },
+    "FORMAL": {
+      "steps": 60,
+      "strategy": "selected_D2_or_D3"
+    }
+  },
+  "max_development_cells": 4,
+  "moving": "only after formal PASS; separately freeze C2 small collision-checked reference before execution",
+  "physics": {
+    "backend": "CPU_NUMPY",
+    "dt_s": 0.016666666666666666,
+    "external_forces_every_iteration": false,
+    "solver": "TGS"
+  },
+  "process": {
+    "kill_grace_s": 10,
+    "serial_owned_session": true,
+    "term_grace_s": 15,
+    "timeout_s": 300,
+    "unique_portable_root": true,
+    "unrelated_kill": false
+  },
+  "safety_abort": {
+    "abs_native_dq_rad_s": 0.3,
+    "first_failure_latched": true,
+    "joint_drift_rad": 0.02,
+    "original_FK_and_FCL": true,
+    "original_joint_limits": true,
+    "tcp_rotation_rad": 0.05,
+    "tcp_translation_m": 0.01
+  },
+  "scene_builder": "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene",
+  "schema": "TASK28_R8_PREREGISTRATION_V1",
+  "threshold_distinction": "1mm is performance, not step abort; 0.100mm original G1 grasp closure unchanged and not applied to free-home hold"
+}

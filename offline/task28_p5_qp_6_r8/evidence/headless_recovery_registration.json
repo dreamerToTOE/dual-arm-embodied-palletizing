@@ -1,0 +1,18 @@
+{
+  "created_utc": "2026-10-29T12:28:57.333849+00:00",
+  "before": "D3; R8 has no valid frame or command",
+  "D2": "300 second initialization timeout; no frame; owned SIGTERM cleanup; child cache isolation verified before scene; independent process audit PASS",
+  "change": "disable active viewport updates using installed viewport_api.updates_enabled=False before original scene and sim.play; actual CPU physics and frozen scene unchanged",
+  "why": "sim.play propagates handles through app.update, which otherwise triggers cold RTX viewport compilation although test has no camera/render requirement",
+  "not_changed": [
+    "GPU selection",
+    "physics backend CPU",
+    "60Hz TGS",
+    "D3/D4 controller and gain rules",
+    "initial native-drive steps",
+    "safety and performance thresholds",
+    "timeout"
+  ],
+  "D4_rule": "only if D3 completes source-valid interval; strongest eligible selection unchanged",
+  "stop_if_D3_initialization_fails": true
+}

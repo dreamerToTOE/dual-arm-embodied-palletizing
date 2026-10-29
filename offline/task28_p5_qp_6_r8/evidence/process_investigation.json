@@ -1,0 +1,110 @@
+{
+  "recorded_utc": "2026-10-29T12:16:14.686600+00:00",
+  "R7_owned_processes_remaining": [],
+  "ownership_limit": "R7 did not record a durable PID registry; current process scan finds no matching running Isaac/Kit/ROS worker. Cannot retrospectively prove ownership of historical locks.",
+  "R7_S2_outcomes": [
+    "SIGSEGV 139",
+    "SIGABRT 134"
+  ],
+  "R7_S2_frames": 0,
+  "logs": {
+    "kit_20261029_113701.log": {
+      "sha256": "136d6163bb6e7915eda21df581c263302824be703eebca640a75f9baefb2b9b2",
+      "signals": [
+        {
+          "line": 5388,
+          "text": "2026-10-29 02:37:11 [10,039ms] [Info] [omni.kit.app.plugin] [10.047s] Simulation App Startup Complete"
+        },
+        {
+          "line": 7725,
+          "text": "2026-10-29 02:37:18 [16,571ms] [Info] [omni.kit.app.plugin] [16.579s] Simulation App Shutting Down"
+        },
+        {
+          "line": 7726,
+          "text": "2026-10-29 02:37:18 [16,571ms] [Info] [omni.kit.app.plugin] [16.579s] Waiting for USD resource operations to complete (this may take a few seconds), use Ctrl-C to exit immediately"
+        }
+      ]
+    },
+    "kit_20261029_112735.log": {
+      "sha256": "360565d20eec44b98893bc1705c88b88ded9c9b7e8f9694ec73ec87b82d81a7c",
+      "signals": [
+        {
+          "line": 5388,
+          "text": "2026-10-29 02:27:45 [9,566ms] [Info] [omni.kit.app.plugin] [9.574s] Simulation App Startup Complete"
+        },
+        {
+          "line": 7734,
+          "text": "2026-10-29 02:27:51 [15,496ms] [Info] [omni.kit.app.plugin] [15.504s] Simulation App Shutting Down"
+        },
+        {
+          "line": 7735,
+          "text": "2026-10-29 02:27:51 [15,496ms] [Info] [omni.kit.app.plugin] [15.504s] Waiting for USD resource operations to complete (this may take a few seconds), use Ctrl-C to exit immediately"
+        }
+      ]
+    },
+    "kit_20261029_115058.log": {
+      "sha256": "6627815f8fb3fd6d42c3437532666186b3e0245f7b30070844482a95a15f64c6",
+      "signals": [
+        {
+          "line": 5388,
+          "text": "2026-10-29 02:51:07 [9,767ms] [Info] [omni.kit.app.plugin] [9.775s] Simulation App Startup Complete"
+        },
+        {
+          "line": 5416,
+          "text": "2026-10-29 02:51:09 [11,027ms] [Info] [omni.kit.app.plugin] [11.035s] Simulation App Shutting Down"
+        }
+      ]
+    },
+    "kit_20261029_113302.log": {
+      "sha256": "8265fc1136cf7939f686ac3d3a7f1d8cd16c9c4d36133f4a5b5990e0ba33dd80",
+      "signals": [
+        {
+          "line": 5256,
+          "text": "2026-10-29 02:33:10 [7,900ms] [Warning] [omni.kvdb.plugin] Disabling key-value database because another kit process is locking it"
+        },
+        {
+          "line": 5393,
+          "text": "2026-10-29 02:33:15 [12,955ms] [Info] [omni.kit.app.plugin] [12.966s] Simulation App Startup Complete"
+        }
+      ]
+    },
+    "kit_20261029_112924.log": {
+      "sha256": "618ea0398c3d7c109a3922660f22d18cf6ba970ddeac84e67d9ffa5f5eafb78d",
+      "signals": [
+        {
+          "line": 5250,
+          "text": "2026-10-29 02:29:30 [6,744ms] [Warning] [omni.kvdb.plugin] Disabling key-value database because another kit process is locking it"
+        },
+        {
+          "line": 5387,
+          "text": "2026-10-29 02:29:35 [11,315ms] [Info] [omni.kit.app.plugin] [11.324s] Simulation App Startup Complete"
+        },
+        {
+          "line": 7744,
+          "text": "2026-10-29 02:29:43 [19,015ms] [Info] [omni.kit.app.plugin] [19.024s] Simulation App Shutting Down"
+        },
+        {
+          "line": 7745,
+          "text": "2026-10-29 02:29:43 [19,015ms] [Info] [omni.kit.app.plugin] [19.024s] Waiting for USD resource operations to complete (this may take a few seconds), use Ctrl-C to exit immediately"
+        }
+      ]
+    },
+    "kit_20261029_113532.log": {
+      "sha256": "5f81bd2fec30e8650a572252ad642a18f1ae13387cd16f635b818547daf4210c",
+      "signals": [
+        {
+          "line": 5262,
+          "text": "2026-10-29 02:35:40 [7,665ms] [Warning] [omni.kvdb.plugin] Disabling key-value database because another kit process is locking it"
+        },
+        {
+          "line": 5399,
+          "text": "2026-10-29 02:35:43 [11,509ms] [Info] [omni.kit.app.plugin] [11.519s] Simulation App Startup Complete"
+        },
+        {
+          "line": 7517,
+          "text": "../../../source/plugins/carb.tasking/Mutex.cpp(537): void carb::tasking::Mutex::unlock()(): Assertion (self == m_owner) failed: Unlocked by non-owner"
+        }
+      ]
+    }
+  }
+}

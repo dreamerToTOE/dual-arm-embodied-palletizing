@@ -1,0 +1,310 @@
+# Task28 G2-P5-QP-6-R8 — Original L-Suction Torque Stabilization Recovery
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected HEAD: fc6d7ca75988d69d2d9409cfc5bb2fcc4cbf71e8
+
+## Research objective
+
+R7 established real bilateral closed-loop torque actuation, but the controllers did not meet the registered 1.0 mm TCP stabilization criterion.
+
+R8 must determine why the feedback controller had such a small effect, establish reliable independent Isaac process execution, and test a physically justified improved joint-space impedance controller in the ORIGINAL L-shaped suction scene.
+
+Do not change the scientific direction, scene geometry, suction system or original fixture.
+
+Complete all eligible stages within this single task.
+
+## 1. Research and existing-code review
+
+Before implementation, read:
+
+- All R6 and R7 reports, source code and raw traces.
+- The R7 S1, S2 and S3 failure evidence.
+- The R7 gain, torque-cap and source-gate registrations.
+- The installed Isaac Sim 4.5 articulation and physics APIs.
+- The original Task28 scene, G1 FK/Jacobian and FCL.
+- Franka official joint impedance and FR3 Duo example controllers.
+- Pinocchio inertia and inverse-dynamics references.
+- PhysX TGS velocity semantics.
+
+Starting references:
+
+https://frankarobotics.github.io/docs/doc/franka_ros2_jazzy/franka_example_controllers/doc/index.html
+
+https://frankarobotics.github.io/docs/doc/libfranka/docs/overview.html
+
+https://github.com/stack-of-tasks/tsid
+
+https://docs.isaacsim.omniverse.nvidia.com/4.5.0/py/source/extensions/isaacsim.core.prims/docs/index.html
+
+The installed Isaac runtime and original scene are authoritative.
+
+Do not copy physical Franka FCI gravity compensation behavior into Isaac. Avoid double compensation.
+
+## 2. Preserve the original environment
+
+Use ONLY:
+
+fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene()
+
+Keep unchanged:
+
+- Original two FR3 robots.
+- Left/right mirrored L-shaped suction tools and four cups per arm.
+- Original link8-to-side_suction_tcp transformations.
+- Cube_01, table, masses, poses and collision objects.
+- Original 60 Hz TGS configuration.
+- Native finger joints, mimic mechanism and finger drives.
+- FR3 USD and frozen source identities.
+- G1/FCL/ACM and all original safety thresholds.
+- Historical R6/R7 artifacts.
+
+All additions must be task-scoped:
+
+offline/task28_p5_qp_6_r8/
+
+Do not change the original scene or persist runtime controller settings.
+
+No ROS, actual Cube suction, D6 attachment, GPU retry or physical robots.
+
+## 3. Repair independent Isaac process execution
+
+R7 S2 failed with SIGSEGV and SIGABRT before a valid frame was recorded.
+
+Earlier Isaac processes were still alive after app.close(), so clean process isolation was not established.
+
+Before any new controller comparison:
+
+1. Investigate R7 S2 startup logs.
+2. Identify and record remaining R7 process ownership, shutdown and resource state.
+3. Establish an isolated child-process runner.
+4. Never launch a new Isaac cell until the previous owned process has exited.
+5. Record PID, process start, exit code, signal, lifecycle and resource cleanup.
+6. Use bounded shutdown and cleanup of task-owned child processes only.
+7. Never kill another user's Isaac process or interfere with existing sessions.
+8. Verify no competing ROS bridge or actuator sink.
+9. Record initialization failures before executing control.
+
+If complete isolation is unavailable, stop controller experiments.
+
+Do not retrospectively convert R7 S2 into a successful test.
+
+## 4. Quantify the source of R7 drift
+
+Recalculate R7 S1 and S3 traces.
+
+Investigate:
+
+- Initial q/dq at native-drive ownership transfer.
+- Actual joint displacement over each physical interval.
+- Solver end-step dq versus whole-step motion.
+- Gravity compensation before and after takeover.
+- Applied torque and feedback correction separately.
+- Joint-specific stiffness/damping effects.
+- Arm inertia and cross-joint coupling.
+- Actual TCP displacement and rotation.
+- Position-error contributions through the frozen G1 TCP Jacobian.
+
+Important R7 facts:
+
+S1 TCP displacement:
+left 3.6668 mm, right 2.0825 mm.
+
+S3 TCP displacement:
+left 3.6426 mm, right 2.0522 mm.
+
+R7 gains:
+
+Kp = [1.2, 1.2, 1.0, 0.8, 0.5, 0.4, 0.3] N.m/rad
+
+Kd = [0.18, 0.18, 0.16, 0.14, 0.10, 0.08, 0.06] N.m.s/rad
+
+Determine whether these gains are too weak to meaningfully counter observed initial motion over a 30-step, 0.50-second interval.
+
+Do not assume the cause is unknown tool inertia without testing alternatives.
+
+Use a small-signal linearized model to estimate modal natural frequencies and damping ratios. Analyze the coupled mass matrix rather than relying only on scalar joint inertia values.
+
+Separate measured results from model-based predictions.
+
+## 5. Design a justified feedback controller
+
+Use a torque-domain gravity-compensated joint impedance controller.
+
+Candidate:
+
+    tau = g(q)
+          + Kp (q_ref - q)
+          + Kd (dq_ref - dq)
+
+Investigate the effects of TGS end-step velocity semantics.
+
+Use the original source-valid q/dq as recorded data.
+
+Do not silently replace native dq with finite-difference velocity.
+
+If an estimated whole-step velocity is proposed, treat it as a separate controller variation with measured uncertainty and delay.
+
+Develop a smooth ownership-transfer/reference procedure.
+
+The controller should not abruptly introduce an inconsistent position reference or demand a discontinuous effort beyond the declared rate limit.
+
+Derive Kp/Kd from the measured M matrix, desired modal response, damping ratios, observed initial q/dq and the 60 Hz timestep.
+
+Analyze discrete-time stability and torque/rate feasibility before testing.
+
+No arbitrary aggressive gains.
+
+No unlimited automatic gain sweep.
+
+Do not change the original L-tool mass or geometry to obtain better results.
+
+## 6. Preserve actual effort and safety semantics
+
+Reuse the R6/R7 full-nine-DOF effort adapter.
+
+Continue controlling only seven arm joints per robot while preserving the native finger behavior.
+
+Keep:
+
+- Exclusive effort actuator ownership.
+- Runtime-only disabling of competing arm position drives.
+- Complete nine-coordinate command handling.
+- Exact source names and units.
+- Live original TCP/FK checks.
+- Frozen collision and joint-limit checks.
+- Torque and torque-rate bounds.
+- First-failure latch and durable command logs.
+- Fresh independent process reset.
+
+Original FR3 effort limits:
+
+[87,87,87,87,12,12,12] N.m.
+
+Preserve the more restrictive registered R7 research limits unless a new, separately justified diagnostic protocol establishes another safe bound.
+
+Never widen bounds merely because a candidate controller saturates.
+
+Distinguish the 1.0 mm diagnostic stabilization acceptance threshold from the original G1 0.100 mm grasp-closure threshold.
+
+Do not silently relax either.
+
+Define performance acceptance separately from safety-abort limits and enforce each according to its preregistered meaning.
+
+## 7. Bounded diagnostic experiments
+
+After process isolation and source checks pass, register no more than FOUR new development experiments.
+
+Suggested sequence:
+
+D1 — Fresh isolated original R7 PD baseline for causal comparison, only if a matched repeat is necessary.
+
+D2 — Inertia-informed feedback with frozen gain matrix.
+
+D3 — A separately preregistered smooth ownership-transfer/reference strategy.
+
+D4 — Independent fresh-process repeat of the strongest scientifically justified eligible strategy.
+
+Choose the exact matrix BEFORE executing the new Isaac runs.
+
+Do not alter gains during a formal run.
+
+For each experiment, measure:
+
+- TCP translation and orientation drift.
+- Joint position/velocity drift.
+- Feedback correction torque separately from gravity compensation.
+- Torque/rate saturation.
+- Source consistency and finger behavior.
+- Actual physics time.
+- Unexpected collisions.
+- First failed gate.
+- Complete process isolation.
+
+If a control candidate exceeds the diagnostic performance tolerance, report that result as a failure of the performance criterion even if every physics step finishes.
+
+Do not interpret an execution-complete result as stabilization PASS.
+
+## 8. Conditional formal static holding
+
+If an independently repeated diagnostic controller satisfies the original 1.0 mm criterion and other required gates:
+
+Freeze:
+
+- Source configuration.
+- Controller gains and ownership transition.
+- Exact initial-state policy.
+- 60 Hz physics.
+- Duration.
+- Effort/rate limits.
+- Complete safety and acceptance criteria.
+
+Run one fresh formal 60-step bilateral static torque hold.
+
+Require full-state, actual L-tool TCP, torque and collision evidence.
+
+Do not tune after formal failure.
+
+If the diagnostic prerequisite fails, SKIP formal static holding with the exact recorded reason.
+
+## 9. Conditional short-motion tracking
+
+Only after formal static holding passes:
+
+Construct a small collision-checked C2 smooth joint reference from the actual original-scene posture.
+
+Run a bounded joint-space PD/impedance motion baseline.
+
+A computed-torque controller is permitted only after independently qualifying the applicable current-state arm dynamics.
+
+Do not use an unvalidated L-tool inertia or end-step velocity derivative as a certified inverse-dynamics model.
+
+If moving feedback succeeds, perform CPU/offline cooperative task-space QP readiness evaluation using the frozen G1 object-centered transformations.
+
+Do not claim actual Cube-centered cooperative HQP execution without an executed experiment.
+
+No suction closure, Cube pickup, D6 attachment or transport in R8.
+
+## 10. Regression and deliverables
+
+Run all previous 1015 software tests and new focused tests.
+
+Preserve R7's four focused results separately to avoid double-counting.
+
+Deliver:
+
+docs/tasks/TASK28_G2_P5_QP_6_R8_TORQUE_STABILIZATION_RECOVERY.md
+
+All code, source review, gain derivations, process logs, preregistration, dynamic traces, negative results, independent evaluations and formal skip reasons under:
+
+offline/task28_p5_qp_6_r8/
+
+Report separately:
+
+- ORIGINAL_SCENE_PRESERVED
+- ISAAC_PROCESS_ISOLATION_VERIFIED
+- R7_DRIFT_CAUSE_STATUS
+- INITIAL_STATE_AND_OWNERSHIP_STATUS
+- DYNAMICS_MODEL_SCOPE
+- FEEDBACK_DIAGNOSTIC_STABILIZATION_STATUS
+- FORMAL_STATIC_HOLD_STATUS
+- SHORT_TRACKING_STATUS
+- COMPUTED_TORQUE_STATUS
+- COOPERATIVE_QP_STATUS
+- CUBE_D6_UNTESTED
+
+Begin the Chinese research report with a short plain-language conclusion:
+
+Did the actual TCP drift decrease?
+Did it meet 1.0 mm?
+Did formal static holding pass?
+Did any moving controller actually run?
+What remains blocked?
+
+Include all failed and skipped trials, exact numeric results, regression counts, commit SHA, verified remote HEAD and worktree status.
+
+Commit and push only task-scoped additions.
+
+STOP after R8.
+
+Do not proceed automatically to actual suction, ROS or hardware.

@@ -1,0 +1,45 @@
+{
+  "applied_readback": "command buffer only; not a physical torque sensor",
+  "finger_policy": "preserve native finger gains, force modes, targets and state; send full nine-dimensional effort buffer",
+  "level1": "DIAGNOSTIC_ACTUATION_SOURCE_READY",
+  "limits": {
+    "arm_effort_rate_max_Nm_s": [
+      2400,
+      600,
+      240,
+      2400,
+      240,
+      240,
+      240
+    ],
+    "research_effort_abs_max_Nm": [
+      35,
+      12,
+      8,
+      35,
+      4,
+      4,
+      4
+    ],
+    "source_effort_abs_max_Nm": [
+      87,
+      87,
+      87,
+      87,
+      12,
+      12,
+      12
+    ]
+  },
+  "model_scope": "mounted-tool 9-coordinate M/c/g observations; no invented L-tool inertia; model control conditional",
+  "schema": "TASK28_G2_P5_QP_6_R8_SOURCE_CONTRACT_V1",
+  "state": {
+    "arm_dof_count": 7,
+    "dof_count": 9,
+    "dt_s": 0.016666666666666666,
+    "dt_tolerance_s": 1e-08,
+    "fk_rotation_tolerance_rad": 2e-05,
+    "fk_translation_tolerance_m": 2e-05
+  },
+  "tgs_velocity_semantics": "Reported dq is end-of-step solver velocity; whole-step fd(q)/dt is estimator only."
+}

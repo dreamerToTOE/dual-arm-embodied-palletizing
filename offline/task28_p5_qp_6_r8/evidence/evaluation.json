@@ -1,0 +1,776 @@
+{
+  "cells": {
+    "D1": {
+      "commands": 0,
+      "execution_valid": false,
+      "failures": [],
+      "first_runtime_failure": {
+        "exit_code": -15,
+        "phase": "INITIALIZATION",
+        "signal": "SIGTERM"
+      },
+      "pass": false,
+      "performance_pass": false,
+      "process_clean_exit": false,
+      "process_isolation": false,
+      "sides": {},
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "ff7451fe2b90499063d0f556c7af869791bfaadb4a575adc8dd0e194db09b733",
+        "result.json": "d40eced018fea0aec16f15e45473ff0ba3f69f26dc1ca894532f7fd31e0222bf"
+      },
+      "status": "PROCESS_ABORTED",
+      "strategy": null,
+      "unexpected_collisions": [],
+      "verdict": "FAIL_EXECUTION_OR_SOURCE",
+      "writes": 0
+    },
+    "D2": {
+      "commands": 0,
+      "execution_valid": false,
+      "failures": [],
+      "first_runtime_failure": {
+        "exit_code": -15,
+        "phase": "INITIALIZATION",
+        "signal": "SIGTERM"
+      },
+      "pass": false,
+      "performance_pass": false,
+      "process_clean_exit": false,
+      "process_isolation": false,
+      "sides": {},
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "51a956c0a4a76dd5384e50f60efef0c7e5a475b2d67cc260de34717b45ca4662",
+        "result.json": "4bbd192bedbdfa5bac1b196233e9ca7e141983eaff6094203de670b74e97b103"
+      },
+      "status": "PROCESS_ABORTED",
+      "strategy": null,
+      "unexpected_collisions": [],
+      "verdict": "FAIL_EXECUTION_OR_SOURCE",
+      "writes": 0
+    },
+    "D3": {
+      "actual_physics_duration_s": 0.5000000260770321,
+      "commands": 30,
+      "execution_valid": true,
+      "failures": [],
+      "first_runtime_failure": null,
+      "independent_geometry": {
+        "frames": 31,
+        "max_fk_rotation_rad": 7.154252750245182e-07,
+        "max_fk_translation_m": 4.4830772390260087e-07,
+        "unexpected": []
+      },
+      "pass": true,
+      "performance_pass": true,
+      "physics_steps": [
+        182,
+        212
+      ],
+      "process_clean_exit": true,
+      "process_isolation": true,
+      "sides": {
+        "left": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0022402673332636903,
+            7.6331963539123535,
+            0.709587812423706,
+            28.000232696533203,
+            0.8898411989212036,
+            3.292583683038559,
+            0.00016059948933055328
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.002240161990798273,
+            0.21507111444351318,
+            0.010003260475452396,
+            0.14824835950541662,
+            0.0017295792741105454,
+            0.014477024183545614,
+            0.00014066873505276707
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 4.4565210188807214e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.0001893522567115724,
+            -0.010724863037467003,
+            -0.0006966578657738864,
+            0.005007283296436071,
+            -0.0010150318266823888,
+            6.819550617365167e-05,
+            2.775590110104531e-05
+          ],
+          "initial_q_rad": [
+            1.8516155250836164e-05,
+            -0.784332275390625,
+            6.924563058419153e-05,
+            -2.356692314147949,
+            0.00010101984662469476,
+            1.5707885026931763,
+            0.7853949069976807
+          ],
+          "joint_final_delta_rad": [
+            -1.1503289897518698e-05,
+            -0.000659942626953125,
+            -4.3182475565117784e-05,
+            0.00030517578125,
+            -6.313075573416427e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.000995635986328125,
+          "native_dq_peak_rad_s": 0.010724863037467003,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.04200427902462283,
+            457.9917812347412,
+            42.57526874542236,
+            1680.0139617919922,
+            53.39047193527222,
+            197.27279663085938,
+            0.003847181797027588
+          ],
+          "readback_max_error_Nm": 9.368549811483717e-07,
+          "tcp_final_rotation_rad": 0.0009664459104671726,
+          "tcp_final_translation_m": 0.00045714590534897705,
+          "tcp_peak_rotation_rad": 0.001462926379994342,
+          "tcp_peak_translation_m": 0.0006925230815698112,
+          "torque_limit_exceeded": false
+        },
+        "right": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0013109993219487445,
+            7.437305450439453,
+            0.5711634159088135,
+            27.80477523803711,
+            0.6943668127059937,
+            3.0971838726947842,
+            0.0002527596370782703
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.0013107846117080466,
+            0.2118382521124733,
+            0.007480936720561883,
+            0.14605965595674486,
+            0.0009787666663675636,
+            0.013275854314357613,
+            0.0003080479622135517
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 2.7677316438712296e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.00017319079779554158,
+            -0.010585268028080463,
+            -0.0005470351316034794,
+            0.0051315100863575935,
+            -0.0008947708993218839,
+            5.531012357096188e-05,
+            1.9185823475709185e-05
+          ],
+          "initial_q_rad": [
+            1.710735341475811e-05,
+            -0.7843459844589233,
+            5.438336302177049e-05,
+            -2.356705904006958,
+            8.91408053576015e-05,
+            1.5707899332046509,
+            0.7853959798812866
+          ],
+          "joint_final_delta_rad": [
+            -1.0571947768767131e-05,
+            -0.000652313232421875,
+            -3.3898933907039464e-05,
+            0.00030517578125,
+            -5.5603301007067785e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.0009822845458984375,
+          "native_dq_peak_rad_s": 0.010585268028080463,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.02458353171719548,
+            446.2383270263672,
+            34.26980495452881,
+            1668.2865142822266,
+            41.66200876235962,
+            185.5448341369629,
+            0.015165578224696219
+          ],
+          "readback_max_error_Nm": 9.497731703334011e-07,
+          "tcp_final_rotation_rad": 0.0009584898259544779,
+          "tcp_final_translation_m": 0.00025892710310370103,
+          "tcp_peak_rotation_rad": 0.0014645791659796523,
+          "tcp_peak_translation_m": 0.0003963523030886832,
+          "torque_limit_exceeded": false
+        }
+      },
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "ab061b212dbd5a58555858dccec3a19d0ba02db118ca3d04183b7ad734eab368",
+        "command_journal.jsonl": "d7e2a2ef31c09539ee6e0deec597db3fa3e824bc28faf6fc7b4f2763b561e98e",
+        "frames.jsonl": "2e43e5171bb840a287e3041fa5ba1a00862785f747c29e396c3ea78c532dc25b",
+        "level1_evidence.json": "0d7033ed151d6e3e1d80d8f8c0ae1bae7655f85d56989f9e93e69b1c62896989",
+        "result.json": "b789a49da2c24223720e4c33407d1bceb25d90e96a20d3b3f7a6a17663b9b06c"
+      },
+      "status": "DIAGNOSTIC_STABILIZATION_COMPLETE",
+      "strategy": "frozen_mass_smooth",
+      "unexpected_collisions": [],
+      "verdict": "PASS",
+      "worst_tcp_peak_m": 0.0006925230815698112,
+      "writes": 60
+    },
+    "D4": {
+      "actual_physics_duration_s": 0.5000000260770321,
+      "commands": 30,
+      "execution_valid": true,
+      "failures": [],
+      "first_runtime_failure": null,
+      "independent_geometry": {
+        "frames": 31,
+        "max_fk_rotation_rad": 7.154252750245182e-07,
+        "max_fk_translation_m": 4.4830772390260087e-07,
+        "unexpected": []
+      },
+      "pass": true,
+      "performance_pass": true,
+      "physics_steps": [
+        182,
+        212
+      ],
+      "process_clean_exit": true,
+      "process_isolation": true,
+      "sides": {
+        "left": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0022402673332636903,
+            7.6331963539123535,
+            0.709587812423706,
+            28.000232696533203,
+            0.8898411989212036,
+            3.292583683038559,
+            0.00016059948933055328
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.002240161990798273,
+            0.21507111444351318,
+            0.010003260475452396,
+            0.14824835950541662,
+            0.0017295792741105454,
+            0.014477024183545614,
+            0.00014066873505276707
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 4.4565210188807214e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.0001893522567115724,
+            -0.010724863037467003,
+            -0.0006966578657738864,
+            0.005007283296436071,
+            -0.0010150318266823888,
+            6.819550617365167e-05,
+            2.775590110104531e-05
+          ],
+          "initial_q_rad": [
+            1.8516155250836164e-05,
+            -0.784332275390625,
+            6.924563058419153e-05,
+            -2.356692314147949,
+            0.00010101984662469476,
+            1.5707885026931763,
+            0.7853949069976807
+          ],
+          "joint_final_delta_rad": [
+            -1.1503289897518698e-05,
+            -0.000659942626953125,
+            -4.3182475565117784e-05,
+            0.00030517578125,
+            -6.313075573416427e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.000995635986328125,
+          "native_dq_peak_rad_s": 0.010724863037467003,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.04200427902462283,
+            457.9917812347412,
+            42.57526874542236,
+            1680.0139617919922,
+            53.39047193527222,
+            197.27279663085938,
+            0.003847181797027588
+          ],
+          "readback_max_error_Nm": 9.368549811483717e-07,
+          "tcp_final_rotation_rad": 0.0009664459104671726,
+          "tcp_final_translation_m": 0.00045714590534897705,
+          "tcp_peak_rotation_rad": 0.001462926379994342,
+          "tcp_peak_translation_m": 0.0006925230815698112,
+          "torque_limit_exceeded": false
+        },
+        "right": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0013109993219487445,
+            7.437305450439453,
+            0.5711634159088135,
+            27.80477523803711,
+            0.6943668127059937,
+            3.0971838726947842,
+            0.0002527596370782703
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.0013107846117080466,
+            0.2118382521124733,
+            0.007480936720561883,
+            0.14605965595674486,
+            0.0009787666663675636,
+            0.013275854314357613,
+            0.0003080479622135517
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 2.7677316438712296e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.00017319079779554158,
+            -0.010585268028080463,
+            -0.0005470351316034794,
+            0.0051315100863575935,
+            -0.0008947708993218839,
+            5.531012357096188e-05,
+            1.9185823475709185e-05
+          ],
+          "initial_q_rad": [
+            1.710735341475811e-05,
+            -0.7843459844589233,
+            5.438336302177049e-05,
+            -2.356705904006958,
+            8.91408053576015e-05,
+            1.5707899332046509,
+            0.7853959798812866
+          ],
+          "joint_final_delta_rad": [
+            -1.0571947768767131e-05,
+            -0.000652313232421875,
+            -3.3898933907039464e-05,
+            0.00030517578125,
+            -5.5603301007067785e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.0009822845458984375,
+          "native_dq_peak_rad_s": 0.010585268028080463,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.02458353171719548,
+            446.2383270263672,
+            34.26980495452881,
+            1668.2865142822266,
+            41.66200876235962,
+            185.5448341369629,
+            0.015165578224696219
+          ],
+          "readback_max_error_Nm": 9.497731703334011e-07,
+          "tcp_final_rotation_rad": 0.0009584898259544779,
+          "tcp_final_translation_m": 0.00025892710310370103,
+          "tcp_peak_rotation_rad": 0.0014645791659796523,
+          "tcp_peak_translation_m": 0.0003963523030886832,
+          "torque_limit_exceeded": false
+        }
+      },
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "bb53ec264013b7baccb567f64545a48644b80c5c16cfe10e3ba70ccc2af3a171",
+        "command_journal.jsonl": "d7e2a2ef31c09539ee6e0deec597db3fa3e824bc28faf6fc7b4f2763b561e98e",
+        "frames.jsonl": "2e43e5171bb840a287e3041fa5ba1a00862785f747c29e396c3ea78c532dc25b",
+        "level1_evidence.json": "0d7033ed151d6e3e1d80d8f8c0ae1bae7655f85d56989f9e93e69b1c62896989",
+        "result.json": "81410bd5658ba358804174b2aef3efa7576d3d0ac77df92ae5c64bab10a25668"
+      },
+      "status": "DIAGNOSTIC_STABILIZATION_COMPLETE",
+      "strategy": "frozen_mass_smooth",
+      "unexpected_collisions": [],
+      "verdict": "PASS",
+      "worst_tcp_peak_m": 0.0006925230815698112,
+      "writes": 60
+    },
+    "FORMAL": {
+      "actual_physics_duration_s": 1.0000000521540642,
+      "commands": 60,
+      "execution_valid": true,
+      "failures": [],
+      "first_runtime_failure": null,
+      "independent_geometry": {
+        "frames": 61,
+        "max_fk_rotation_rad": 7.154252750245182e-07,
+        "max_fk_translation_m": 5.191470210055445e-07,
+        "unexpected": []
+      },
+      "pass": true,
+      "performance_pass": true,
+      "physics_steps": [
+        182,
+        242
+      ],
+      "process_clean_exit": true,
+      "process_isolation": true,
+      "sides": {
+        "left": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0022402673332636903,
+            7.6331963539123535,
+            0.709587812423706,
+            28.00188219151617,
+            0.8898411989212036,
+            3.292583683038559,
+            0.00016059948933055328
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.002240161990798273,
+            0.21507111444351318,
+            0.010003260475452396,
+            0.14824835950541662,
+            0.0017295792741105454,
+            0.014477024183545614,
+            0.00014066873505276707
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 5.137164826862772e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.0001893522567115724,
+            -0.010724863037467003,
+            -0.0006966578657738864,
+            0.005007283296436071,
+            -0.0010150318266823888,
+            6.819550617365167e-05,
+            2.775590110104531e-05
+          ],
+          "initial_q_rad": [
+            1.8516155250836164e-05,
+            -0.784332275390625,
+            6.924563058419153e-05,
+            -2.356692314147949,
+            0.00010101984662469476,
+            1.5707885026931763,
+            0.7853949069976807
+          ],
+          "joint_final_delta_rad": [
+            -3.0828832677798346e-06,
+            -0.00017547607421875,
+            -1.1467425792943686e-05,
+            7.62939453125e-05,
+            -1.6526268154848367e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.000995635986328125,
+          "native_dq_peak_rad_s": 0.010724863037467003,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.04200427902462283,
+            457.9917812347412,
+            42.57526874542236,
+            1680.0139617919922,
+            53.39047193527222,
+            197.27279663085938,
+            0.003847181797027588
+          ],
+          "readback_max_error_Nm": 9.368549811483717e-07,
+          "tcp_final_rotation_rad": 0.00025194058589747564,
+          "tcp_final_translation_m": 0.00011878534059519027,
+          "tcp_peak_rotation_rad": 0.001462926379994342,
+          "tcp_peak_translation_m": 0.0006925230815698112,
+          "torque_limit_exceeded": false
+        },
+        "right": {
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0013109993219487445,
+            7.437305450439453,
+            0.5711634159088135,
+            27.80641096945706,
+            0.6943668127059937,
+            3.0971838726947842,
+            0.0002527596370782703
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.0013107846117080466,
+            0.2118382521124733,
+            0.007480936720561883,
+            0.14605965595674486,
+            0.0009787666663675636,
+            0.013275854314357613,
+            0.0003080479622135517
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 3.377316915020856e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.00017319079779554158,
+            -0.010585268028080463,
+            -0.0005470351316034794,
+            0.0051315100863575935,
+            -0.0008947708993218839,
+            5.531012357096188e-05,
+            1.9185823475709185e-05
+          ],
+          "initial_q_rad": [
+            1.710735341475811e-05,
+            -0.7843459844589233,
+            5.438336302177049e-05,
+            -2.356705904006958,
+            8.91408053576015e-05,
+            1.5707899332046509,
+            0.7853959798812866
+          ],
+          "joint_final_delta_rad": [
+            -2.8348913474474102e-06,
+            -0.000171661376953125,
+            -9.011000656755641e-06,
+            6.866455078125e-05,
+            -1.4526791346725076e-05,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.0009822845458984375,
+          "native_dq_peak_rad_s": 0.010585268028080463,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.02458353171719548,
+            446.2383270263672,
+            34.26980495452881,
+            1668.2865142822266,
+            41.66200876235962,
+            185.5448341369629,
+            0.015165578224696219
+          ],
+          "readback_max_error_Nm": 9.497731703334011e-07,
+          "tcp_final_rotation_rad": 0.0002403486590965509,
+          "tcp_final_translation_m": 6.464820473204188e-05,
+          "tcp_peak_rotation_rad": 0.0014645791659796523,
+          "tcp_peak_translation_m": 0.0003963523030886832,
+          "torque_limit_exceeded": false
+        }
+      },
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "d7e9aca9028d761854fb96fbc9e8621d92e795e90e900a8859316a15aff4b5a6",
+        "command_journal.jsonl": "62cfe1873c58db7474f3eacc1650062e8806ca19914430c78643432751d3a926",
+        "frames.jsonl": "bb3b4f51b2625783dc0fc01a80c3220dfd5059dd10546a92984ac26b75fb6b2a",
+        "level1_evidence.json": "0d7033ed151d6e3e1d80d8f8c0ae1bae7655f85d56989f9e93e69b1c62896989",
+        "result.json": "772f510f52e7d0dc7ecaa73a36e77fc59eaa68830064adb4f19be82d19c1efc5"
+      },
+      "status": "FORMAL_STATIC_HOLD_COMPLETE",
+      "strategy": "frozen_mass_smooth",
+      "unexpected_collisions": [],
+      "verdict": "PASS",
+      "worst_tcp_peak_m": 0.0006925230815698112,
+      "writes": 120
+    },
+    "MOVING": {
+      "actual_physics_duration_s": 3.5000001825392246,
+      "commands": 210,
+      "execution_valid": true,
+      "failures": [],
+      "first_runtime_failure": null,
+      "independent_geometry": {
+        "frames": 211,
+        "max_fk_rotation_rad": 7.311462280210543e-07,
+        "max_fk_translation_m": 5.27156522279649e-07,
+        "unexpected": []
+      },
+      "pass": true,
+      "performance_pass": true,
+      "physics_steps": [
+        182,
+        392
+      ],
+      "process_clean_exit": true,
+      "process_isolation": true,
+      "sides": {
+        "left": {
+          "TCP_rotation_tracking_peak_rad": 0.0014629004949737638,
+          "TCP_tracking_final_m": 2.125762441504064e-05,
+          "TCP_tracking_moving_peak_m": 0.00011897070069437018,
+          "TCP_tracking_peak_m": 0.0006927079471353193,
+          "actual_joint2_displacement_rad": 0.0020503997802734375,
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0022402673332636903,
+            7.711055704443604,
+            0.709587812423706,
+            28.007981499256516,
+            0.8899073907393193,
+            3.292583683038559,
+            0.00016059948933055328
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.002240161990798273,
+            0.21507111444351318,
+            0.010003260475452396,
+            0.14824835950541662,
+            0.0017295792741105454,
+            0.014477024183545614,
+            0.00014066873505276707
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 5.137164826862772e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.0001893522567115724,
+            -0.010724863037467003,
+            -0.0006966578657738864,
+            0.005007283296436071,
+            -0.0010150318266823888,
+            6.819550617365167e-05,
+            2.775590110104531e-05
+          ],
+          "initial_q_rad": [
+            1.8516155250836164e-05,
+            -0.784332275390625,
+            6.924563058419153e-05,
+            -2.356692314147949,
+            0.00010101984662469476,
+            1.5707885026931763,
+            0.7853949069976807
+          ],
+          "joint_final_delta_rad": [
+            3.47245077136904e-09,
+            0.0020503997802734375,
+            -1.000444171950221e-08,
+            6.103515625e-05,
+            7.203198038041592e-09,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.0021076202392578125,
+          "joint_tracking_final_rad": 6.103515625e-05,
+          "joint_tracking_peak_rad": 0.000995635986328125,
+          "motion_nonzero_reference_commands": 119,
+          "native_dq_peak_rad_s": 0.010724863037467003,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.04200427902462283,
+            457.9917812347412,
+            42.57526874542236,
+            1680.0139617919922,
+            53.39047193527222,
+            197.27279663085938,
+            0.003847181797027588
+          ],
+          "readback_max_error_Nm": 9.521752275531981e-07,
+          "tcp_final_rotation_rad": 0.0019894290139734023,
+          "tcp_final_translation_m": 0.0008979645919092275,
+          "tcp_peak_rotation_rad": 0.002046872814322964,
+          "tcp_peak_translation_m": 0.0009238331128427641,
+          "torque_limit_exceeded": false
+        },
+        "right": {
+          "TCP_rotation_tracking_peak_rad": 0.0014644081958019638,
+          "TCP_tracking_final_m": 1.9716336178646263e-05,
+          "TCP_tracking_moving_peak_m": 6.483638359562885e-05,
+          "TCP_tracking_peak_m": 0.00039654101395683795,
+          "actual_joint2_displacement_rad": 0.0020503997802734375,
+          "command_reconstruction_error_Nm": 0.0,
+          "effort_peak_Nm_per_joint": [
+            0.0013109993219487445,
+            7.5151316455787684,
+            0.5711782223725073,
+            27.812462485043568,
+            0.6944120482026146,
+            3.0971838726947842,
+            0.0005780575974702927
+          ],
+          "feedback_peak_Nm_per_joint": [
+            0.0013107846117080466,
+            0.2118382521124733,
+            0.007480936720561883,
+            0.14605965595674486,
+            0.0009787666663675636,
+            0.013275854314357613,
+            0.0003080479622135517
+          ],
+          "finger_preserved": true,
+          "finger_q_peak_change_m": 3.7166040620095764e-08,
+          "first_1mm_exceed_step": null,
+          "initial_dq_rad_s": [
+            -0.00017319079779554158,
+            -0.010585268028080463,
+            -0.0005470351316034794,
+            0.0051315100863575935,
+            -0.0008947708993218839,
+            5.531012357096188e-05,
+            1.9185823475709185e-05
+          ],
+          "initial_q_rad": [
+            1.710735341475811e-05,
+            -0.7843459844589233,
+            5.438336302177049e-05,
+            -2.356705904006958,
+            8.91408053576015e-05,
+            1.5707899332046509,
+            0.7853959798812866
+          ],
+          "joint_final_delta_rad": [
+            -7.405105861835182e-09,
+            0.0020503997802734375,
+            -1.1157681001350284e-08,
+            6.103515625e-05,
+            4.778848960995674e-08,
+            0.0,
+            0.0
+          ],
+          "joint_peak_drift_rad": 0.0021076202392578125,
+          "joint_tracking_final_rad": 6.103515625e-05,
+          "joint_tracking_peak_rad": 0.0009822845458984375,
+          "motion_nonzero_reference_commands": 119,
+          "native_dq_peak_rad_s": 0.010585268028080463,
+          "rate_limit_exceeded": false,
+          "rate_peak_Nm_s_per_joint": [
+            0.02458353171719548,
+            446.2383270263672,
+            34.26980495452881,
+            1668.2865142822266,
+            41.66200876235962,
+            185.5448341369629,
+            0.015165578224696219
+          ],
+          "readback_max_error_Nm": 9.497731703334011e-07,
+          "tcp_final_rotation_rad": 0.0019893805638233064,
+          "tcp_final_translation_m": 0.0005316863908100836,
+          "tcp_peak_rotation_rad": 0.0020467015401684943,
+          "tcp_peak_translation_m": 0.0005468603010431502,
+          "torque_limit_exceeded": false
+        }
+      },
+      "source_files_sha256": {
+        "child_lifecycle.jsonl": "641d21379ebd343f17544587a06389a3892cd493e6aaa58b7782237880a6869e",
+        "command_journal.jsonl": "a50d9f79440f6dfdcb50090e337e1b9c8e7b6995ffde42519f90140ef2592c1e",
+        "frames.jsonl": "04836f29c911eae61cf5e7c467501d7a3fe0ce5b70c513c4f3454a4f863dd122",
+        "level1_evidence.json": "0d7033ed151d6e3e1d80d8f8c0ae1bae7655f85d56989f9e93e69b1c62896989",
+        "reference_geometry.json": "5c021cd3eedd8ecb94596479ca7d70a76da9d4a331d817a128154fc6a92bbfab",
+        "result.json": "545d66fdc7df2bda6815920a06917aa1c796cfe753f2a18d763399018f9dae29"
+      },
+      "status": "MOVING_TRACKING_COMPLETE",
+      "strategy": "frozen_mass_smooth",
+      "unexpected_collisions": [],
+      "verdict": "PASS",
+      "worst_tcp_peak_m": 0.0009238331128427641,
+      "writes": 420
+    }
+  },
+  "formal_prerequisite": {
+    "eligible": true,
+    "reason": "independent diagnostic repeat PASS",
+    "selected": {
+      "metric": "worst-arm all-sample TCP translation",
+      "selected_cell": "D3",
+      "selection_frozen_before_D4": true,
+      "strategy": "frozen_mass_smooth",
+      "value_m": 0.0006925230815698112
+    }
+  }
+}
