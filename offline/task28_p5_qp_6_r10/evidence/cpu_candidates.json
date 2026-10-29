@@ -1,0 +1,55 @@
+{
+  "acceptance": {
+    "fcl": 0,
+    "object_m": 0.00025,
+    "relative_rotation_rad": 0.001,
+    "relative_translation_m": 0.00015
+  },
+  "candidates": {
+    "A": {
+      "execution_authorized": false,
+      "object_tracking_peak_m": 2.2951320438385907e-06,
+      "position_lookahead_min_margin_rad": 0.6653939807346738,
+      "qdot_peak_rad_s": 0.0008446575535432654,
+      "relative_rotation_peak_rad": 5.727343501111054e-07,
+      "relative_translation_peak_m": 5.355776660384237e-07,
+      "samples": 211,
+      "solver_calls": 210,
+      "solver_kkt_all": true,
+      "status": "PASS",
+      "strategy": "A",
+      "unexpected_fcl": []
+    },
+    "B": {
+      "execution_authorized": false,
+      "object_tracking_peak_m": 4.399202331414889e-06,
+      "position_lookahead_min_margin_rad": 0.6653939745939019,
+      "qdot_peak_rad_s": 0.0008507152474679508,
+      "relative_rotation_peak_rad": 5.727342852732561e-07,
+      "relative_translation_peak_m": 5.355744590459242e-07,
+      "samples": 211,
+      "solver_calls": 210,
+      "solver_kkt_all": true,
+      "status": "PASS",
+      "strategy": "B",
+      "unexpected_fcl": []
+    },
+    "C": {
+      "execution_authorized": false,
+      "object_tracking_peak_m": 4.349651838347862e-06,
+      "position_lookahead_min_margin_rad": 0.6653940103849756,
+      "qdot_peak_rad_s": 0.0008507448789348837,
+      "relative_rotation_peak_rad": 5.727342782438996e-07,
+      "relative_translation_peak_m": 5.355744590459242e-07,
+      "samples": 211,
+      "solver_calls": 210,
+      "solver_kkt_all": true,
+      "status": "PASS",
+      "strategy": "C",
+      "unexpected_fcl": []
+    }
+  },
+  "no_physical_execution": true,
+  "schema": "TASK28_R10_CPU_CANDIDATES_V1",
+  "selection_rule": "first A/B/C meeting every frozen gate"
+}

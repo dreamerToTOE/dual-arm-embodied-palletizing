@@ -1,0 +1,11 @@
+{
+  "schema": "TASK28_R10_REGISTRATIONS_V1",
+  "selection_rule": "Run A, B, C in preregistered order. Select the first configuration whose independent evaluation satisfies every frozen virtual accuracy, source, no-contact, FCL, timing and process gate. Run D only as an exact fresh-process repeat of that selected configuration. If no A-C cell is eligible, D is not executed.",
+  "comparison": {"kind": "historical", "source": "R9 V1_RECOVERY2 and V2", "execute": false},
+  "V10-A": {"kind": "development", "strategy": "quintic_time_parameterization_reference_consistency_only", "feedback": "none", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "execute": true},
+  "V10-B": {"kind": "development", "strategy": "quintic_plus_common_virtual_se3_feedback", "feedback": "common_object", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "execute": true},
+  "V10-C": {"kind": "development", "strategy": "quintic_plus_common_and_relative_pose_feedback", "feedback": "common_object_and_relative_pose", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "execute": true},
+  "V10-D": {"kind": "fresh_repeat", "strategy": "selected_first_eligible_A_or_B_or_C", "execute": false, "selection_precondition": "selected A-C cell independently passes all frozen gates"},
+  "FORMAL": {"kind": "formal_frozen_no_contact_validation", "execute": false, "precondition": "two independent eligible diagnostics"},
+  "physical_approach": {"kind": "cpu_only_continuous_safety_audit", "execute": false, "reason": "R10 physical HOME-to-Cube approach is out of scope"}
+}

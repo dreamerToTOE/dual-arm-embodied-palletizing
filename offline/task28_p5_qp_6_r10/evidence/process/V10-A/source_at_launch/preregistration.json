@@ -1,0 +1,10 @@
+{
+  "schema": "TASK28_R10_PREREGISTRATION_V1",
+  "created_from_head": "3a81a4a83144d41b07a5bf9aeb79717e2b1c5927",
+  "virtual": {"identity": "FREE_HOME_VIRTUAL_COOPERATION", "axis": "world_x", "amplitude_m": 0.0005, "duration_s": 3.5, "steps": 210, "physics_dt_s": 0.016666666666666666, "reference_dt_s": 0.016666666666666666, "preflight_sample_dt_s": 0.016666666666666666, "trajectory": "quintic C2 s=10u^3-15u^4+6u^5", "initial_state": "actual observed FREE_HOME ownership state; no teleport"},
+  "feedback": {"common_translation_gain_s_inv": 4.0, "common_rotation_gain_s_inv": 4.0, "relative_translation_gain_s_inv": 3.0, "relative_rotation_gain_s_inv": 3.0, "correction_twist_limit_linear_m_s": 0.002, "correction_twist_limit_angular_rad_s": 0.01, "relative_equality": "affine measured relative pose correction"},
+  "qp": {"dimension": 14, "hard": ["finite source", "joint velocity box", "joint position lookahead q+dt*qdot within original limits with 0.02 rad margin", "affine relative virtual-object twist correction"], "soft": ["common virtual-object feedforward plus pose feedback", "joint smoothness"], "solver": "strict SPD box/equality QP via shifted affine equality and independent KKT"},
+  "acceptance": {"virtual_object_tracking_peak_m": 0.00025, "relative_tcp_translation_peak_m": 0.00015, "relative_tcp_rotation_peak_rad": 0.001, "joint_tracking_peak_rad": 0.02, "native_dq_peak_rad_s": 0.3, "unexpected_fcl_collisions": 0, "cube_translation_m": 1e-8, "suction_commands": 0, "D6_commands": 0, "clean_process_exit": true},
+  "selection": {"order": ["V10-A", "V10-B", "V10-C"], "repeat": "V10-D exact repeat of first eligible cell", "formal": "only if two independent eligible diagnostics pass all frozen requirements"},
+  "safety": {"first_rejection_latches": true, "effort_abs_and_rate": "R8 unchanged limits", "no_cube_identity_promotion": true, "no_physical_execution": true, "continuous_collision_certificate": false}
+}

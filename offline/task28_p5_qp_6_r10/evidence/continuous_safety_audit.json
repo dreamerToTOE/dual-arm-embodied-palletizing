@@ -1,0 +1,110 @@
+{
+  "adversarial_controls": "offline/task28_g1_2b_1/adversarial_controls.py demonstrates off-grid witnesses that endpoint/grid samples can miss",
+  "depth_runs": [
+    {
+      "closed_chain": "CONTINUOUSLY_REJECTED",
+      "collision": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "combined_status": "CONTINUOUSLY_REJECTED",
+      "joint_limits": "CONTINUOUSLY_VERIFIED",
+      "max_depth": 0,
+      "max_depth_observed": 0,
+      "sampled_count": 159,
+      "sampled_edge_status": "sampled_edge_rejected",
+      "sampled_reasons": [
+        "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_ROTATION_MISMATCH",
+        "RIGHT_GRASP_TRANSLATION_MISMATCH",
+        "RIGHT_GRASP_ROTATION_MISMATCH",
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+        "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+        "ATTACHMENT_CHANGED_WITHOUT_EXPLICIT_EVENT"
+      ],
+      "unresolved_interval_count": 7,
+      "witness_count": 3
+    },
+    {
+      "closed_chain": "CONTINUOUSLY_REJECTED",
+      "collision": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "combined_status": "CONTINUOUSLY_REJECTED",
+      "joint_limits": "CONTINUOUSLY_VERIFIED",
+      "max_depth": 1,
+      "max_depth_observed": 1,
+      "sampled_count": 159,
+      "sampled_edge_status": "sampled_edge_rejected",
+      "sampled_reasons": [
+        "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_ROTATION_MISMATCH",
+        "RIGHT_GRASP_TRANSLATION_MISMATCH",
+        "RIGHT_GRASP_ROTATION_MISMATCH",
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+        "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+        "ATTACHMENT_CHANGED_WITHOUT_EXPLICIT_EVENT"
+      ],
+      "unresolved_interval_count": 10,
+      "witness_count": 3
+    },
+    {
+      "closed_chain": "CONTINUOUSLY_REJECTED",
+      "collision": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "combined_status": "CONTINUOUSLY_REJECTED",
+      "joint_limits": "CONTINUOUSLY_VERIFIED",
+      "max_depth": 2,
+      "max_depth_observed": 2,
+      "sampled_count": 159,
+      "sampled_edge_status": "sampled_edge_rejected",
+      "sampled_reasons": [
+        "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_ROTATION_MISMATCH",
+        "RIGHT_GRASP_TRANSLATION_MISMATCH",
+        "RIGHT_GRASP_ROTATION_MISMATCH",
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+        "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+        "ATTACHMENT_CHANGED_WITHOUT_EXPLICIT_EVENT"
+      ],
+      "unresolved_interval_count": 16,
+      "witness_count": 3
+    },
+    {
+      "closed_chain": "CONTINUOUSLY_REJECTED",
+      "collision": "CONTINUOUS_VERIFICATION_INCONCLUSIVE",
+      "combined_status": "CONTINUOUSLY_REJECTED",
+      "joint_limits": "CONTINUOUSLY_VERIFIED",
+      "max_depth": 4,
+      "max_depth_observed": 4,
+      "sampled_count": 159,
+      "sampled_edge_status": "sampled_edge_rejected",
+      "sampled_reasons": [
+        "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_TRANSLATION_MISMATCH",
+        "LEFT_GRASP_ROTATION_MISMATCH",
+        "RIGHT_GRASP_TRANSLATION_MISMATCH",
+        "RIGHT_GRASP_ROTATION_MISMATCH",
+        "COLLISION:Cube_01/box|task28_table/box",
+        "AIRBORNE_CLEARANCE_NOT_ESTABLISHED",
+        "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+        "ATTACHMENT_CHANGED_WITHOUT_EXPLICIT_EVENT"
+      ],
+      "unresolved_interval_count": 52,
+      "witness_count": 3
+    }
+  ],
+  "execution": {
+    "cube_commands": 0,
+    "ros": 0,
+    "status": "BLOCKED",
+    "suction": 0
+  },
+  "finite_sample_source": "evidence/approach_audit.json",
+  "not_a_certificate": true,
+  "original_cube_identity": "PRE_CONTACT_ORIGINAL_CUBE",
+  "reason": "interval verifier leaves collision/support bounds unresolved; existing FCL is single-state rigid collision only and has no articulated FK CCD callback",
+  "schema": "TASK28_R10_ORIGINAL_CUBE_CONTINUOUS_AUDIT_V1",
+  "status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+  "trajectory": "r10_original_cube_approach_interval_audit"
+}

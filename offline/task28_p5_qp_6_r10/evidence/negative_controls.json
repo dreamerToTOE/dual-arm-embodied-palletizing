@@ -1,0 +1,40 @@
+{
+  "controls": {
+    "between_sample_collision": {
+      "pass": true,
+      "reason": "off-grid witness is not accepted by endpoint samples",
+      "source": "offline/task28_g1_2b_1 adversarial controls"
+    },
+    "ccd_articulated_certificate": {
+      "pass": true,
+      "reason": "installed rigid CCD has no articulated FK callback",
+      "status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED"
+    },
+    "cubic_smoothstep_c2_claim": {
+      "cubic_second_derivative_at_boundaries": [
+        6.0,
+        -6.0
+      ],
+      "pass": true,
+      "reason": "cubic is C1 only; quintic has zero first and second derivatives at both boundaries"
+    },
+    "false_r9_preflight_dt": {
+      "actual_reference_s": 0.016666666666666666,
+      "claimed_s": 0.0016666666666666668,
+      "pass": true
+    },
+    "infeasible_affine_qp": {
+      "pass": true,
+      "reason": "affine equality outside box returns QP_INFEASIBLE"
+    },
+    "stale_tcp_pose": {
+      "pass": true,
+      "reason": "measured_tcp is mandatory"
+    },
+    "wrong_world_body_twist": {
+      "pass": true,
+      "reason": "world pose error and world geometric Jacobian are required"
+    }
+  },
+  "schema": "TASK28_R10_NEGATIVE_CONTROLS_V1"
+}
