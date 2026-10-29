@@ -1,0 +1,33 @@
+{
+  "actual_effort_commands": 0,
+  "attempts": [
+    {
+      "exit_code": 139,
+      "exit_signal": "SIGSEGV",
+      "id": "S2_attempt_1",
+      "kit_log": "process_logs/kit_20261029_113302.log"
+    },
+    {
+      "exit_code": 134,
+      "exit_signal": "SIGABRT",
+      "id": "S2_attempt_2",
+      "kit_log": "process_logs/kit_20261029_113532.log"
+    }
+  ],
+  "configuration": "S2",
+  "count_basis": "No frame or durable pre-command journal exists; runtime writes a frame before ownership or effort, so no recorded effort execution. Total startup physics steps are unknown.",
+  "cube_contact_commands": 0,
+  "explicit_physics_steps": null,
+  "first_failure": {
+    "message": "Two process failures before frame/journal output. Prior S1 processes had reached app.close but remained alive; process isolation not established for S2. No controller comparison or repeatability claim."
+  },
+  "record_origin": "POSTHOC_RECOVERY_FROM_TOOL_OUTPUT_AND_KIT_LOGS",
+  "registration": {
+    "controller": "pd",
+    "steps": 30
+  },
+  "robot_command_writes": 0,
+  "source_valid": false,
+  "status": "PROCESS_ABORTED",
+  "suction_commands": 0
+}

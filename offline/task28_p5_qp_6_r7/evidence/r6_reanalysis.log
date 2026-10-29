@@ -1,0 +1,501 @@
+{
+  "cells": {
+    "A": {
+      "completed_commands": 18,
+      "frames": 200,
+      "full_nine_coordinate_writes": 36,
+      "sides": {
+        "left": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.12586131035514792,
+            "mean": 0.020172700916831703,
+            "median": 0.0054666245764764245
+          },
+          "delta_q_arm_rad": [
+            -0.00014875844499329105,
+            -0.0047054290771484375,
+            -0.000249512457230594,
+            0.00101470947265625,
+            -0.00013939377095084637,
+            -0.00186920166015625,
+            -1.33514404296875e-05
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7388305829181223,
+            "mean": -0.0006464909076126392,
+            "median": 0.0001893522567115724
+          },
+          "joint4_delta_rad": 0.00101470947265625,
+          "link8_translation_m": 0.0022440508414437576,
+          "max_abs_delta_q_rad": 0.0047054290771484375,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.016627374633518054,
+            "median": 0.009233974599705966
+          },
+          "tcp_rotation_rad": 0.005463762193777842,
+          "tcp_translation_m": 0.002427642150946357,
+          "transition_samples": [
+            {
+              "dq_norm": 0.0119601640376589,
+              "q_norm": 0.00019903390071649416,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.01208741692433517,
+              "q_norm": 0.00020259763780415666,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.01229454686594479,
+              "q_norm": 0.00020619648351449156,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        },
+        "right": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.12412256845192626,
+            "mean": 0.01994964117593421,
+            "median": 0.005247140960916975
+          },
+          "delta_q_arm_rad": [
+            -0.00012339759086898994,
+            -0.004634857177734375,
+            -0.00019752611478907056,
+            0.00103759765625,
+            -0.00012663929737755097,
+            -0.001857757568359375,
+            9.5367431640625e-06
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7386501224257214,
+            "mean": -0.00043995573112053603,
+            "median": 0.00016429272850625634
+          },
+          "joint4_delta_rad": 0.00103759765625,
+          "link8_translation_m": 0.0022221185315523767,
+          "max_abs_delta_q_rad": 0.004634857177734375,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.01637680959731268,
+            "median": 0.009131507711593129
+          },
+          "tcp_rotation_rad": 0.0054083452981307355,
+          "tcp_translation_m": 0.0017216119462753552,
+          "transition_samples": [
+            {
+              "dq_norm": 0.011868254360113996,
+              "q_norm": 0.00019702380000267774,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.011992725929701149,
+              "q_norm": 0.00019887277817380797,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.012194906819114053,
+              "q_norm": 0.0002024743463627682,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        }
+      },
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "B": {
+      "completed_commands": 18,
+      "frames": 200,
+      "full_nine_coordinate_writes": 36,
+      "sides": {
+        "left": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.8514040637029078,
+            "mean": 0.24905392204056925,
+            "median": 0.09284464623844234
+          },
+          "delta_q_arm_rad": [
+            0.0007209223622339778,
+            0.008544921875,
+            0.0002962719663628377,
+            0.02703857421875,
+            -0.0050950453005498275,
+            -0.03737640380859375,
+            0.004123687744140625
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7388305829181223,
+            "mean": -0.0006464080888643217,
+            "median": 0.0001893522567115724
+          },
+          "joint4_delta_rad": 0.02703857421875,
+          "link8_translation_m": 0.0069580552000123325,
+          "max_abs_delta_q_rad": 0.03737640380859375,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.02964728542093994,
+            "median": 0.014159239272275007
+          },
+          "tcp_rotation_rad": 0.02813424430204526,
+          "tcp_translation_m": 0.004941420024127683,
+          "transition_samples": [
+            {
+              "dq_norm": 0.036630178966088896,
+              "q_norm": 0.0006084436447341802,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05326187525449086,
+              "q_norm": 0.0008871188862131184,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.07013475664898865,
+              "q_norm": 0.0011703607558142713,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        },
+        "right": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.828161829731369,
+            "mean": 0.23876170923079906,
+            "median": 0.0966583141937241
+          },
+          "delta_q_arm_rad": [
+            0.0005717480034945766,
+            0.008417129516601562,
+            0.00026607553809299134,
+            0.02660369873046875,
+            -0.004029891650134232,
+            -0.036357879638671875,
+            -0.001750946044921875
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7386501224257214,
+            "mean": -0.00043950258959632823,
+            "median": 0.00016429272850625634
+          },
+          "joint4_delta_rad": 0.02660369873046875,
+          "link8_translation_m": 0.006868307498162063,
+          "max_abs_delta_q_rad": 0.036357879638671875,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.02908291531475275,
+            "median": 0.013783435456974007
+          },
+          "tcp_rotation_rad": 0.026598001395642647,
+          "tcp_translation_m": 0.009550330523004292,
+          "transition_samples": [
+            {
+              "dq_norm": 0.03558779395580032,
+              "q_norm": 0.000594389677950713,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05166205506776883,
+              "q_norm": 0.0008600240257439223,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.06799230328362688,
+              "q_norm": 0.0011306063894188664,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        }
+      },
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "C": {
+      "completed_commands": 18,
+      "frames": 200,
+      "full_nine_coordinate_writes": 36,
+      "sides": {
+        "left": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.8343420860141918,
+            "mean": 0.2560421048580239,
+            "median": 0.0935635340962951
+          },
+          "delta_q_arm_rad": [
+            -0.0009954289489542134,
+            -0.017816543579101562,
+            -0.0008083488719421439,
+            -0.0248870849609375,
+            0.005021893201046623,
+            0.03383636474609375,
+            -0.0042781829833984375
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7388305829181223,
+            "mean": -0.0006472474874226596,
+            "median": 0.0001893522567115724
+          },
+          "joint4_delta_rad": -0.0248870849609375,
+          "link8_translation_m": 0.003672528589023401,
+          "max_abs_delta_q_rad": 0.03383636474609375,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.05492453116950269,
+            "median": 0.024390267226181237
+          },
+          "tcp_rotation_rad": 0.03884738688899645,
+          "tcp_translation_m": 0.0007057673766983093,
+          "transition_samples": [
+            {
+              "dq_norm": 0.036260834280719634,
+              "q_norm": 0.0006036377990017332,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05256158773436912,
+              "q_norm": 0.0008747767496056573,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.06896145711640128,
+              "q_norm": 0.0011474436856635615,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        },
+        "right": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.8111571842573562,
+            "mean": 0.24222409175253914,
+            "median": 0.08511056679655636
+          },
+          "delta_q_arm_rad": [
+            -0.0008055554408201715,
+            -0.017581939697265625,
+            -0.0006709922490699682,
+            -0.02433013916015625,
+            0.003935470049327705,
+            0.032787322998046875,
+            0.0015716552734375
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7386501224257214,
+            "mean": -0.00043876990201911753,
+            "median": 0.00016429272850625634
+          },
+          "joint4_delta_rad": -0.02433013916015625,
+          "link8_translation_m": 0.003601489980950117,
+          "max_abs_delta_q_rad": 0.032787322998046875,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.05443824930384376,
+            "median": 0.024122827488660556
+          },
+          "tcp_rotation_rad": 0.037578575867364565,
+          "tcp_translation_m": 0.006555409497528292,
+          "transition_samples": [
+            {
+              "dq_norm": 0.03512899646616297,
+              "q_norm": 0.0005834066022827051,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05086282374139364,
+              "q_norm": 0.000847793843988428,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.06671090048686797,
+              "q_norm": 0.001111856330846551,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        }
+      },
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "D": {
+      "completed_commands": 18,
+      "frames": 200,
+      "full_nine_coordinate_writes": 36,
+      "sides": {
+        "left": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.8514040637029078,
+            "mean": 0.24905392204056925,
+            "median": 0.09284464623844234
+          },
+          "delta_q_arm_rad": [
+            0.0007209223622339778,
+            0.008544921875,
+            0.0002962719663628377,
+            0.02703857421875,
+            -0.0050950453005498275,
+            -0.03737640380859375,
+            0.004123687744140625
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7388305829181223,
+            "mean": -0.0006464080888643217,
+            "median": 0.0001893522567115724
+          },
+          "joint4_delta_rad": 0.02703857421875,
+          "link8_translation_m": 0.0069580552000123325,
+          "max_abs_delta_q_rad": 0.03737640380859375,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.02964728542093994,
+            "median": 0.014159239272275007
+          },
+          "tcp_rotation_rad": 0.02813424430204526,
+          "tcp_translation_m": 0.004941420024127683,
+          "transition_samples": [
+            {
+              "dq_norm": 0.036630178966088896,
+              "q_norm": 0.0006084436447341802,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05326187525449086,
+              "q_norm": 0.0008871188862131184,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.07013475664898865,
+              "q_norm": 0.0011703607558142713,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        },
+        "right": {
+          "cross_joint_acceleration_stats": {
+            "count": 119,
+            "max_abs": 0.828161829731369,
+            "mean": 0.23876170923079906,
+            "median": 0.0966583141937241
+          },
+          "delta_q_arm_rad": [
+            0.0005717480034945766,
+            0.008417129516601562,
+            0.00026607553809299134,
+            0.02660369873046875,
+            -0.004029891650134232,
+            -0.036357879638671875,
+            -0.001750946044921875
+          ],
+          "fd_minus_end_dq_stats": {
+            "count": 1386,
+            "max_abs": 2.7386501224257214,
+            "mean": -0.00043950258959632823,
+            "median": 0.00016429272850625634
+          },
+          "joint4_delta_rad": 0.02660369873046875,
+          "link8_translation_m": 0.006868307498162063,
+          "max_abs_delta_q_rad": 0.036357879638671875,
+          "model_residual_Nm": {
+            "count": 17,
+            "definition": "M*(end_dq difference/dt)+c+g-tau; end-step solver dq estimator only",
+            "max": 0.02908291531475275,
+            "median": 0.013783435456974007
+          },
+          "tcp_rotation_rad": 0.026598001395642647,
+          "tcp_translation_m": 0.009550330523004292,
+          "transition_samples": [
+            {
+              "dq_norm": 0.03558779395580032,
+              "q_norm": 0.000594389677950713,
+              "step": 184,
+              "time_s": 3.066666826605797
+            },
+            {
+              "dq_norm": 0.05166205506776883,
+              "q_norm": 0.0008600240257439223,
+              "step": 185,
+              "time_s": 3.083333494141698
+            },
+            {
+              "dq_norm": 0.06799230328362688,
+              "q_norm": 0.0011306063894188664,
+              "step": 186,
+              "time_s": 3.100000161677599
+            }
+          ]
+        }
+      },
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    }
+  },
+  "conclusions": {
+    "no_formal_hold": true,
+    "r6_archive_complete": true,
+    "repeatability_max_abs_rad": 0.0,
+    "signed_response_reproduced": true,
+    "tgs_uncertainty": "reported dq is end-step solver velocity; fd and residual are estimators"
+  },
+  "max_model_residual_estimator_Nm": 0.05492453116950269,
+  "r6_evidence_sha256": "399bee624145edcba47d4efcda8a79b3aaa9bdd951511a611845e40841809cb7",
+  "r6_historical_residual_Nm": 0.05492453116950269,
+  "schema": "TASK28_G2_P5_QP_6_R7_R6_REANALYSIS_V1",
+  "signed_response": {
+    "left": {
+      "B_joint4_rad": 0.02703857421875,
+      "B_minus_D_rad": 0.0,
+      "B_plus_C_rad": 0.0021514892578125,
+      "C_joint4_rad": -0.0248870849609375,
+      "D_joint4_rad": 0.02703857421875
+    },
+    "right": {
+      "B_joint4_rad": 0.02660369873046875,
+      "B_minus_D_rad": 0.0,
+      "B_plus_C_rad": 0.0022735595703125,
+      "C_joint4_rad": -0.02433013916015625,
+      "D_joint4_rad": 0.02660369873046875
+    }
+  },
+  "source_root": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r6/evidence",
+  "total_full_nine_coordinate_writes": 144
+}

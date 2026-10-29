@@ -1,0 +1,129 @@
+{
+  "schema": "TASK28_G2_P5_QP_6_R7_PREREGISTRATION_V1",
+  "repository": "dreamerToTOE/dual-arm-embodied-palletizing",
+  "branch": "side-suction-palletizing",
+  "expected_start_head": "759293ad862dac74a35b979007929ef59227b29f",
+  "scene_builder": "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene",
+  "scene_policy": "fresh anonymous stage; original scene/USD/fixture/history preserved",
+  "physics": {
+    "dt_s": 0.016666666666666666,
+    "solver": "TGS",
+    "backend": "CPU_NUMPY"
+  },
+  "controller": {
+    "formula": "tau=g_arm(q)+Kp*(q_hold-q_arm)-Kd*dq_arm",
+    "gains_Nm_per_rad": [
+      1.2,
+      1.2,
+      1.0,
+      0.8,
+      0.5,
+      0.4,
+      0.3
+    ],
+    "damping_Nms_per_rad": [
+      0.18,
+      0.18,
+      0.16,
+      0.14,
+      0.1,
+      0.08,
+      0.06
+    ],
+    "q_hold": "actual source-validated arm q at ownership transfer",
+    "computed_torque": "not enabled; model not pre-qualified"
+  },
+  "limits": {
+    "source_effort_Nm": [
+      87,
+      87,
+      87,
+      87,
+      12,
+      12,
+      12
+    ],
+    "research_effort_cap_Nm": [
+      35,
+      12,
+      8,
+      35,
+      4,
+      4,
+      4
+    ],
+    "effective_effort_Nm": [
+      35,
+      12,
+      8,
+      35,
+      4,
+      4,
+      4
+    ],
+    "rate_Nm_s": [
+      2400,
+      600,
+      240,
+      2400,
+      240,
+      240,
+      240
+    ]
+  },
+  "diagnostic": {
+    "cells": [
+      {
+        "id": "S1",
+        "controller": "gravity_plus_small_damping",
+        "steps": 30
+      },
+      {
+        "id": "S2",
+        "controller": "gravity_plus_pd_hold",
+        "steps": 30
+      },
+      {
+        "id": "S3",
+        "controller": "gravity_plus_pd_hold_repeat",
+        "steps": 30
+      }
+    ],
+    "tcp_translation_tolerance_m": 0.001,
+    "joint_position_tolerance_rad": 0.02,
+    "joint_velocity_tolerance_rad_s": 0.3,
+    "failure": [
+      "source_gate",
+      "unexpected_collision",
+      "effort_or_rate_limit",
+      "timestamp_or_step_fault",
+      "finger_policy_change",
+      "envelope_exceeded"
+    ]
+  },
+  "formal": {
+    "static_hold": {
+      "steps": 60,
+      "only_if": "all eligible diagnostic cells stable",
+      "rerun_after_failure": false
+    },
+    "moving": "only if formal static PASS",
+    "computed_torque": "skip unless independent model qualification PASS"
+  },
+  "forbidden": [
+    "teleport",
+    "ROS command bridge",
+    "suction",
+    "Cube contact/transport",
+    "GPU retry",
+    "hardware",
+    "unbounded gain search",
+    "editing frozen scene/USD/old evidence"
+  ],
+  "created_before_new_isaac_experiment": true,
+  "registration_revision": {
+    "reason": "initial 6 Nm cap could not represent observed 28 Nm joint4 gravity term; revised before any closed-loop write",
+    "preserved_rejection": "evidence/diagnostic/S1_cap_reject",
+    "source_constraint": "min(frozen source, research cap)"
+  }
+}

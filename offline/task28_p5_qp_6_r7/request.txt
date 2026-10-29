@@ -1,0 +1,350 @@
+# Task28 G2-P5-QP-6-R7 — Original L-Suction Dynamics Qualification and Bilateral Torque Stabilization
+
+Repository: dreamerToTOE/dual-arm-embodied-palletizing
+Branch: side-suction-palletizing
+Expected starting HEAD: 759293ad862dac74a35b979007929ef59227b29f
+
+## Research decision
+
+R6 demonstrated real, reproducible bilateral effort actuation in the original double-FR3 L-shaped side-suction scene.
+
+R7 must advance from open-loop diagnostic effort responses to bounded closed-loop bilateral torque stabilization and, conditionally, moving trajectory tracking.
+
+Do not return to repeated generic state-source audits.
+
+Use the established R6 actuator pathway, original scene builder and original L-shaped tool geometry.
+
+The owner authorizes bounded research-only diagnostic feedback torque experiments in isolated Isaac Sim processes after the diagnostic source, geometry, actuation ownership, torque and failure gates pass.
+
+Formal model-based controller qualification and formal performance claims require separate, independently verified prerequisites.
+
+Complete multiple eligible stages in ONE Codex task.
+
+## Phase 0 — prior literature and code review
+
+Review before writing implementation code:
+
+- R6 full reports, raw traces, effort adapter and signed perturbation evidence.
+- R3–R5 source diagnostics and TGS velocity semantics.
+- QP6/R1 coupled dynamics and finger constraint modeling.
+- Original Task28 G1 fixture, FCL, FK and actual side_suction_tcp.
+- Installed Isaac Sim 4.5 articulation API.
+- Franka gravity compensation and joint impedance controller implementations.
+- Pinocchio RNEA/CRBA/ABA reference implementations.
+
+Relevant references:
+
+https://github.com/nbfigueroa/franka_interactive_controllers
+
+https://gepettoweb.laas.fr/doc/stack-of-tasks/pinocchio/devel/doxygen-html/md_doc_a-features_g-dynamic.html
+
+https://frankarobotics.github.io/docs/doc/libfranka/docs/overview.html
+
+https://docs.isaacsim.omniverse.nvidia.com/4.5.0/py/source/extensions/isaacsim.core.prims/docs/index.html
+
+Document the concrete technical lessons for the currently installed Isaac runtime.
+
+Do not assume real FR3 FCI torque commands have the same gravity/friction compensation semantics as Isaac explicit effort commands.
+
+## Phase 1 — freeze and protect the real scene
+
+Use only:
+
+fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene()
+
+Preserve the original:
+
+- Two FR3 articulations.
+- Mirrored L-shaped side-suction tools and all eight cup geometries.
+- Link8-to-side_suction_tcp transforms.
+- Cube_01, table, initial poses and physical collision scene.
+- 60 Hz TGS timestep.
+- Native fingers, mimic joints and finger drives.
+- Original joint limits, G1 grasp closure and FCL/ACM.
+- Original FR3 USD and fixture source hashes.
+
+All new implementation and evidence must be placed under:
+
+offline/task28_p5_qp_6_r7/
+
+Do not edit original scene, bridge, USD, robot descriptions or old reports.
+
+Use fresh isolated Isaac processes and the actual original builder.
+
+No ROS command bridge, suction closure, Cube transport, GPU retry or hardware operations.
+
+## Phase 2 — independent reanalysis of R6
+
+Start with the existing A/B/C/D evidence, without additional physics.
+
+Independently reproduce:
+
+- 18 completed command steps per cell.
+- 144 full nine-coordinate articulation writes.
+- Correct commanded effort and immediate readback.
+- Positive/negative joint4 response.
+- Repeatability of B/D.
+- Full seven-arm joint displacement for every cell.
+- Actual link8 and L-tool TCP displacement.
+- The gravity-only A baseline drift.
+- The maximum model residual estimator approximately 0.0549245 N.m.
+
+The original A experiment showed about 2.43 mm left and 1.72 mm right TCP displacement in 18 physics steps.
+
+Do not label A as a formal static holding PASS.
+
+Investigate whether initial q/dq at the exact drive-to-effort ownership transition explains part of this drift.
+
+Compare native drive target, actual q, solver dq, gravity torque, transition time and torque-rate margins.
+
+Do not select a more favorable starting state by teleporting or changing the frozen scene.
+
+For the B/C data, examine cross-joint motion rather than assuming the injected joint4 torque exclusively accelerates joint4.
+
+Compute baseline-subtracted and sign-symmetric response statistics to isolate the incremental effect of the perturbation.
+
+Report uncertainty due to TGS end-step solver velocity.
+
+## Phase 3 — dynamic model and tool inertia investigation
+
+Read actual same-step q9, dq9, M9, c9 and g9.
+
+Explicitly partition each articulation:
+
+    q9 = [q_arm7, q_finger2]
+
+    M9 = [[Maa, Maf],
+          [Mfa, Mff]]
+
+Evaluate the active-arm equation:
+
+    Maa*qdd_arm + Maf*qdd_finger + c_arm + g_arm
+        = tau_arm + external_generalized_effort
+
+Do not claim qdd from end-step solver velocity is an independently measured acceleration.
+
+Use multiple declared estimators or integration-based prediction checks, and compare their uncertainty.
+
+Compare model-predicted signed responses against the real R6 positive/negative trials.
+
+Check the contribution of:
+
+- Initial nonzero velocity.
+- Gravity compensation error.
+- Inertial coupling between arm joints.
+- Native finger coupling and constraints.
+- Current mounted-tool effective inertia.
+- Force or constraint effects.
+- TGS time integration and numerical precision.
+
+Determine how the fixed L-tool collider geometry contributes, if at all, to actual articulation mass/inertia.
+
+Use installed PhysX mass/inertia APIs and frozen USD provenance.
+
+An inertial inspection or read-only independent model calculation is allowed.
+
+Do not modify the original tool mass, add payloads or change the physical scene to force model agreement.
+
+If tool inertia cannot be identified uniquely, label that component UNKNOWN rather than inventing a value.
+
+Independent negative controls must reject incorrect dynamics signs, malformed mass matrices, invalid timestamps, incorrect finger assumptions and fabricated sensor data.
+
+Deliver a scoped model qualification, not a binary blanket PASS.
+
+## Phase 4 — new diagnostic closed-loop torque controller
+
+The first control objective is stable FREE_HOME holding, not Cube grasping.
+
+Use a bounded gravity-compensated joint-space PD/impedance controller:
+
+    tau_arm = g_arm(q)
+              + Kp*(q_hold - q_arm)
+              - Kd*dq_arm
+
+Here q_hold is the actual source-validated reference at the declared ownership transfer.
+
+Use appropriate joint-space torque-domain gains, not acceleration-domain computed-torque gains.
+
+Review the installed solver's TGS velocity semantics when selecting damping and interpreting behavior.
+
+Derive the initial gains and admissible control authority using R6 response magnitudes, actual inertia, 60 Hz dt and observed velocity/position precision.
+
+Do not arbitrarily use large gains.
+
+No unbounded tuning or post-formal gain adjustment.
+
+The control policy must remain research-only and be tested under an explicit bounded diagnostic authorization.
+
+Use R6's actual full nine-coordinate effort adapter.
+
+For each effort write:
+
+- Preserve the native finger policy.
+- Check original per-joint effort limits and the stricter research cap.
+- In particular, do not apply a 45 N.m research cap in place of smaller source limits for joints 5–7.
+- Enforce the registered torque-rate limit.
+- Check original scene identity and q/dq timestamps.
+- Check FCL and actual tool/Cube clearance.
+- Verify exclusive arm effort mode and zero competing position-drive gains.
+- Save the proposed command before execution.
+- Read back the command.
+- Advance exactly one registered physics step.
+- Validate the resulting state before continuing.
+
+Do not treat FREE_HOME as an attached bilateral grasp.
+
+## Phase 5 — bounded diagnostic stabilization experiments
+
+Pre-register up to FOUR development-only closed-loop experiments.
+
+Suggested comparisons:
+
+S0 — R6 gravity-only baseline reconstruction from archived data, no need to rerun unless a new matched initial-condition control is scientifically necessary.
+
+S1 — Small, bounded joint-space damping with source-valid gravity compensation.
+
+S2 — Gravity+PD holding the actual measured initial arm configuration.
+
+S3 — Independent repeat of the most informative eligible feedback configuration.
+
+All real experiments must use the original scene, fresh independent resets and no suction.
+
+Set a bounded duration, position/velocity envelope, torque/rate policy and failure criteria before execution.
+
+Use no arbitrary gain search.
+
+Compare:
+
+- Actual joint drift relative to initial reference.
+- Total and maximum L-tool TCP translation/rotation drift.
+- Solver-reported joint velocities.
+- Actual joint/link displacement.
+- Command magnitude and rate.
+- Stability over the complete registered interval.
+- Finger state and behavior.
+- Reproducibility across resets.
+- Unexpected collision and first failure.
+
+The frozen G1 0.100 mm grasp threshold must not be redefined as an automatic FREE_HOME holding threshold.
+
+Define any diagnostic holding tolerance separately and justify it before running the relevant formal experiment.
+
+A successful diagnostic control test does not certify the entire inverse-dynamics model.
+
+## Phase 6 — formal static torque hold
+
+If the bounded diagnostic feedback controller is stable and source-valid:
+
+Freeze the controller gains, initial-state definition, physics settings, limits, duration, independent evaluator and acceptance thresholds.
+
+Start a fresh original scene.
+
+Run ONE formal bilateral static effort holding experiment.
+
+Require real effort commands, actual state response and completion of the registered hold duration.
+
+Evaluate both joint and actual side_suction_tcp errors.
+
+A formal PASS requires all declared state, collision, torque, rate, timing and stability gates to pass for the entire run.
+
+Do not tune and rerun after formal failure.
+
+If a diagnostic prerequisite is not satisfied, skip the formal experiment and explain the exact prerequisite.
+
+## Phase 7 — conditional moving torque tracking
+
+Only if formal static holding passes:
+
+Construct a small, smooth, collision-checked C2 joint reference from the actual FREE_HOME posture.
+
+Preserve original Cube and tool geometry.
+
+Do not teleport a robot or use a saved QP4 intermediate configuration as an actual starting posture.
+
+Run independently registered comparisons, when eligible:
+
+A — Gravity+PD tracking with the validated gains.
+
+B — Computed-torque tracking with a separately qualified arm dynamics model.
+
+Two profile durations may be used:
+
+- 0.50 seconds.
+- 1.00 second.
+
+A total of up to four formal moving cells is permitted.
+
+The model-based B cells must be skipped if the applicable dynamics source cannot be qualified.
+
+If static holding and movement are valid, optionally perform an offline or diagnostic-only object-centered task-space QP readiness analysis.
+
+Do not claim cooperative moving HQP success without an actual controller experiment.
+
+Do not touch, attach or transport the Cube.
+
+## Phase 8 — scientific evaluation
+
+Report the hierarchy of evidence separately:
+
+1. Real actuator I/O and signed response, already established by R6.
+2. Bounded feedback stabilization.
+3. Formal static gravity+PD holding.
+4. Model-based inverse-dynamics qualification.
+5. Short moving trajectory tracking.
+6. Cooperative task-space QP readiness.
+7. Actual Cube/D6/internal-wrench status.
+
+For the model residual, compare R7 estimates against R6's historical 0.0549245 N.m estimate using identical definitions.
+
+Do not reduce an error by changing its mathematical definition and call that an improvement.
+
+If a new, more reliable residual is used, report both old and new definitions separately.
+
+No claim of hardware-equivalent torque sensing or real suction capacity.
+
+Do not conceal unsuccessful cells or later stages skipped because of shared prerequisites.
+
+## Phase 9 — tests and deliverables
+
+Deliver:
+
+docs/tasks/TASK28_G2_P5_QP_6_R7_TORQUE_STABILIZATION.md
+
+All task-scoped scripts, source review, preregistration, raw traces, independent evaluations, failure records and model analysis under:
+
+offline/task28_p5_qp_6_r7/
+
+Run the existing 1015 tests and the new focused tests, without double-counting overlapping cases.
+
+Preserve previous R3–R6 reports, original fixture, NR/QP implementation and G1 thresholds.
+
+Final scientific statuses must explicitly include:
+
+- ORIGINAL_SCENE_PRESERVED
+- R6_ACTIVE_TORQUE_EVIDENCE_PRESERVED
+- DYNAMIC_MODEL_SCOPE
+- TOOL_INERTIA_STATUS
+- DIAGNOSTIC_STATIC_STABILIZATION_STATUS
+- FORMAL_STATIC_HOLD_STATUS
+- SHORT_MOVING_TRACKING_STATUS
+- COMPUTED_TORQUE_STATUS
+- COOPERATIVE_QP_STATUS
+- ACTUAL_CUBE_SUCTION_NOT_TESTED
+
+Commit and push task-scoped additions only.
+
+Report verified remote HEAD and clean worktree.
+
+Begin the final Chinese report with a SHORT PLAIN-LANGUAGE SUMMARY answering:
+
+- Did closed-loop feedback actually stabilize the robots?
+- Did formal static holding pass?
+- Did any moving torque experiment run?
+- What is still blocked?
+- What should happen next?
+
+Then give the full technical report and complete experiment matrix.
+
+STOP after R7.
+
+No physical FR3, ROS actuation, Cube suction, D6 attachment, transport or unapproved changes to the frozen environment.

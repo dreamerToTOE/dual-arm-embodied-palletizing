@@ -1,0 +1,483 @@
+{
+  "arm_equation": "Maa*qdd_arm+Maf*qdd_finger+c_arm+g_arm=tau_arm+external_generalized_effort",
+  "baseline_subtracted_signed_response": {
+    "left": {
+      "B_D_repeat_max_abs_rad": 0.0,
+      "B_minus_A_rad": [
+        0.0008696808072272688,
+        0.013250350952148438,
+        0.0005457844235934317,
+        0.02602386474609375,
+        -0.004955651529598981,
+        -0.0355072021484375,
+        0.0041370391845703125
+      ],
+      "C_minus_A_rad": [
+        -0.0008466705039609224,
+        -0.013111114501953125,
+        -0.0005588364147115499,
+        -0.02590179443359375,
+        0.00516128697199747,
+        0.03570556640625,
+        -0.00426483154296875
+      ],
+      "cross_joint_B_abs_rad": [
+        0.0007209223622339778,
+        0.008544921875,
+        0.0002962719663628377,
+        0.02703857421875,
+        0.0050950453005498275,
+        0.03737640380859375,
+        0.004123687744140625
+      ],
+      "cross_joint_C_abs_rad": [
+        0.0009954289489542134,
+        0.017816543579101562,
+        0.0008083488719421439,
+        0.0248870849609375,
+        0.005021893201046623,
+        0.03383636474609375,
+        0.0042781829833984375
+      ],
+      "sign_symmetric_B_plus_C_rad": [
+        2.3010303266346455e-05,
+        0.0001392364501953125,
+        -1.3051991118118167e-05,
+        0.0001220703125,
+        0.00020563544239848852,
+        0.0001983642578125,
+        -0.0001277923583984375
+      ]
+    },
+    "right": {
+      "B_D_repeat_max_abs_rad": 0.0,
+      "B_minus_A_rad": [
+        0.0006951455943635665,
+        0.013051986694335938,
+        0.0004636016528820619,
+        0.02556610107421875,
+        -0.003903252352756681,
+        -0.0345001220703125,
+        -0.0017604827880859375
+      ],
+      "C_minus_A_rad": [
+        -0.0006821578499511816,
+        -0.01294708251953125,
+        -0.0004734661342808977,
+        -0.02536773681640625,
+        0.004062109346705256,
+        0.03464508056640625,
+        0.0015621185302734375
+      ],
+      "cross_joint_B_abs_rad": [
+        0.0005717480034945766,
+        0.008417129516601562,
+        0.00026607553809299134,
+        0.02660369873046875,
+        0.004029891650134232,
+        0.036357879638671875,
+        0.001750946044921875
+      ],
+      "cross_joint_C_abs_rad": [
+        0.0008055554408201715,
+        0.017581939697265625,
+        0.0006709922490699682,
+        0.02433013916015625,
+        0.003935470049327705,
+        0.032787322998046875,
+        0.0015716552734375
+      ],
+      "sign_symmetric_B_plus_C_rad": [
+        1.2987744412384927e-05,
+        0.0001049041748046875,
+        -9.864481398835778e-06,
+        0.0001983642578125,
+        0.0001588569939485751,
+        0.00014495849609375,
+        -0.0001983642578125
+      ]
+    }
+  },
+  "cell_statistics": {
+    "A": {
+      "left": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.01905539282030417,
+        "fd_minus_end_dq_max_abs": 0.00022082982400208062,
+        "integration_prediction_error_rad_s": {
+          "max": 0.00029080540905335623,
+          "median": 0.00016083958567200842
+        },
+        "max_residual_Nm": 0.016627374633518054,
+        "median_residual_Nm": 0.008976025195563855,
+        "qdd_estimator_max_abs_rad_s2": 0.12586131035514792
+      },
+      "right": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.018844723432731407,
+        "fd_minus_end_dq_max_abs": 0.0002037766867033472,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0002879574994492399,
+          "median": 0.00015857168403258474
+        },
+        "max_residual_Nm": 0.01637680959731268,
+        "median_residual_Nm": 0.008857211745943932,
+        "qdd_estimator_max_abs_rad_s2": 0.12412256845192626
+      }
+    },
+    "B": {
+      "left": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.25017915627264714,
+        "fd_minus_end_dq_max_abs": 0.00020771349409174494,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0008083958374676614,
+          "median": 0.0005308334845598352
+        },
+        "max_residual_Nm": 0.02964728542093994,
+        "median_residual_Nm": 0.013374908734655277,
+        "qdd_estimator_max_abs_rad_s2": 0.8514040637029078
+      },
+      "right": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.239225983961934,
+        "fd_minus_end_dq_max_abs": 0.00022379270922143202,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0008139782271049843,
+          "median": 0.0005300549249009919
+        },
+        "max_residual_Nm": 0.02908291531475275,
+        "median_residual_Nm": 0.01302449526578197,
+        "qdd_estimator_max_abs_rad_s2": 0.828161829731369
+      }
+    },
+    "C": {
+      "left": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.25677366209176716,
+        "fd_minus_end_dq_max_abs": 0.0002085786713909854,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0011869075347158693,
+          "median": 0.0007219049012873527
+        },
+        "max_residual_Nm": 0.05492453116950269,
+        "median_residual_Nm": 0.02315931030915431,
+        "qdd_estimator_max_abs_rad_s2": 0.847081887100045
+      },
+      "right": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.24249046433514512,
+        "fd_minus_end_dq_max_abs": 0.0001993887833575958,
+        "integration_prediction_error_rad_s": {
+          "max": 0.00117008386200604,
+          "median": 0.0007159741800829771
+        },
+        "max_residual_Nm": 0.05443824930384376,
+        "median_residual_Nm": 0.022934791008437448,
+        "qdd_estimator_max_abs_rad_s2": 0.8240442595215481
+      }
+    },
+    "D": {
+      "left": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.25017915627264714,
+        "fd_minus_end_dq_max_abs": 0.00020771349409174494,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0008083958374676614,
+          "median": 0.0005308334845598352
+        },
+        "max_residual_Nm": 0.02964728542093994,
+        "median_residual_Nm": 0.013374908734655277,
+        "qdd_estimator_max_abs_rad_s2": 0.8514040637029078
+      },
+      "right": {
+        "acceleration_role": "estimator_only; TGS dq is end-step solver velocity",
+        "count": 18,
+        "cross_joint_acceleration_mean_abs": 0.239225983961934,
+        "fd_minus_end_dq_max_abs": 0.00022379270922143202,
+        "integration_prediction_error_rad_s": {
+          "max": 0.0008139782271049843,
+          "median": 0.0005300549249009919
+        },
+        "max_residual_Nm": 0.02908291531475275,
+        "median_residual_Nm": 0.01302449526578197,
+        "qdd_estimator_max_abs_rad_s2": 0.828161829731369
+      }
+    }
+  },
+  "historical_r6_max_residual_Nm": 0.05492453116950269,
+  "historical_residual_definition": "M*(end_dq difference/dt)+c+g-tau; compare identical R6 definition",
+  "negative_controls": [
+    {
+      "name": "malformed_mass",
+      "rejected": true
+    },
+    {
+      "name": "fabricated_shape",
+      "rejected": true
+    },
+    {
+      "name": "invalid_timestamp",
+      "rejected": true
+    },
+    {
+      "name": "wrong_dynamics_sign",
+      "rejected": true
+    },
+    {
+      "name": "wrong_finger_assumption",
+      "rejected": true
+    }
+  ],
+  "ownership_transition": {
+    "A": {
+      "left": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.289157521317975e-07,
+          -7.6331963539123535,
+          -0.709587812423706,
+          28.000232696533203,
+          0.8898411989212036,
+          3.2878799438476562,
+          -6.411969661712646e-05
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.0001893522567115724,
+          -0.010724863037467003,
+          -0.0006966578657738864,
+          0.005007283296436071,
+          -0.0010150318266823888,
+          6.819550617365167e-05,
+          2.775590110104531e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      },
+      "right": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.0352905494291917e-07,
+          -7.437305450439453,
+          -0.5711634159088135,
+          27.80477523803711,
+          0.6943668127059937,
+          3.092413902282715,
+          0.0002527596370782703
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.00017319079779554158,
+          -0.010585268028080463,
+          -0.0005470351316034794,
+          0.0051315100863575935,
+          -0.0008947708993218839,
+          5.531012357096188e-05,
+          1.9185823475709185e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      }
+    },
+    "B": {
+      "left": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.289157521317975e-07,
+          -7.6331963539123535,
+          -0.709587812423706,
+          28.000232696533203,
+          0.8898411989212036,
+          3.2878799438476562,
+          -6.411969661712646e-05
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.0001893522567115724,
+          -0.010724863037467003,
+          -0.0006966578657738864,
+          0.005007283296436071,
+          -0.0010150318266823888,
+          6.819550617365167e-05,
+          2.775590110104531e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      },
+      "right": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.0352905494291917e-07,
+          -7.437305450439453,
+          -0.5711634159088135,
+          27.80477523803711,
+          0.6943668127059937,
+          3.092413902282715,
+          0.0002527596370782703
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.00017319079779554158,
+          -0.010585268028080463,
+          -0.0005470351316034794,
+          0.0051315100863575935,
+          -0.0008947708993218839,
+          5.531012357096188e-05,
+          1.9185823475709185e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      }
+    },
+    "C": {
+      "left": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.289157521317975e-07,
+          -7.6331963539123535,
+          -0.709587812423706,
+          28.000232696533203,
+          0.8898411989212036,
+          3.2878799438476562,
+          -6.411969661712646e-05
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.0001893522567115724,
+          -0.010724863037467003,
+          -0.0006966578657738864,
+          0.005007283296436071,
+          -0.0010150318266823888,
+          6.819550617365167e-05,
+          2.775590110104531e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      },
+      "right": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.0352905494291917e-07,
+          -7.437305450439453,
+          -0.5711634159088135,
+          27.80477523803711,
+          0.6943668127059937,
+          3.092413902282715,
+          0.0002527596370782703
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.00017319079779554158,
+          -0.010585268028080463,
+          -0.0005470351316034794,
+          0.0051315100863575935,
+          -0.0008947708993218839,
+          5.531012357096188e-05,
+          1.9185823475709185e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      }
+    },
+    "D": {
+      "left": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.289157521317975e-07,
+          -7.6331963539123535,
+          -0.709587812423706,
+          28.000232696533203,
+          0.8898411989212036,
+          3.2878799438476562,
+          -6.411969661712646e-05
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.0001893522567115724,
+          -0.010724863037467003,
+          -0.0006966578657738864,
+          0.005007283296436071,
+          -0.0010150318266823888,
+          6.819550617365167e-05,
+          2.775590110104531e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      },
+      "right": {
+        "first_command_step": 183,
+        "first_command_time_s": 3.0500001590698957,
+        "gravity_arm_Nm": [
+          2.0352905494291917e-07,
+          -7.437305450439453,
+          -0.5711634159088135,
+          27.80477523803711,
+          0.6943668127059937,
+          3.092413902282715,
+          0.0002527596370782703
+        ],
+        "native_target_q": [
+          0.0,
+          0.0
+        ],
+        "ownership_dq_arm": [
+          -0.00017319079779554158,
+          -0.010585268028080463,
+          -0.0005470351316034794,
+          0.0051315100863575935,
+          -0.0008947708993218839,
+          5.531012357096188e-05,
+          1.9185823475709185e-05
+        ],
+        "ownership_step": 182,
+        "ownership_time_s": 3.0333334915339947
+      }
+    }
+  },
+  "partition": "q9=[arm7,finger2], M9 blocks Maa/Maf/Mfa/Mff",
+  "qualification": "SCOPED_PARTIAL_MEASURED_M_C_G; computed torque not qualified; qdd and residual use declared estimators",
+  "r7_recomputed_max_residual_Nm": 0.05492453116950269,
+  "schema": "TASK28_G2_P5_QP_6_R7_MODEL_INSPECTION_V2",
+  "source": "immutable R6 raw traces; no physics commands",
+  "tool_geometry": {
+    "reason": "frozen builder tool collision geometry has no uniquely attributable payload mass declaration; no mass/scene modification",
+    "scene_sha256": "acb5ba60138685ce37351fde4da338183dcb15c8012d4d25c01d04b2adb37c87",
+    "tool_mass_contribution": "UNKNOWN"
+  }
+}

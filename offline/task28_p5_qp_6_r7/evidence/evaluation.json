@@ -1,0 +1,124 @@
+{
+  "cells": {
+    "FORMAL": {
+      "stable_complete_interval": false,
+      "status": "MISSING"
+    },
+    "S1": {
+      "commands": 30,
+      "gates": {
+        "commands_complete": true,
+        "joint_tolerance": true,
+        "source_valid": true,
+        "tcp_tolerance": false,
+        "velocity_tolerance": true
+      },
+      "sides": {
+        "left": {
+          "joint_drift_rad": [
+            -0.00011756621825043112,
+            -0.0051708221435546875,
+            -0.0003374590814928524,
+            0.0025177001953125,
+            -0.0003621028590714559,
+            0.0,
+            0.0
+          ],
+          "max_abs_dq_rad_s": 0.010724863037467003,
+          "max_abs_joint_drift_rad": 0.0051708221435546875,
+          "tcp_rotation_frobenius": 0.010886183004018092,
+          "tcp_translation_m": 0.003666769520370212
+        },
+        "right": {
+          "joint_drift_rad": [
+            -0.0001024823486659443,
+            -0.0051097869873046875,
+            -0.00026636681650415994,
+            0.00260162353515625,
+            -0.0003248438806622289,
+            0.0,
+            0.0
+          ],
+          "max_abs_dq_rad_s": 0.010585268028080463,
+          "max_abs_joint_drift_rad": 0.0051097869873046875,
+          "tcp_rotation_frobenius": 0.010914897529353538,
+          "tcp_translation_m": 0.0020824608541163145
+        }
+      },
+      "stable_complete_interval": false,
+      "status": "DIAGNOSTIC_STABILIZATION_COMPLETE",
+      "unexpected_collisions": [],
+      "writes": 60
+    },
+    "S2": {
+      "commands": 0,
+      "gates": {
+        "commands_complete": false,
+        "joint_tolerance": false,
+        "source_valid": false,
+        "tcp_tolerance": false,
+        "velocity_tolerance": false
+      },
+      "sides": {},
+      "stable_complete_interval": false,
+      "status": "PROCESS_ABORTED",
+      "unexpected_collisions": [],
+      "writes": 0
+    },
+    "S3": {
+      "commands": 30,
+      "gates": {
+        "commands_complete": true,
+        "joint_tolerance": true,
+        "source_valid": true,
+        "tcp_tolerance": false,
+        "velocity_tolerance": true
+      },
+      "sides": {
+        "left": {
+          "joint_drift_rad": [
+            -0.0001253715017810464,
+            -0.0049877166748046875,
+            -0.00032791255944175646,
+            0.00261688232421875,
+            -0.00027458211116027087,
+            -3.814697265625e-05,
+            0.0
+          ],
+          "max_abs_dq_rad_s": 0.010724863037467003,
+          "max_abs_joint_drift_rad": 0.0049877166748046875,
+          "tcp_rotation_frobenius": 0.010712278538005144,
+          "tcp_translation_m": 0.003642622153648249
+        },
+        "right": {
+          "joint_drift_rad": [
+            -0.0001060501435858896,
+            -0.004924774169921875,
+            -0.00025997081320383586,
+            0.00266265869140625,
+            -0.00025189342704834417,
+            -3.814697265625e-05,
+            2.86102294921875e-05
+          ],
+          "max_abs_dq_rad_s": 0.010585268028080463,
+          "max_abs_joint_drift_rad": 0.004924774169921875,
+          "tcp_rotation_frobenius": 0.010686107471383871,
+          "tcp_translation_m": 0.0020521965107374415
+        }
+      },
+      "stable_complete_interval": false,
+      "status": "DIAGNOSTIC_STABILIZATION_COMPLETE",
+      "unexpected_collisions": [],
+      "writes": 60
+    }
+  },
+  "computed_torque_status": "SKIPPED_MODEL_NOT_QUALIFIED",
+  "cooperative_qp_status": "SKIPPED_NO_MOVING_CONTROLLER",
+  "cube_suction_status": "NOT_TESTED",
+  "diagnostic_eligible": [],
+  "diagnostic_stabilization_status": "FAIL_OR_INCOMPLETE",
+  "formal_prerequisite": "S2/S3 stable and source-valid",
+  "formal_static_hold_status": "SKIPPED",
+  "moving_tracking_status": "SKIPPED_FORMAL_STATIC_PREREQUISITE",
+  "schema": "TASK28_G2_P5_QP_6_R7_EVALUATION_V1"
+}

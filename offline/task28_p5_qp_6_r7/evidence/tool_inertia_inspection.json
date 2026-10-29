@@ -1,0 +1,29 @@
+{
+  "inspection_script": "inspect_tool_inertia.py",
+  "installed_api": "pxr.UsdPhysics.MassAPI and RigidBodyAPI attempted in fresh anonymous stage; process aborted during startup before serialized stage traversal",
+  "reason": "Frozen builder contains L-tool collider geometry under link8 without a uniquely attributable payload mass declaration. Isaac startup emitted invalid hand_tcp inertia warnings; no mass or scene change was made. M/c/g observations remain scoped partial evidence.",
+  "runtime_observation": [
+    {
+      "mass_matrix_shape": [
+        9,
+        9
+      ],
+      "mass_spd_min_eigen": 0.00901351513948736,
+      "physics_step": 200,
+      "side": "left"
+    },
+    {
+      "mass_matrix_shape": [
+        9,
+        9
+      ],
+      "mass_spd_min_eigen": 0.008952614103893992,
+      "physics_step": 200,
+      "side": "right"
+    }
+  ],
+  "scene_builder": "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py::build_scene",
+  "scene_sha256": "acb5ba60138685ce37351fde4da338183dcb15c8012d4d25c01d04b2adb37c87",
+  "schema": "TASK28_G2_P5_QP_6_R7_TOOL_INERTIA_INSPECTION_V1",
+  "tool_mass_contribution": "UNKNOWN"
+}
