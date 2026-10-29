@@ -1,0 +1,239 @@
+{
+  "limitations": [
+    "applied readback is command buffer, not torque sensor",
+    "M/c/g include native finger coordinates and do not identify L-tool inertia",
+    "end-step dq derivative is an estimator under TGS",
+    "no static hold/tracking/Cube contact/hardware"
+  ],
+  "max_model_residual_estimator_Nm": 0.05492453116950269,
+  "outcomes": {
+    "ACTUAL_EFFORT_COMMAND_EXECUTED": "PASS",
+    "ARM_DYNAMICS_STATUS": "PARTIAL_MEASURED_RESPONSE_MODEL_RESIDUAL_NOT_CERTIFIED",
+    "BOUNDED_TORQUE_RESPONSE_VALIDATED": "PASS",
+    "CUBE_D6_NOT_TESTED": true,
+    "DIAGNOSTIC_ACTUATION_SOURCE_READY": "PASS",
+    "ORIGINAL_SCENE_PRESERVED": "PASS",
+    "SHORT_TRACKING_STATUS": "SKIPPED_STATIC_HOLD_PREREQUISITE",
+    "STATIC_TORQUE_HOLD_STATUS": "SKIPPED_MODEL_BASED_PREREQUISITE",
+    "VIRTUAL_COOPERATIVE_QP_STATUS": "SKIPPED_R6_SCOPE"
+  },
+  "per_cell": {
+    "A": {
+      "actual_effort_commands": 18,
+      "first_failure": null,
+      "model_residual": {
+        "left": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.016627374633518054,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.008976025195563855
+        },
+        "right": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.01637680959731268,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.008857211745943932
+        }
+      },
+      "readback_all_match": true,
+      "response": {
+        "left": {
+          "delta_q_arm": [
+            -0.00014875844499329105,
+            -0.0047054290771484375,
+            -0.000249512457230594,
+            0.00101470947265625,
+            -0.00013939377095084637,
+            -0.00186920166015625,
+            -1.33514404296875e-05
+          ],
+          "joint3_delta_rad": 0.00101470947265625,
+          "tcp_delta_m": 0.002427642150946357
+        },
+        "right": {
+          "delta_q_arm": [
+            -0.00012339759086898994,
+            -0.004634857177734375,
+            -0.00019752611478907056,
+            0.00103759765625,
+            -0.00012663929737755097,
+            -0.001857757568359375,
+            9.5367431640625e-06
+          ],
+          "joint3_delta_rad": 0.00103759765625,
+          "tcp_delta_m": 0.0017216119462753552
+        }
+      },
+      "robot_command_writes": 36,
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "B": {
+      "actual_effort_commands": 18,
+      "first_failure": null,
+      "model_residual": {
+        "left": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.02964728542093994,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.013374908734655277
+        },
+        "right": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.02908291531475275,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.01302449526578197
+        }
+      },
+      "readback_all_match": true,
+      "response": {
+        "left": {
+          "delta_q_arm": [
+            0.0007209223622339778,
+            0.008544921875,
+            0.0002962719663628377,
+            0.02703857421875,
+            -0.0050950453005498275,
+            -0.03737640380859375,
+            0.004123687744140625
+          ],
+          "joint3_delta_rad": 0.02703857421875,
+          "tcp_delta_m": 0.004941420024127683
+        },
+        "right": {
+          "delta_q_arm": [
+            0.0005717480034945766,
+            0.008417129516601562,
+            0.00026607553809299134,
+            0.02660369873046875,
+            -0.004029891650134232,
+            -0.036357879638671875,
+            -0.001750946044921875
+          ],
+          "joint3_delta_rad": 0.02660369873046875,
+          "tcp_delta_m": 0.009550330523004292
+        }
+      },
+      "robot_command_writes": 36,
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "C": {
+      "actual_effort_commands": 18,
+      "first_failure": null,
+      "model_residual": {
+        "left": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.05492453116950269,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.02315931030915431
+        },
+        "right": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.05443824930384376,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.022934791008437448
+        }
+      },
+      "readback_all_match": true,
+      "response": {
+        "left": {
+          "delta_q_arm": [
+            -0.0009954289489542134,
+            -0.017816543579101562,
+            -0.0008083488719421439,
+            -0.0248870849609375,
+            0.005021893201046623,
+            0.03383636474609375,
+            -0.0042781829833984375
+          ],
+          "joint3_delta_rad": -0.0248870849609375,
+          "tcp_delta_m": 0.0007057673766983093
+        },
+        "right": {
+          "delta_q_arm": [
+            -0.0008055554408201715,
+            -0.017581939697265625,
+            -0.0006709922490699682,
+            -0.02433013916015625,
+            0.003935470049327705,
+            0.032787322998046875,
+            0.0015716552734375
+          ],
+          "joint3_delta_rad": -0.02433013916015625,
+          "tcp_delta_m": 0.006555409497528292
+        }
+      },
+      "robot_command_writes": 36,
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    },
+    "D": {
+      "actual_effort_commands": 18,
+      "first_failure": null,
+      "model_residual": {
+        "left": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.02964728542093994,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.013374908734655277
+        },
+        "right": {
+          "count": 18,
+          "max_arm_norm_Nm": 0.02908291531475275,
+          "meaning": "solver-dq derivative estimator; not a calibrated torque residual",
+          "median_arm_norm_Nm": 0.01302449526578197
+        }
+      },
+      "readback_all_match": true,
+      "response": {
+        "left": {
+          "delta_q_arm": [
+            0.0007209223622339778,
+            0.008544921875,
+            0.0002962719663628377,
+            0.02703857421875,
+            -0.0050950453005498275,
+            -0.03737640380859375,
+            0.004123687744140625
+          ],
+          "joint3_delta_rad": 0.02703857421875,
+          "tcp_delta_m": 0.004941420024127683
+        },
+        "right": {
+          "delta_q_arm": [
+            0.0005717480034945766,
+            0.008417129516601562,
+            0.00026607553809299134,
+            0.02660369873046875,
+            -0.004029891650134232,
+            -0.036357879638671875,
+            -0.001750946044921875
+          ],
+          "joint3_delta_rad": 0.02660369873046875,
+          "tcp_delta_m": 0.009550330523004292
+        }
+      },
+      "robot_command_writes": 36,
+      "status": "DIAGNOSTIC_ACTUATION_COMPLETE",
+      "unexpected_collisions": []
+    }
+  },
+  "repeat_error_max_rad": 0.0,
+  "sign_response_pass": true,
+  "signed_response_joint3_rad": {
+    "B": {
+      "left": 0.02703857421875,
+      "right": 0.02660369873046875
+    },
+    "C": {
+      "left": -0.0248870849609375,
+      "right": -0.02433013916015625
+    },
+    "D": {
+      "left": 0.02703857421875,
+      "right": 0.02660369873046875
+    }
+  },
+  "status": "R6_EVALUATED"
+}

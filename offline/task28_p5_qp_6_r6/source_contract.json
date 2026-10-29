@@ -1,0 +1,11 @@
+{
+  "schema": "TASK28_G2_P5_QP_6_R6_SOURCE_CONTRACT_V1",
+  "level1": "DIAGNOSTIC_ACTUATION_SOURCE_READY",
+  "level2": "MODEL_BASED_CONTROL_SOURCE_READY",
+  "tgs_velocity_semantics": "Reported dq is end-of-step solver velocity; whole-step fd(q)/dt is an estimator and never a rejection by itself.",
+  "state": {"dof_count": 9, "arm_dof_count": 7, "dt_s": 0.016666666666666666, "dt_tolerance_s": 1e-8, "fk_translation_tolerance_m": 2e-5, "fk_rotation_tolerance_rad": 2e-5},
+  "limits": {"arm_effort_abs_max_Nm": 45.0, "arm_effort_rate_max_Nm_s": 2400.0},
+  "finger_policy": "preserve native finger gains, force modes, targets and state; send full nine-dimensional effort buffer",
+  "applied_readback": "command buffer only; not a physical torque sensor",
+  "model_scope": "mounted-tool 9-coordinate M/c/g are observations; no invented L-tool inertia; model-based control remains conditional"
+}

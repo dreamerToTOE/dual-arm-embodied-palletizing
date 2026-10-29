@@ -1,0 +1,112 @@
+{
+  "cases": [
+    {
+      "commands": 0,
+      "expected": "INCORRECT_TORQUE_SIGN",
+      "name": "incorrect_torque_sign",
+      "outcome": "REJECTED",
+      "reason": "INCORRECT_TORQUE_SIGN"
+    },
+    {
+      "commands": 0,
+      "expected": "WRONG_ARM_IDENTITY",
+      "name": "wrong_arm_identity",
+      "outcome": "REJECTED",
+      "reason": "WRONG_ARM_IDENTITY"
+    },
+    {
+      "commands": 0,
+      "expected": "INVALID_EFFORT_UNITS",
+      "name": "invalid_effort_units",
+      "outcome": "REJECTED",
+      "reason": "INVALID_EFFORT_UNITS"
+    },
+    {
+      "commands": 0,
+      "expected": "COMPETING_POSITION_SINK",
+      "name": "duplicate_command_ownership",
+      "outcome": "REJECTED",
+      "reason": "COMPETING_POSITION_SINK"
+    },
+    {
+      "commands": 0,
+      "expected": "POSITION_DRIVE_ACTIVE",
+      "name": "position_drive_still_active",
+      "outcome": "REJECTED",
+      "reason": "POSITION_DRIVE_ACTIVE"
+    },
+    {
+      "commands": 0,
+      "expected": "PHYSICS_DT",
+      "name": "wrong_control_time",
+      "outcome": "REJECTED",
+      "reason": "PHYSICS_DT"
+    },
+    {
+      "commands": 0,
+      "expected": "STALE_OR_ALIASED_STATE",
+      "name": "stale_aliased_state",
+      "outcome": "REJECTED",
+      "reason": "STALE_OR_ALIASED_STATE"
+    },
+    {
+      "commands": 0,
+      "expected": "FINGER_POLICY_CHANGED",
+      "name": "finger_effort_buffer_corruption",
+      "outcome": "REJECTED",
+      "reason": "FINGER_POLICY_CHANGED"
+    },
+    {
+      "commands": 0,
+      "expected": "EFFORT_OR_RATE",
+      "name": "excessive_effort_rate",
+      "outcome": "REJECTED",
+      "reason": "EFFORT_OR_RATE"
+    },
+    {
+      "commands": 0,
+      "expected": "UNEXPECTED_COLLISION",
+      "name": "unexpected_collision",
+      "outcome": "REJECTED",
+      "reason": "UNEXPECTED_COLLISION"
+    },
+    {
+      "commands": 0,
+      "expected": "NON_POSITIVE_MASS",
+      "name": "invalid_model_dynamics",
+      "outcome": "REJECTED",
+      "reason": "NON_POSITIVE_MASS"
+    },
+    {
+      "commands": 0,
+      "expected": "TGS_SEMANTICS_UNDECLARED",
+      "name": "bad_tgs_semantics",
+      "outcome": "REJECTED",
+      "reason": "TGS_SEMANTICS_UNDECLARED"
+    },
+    {
+      "commands": 0,
+      "expected": "LATCHED:PRE_COMMAND_REJECTED",
+      "name": "command_after_failure_latch",
+      "outcome": "REJECTED",
+      "reason": "LATCHED:PRE_COMMAND_REJECTED"
+    },
+    {
+      "commands": 0,
+      "expected": "INCORRECT_TORQUE_SIGN",
+      "name": "wrong_effort_sign_command_layer",
+      "outcome": "REJECTED",
+      "reason": "INCORRECT_TORQUE_SIGN"
+    },
+    {
+      "commands": 0,
+      "expected": "EFFORT_OR_RATE",
+      "name": "excessive_effort_command_layer",
+      "outcome": "REJECTED",
+      "reason": "EFFORT_OR_RATE"
+    }
+  ],
+  "robot_command_writes": 0,
+  "status": "ALL_R6_NEGATIVE_CONTROLS_REJECTED",
+  "suction_commands": 0
+}

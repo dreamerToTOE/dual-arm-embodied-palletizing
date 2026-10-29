@@ -1,0 +1,15 @@
+{
+  "formal_inverse_dynamics_ready": false,
+  "limitations": [
+    "solver dq is end-step velocity",
+    "applied readback is command buffer",
+    "unknown L-tool inertia",
+    "native finger coupling and contact effects retained"
+  ],
+  "max_model_residual_estimator_Nm": 0.05492453116950269,
+  "repeat_response_pass": true,
+  "residual_definition": "M qdd_est + c + g - tau; qdd_est from reported end-step dq",
+  "scope": "original mounted-tool arm diagnostic only",
+  "signed_response_pass": true,
+  "status": "PARTIAL_MEASURED_RESPONSE_MODEL_RESIDUAL_NOT_CERTIFIED"
+}
