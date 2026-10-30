@@ -1,46 +1,25 @@
 import json
+import hashlib
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[1]
+BASE=HERE.parent/'task28_p5_qp_6_r12'
 
-def test_frozen_controller_and_repetition_contract():
-    p=json.loads((HERE/'preregistration.json').read_text())
-    assert p['created_from_head']=='52d07e6a9c4ac482db4887483cbf8ab0cbf510d1'
-    assert p['controller_frozen']['feedback_gain_scale']==0.75
-    assert p['controller_frozen']['velocity_capture_tau_s']==0.1
-    assert p['repetition_plan']['deterministic_repetitions_per_cell']==20
-    assert p['physical_execution'] is False
+def test_unqualified_previous_evidence_is_explicitly_revoked():
+    d=json.loads((HERE/'evidence/methodology_correction.json').read_text())
+    assert d['old_perturbation_peak_values_valid_as_robustness_result'] is False
+    assert d['old_repetition_count_valid_as_fresh_runs'] is False
+    for item in d['retained_artifacts']:
+        assert hashlib.sha256((HERE/item['retained_path']).read_bytes()).hexdigest()==item['sha256']
 
-def test_deterministic_replays_pass_and_are_identical():
-    d=json.loads((HERE/'evidence/robustness_replay.json').read_text())
-    for cell in ('V10-A','V10-B','V10-C'):
-        x=d['cells'][cell]['deterministic_repetition']
-        assert x['repetitions']==20
-        assert x['identical_record_fingerprint'] is True
-        assert x['peak_span_mm']==0.0
-        assert x['all_acceptance_pass'] is True
-        assert x['solver_status']['all_qp_optimal'] is True
-
-def test_independent_cpu_process_replays_pass():
-    d=json.loads((HERE/'evidence/independent_replay.json').read_text())
-    for cell in ('V10-A','V10-B','V10-C'):
-        x=d['cells'][cell]
-        assert x['independent_processes']==20
-        assert x['all_exit_zero'] is True
-        assert x['identical_record_fingerprint'] is True
-        assert x['all_acceptance_pass'] is True
-
-def test_margin_and_perturbation_are_not_promoted_to_acceptance():
-    d=json.loads((HERE/'evidence/robustness_replay.json').read_text())
-    assert d['cells']['V10-C']['r12_acceptance_margin_mm'] > 0.0023
-    assert d['cells']['V10-C']['combined_extremes']['all_acceptance_pass'] is False
-    assert d['cells']['V10-C']['combined_extremes']['worst_case']['object_over_limit_count'] > 0
-    assert all(x['solver_status'].startswith('NOT_RE_SOLVED') for x in d['cells']['V10-C']['perturbations'].values())
-
-def test_continuous_safety_and_phase_gate_remain_blocked():
-    s=json.loads((HERE/'evidence/continuous_safety_audit.json').read_text())
-    a=json.loads((HERE/'evidence/phase_admission_review.json').read_text())
-    assert s['status']=='CONTINUOUS_SAFETY_NOT_ESTABLISHED'
-    assert s['execution']['cube_commands']==0
-    assert a['V10-D']['status'].startswith('BLOCKED_')
-    assert a['FORMAL']['status'].startswith('BLOCKED_')
-    assert a['physical_execution'] is False
+def test_fresh_runs_invoke_frozen_r12_runtime_and_source():
+    d=json.loads((HERE/'evidence/isaac_repetitions/plan.json').read_text())
+    assert d['repeat_count_per_cell']==20
+    assert d['controller_modified'] is False
+    assert d['runtime_module']=='offline.task28_p5_qp_6_r12.runtime_virtual'
+    for name in ['source_contract.json','registrations.json','runtime_virtual.py','qp_math.py']:
+        key='offline/task28_p5_qp_6_r12/'+name
+        assert hashlib.sha256((BASE/name).read_bytes()).hexdigest()==d['source_hashes'][key]
+    reg=json.loads((BASE/'registrations.json').read_text())
+    for cell in ['V10-A','V10-B','V10-C']:
+        assert reg[cell]['feedback_gain_scale']==.75
+        assert reg[cell]['velocity_capture']['tau_s']==.1

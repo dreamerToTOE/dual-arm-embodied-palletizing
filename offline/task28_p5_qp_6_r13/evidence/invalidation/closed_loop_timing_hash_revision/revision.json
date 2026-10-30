@@ -1,0 +1,8 @@
+{
+  "reason": "Full numerical traces accidentally retained qp.solve_wall_time_s. Remove both solver wall time fields so elapsed process timing cannot create numerical nondeterminism. Also derive equivalent existing gain/clip values directly from frozen source contract and explicitly state omitted runtime gates. No controller, parameter, safety limit, plant model, scenario, qualification criterion or threshold adjustment. Prior generated JSON retained here; pre-revision trace blobs remain content-addressed and are not used for current claims.",
+  "old_json_sha256": {
+    "closed_loop_manifest.json": "900171e6975f54a7ef0c67464e52db9dfa962d849d36889534d9a91956d006d5",
+    "closed_loop_results.json": "bc4859f98dc7dbc79371ba8c0eb966c55d4481e38e0daba900dbd40a2b7f7c82",
+    "closed_loop_model_validation.json": "b3716579ee62c3b1bc1a8f80551a438cfddc5cf015772f964d8ae95d25f415d4"
+  }
+}

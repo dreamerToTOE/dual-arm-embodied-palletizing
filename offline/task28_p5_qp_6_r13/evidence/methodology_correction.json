@@ -1,0 +1,79 @@
+{
+  "baseline_unchanged": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
+  "old_perturbation_peak_values_valid_as_robustness_result": false,
+  "old_repetition_count_valid_as_fresh_runs": false,
+  "replacement_studies": {
+    "admission": "acceptance_review.py: registered requirements, recommendations and authorization separated",
+    "closed_loop_model": "closed_loop_replay.py: frozen QP and torque recomputation plus explicit model qualification",
+    "continuous": "continuous_safety_audit.py: archived path with correct detached supported semantics",
+    "fresh_physics": "isaac_repetitions.py: 20 freshly initialized isolated R12 Isaac runs per A/B/C"
+  },
+  "retained_artifacts": [
+    {
+      "original_path": "robustness_replay.py",
+      "retained_path": "superseded_c186290/robustness_replay.py",
+      "sha256": "dcdac6cfad088a3c80ec092d14f1922a85e6e26c4cdb8f209f397d1ca52957c5"
+    },
+    {
+      "original_path": "independent_replay.py",
+      "retained_path": "superseded_c186290/independent_replay.py",
+      "sha256": "7e2da719ad7f597605adf01adad462624e16bb67f710c2fd5586a7f797a3ed38"
+    },
+    {
+      "original_path": "preregistration.json",
+      "retained_path": "superseded_c186290/preregistration.json",
+      "sha256": "ec811074f749bfb7e971f76c32af5e0dc8660f99795097f29b27da5151f02e5c"
+    },
+    {
+      "original_path": "evidence/robustness_replay.json",
+      "retained_path": "superseded_c186290/evidence/robustness_replay.json",
+      "sha256": "eb7ce03f3c1ef578ecba6dfcc23922ba46504320120dd609e54ed826ac12f96b"
+    },
+    {
+      "original_path": "evidence/independent_replay.json",
+      "retained_path": "superseded_c186290/evidence/independent_replay.json",
+      "sha256": "cadf22262220385649a91fb7a6c69be11b8937c920222659214688325089bf9c"
+    },
+    {
+      "original_path": "docs/tasks/TASK28_G2_P5_QP_6_R13_ROBUSTNESS_AND_CONTINUOUS_SAFETY.md",
+      "retained_path": "superseded_c186290/report.md",
+      "sha256": "4d74b5cec6142c5aa5caac8eb1bcee9c244d8c5352eee0e23bfdbb760be4d26b"
+    },
+    {
+      "original_path": "offline/task28_p5_qp_6_r13/evidence/final_status.json",
+      "retained_path": "superseded_c186290/evidence/final_status.json",
+      "sha256": "a95f2f9c5b3e6447b63a85b32ad94ee348e2baf661ba53187fb90bcc78ef01aa"
+    },
+    {
+      "original_path": "offline/task28_p5_qp_6_r13/evidence/selection.json",
+      "retained_path": "superseded_c186290/evidence/selection.json",
+      "sha256": "b1210ff535f0a2a96ceebf064bb02bcc182dd46625482aca9165a95e1cc52c74"
+    },
+    {
+      "original_path": "offline/task28_p5_qp_6_r13/evidence/regressions/summary.json",
+      "retained_path": "superseded_c186290/evidence/regressions/summary.json",
+      "sha256": "d78f540fac1481a8a4e36f889a6c792cbf52824c969381919f58447320eb9d1b"
+    },
+    {
+      "original_path": "offline/task28_p5_qp_6_r13/evidence/regressions/r13_focused.json",
+      "retained_path": "superseded_c186290/evidence/regressions/r13_focused.json",
+      "sha256": "6c25df636fc85100d3cccfbe44148bdb7e85e4e2526a893d7b653bdba03488e8"
+    },
+    {
+      "original_path": "offline/task28_p5_qp_6_r13/evidence/regressions/r13_focused.log",
+      "retained_path": "superseded_c186290/evidence/regressions/r13_focused.log",
+      "sha256": "9310d484212a1fe2c33b4b8accdf50a2639f09ba039354f8448f8aa8d173e1ff"
+    }
+  ],
+  "revoked_claims": [
+    "Repeated statistics over one archive do not count as independent controller or physics runs, even in independent processes.",
+    "Scaling a recorded q path by dt_scale/model_scale is not a dynamics experiment and cannot establish robust pass/failure.",
+    "Posture variation in M is not a measured model uncertainty bound. 3% is not an outward rounding of 3.073%.",
+    "Hardcoded position_lookahead_active=False is not activation evidence.",
+    "Airborne attached mode with changing attachment IDs cannot test a detached supported approach.",
+    "New robustness conditions cannot be represented as old registered D/FORMAL gates.",
+    "The former 1075 total omitted R10/R11 focused suites and used five superseded R13 tests; the correction reruns the complete suite inventory."
+  ],
+  "schema": "TASK28_R13_METHODOLOGY_CORRECTION_V1",
+  "superseded_head": "c186290d5afed20ed0f9e1f085be1828d2a86d55"
+}

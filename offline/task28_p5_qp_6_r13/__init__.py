@@ -1,1 +1,1 @@
-"""R12 offline diagnostic evidence; no actuation or safety-gate changes."""
+"""R13 frozen-controller repeatability and offline qualification audits."""

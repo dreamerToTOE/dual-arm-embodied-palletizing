@@ -1,13 +1,14 @@
 {
-  "schema": "TASK28_R13_PRIOR_REGRESSION_SUMMARY_V1",
+  "schema": "TASK28_R13_PRIOR_REGRESSION_SUMMARY_V2",
   "status": "PASS",
-  "historical_prior": 1051,
+  "historical_through_r9": 1051,
+  "r10_focused_passed": 16,
+  "r11_focused_passed": 19,
   "r12_focused_passed": 19,
-  "r13_focused_passed": 5,
-  "new_total_including_r12_r13": 1075,
-  "expected_prior": 1051,
-  "expected_r12_focused": 19,
-  "expected_r13_focused": 5,
+  "r13_focused_passed": 47,
+  "total_passed": 1152,
+  "expected_prior_through_r9": 1051,
+  "expected_r13_focused": 47,
   "physics_launched": false,
   "runs": {
     "pre_r8": {
@@ -52,7 +53,7 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 98.23072423799931,
+          "elapsed_s": 190.8799693539986,
           "passed": 789,
           "expected": 789,
           "test_directories": [
@@ -75,7 +76,7 @@
             "offline/task28_p5_qp_2/tests",
             "offline/task28_p5_qp_3/tests"
           ],
-          "log_sha256": "794a4be3b05504cdbb262eea4a4e0af04599feec0b4673d6dc497395e6488c46",
+          "log_sha256": "927a15cd5e801cf87378873b93d2e302595dbeb54fc4be7596df4cc3ca575409",
           "pass": true
         },
         {
@@ -94,13 +95,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 5.914072502999261,
+          "elapsed_s": 10.859050743001717,
           "passed": 53,
           "expected": 53,
           "test_directories": [
             "offline/task28_p5_qp_4/tests"
           ],
-          "log_sha256": "4bb82720917797602b3266aace80d43011e2942a80f6ece7ac4ff638f17d422f",
+          "log_sha256": "3f3701126a30a3707fda5488dfcdfee39de947561fcf0ef1db215c6c36302cb1",
           "pass": true
         },
         {
@@ -119,13 +120,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.5417611439988832,
+          "elapsed_s": 0.909613920000993,
           "passed": 5,
           "expected": 5,
           "test_directories": [
             "offline/task28_p5_qp_5/tests"
           ],
-          "log_sha256": "2f2d71b76cb38573f465395fbaa020a42b0f73978d2d0b4ab0cbbc4a1187078e",
+          "log_sha256": "af42015c47bffad22c7f344145fe6e9967621a5e9f1ef59bce3019317884ce82",
           "pass": true
         },
         {
@@ -144,13 +145,13 @@
           "PYTHONPATH": ".:../qp6_deps",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 1.4211708669990912,
+          "elapsed_s": 2.497680655000295,
           "passed": 30,
           "expected": 30,
           "test_directories": [
             "offline/task28_p5_qp_6_r1/tests"
           ],
-          "log_sha256": "2d6d6fd529c57ad13dc3b51e35c0ba151fe1142a90ae703fccd89fa429a8490b",
+          "log_sha256": "0684e342056f66cf2014faec0df316028f203eb0a59fd27de3a9360a287f9813",
           "pass": true
         },
         {
@@ -169,13 +170,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.4557231769995269,
+          "elapsed_s": 0.8170335319991864,
           "passed": 12,
           "expected": 12,
           "test_directories": [
             "offline/task28_p5_qp_6_r2/tests"
           ],
-          "log_sha256": "9ecd3687c13c7ea0c91c7aedbd77d729daaef2e196e6b47103b080c8b0557eca",
+          "log_sha256": "47b7315acda5ca0143a1c738211adfb382a8ea5e9474bfc9e8365f44b3ffd58e",
           "pass": true
         },
         {
@@ -194,13 +195,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.4071901089992025,
+          "elapsed_s": 0.6926263189998281,
           "passed": 7,
           "expected": 7,
           "test_directories": [
             "offline/task28_p5_qp_6_r3/tests"
           ],
-          "log_sha256": "8e77b268860e20bfd1a0c8f416d4da525a08324403608345305a9eebf76ca0b2",
+          "log_sha256": "9de5301c27ae23532fb97beb653d0ae02ede7ede4e205624027a3e6ca2a77a20",
           "pass": true
         },
         {
@@ -219,13 +220,13 @@
           "PYTHONPATH": ".:../qp6_deps",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 2.63544704800006,
+          "elapsed_s": 4.9393190709997725,
           "passed": 54,
           "expected": 54,
           "test_directories": [
             "offline/task28_p5_qp_6/tests"
           ],
-          "log_sha256": "2b1a4450663db0397d7384d3de68880d84e6a52ede81034c0ac2fc9f677845a4",
+          "log_sha256": "9ee01916381beede937eedd77676a298a852a57a514ff643d3a5cc3b8e68a584",
           "pass": true
         },
         {
@@ -244,13 +245,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.5722139270001207,
+          "elapsed_s": 1.1421627060008177,
           "passed": 6,
           "expected": 6,
           "test_directories": [
             "offline/task28_p5_qp_5_r1/tests"
           ],
-          "log_sha256": "4b4745ab015b850ce8a676a147e4f8195e772f647bded79bba21d982a287ba42",
+          "log_sha256": "83ef11ace12d1ef8964708e04e58196db7ea23f86721f1686aa707958b594b11",
           "pass": true
         },
         {
@@ -269,13 +270,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 1.6561513870001363,
+          "elapsed_s": 3.1253368410034454,
           "passed": 22,
           "expected": 22,
           "test_directories": [
             "offline/task28_p5_qp_5_r2/tests"
           ],
-          "log_sha256": "ca5a4e9536183a003e9f74102202e8e826ffadffdd2dcff32a63be413ceba4d8",
+          "log_sha256": "fc37dda6004c83ad765d3de54752b79d23214b27f4602a009f6e7184c90bdde1",
           "pass": true
         },
         {
@@ -294,13 +295,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.7354226579991519,
+          "elapsed_s": 1.4491241020004964,
           "passed": 12,
           "expected": 12,
           "test_directories": [
             "offline/task28_p5_qp_6_r4/tests"
           ],
-          "log_sha256": "827ddcc4b6d1a1a93d16ee5d4110069b645d4b08851dcb41ce3c086eeb70b9be",
+          "log_sha256": "f29e06b9e15bfdfbe7a4199eb9c8c54010a62ff6e13cdd2cad0e1c8458280f80",
           "pass": true
         },
         {
@@ -319,13 +320,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.7666178680010489,
+          "elapsed_s": 2.0689911849985947,
           "passed": 13,
           "expected": 13,
           "test_directories": [
             "offline/task28_p5_qp_6_r5/tests"
           ],
-          "log_sha256": "592d256029ad6e61224eb47699509c4243e9722870ee2d00ba3f842e7af0d989",
+          "log_sha256": "712a7b82684d703dbe233eea92757d9ae8357a0b3c81a8c4bbdcc73905d7c3ff",
           "pass": true
         },
         {
@@ -344,13 +345,13 @@
           "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
           "PYTHONDONTWRITEBYTECODE": "1",
           "exit_code": 0,
-          "elapsed_s": 0.32959615500112704,
+          "elapsed_s": 0.5732471679984883,
           "passed": 12,
           "expected": 12,
           "test_directories": [
             "offline/task28_p5_qp_6_r6/tests"
           ],
-          "log_sha256": "0becb50d8f51974359e92415eab80f734b323f7a5c7a502e83098703486c56a5",
+          "log_sha256": "185fee9ff5fe0f86ce14ba73a8a6f0801271e441c85f8c36f5c8d80abd930bab",
           "pass": true
         }
       ],
@@ -369,11 +370,11 @@
         "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
         "PYTHONPATH": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing:.:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
         "exit_code": 0,
-        "elapsed_s": 0.32457892099955643,
+        "elapsed_s": 0.6217986310002743,
         "passed": 4,
         "expected": 4,
         "included_in_previous_1015": false,
-        "log_sha256": "cf0c2cc2867610db68ff0a051d55d0e206ddaa505c66c6ee68075be937872047",
+        "log_sha256": "ebd938888ffaa2af3581cec946b9b58fbc84d3d34af429b416dd4a0ad79f1a12",
         "pass": true
       },
       "all_requested_historical_pass": true,
@@ -392,11 +393,11 @@
         "--import-mode=importlib"
       ],
       "exit_code": 0,
-      "elapsed_s": 0.7557476599995425,
+      "elapsed_s": 1.1661795510008233,
       "passed": 15,
       "expected": 15,
       "pass": true,
-      "log_sha256": "e1775867ed883bcb9659d608c1864c408e09eb6b9e29ffa8e40a287078254e03"
+      "log_sha256": "5bd280812c2b3bc9ffb32a1012d91da69811ef479de897815fe60fa3a87a5f75"
     },
     "r9_focused": {
       "name": "r9_focused",
@@ -411,11 +412,49 @@
         "--import-mode=importlib"
       ],
       "exit_code": 0,
-      "elapsed_s": 0.6046362230008526,
+      "elapsed_s": 0.9806620419985848,
       "passed": 17,
       "expected": 17,
       "pass": true,
-      "log_sha256": "8003c87e9603cd12193f20fc05b35f783e78a20b07052fb753dc5d586c0b87ac"
+      "log_sha256": "084a25fd7fc57b69d76f16eaf5bf6197aefadfde1d0102d9db63b3ed8dd33a12"
+    },
+    "r10_focused": {
+      "name": "r10_focused",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "offline/task28_p5_qp_6_r10/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--import-mode=importlib"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 1.2560013519978384,
+      "passed": 16,
+      "expected": 16,
+      "pass": true,
+      "log_sha256": "124ace0cc80de7bf2a75679398dae335384fcfec43b17f4745c2a5874c6d0841"
+    },
+    "r11_focused": {
+      "name": "r11_focused",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "offline/task28_p5_qp_6_r11/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--import-mode=importlib"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 1.1301599489997898,
+      "passed": 19,
+      "expected": 19,
+      "pass": true,
+      "log_sha256": "c201eb7831b3647ab4c48a9edda01cc731c17fbc337884cab592dc8263deb111"
     },
     "r12_focused": {
       "name": "r12_focused",
@@ -430,11 +469,11 @@
         "--import-mode=importlib"
       ],
       "exit_code": 0,
-      "elapsed_s": 0.6121800780001649,
+      "elapsed_s": 1.1371585220003908,
       "passed": 19,
       "expected": 19,
       "pass": true,
-      "log_sha256": "83b3a3219722d4f3fbf39e2092647e2613e9992af43a54ad1d1886e003beac44"
+      "log_sha256": "c17495ce63dbff2fee04fb81d71ad682111676d49b23770c06a7301fc0071aa6"
     },
     "r13_focused": {
       "name": "r13_focused",
@@ -449,11 +488,11 @@
         "--import-mode=importlib"
       ],
       "exit_code": 0,
-      "elapsed_s": 0.21143487400149752,
-      "passed": 5,
-      "expected": 5,
+      "elapsed_s": 5.551625051997689,
+      "passed": 47,
+      "expected": 47,
       "pass": true,
-      "log_sha256": "9310d484212a1fe2c33b4b8accdf50a2639f09ba039354f8448f8aa8d173e1ff"
+      "log_sha256": "c28a8f5557671dbb8ca7b060b2537742393457bc933447089a14353495898f24"
     }
   }
 }

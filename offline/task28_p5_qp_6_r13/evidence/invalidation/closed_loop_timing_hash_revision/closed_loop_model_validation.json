@@ -1,0 +1,39 @@
+{
+  "cases": {
+    "V10-A": {
+      "same_index_tcp_discrepancy_peak_m": 3.2244236006853415e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    },
+    "V10-B": {
+      "same_index_tcp_discrepancy_peak_m": 4.6320709385037694e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    },
+    "V10-C": {
+      "same_index_tcp_discrepancy_peak_m": 4.030361788952953e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    }
+  },
+  "gate_faults": {
+    "coherent_one_sample_stale_marked_fresh": {
+      "command_applied": false,
+      "limitation": "Pair gate checks agreement and caller fresh_copy assertion; no external current-cursor comparison. Later adapter post-step cursor does not prove pre-command stale rejection.",
+      "status": "ACCEPTED_BY_PAIR_GATE"
+    },
+    "declared_one_sample_stale": {
+      "command_applied": false,
+      "reason": "STALE_OR_ALIASED_STATE",
+      "status": "REJECTED_BEFORE_COMMAND"
+    },
+    "dt_just_outside_existing_gate": {
+      "command_applied": false,
+      "reason": "PHYSICS_DT",
+      "status": "REJECTED_BEFORE_COMMAND"
+    }
+  },
+  "manifest_sha256": "900171e6975f54a7ef0c67464e52db9dfa962d849d36889534d9a91956d006d5",
+  "robustness_qualification": "NOT_ESTABLISHED",
+  "schema": "TASK28_R13_PLANT_QUALIFICATION_V1"
+}

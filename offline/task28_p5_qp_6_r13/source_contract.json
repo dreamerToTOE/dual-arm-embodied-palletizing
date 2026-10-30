@@ -3,12 +3,30 @@
   "created_from_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
   "baseline": "R12 common/relative feedback scale 0.75 and tau 0.10 s",
   "acceptance": {
-    "virtual_object_tracking_peak_m": 0.00025,
-    "relative_tcp_translation_peak_m": 0.00015,
+    "D6_commands": 0,
+    "clean_process_exit": true,
+    "cube_translation_m": 1e-08,
     "joint_tracking_peak_rad": 0.02,
-    "native_dq_peak_rad_s": 0.3
+    "native_dq_peak_rad_s": 0.3,
+    "relative_tcp_rotation_peak_rad": 0.001,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "suction_commands": 0,
+    "unexpected_fcl_collisions": 0,
+    "virtual_object_tracking_peak_m": 0.00025
   },
-  "forbidden": ["real robot", "Cube motion", "physical contact", "suction", "D6", "ROS control commands", "V10-D", "FORMAL"],
+  "forbidden": [
+    "real robot",
+    "Cube motion",
+    "physical contact",
+    "suction",
+    "D6",
+    "ROS control commands",
+    "V10-D",
+    "FORMAL"
+  ],
   "diagnostic_only": true,
-  "continuous_safety_status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED"
+  "continuous_safety_status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+  "acceptance_authority": "Frozen R12 preregistration.json; R12 source_contract.json and registrations.json retain all state/QP/effort/phase conditions.",
+  "summary_is_not_a_replacement_gate": true,
+  "physics_scope": "Fresh isolated original R12 no-contact A/B/C scenes; simulated arm efforts only. No Cube/suction/D6/ROS/hardware command."
 }

@@ -1,0 +1,106 @@
+{
+  "acceptance": {
+    "D6_commands": 0,
+    "clean_process_exit": true,
+    "cube_translation_m": 1e-08,
+    "joint_tracking_peak_rad": 0.02,
+    "native_dq_peak_rad_s": 0.3,
+    "relative_tcp_rotation_peak_rad": 0.001,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "suction_commands": 0,
+    "unexpected_fcl_collisions": 0,
+    "virtual_object_tracking_peak_m": 0.00025
+  },
+  "created_from_head": "180b1adecbba91bd30acf563578188fcd026afa2",
+  "diagnostic": {
+    "offline_replay": {
+      "model": "frozen CPU semi-implicit replay of recorded R11 qdot/M/Kp/Kd/dq0",
+      "proxy_scale_set": [
+        1.0,
+        0.75,
+        0.5,
+        0.25
+      ],
+      "selection_rule": "Freeze global feedback_gain_scale=0.75 before R12 Isaac runs because the fixed proxy predicts all A/B/C below 0.25 mm with larger margin than 0.50; proxy is diagnostic only and no post-run tuning is allowed",
+      "variables": [
+        "R11 tau=0.10 baseline",
+        "proxy global feedback scale in {1.0,0.75,0.75,0.25} applied to recorded pose-feedback qdot"
+      ]
+    },
+    "read_only": true,
+    "single_runtime_change": {
+      "feedback_gain_scale": 0.75,
+      "forbidden_changes": [
+        "acceptance thresholds",
+        "QP hard constraints",
+        "joint velocity/position limits",
+        "effort gains",
+        "effort limits",
+        "rate limits",
+        "scene",
+        "fixture",
+        "Cube",
+        "suction",
+        "D6",
+        "ROS",
+        "contact"
+      ],
+      "retained_velocity_capture_tau_s": 0.1,
+      "scope": "global common and relative pose feedback for every V10 cell"
+    },
+    "source": "R11 V10-A/B/C immutable archives"
+  },
+  "feedback": {
+    "common_rotation_gain_s_inv": 4.0,
+    "common_translation_gain_s_inv": 4.0,
+    "correction_twist_limit_angular_rad_s": 0.01,
+    "correction_twist_limit_linear_m_s": 0.002,
+    "relative_equality": "affine measured relative pose correction",
+    "relative_rotation_gain_s_inv": 3.0,
+    "relative_translation_gain_s_inv": 3.0
+  },
+  "qp": {
+    "dimension": 14,
+    "hard": [
+      "finite source",
+      "joint velocity box",
+      "joint position lookahead q+dt*qdot within original limits with 0.02 rad margin",
+      "affine relative virtual-object twist correction"
+    ],
+    "soft": [
+      "common virtual-object feedforward plus pose feedback",
+      "joint smoothness"
+    ],
+    "solver": "strict SPD box/equality QP via shifted affine equality and independent KKT"
+  },
+  "safety": {
+    "continuous_collision_certificate": false,
+    "effort_abs_and_rate": "R8 unchanged limits",
+    "first_rejection_latches": true,
+    "no_cube_identity_promotion": true,
+    "no_physical_execution": true
+  },
+  "schema": "TASK28_R12_PREREGISTRATION_V1",
+  "scope": "R12 joint V10-A/B/C validation retaining R11 startup velocity capture and applying one globally frozen feedback-gain scale; unchanged safety and acceptance thresholds",
+  "selection": {
+    "formal": "disabled unless all V10-A/B/C and two independent diagnostics pass",
+    "order": [
+      "V10-A",
+      "V10-B",
+      "V10-C"
+    ],
+    "repeat": "disabled unless all V10-A/B/C pass unchanged gates"
+  },
+  "virtual": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "identity": "FREE_HOME_VIRTUAL_COOPERATION",
+    "initial_state": "actual observed FREE_HOME ownership state; no teleport",
+    "physics_dt_s": 0.016666666666666666,
+    "preflight_sample_dt_s": 0.016666666666666666,
+    "reference_dt_s": 0.016666666666666666,
+    "steps": 210,
+    "trajectory": "quintic C2 s=10u^3-15u^4+6u^5"
+  }
+}

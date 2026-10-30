@@ -1,0 +1,41 @@
+{
+  "archive_comparison_scope": "Archive kinematic-output comparison conditional on archived g/c schedules; no independent plant validation or calibrated model-uncertainty qualification.",
+  "cases": {
+    "V10-A": {
+      "same_index_tcp_discrepancy_peak_m": 3.2244236006853415e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    },
+    "V10-B": {
+      "same_index_tcp_discrepancy_peak_m": 4.6320709385037694e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    },
+    "V10-C": {
+      "same_index_tcp_discrepancy_peak_m": 4.030361788952953e-05,
+      "status": "MODEL_NOT_QUALIFIED_FOR_MARGIN",
+      "v10c_remaining_margin_m": 2.3834269632750185e-06
+    }
+  },
+  "execution_manifest_sha256": "f7ababa54bc0d046f61395c3e2e30ae4b57c7c1e953dc307994b1b01c6081c5b",
+  "gate_faults": {
+    "coherent_one_sample_stale_marked_fresh": {
+      "command_applied": false,
+      "limitation": "Pair gate checks agreement and caller fresh_copy assertion; no external current-cursor comparison. Later adapter post-step cursor does not prove pre-command stale rejection.",
+      "status": "ACCEPTED_BY_PAIR_GATE"
+    },
+    "declared_one_sample_stale": {
+      "command_applied": false,
+      "reason": "STALE_OR_ALIASED_STATE",
+      "status": "REJECTED_BEFORE_COMMAND"
+    },
+    "dt_just_outside_existing_gate": {
+      "command_applied": false,
+      "reason": "PHYSICS_DT",
+      "status": "REJECTED_BEFORE_COMMAND"
+    }
+  },
+  "manifest_sha256": "38e7db6355110c54e5d40da5685e2d394e6aa7e0241dea22412848f4d513f1e9",
+  "robustness_qualification": "NOT_ESTABLISHED",
+  "schema": "TASK28_R13_PLANT_QUALIFICATION_V1"
+}

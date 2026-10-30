@@ -1,0 +1,1982 @@
+{
+  "cell": "V10-B",
+  "child_pid": 172643,
+  "completed": true,
+  "elapsed_s": 146.21395042900258,
+  "evaluation": {
+    "D6_commands": 0,
+    "accuracy": {
+      "joint_tracking_peak_rad": {
+        "limit": 0.02,
+        "pass": true,
+        "value": 0.0003432657385582516
+      },
+      "native_dq_peak_rad_s": {
+        "limit": 0.3,
+        "pass": true,
+        "value": 0.00786183774471283
+      },
+      "relative_tcp_rotation_peak_rad": {
+        "limit": 0.001,
+        "pass": true,
+        "value": 5.366655095825312e-05
+      },
+      "relative_tcp_translation_peak_m": {
+        "limit": 0.00015,
+        "pass": true,
+        "value": 6.528643602387225e-05
+      },
+      "virtual_object_tracking_peak_m": {
+        "limit": 0.00025,
+        "pass": true,
+        "value": 0.00023718320935481833
+      }
+    },
+    "accuracy_status": "PASS",
+    "commands_per_arm": 210,
+    "cube_displacement_m": 0.0,
+    "cube_unchanged": true,
+    "effort_peak_Nm": 28.016756502801854,
+    "effort_rate_peak_Nm_s": 4.413015957628712,
+    "eligible_for_v10d": true,
+    "frames": 392,
+    "joint_tracking_peak_rad": 0.0003432657385582516,
+    "native_dq_peak_rad_s": 0.00786183774471283,
+    "no_contact_status": "PASS",
+    "physics_steps": 390,
+    "process_result": {
+      "controller": "R8_frozen_mass_smooth",
+      "effective_backend": "CPU_NUMPY",
+      "level1_source": "PASS",
+      "level2_source": "R12_RUNTIME_CANDIDATE_PENDING_INDEPENDENT_EVALUATION"
+    },
+    "qdot_peak_rad_s": 0.004396418187411089,
+    "qp_hard_residual_peak": 1.1269787399909655e-10,
+    "relative_tcp_rotation_peak_rad": 5.366655095825312e-05,
+    "relative_tcp_translation_peak_m": 6.528643602387225e-05,
+    "robot_command_writes": 420,
+    "runtime_status": "NO_CONTACT_R12_VIRTUAL_COOPERATION_COMPLETE",
+    "status": "PASS_NO_CONTACT_ACCURACY_GATE_PASS",
+    "suction_commands": 0,
+    "unexpected_collision": null,
+    "virtual_object_displacement_m": 0.0004936707032836808,
+    "virtual_object_tracking_peak_m": 0.00023718320935481833,
+    "virtual_object_tracking_peak_rotation_rad": 0.0004870575929795295,
+    "virtual_tracking_records": [
+      {
+        "object_left_error_m": 6.681342225703969e-05,
+        "object_left_rotation_rad": 0.0001929112893947237,
+        "object_right_error_m": 7.544128109444724e-05,
+        "object_right_rotation_rad": 0.00019079596196524157,
+        "physics_step": 183,
+        "relative_error_m": 1.1209907644402597e-05,
+        "relative_rotation_rad": 2.7281515712647954e-06
+      },
+      {
+        "object_left_error_m": 0.00011513987359405302,
+        "object_left_rotation_rad": 0.0003283710547550657,
+        "object_right_error_m": 0.00012970482380903617,
+        "object_right_rotation_rad": 0.0003246402447279838,
+        "physics_step": 184,
+        "relative_error_m": 1.9080862106096147e-05,
+        "relative_rotation_rad": 4.689232659824356e-06
+      },
+      {
+        "object_left_error_m": 0.00015043663506623142,
+        "object_left_rotation_rad": 0.0004183775888122407,
+        "object_right_error_m": 0.00016625992859492446,
+        "object_right_rotation_rad": 0.00041036910418117264,
+        "physics_step": 185,
+        "relative_error_m": 2.2930809395235126e-05,
+        "relative_rotation_rad": 8.711462036414877e-06
+      },
+      {
+        "object_left_error_m": 0.0001749924262543534,
+        "object_left_rotation_rad": 0.0004695757607588485,
+        "object_right_error_m": 0.00019046861161506107,
+        "object_right_rotation_rad": 0.00045809049021582337,
+        "physics_step": 186,
+        "relative_error_m": 2.464952830579524e-05,
+        "relative_rotation_rad": 1.2096609709476267e-05
+      },
+      {
+        "object_left_error_m": 0.00019053145723599513,
+        "object_left_rotation_rad": 0.0004870575929795295,
+        "object_right_error_m": 0.0002077335778533384,
+        "object_right_rotation_rad": 0.0004810467962479331,
+        "physics_step": 187,
+        "relative_error_m": 2.5959536880087486e-05,
+        "relative_rotation_rad": 7.33626111524757e-06
+      },
+      {
+        "object_left_error_m": 0.0002014500335101078,
+        "object_left_rotation_rad": 0.00048335588717952357,
+        "object_right_error_m": 0.0002169148862083321,
+        "object_right_rotation_rad": 0.00047932781572523393,
+        "physics_step": 188,
+        "relative_error_m": 2.5136114429335962e-05,
+        "relative_rotation_rad": 6.127527292779966e-06
+      },
+      {
+        "object_left_error_m": 0.00020898448385831984,
+        "object_left_rotation_rad": 0.0004642012748127162,
+        "object_right_error_m": 0.00022129269963697425,
+        "object_right_rotation_rad": 0.00045865396105146633,
+        "physics_step": 189,
+        "relative_error_m": 2.3580296580734257e-05,
+        "relative_rotation_rad": 7.225967673909263e-06
+      },
+      {
+        "object_left_error_m": 0.00021408759832614063,
+        "object_left_rotation_rad": 0.0004334472942279895,
+        "object_right_error_m": 0.00021947077707116093,
+        "object_right_rotation_rad": 0.00041802633084640474,
+        "physics_step": 190,
+        "relative_error_m": 2.2724832989711128e-05,
+        "relative_rotation_rad": 1.597234214693656e-05
+      },
+      {
+        "object_left_error_m": 0.00021742181861112876,
+        "object_left_rotation_rad": 0.0003933130393298186,
+        "object_right_error_m": 0.00021538954048416176,
+        "object_right_rotation_rad": 0.0003725582084729432,
+        "physics_step": 191,
+        "relative_error_m": 2.332367636652237e-05,
+        "relative_rotation_rad": 2.1162047334081104e-05
+      },
+      {
+        "object_left_error_m": 0.00021533895958182115,
+        "object_left_rotation_rad": 0.00033585110114602327,
+        "object_right_error_m": 0.0002102290906083821,
+        "object_right_rotation_rad": 0.0003189004697077872,
+        "physics_step": 192,
+        "relative_error_m": 2.3157074964518783e-05,
+        "relative_rotation_rad": 1.74553263677084e-05
+      },
+      {
+        "object_left_error_m": 0.00021339463467343614,
+        "object_left_rotation_rad": 0.0002773076656001183,
+        "object_right_error_m": 0.00020394780211046014,
+        "object_right_rotation_rad": 0.0002637168828029176,
+        "physics_step": 193,
+        "relative_error_m": 2.4498699753275416e-05,
+        "relative_rotation_rad": 1.4356015502817815e-05
+      },
+      {
+        "object_left_error_m": 0.00021093867808646077,
+        "object_left_rotation_rad": 0.00021962970600701193,
+        "object_right_error_m": 0.00019722515552593153,
+        "object_right_rotation_rad": 0.00021014113452108297,
+        "physics_step": 194,
+        "relative_error_m": 2.5837252759835235e-05,
+        "relative_rotation_rad": 1.0468940353113121e-05
+      },
+      {
+        "object_left_error_m": 0.00020769450133684717,
+        "object_left_rotation_rad": 0.00016450764751031608,
+        "object_right_error_m": 0.00018720727035715276,
+        "object_right_rotation_rad": 0.00015106612981020126,
+        "physics_step": 195,
+        "relative_error_m": 3.189340052327405e-05,
+        "relative_rotation_rad": 1.415904968608935e-05
+      },
+      {
+        "object_left_error_m": 0.00020176470386216918,
+        "object_left_rotation_rad": 0.00010524307782555479,
+        "object_right_error_m": 0.00017759835540926512,
+        "object_right_rotation_rad": 9.555288237042195e-05,
+        "physics_step": 196,
+        "relative_error_m": 3.453154320332345e-05,
+        "relative_rotation_rad": 1.0524926123322843e-05
+      },
+      {
+        "object_left_error_m": 0.00019575557188394196,
+        "object_left_rotation_rad": 5.043636578247936e-05,
+        "object_right_error_m": 0.00016717218018035107,
+        "object_right_rotation_rad": 4.2177993966350395e-05,
+        "physics_step": 197,
+        "relative_error_m": 3.7925421913900064e-05,
+        "relative_rotation_rad": 9.154522422506689e-06
+      },
+      {
+        "object_left_error_m": 0.00018995680361738018,
+        "object_left_rotation_rad": 7.223088758464895e-06,
+        "object_right_error_m": 0.00015446083298470797,
+        "object_right_rotation_rad": 1.511450007988252e-05,
+        "physics_step": 198,
+        "relative_error_m": 4.591175002810607e-05,
+        "relative_rotation_rad": 1.7314583970752686e-05
+      },
+      {
+        "object_left_error_m": 0.00018133161249581393,
+        "object_left_rotation_rad": 5.0193252238886745e-05,
+        "object_right_error_m": 0.0001421885228270417,
+        "object_right_rotation_rad": 6.47119912471795e-05,
+        "physics_step": 199,
+        "relative_error_m": 4.976256656492641e-05,
+        "relative_rotation_rad": 1.5598698397040878e-05
+      },
+      {
+        "object_left_error_m": 0.00017271800035022916,
+        "object_left_rotation_rad": 9.373076799713293e-05,
+        "object_right_error_m": 0.00012967107795315447,
+        "object_right_rotation_rad": 0.00011062334794332083,
+        "physics_step": 200,
+        "relative_error_m": 5.443681638897211e-05,
+        "relative_rotation_rad": 1.7722075072954215e-05
+      },
+      {
+        "object_left_error_m": 0.0001618303908142144,
+        "object_left_rotation_rad": 0.0001357019866757404,
+        "object_right_error_m": 0.00011622058846916772,
+        "object_right_rotation_rad": 0.00015460958088205553,
+        "physics_step": 201,
+        "relative_error_m": 5.845073553418453e-05,
+        "relative_rotation_rad": 1.9529491662511155e-05
+      },
+      {
+        "object_left_error_m": 0.0001506570081136071,
+        "object_left_rotation_rad": 0.00016992753844311475,
+        "object_right_error_m": 0.000103008635430144,
+        "object_right_rotation_rad": 0.0001907232216160392,
+        "physics_step": 202,
+        "relative_error_m": 6.231836764428093e-05,
+        "relative_rotation_rad": 2.1338945320413695e-05
+      },
+      {
+        "object_left_error_m": 0.00013655349781372108,
+        "object_left_rotation_rad": 0.0002041741250176162,
+        "object_right_error_m": 8.977173466173755e-05,
+        "object_right_rotation_rad": 0.00021972229206715233,
+        "physics_step": 203,
+        "relative_error_m": 6.263691795915936e-05,
+        "relative_rotation_rad": 1.6115972960410164e-05
+      },
+      {
+        "object_left_error_m": 0.00012342103140237752,
+        "object_left_rotation_rad": 0.00022935897661624372,
+        "object_right_error_m": 7.706182106834698e-05,
+        "object_right_rotation_rad": 0.00024396579865760843,
+        "physics_step": 204,
+        "relative_error_m": 6.372477000381012e-05,
+        "relative_rotation_rad": 1.5344449520996297e-05
+      },
+      {
+        "object_left_error_m": 0.00010733323068672199,
+        "object_left_rotation_rad": 0.0002539757094160825,
+        "object_right_error_m": 6.45688167062824e-05,
+        "object_right_rotation_rad": 0.0002674717102416288,
+        "physics_step": 205,
+        "relative_error_m": 6.39651625584201e-05,
+        "relative_rotation_rad": 1.4165937424964431e-05
+      },
+      {
+        "object_left_error_m": 9.166764338594637e-05,
+        "object_left_rotation_rad": 0.0002690887893718945,
+        "object_right_error_m": 5.4122436621279084e-05,
+        "object_right_rotation_rad": 0.0002864867942442568,
+        "physics_step": 206,
+        "relative_error_m": 6.528643602387225e-05,
+        "relative_rotation_rad": 1.7958125901386606e-05
+      },
+      {
+        "object_left_error_m": 7.364508471649396e-05,
+        "object_left_rotation_rad": 0.0002880800825899354,
+        "object_right_error_m": 4.58751896520042e-05,
+        "object_right_rotation_rad": 0.0002978948683758426,
+        "physics_step": 207,
+        "relative_error_m": 6.223262010649393e-05,
+        "relative_rotation_rad": 1.0775542989770403e-05
+      },
+      {
+        "object_left_error_m": 5.665175054880555e-05,
+        "object_left_rotation_rad": 0.00029792069566049646,
+        "object_right_error_m": 4.2867717112166125e-05,
+        "object_right_rotation_rad": 0.0003055156891339028,
+        "physics_step": 208,
+        "relative_error_m": 5.9907885112759996e-05,
+        "relative_rotation_rad": 8.565944213537361e-06
+      },
+      {
+        "object_left_error_m": 3.99346301224805e-05,
+        "object_left_rotation_rad": 0.000303749494345856,
+        "object_right_error_m": 4.857754954106018e-05,
+        "object_right_rotation_rad": 0.0003152622540541911,
+        "physics_step": 209,
+        "relative_error_m": 6.080953069680788e-05,
+        "relative_rotation_rad": 1.2216339814409423e-05
+      },
+      {
+        "object_left_error_m": 2.5273793870078717e-05,
+        "object_left_rotation_rad": 0.00030372516287615405,
+        "object_right_error_m": 5.9162435861972146e-05,
+        "object_right_rotation_rad": 0.00032107695780806626,
+        "physics_step": 210,
+        "relative_error_m": 6.170780786227035e-05,
+        "relative_rotation_rad": 1.7914335938073544e-05
+      },
+      {
+        "object_left_error_m": 2.0748072326812655e-05,
+        "object_left_rotation_rad": 0.00030750215134215406,
+        "object_right_error_m": 7.285726123642362e-05,
+        "object_right_rotation_rad": 0.0003228967359424109,
+        "physics_step": 211,
+        "relative_error_m": 5.897974805349072e-05,
+        "relative_rotation_rad": 1.5842193153839387e-05
+      },
+      {
+        "object_left_error_m": 3.176446778939083e-05,
+        "object_left_rotation_rad": 0.00030578754979785895,
+        "object_right_error_m": 8.77623622516556e-05,
+        "object_right_rotation_rad": 0.0003227670157841984,
+        "physics_step": 212,
+        "relative_error_m": 5.70159559995681e-05,
+        "relative_rotation_rad": 1.740371959574758e-05
+      },
+      {
+        "object_left_error_m": 4.910985595753409e-05,
+        "object_left_rotation_rad": 0.0003033949258497856,
+        "object_right_error_m": 0.00010315048849595124,
+        "object_right_rotation_rad": 0.0003190439711617296,
+        "physics_step": 213,
+        "relative_error_m": 5.409744518195184e-05,
+        "relative_rotation_rad": 1.6164416269589145e-05
+      },
+      {
+        "object_left_error_m": 6.72752446690398e-05,
+        "object_left_rotation_rad": 0.00029599576356454825,
+        "object_right_error_m": 0.00011858480095040695,
+        "object_right_rotation_rad": 0.00031285177556883567,
+        "physics_step": 214,
+        "relative_error_m": 5.138363014468521e-05,
+        "relative_rotation_rad": 1.7214715205163368e-05
+      },
+      {
+        "object_left_error_m": 8.627210629923764e-05,
+        "object_left_rotation_rad": 0.00028842567977670707,
+        "object_right_error_m": 0.0001344461052206019,
+        "object_right_rotation_rad": 0.0003074605091932963,
+        "physics_step": 215,
+        "relative_error_m": 4.853818629461255e-05,
+        "relative_rotation_rad": 1.9362758265203253e-05
+      },
+      {
+        "object_left_error_m": 0.00010477936915958174,
+        "object_left_rotation_rad": 0.000278854990318256,
+        "object_right_error_m": 0.0001466809506727955,
+        "object_right_rotation_rad": 0.00029232996906787637,
+        "physics_step": 216,
+        "relative_error_m": 4.235392820119379e-05,
+        "relative_rotation_rad": 1.3902580641093114e-05
+      },
+      {
+        "object_left_error_m": 0.0001233363991923644,
+        "object_left_rotation_rad": 0.0002694970283104129,
+        "object_right_error_m": 0.00015881853191408688,
+        "object_right_rotation_rad": 0.0002769328027421566,
+        "physics_step": 217,
+        "relative_error_m": 3.591555756431238e-05,
+        "relative_rotation_rad": 8.102037800167549e-06
+      },
+      {
+        "object_left_error_m": 0.00013840879637987832,
+        "object_left_rotation_rad": 0.0002538892111577661,
+        "object_right_error_m": 0.00017101833463320786,
+        "object_right_rotation_rad": 0.0002635347618718454,
+        "physics_step": 218,
+        "relative_error_m": 3.321083229442566e-05,
+        "relative_rotation_rad": 1.0132901081342619e-05
+      },
+      {
+        "object_left_error_m": 0.00015347635387908854,
+        "object_left_rotation_rad": 0.00023889243359410378,
+        "object_right_error_m": 0.00018294927350761685,
+        "object_right_rotation_rad": 0.00024995806254585385,
+        "physics_step": 219,
+        "relative_error_m": 3.0202843230008953e-05,
+        "relative_rotation_rad": 1.1490508024573554e-05
+      },
+      {
+        "object_left_error_m": 0.00016802326827360174,
+        "object_left_rotation_rad": 0.0002254027409460931,
+        "object_right_error_m": 0.0001946111793989632,
+        "object_right_rotation_rad": 0.00023865448461781385,
+        "physics_step": 220,
+        "relative_error_m": 2.7346675440859045e-05,
+        "relative_rotation_rad": 1.3567484659979012e-05
+      },
+      {
+        "object_left_error_m": 0.00018248021886314237,
+        "object_left_rotation_rad": 0.00021177029448025503,
+        "object_right_error_m": 0.00020272690780085182,
+        "object_right_rotation_rad": 0.00021940720133834887,
+        "physics_step": 221,
+        "relative_error_m": 2.0736676461336835e-05,
+        "relative_rotation_rad": 8.156602935751715e-06
+      },
+      {
+        "object_left_error_m": 0.00019356405866193213,
+        "object_left_rotation_rad": 0.00019291163232996444,
+        "object_right_error_m": 0.00021058879588104897,
+        "object_right_rotation_rad": 0.00020226333886379176,
+        "physics_step": 222,
+        "relative_error_m": 1.758942611957146e-05,
+        "relative_rotation_rad": 9.67849350153258e-06
+      },
+      {
+        "object_left_error_m": 0.00020401876793621279,
+        "object_left_rotation_rad": 0.0001758853853281739,
+        "object_right_error_m": 0.0002186489398156541,
+        "object_right_rotation_rad": 0.00018915460610600208,
+        "physics_step": 223,
+        "relative_error_m": 1.5154796627308632e-05,
+        "relative_rotation_rad": 1.3425658453875625e-05
+      },
+      {
+        "object_left_error_m": 0.00021412235800921358,
+        "object_left_rotation_rad": 0.00016253501859629727,
+        "object_right_error_m": 0.00022285059897780631,
+        "object_right_rotation_rad": 0.0001697633813526762,
+        "physics_step": 224,
+        "relative_error_m": 8.840049389084343e-06,
+        "relative_rotation_rad": 7.570160204622628e-06
+      },
+      {
+        "object_left_error_m": 0.0002207788198957662,
+        "object_left_rotation_rad": 0.00014312216751499493,
+        "object_right_error_m": 0.0002269850637894815,
+        "object_right_rotation_rad": 0.0001546577355850606,
+        "physics_step": 225,
+        "relative_error_m": 6.317105422717523e-06,
+        "relative_rotation_rad": 1.1749395420313946e-05
+      },
+      {
+        "object_left_error_m": 0.0002273908537336457,
+        "object_left_rotation_rad": 0.00012807242490048664,
+        "object_right_error_m": 0.00023076071729637092,
+        "object_right_rotation_rad": 0.00014107535394845483,
+        "physics_step": 226,
+        "relative_error_m": 3.5463005802512234e-06,
+        "relative_rotation_rad": 1.3142432555684724e-05
+      },
+      {
+        "object_left_error_m": 0.00023132737052897998,
+        "object_left_rotation_rad": 0.0001091283902437558,
+        "object_right_error_m": 0.00023159218560308209,
+        "object_right_rotation_rad": 0.00012399507110068747,
+        "physics_step": 227,
+        "relative_error_m": 1.1425106936727682e-06,
+        "relative_rotation_rad": 1.4976577723720082e-05
+      },
+      {
+        "object_left_error_m": 0.00023413751040059867,
+        "object_left_rotation_rad": 9.161103802188589e-05,
+        "object_right_error_m": 0.0002317403476106764,
+        "object_right_rotation_rad": 0.00010872027239824932,
+        "physics_step": 228,
+        "relative_error_m": 2.904720100753413e-06,
+        "relative_rotation_rad": 1.7244409326430186e-05
+      },
+      {
+        "object_left_error_m": 0.00023718320935481833,
+        "object_left_rotation_rad": 7.86352405036476e-05,
+        "object_right_error_m": 0.0002318872038245319,
+        "object_right_rotation_rad": 9.751863275924224e-05,
+        "physics_step": 229,
+        "relative_error_m": 5.705040769851807e-06,
+        "relative_rotation_rad": 1.8979168355722913e-05
+      },
+      {
+        "object_left_error_m": 0.00023659646858783102,
+        "object_left_rotation_rad": 6.338632702907112e-05,
+        "object_right_error_m": 0.00022843498428370995,
+        "object_right_rotation_rad": 8.007977034802347e-05,
+        "physics_step": 230,
+        "relative_error_m": 9.05634301203267e-06,
+        "relative_rotation_rad": 1.6779372989886647e-05
+      },
+      {
+        "object_left_error_m": 0.00023578251427688768,
+        "object_left_rotation_rad": 5.17416745885198e-05,
+        "object_right_error_m": 0.00022489384362737102,
+        "object_right_rotation_rad": 6.695829412451548e-05,
+        "physics_step": 231,
+        "relative_error_m": 1.1920483931623264e-05,
+        "relative_rotation_rad": 1.5320345659343436e-05
+      },
+      {
+        "object_left_error_m": 0.00023541059073798595,
+        "object_left_rotation_rad": 4.427840117934796e-05,
+        "object_right_error_m": 0.00022137393816056258,
+        "object_right_rotation_rad": 5.725119734277493e-05,
+        "physics_step": 232,
+        "relative_error_m": 1.5493104479012748e-05,
+        "relative_rotation_rad": 1.3034057888838735e-05
+      },
+      {
+        "object_left_error_m": 0.0002315654851325936,
+        "object_left_rotation_rad": 3.294961660749733e-05,
+        "object_right_error_m": 0.0002144429727208406,
+        "object_right_rotation_rad": 4.21613760218272e-05,
+        "physics_step": 233,
+        "relative_error_m": 1.9050364057293727e-05,
+        "relative_rotation_rad": 9.309612644707186e-06
+      },
+      {
+        "object_left_error_m": 0.00022725680665118178,
+        "object_left_rotation_rad": 2.3231512757614636e-05,
+        "object_right_error_m": 0.0002072666720049314,
+        "object_right_rotation_rad": 2.6853623175212813e-05,
+        "physics_step": 234,
+        "relative_error_m": 2.266121478947246e-05,
+        "relative_rotation_rad": 3.949713047806242e-06
+      },
+      {
+        "object_left_error_m": 0.00022279803568284697,
+        "object_left_rotation_rad": 1.7219348394197388e-05,
+        "object_right_error_m": 0.0002001853095434165,
+        "object_right_rotation_rad": 1.537018880020447e-05,
+        "physics_step": 235,
+        "relative_error_m": 2.5957326166794232e-05,
+        "relative_rotation_rad": 2.6720995959179534e-06
+      },
+      {
+        "object_left_error_m": 0.00021564092458002166,
+        "object_left_rotation_rad": 4.0833320689102735e-06,
+        "object_right_error_m": 0.00019308355398267956,
+        "object_right_rotation_rad": 8.117808065378171e-06,
+        "physics_step": 236,
+        "relative_error_m": 2.561082971937869e-05,
+        "relative_rotation_rad": 4.0744126485247e-06
+      },
+      {
+        "object_left_error_m": 0.00020809254805189328,
+        "object_left_rotation_rad": 5.598343043407889e-06,
+        "object_right_error_m": 0.0001851658490432341,
+        "object_right_rotation_rad": 2.7580639488394465e-06,
+        "physics_step": 237,
+        "relative_error_m": 2.5561661687200432e-05,
+        "relative_rotation_rad": 7.3751068483960575e-06
+      },
+      {
+        "object_left_error_m": 0.00020056174115005816,
+        "object_left_rotation_rad": 1.1247585452607017e-05,
+        "object_right_error_m": 0.00017468068876039328,
+        "object_right_rotation_rad": 1.1693040651603297e-05,
+        "physics_step": 238,
+        "relative_error_m": 2.9341765953197965e-05,
+        "relative_rotation_rad": 1.1841479584860653e-06
+      },
+      {
+        "object_left_error_m": 0.00019320673561069055,
+        "object_left_rotation_rad": 1.7054589407013813e-05,
+        "object_right_error_m": 0.00016400853681256176,
+        "object_right_rotation_rad": 2.0999111612740704e-05,
+        "physics_step": 239,
+        "relative_error_m": 3.3036200433300416e-05,
+        "relative_rotation_rad": 4.028491540340265e-06
+      },
+      {
+        "object_left_error_m": 0.00018255353063689132,
+        "object_left_rotation_rad": 2.6504172247632243e-05,
+        "object_right_error_m": 0.00015333841878106605,
+        "object_right_rotation_rad": 3.0679624544689256e-05,
+        "physics_step": 240,
+        "relative_error_m": 3.3226168353941265e-05,
+        "relative_rotation_rad": 4.306228983793587e-06
+      },
+      {
+        "object_left_error_m": 0.00017219476933818327,
+        "object_left_rotation_rad": 3.1931199075710536e-05,
+        "object_right_error_m": 0.00014259848000949888,
+        "object_right_rotation_rad": 3.634871750990794e-05,
+        "physics_step": 241,
+        "relative_error_m": 3.361408069313011e-05,
+        "relative_rotation_rad": 4.448554168296271e-06
+      },
+      {
+        "object_left_error_m": 0.00016149809123153024,
+        "object_left_rotation_rad": 3.820017010770784e-05,
+        "object_right_error_m": 0.0001319416368639498,
+        "object_right_rotation_rad": 4.203912517547674e-05,
+        "physics_step": 242,
+        "relative_error_m": 3.362268162476142e-05,
+        "relative_rotation_rad": 3.964787970026653e-06
+      },
+      {
+        "object_left_error_m": 0.0001510053693233743,
+        "object_left_rotation_rad": 4.372896534464754e-05,
+        "object_right_error_m": 0.00012121133199704124,
+        "object_right_rotation_rad": 4.3780621463292046e-05,
+        "physics_step": 243,
+        "relative_error_m": 3.349808099217994e-05,
+        "relative_rotation_rad": 1.1126061553004766e-06
+      },
+      {
+        "object_left_error_m": 0.00014059065844878238,
+        "object_left_rotation_rad": 4.548116544691967e-05,
+        "object_right_error_m": 0.00011030537253411268,
+        "object_right_rotation_rad": 4.574467952973557e-05,
+        "physics_step": 244,
+        "relative_error_m": 3.3990945025304875e-05,
+        "relative_rotation_rad": 9.609184376038388e-07
+      },
+      {
+        "object_left_error_m": 0.0001304254695211142,
+        "object_left_rotation_rad": 4.543805058373767e-05,
+        "object_right_error_m": 0.00010002178375743491,
+        "object_right_rotation_rad": 4.610750855653118e-05,
+        "physics_step": 245,
+        "relative_error_m": 3.404247655485731e-05,
+        "relative_rotation_rad": 1.333964246683347e-06
+      },
+      {
+        "object_left_error_m": 0.00012034705026879193,
+        "object_left_rotation_rad": 4.548864354564026e-05,
+        "object_right_error_m": 8.994549265472838e-05,
+        "object_right_rotation_rad": 4.5751321353172414e-05,
+        "physics_step": 246,
+        "relative_error_m": 3.399704624596052e-05,
+        "relative_rotation_rad": 1.232566460546257e-06
+      },
+      {
+        "object_left_error_m": 0.00011005416172197433,
+        "object_left_rotation_rad": 4.5583120768352736e-05,
+        "object_right_error_m": 7.983350914713856e-05,
+        "object_right_rotation_rad": 4.589009823071722e-05,
+        "physics_step": 247,
+        "relative_error_m": 3.3955957319012687e-05,
+        "relative_rotation_rad": 1.253301396815684e-06
+      },
+      {
+        "object_left_error_m": 0.00010002926630198604,
+        "object_left_rotation_rad": 4.5518229446042326e-05,
+        "object_right_error_m": 6.944211493267338e-05,
+        "object_right_rotation_rad": 4.585813185740401e-05,
+        "physics_step": 248,
+        "relative_error_m": 3.4239911148174124e-05,
+        "relative_rotation_rad": 1.107329751654458e-06
+      },
+      {
+        "object_left_error_m": 8.756396023341663e-05,
+        "object_left_rotation_rad": 5.1572530623649295e-05,
+        "object_right_error_m": 5.9869659313128594e-05,
+        "object_right_rotation_rad": 4.4219587909952795e-05,
+        "physics_step": 249,
+        "relative_error_m": 3.0724505914054586e-05,
+        "relative_rotation_rad": 7.468050152446152e-06
+      },
+      {
+        "object_left_error_m": 7.807405519747761e-05,
+        "object_left_rotation_rad": 4.9524391477466176e-05,
+        "object_right_error_m": 5.035725893934182e-05,
+        "object_right_rotation_rad": 4.205399603772562e-05,
+        "physics_step": 250,
+        "relative_error_m": 3.0625364177435196e-05,
+        "relative_rotation_rad": 7.562419732787677e-06
+      },
+      {
+        "object_left_error_m": 6.879322493434093e-05,
+        "object_left_rotation_rad": 4.7392173372518595e-05,
+        "object_right_error_m": 4.063954336105798e-05,
+        "object_right_rotation_rad": 4.0278844809901976e-05,
+        "physics_step": 251,
+        "relative_error_m": 3.1012016208278135e-05,
+        "relative_rotation_rad": 7.248090086520671e-06
+      },
+      {
+        "object_left_error_m": 5.97417172094237e-05,
+        "object_left_rotation_rad": 4.381247365413219e-05,
+        "object_right_error_m": 3.140019484620708e-05,
+        "object_right_rotation_rad": 4.226886765643859e-05,
+        "physics_step": 252,
+        "relative_error_m": 3.145961881040747e-05,
+        "relative_rotation_rad": 1.855996242928472e-06
+      },
+      {
+        "object_left_error_m": 5.1286401705224263e-05,
+        "object_left_rotation_rad": 4.000622837944744e-05,
+        "object_right_error_m": 2.2816806883762984e-05,
+        "object_right_rotation_rad": 4.19998259924844e-05,
+        "physics_step": 253,
+        "relative_error_m": 3.20521245560702e-05,
+        "relative_rotation_rad": 2.1781069805869484e-06
+      },
+      {
+        "object_left_error_m": 4.2354922625255446e-05,
+        "object_left_rotation_rad": 4.002943525443486e-05,
+        "object_right_error_m": 1.4313793589454173e-05,
+        "object_right_rotation_rad": 4.2259570241061784e-05,
+        "physics_step": 254,
+        "relative_error_m": 3.234919045950697e-05,
+        "relative_rotation_rad": 2.448609503689485e-06
+      },
+      {
+        "object_left_error_m": 3.407110242315103e-05,
+        "object_left_rotation_rad": 3.789578767933215e-05,
+        "object_right_error_m": 7.93574236429565e-06,
+        "object_right_rotation_rad": 3.9941682730813625e-05,
+        "physics_step": 255,
+        "relative_error_m": 3.185256135070134e-05,
+        "relative_rotation_rad": 2.1001931888063907e-06
+      },
+      {
+        "object_left_error_m": 2.586588042652691e-05,
+        "object_left_rotation_rad": 3.605206446807918e-05,
+        "object_right_error_m": 8.201840280453496e-06,
+        "object_right_rotation_rad": 4.200243561506643e-05,
+        "physics_step": 256,
+        "relative_error_m": 3.192962650469437e-05,
+        "relative_rotation_rad": 5.969948732606406e-06
+      },
+      {
+        "object_left_error_m": 1.7859792713952473e-05,
+        "object_left_rotation_rad": 3.819681488630645e-05,
+        "object_right_error_m": 1.4677554901614608e-05,
+        "object_right_rotation_rad": 4.399844825283064e-05,
+        "physics_step": 257,
+        "relative_error_m": 3.232732019240604e-05,
+        "relative_rotation_rad": 5.8711582877512596e-06
+      },
+      {
+        "object_left_error_m": 1.0572712055701665e-05,
+        "object_left_rotation_rad": 3.7844926139533606e-05,
+        "object_right_error_m": 2.1587997577857365e-05,
+        "object_right_rotation_rad": 4.387447973932331e-05,
+        "physics_step": 258,
+        "relative_error_m": 3.208351000274067e-05,
+        "relative_rotation_rad": 6.111175244813849e-06
+      },
+      {
+        "object_left_error_m": 5.162921398418015e-06,
+        "object_left_rotation_rad": 3.8190940253268926e-05,
+        "object_right_error_m": 2.916094584889671e-05,
+        "object_right_rotation_rad": 4.759411949947363e-05,
+        "physics_step": 259,
+        "relative_error_m": 3.241892521946936e-05,
+        "relative_rotation_rad": 9.431194789305986e-06
+      },
+      {
+        "object_left_error_m": 7.514850562345084e-06,
+        "object_left_rotation_rad": 4.17937898821995e-05,
+        "object_right_error_m": 3.3406640751784156e-05,
+        "object_right_rotation_rad": 4.39338707757826e-05,
+        "physics_step": 260,
+        "relative_error_m": 2.8838639309079583e-05,
+        "relative_rotation_rad": 2.247281386919069e-06
+      },
+      {
+        "object_left_error_m": 1.388096629804688e-05,
+        "object_left_rotation_rad": 4.385063380863713e-05,
+        "object_right_error_m": 3.7110071057678956e-05,
+        "object_right_rotation_rad": 4.189932152646227e-05,
+        "physics_step": 261,
+        "relative_error_m": 2.5054893350559134e-05,
+        "relative_rotation_rad": 2.1776079918601243e-06
+      },
+      {
+        "object_left_error_m": 2.0497916833061782e-05,
+        "object_left_rotation_rad": 4.569019185604643e-05,
+        "object_right_error_m": 4.121031056200363e-05,
+        "object_right_rotation_rad": 4.0104723887566996e-05,
+        "physics_step": 262,
+        "relative_error_m": 2.216533090278592e-05,
+        "relative_rotation_rad": 5.703369983467047e-06
+      },
+      {
+        "object_left_error_m": 2.4729229132421234e-05,
+        "object_left_rotation_rad": 4.3708063251474725e-05,
+        "object_right_error_m": 4.52790852459632e-05,
+        "object_right_rotation_rad": 3.830751492438142e-05,
+        "physics_step": 263,
+        "relative_error_m": 2.2084721097926437e-05,
+        "relative_rotation_rad": 5.550860437337241e-06
+      },
+      {
+        "object_left_error_m": 2.835197063569041e-05,
+        "object_left_rotation_rad": 4.007821755406989e-05,
+        "object_right_error_m": 4.937141269069414e-05,
+        "object_right_rotation_rad": 4.020954149632063e-05,
+        "physics_step": 264,
+        "relative_error_m": 2.2942034709882763e-05,
+        "relative_rotation_rad": 1.0361613178434035e-06
+      },
+      {
+        "object_left_error_m": 3.2154115752092045e-05,
+        "object_left_rotation_rad": 3.602554685750108e-05,
+        "object_right_error_m": 5.263590922986733e-05,
+        "object_right_rotation_rad": 3.9766345166610536e-05,
+        "physics_step": 265,
+        "relative_error_m": 2.2677889339426344e-05,
+        "relative_rotation_rad": 3.839203682449342e-06
+      },
+      {
+        "object_left_error_m": 3.540847229883223e-05,
+        "object_left_rotation_rad": 3.599559981565143e-05,
+        "object_right_error_m": 5.6304110627803015e-05,
+        "object_right_rotation_rad": 4.02374270905162e-05,
+        "physics_step": 266,
+        "relative_error_m": 2.299854100827965e-05,
+        "relative_rotation_rad": 4.2889561291577086e-06
+      },
+      {
+        "object_left_error_m": 3.9266263628187924e-05,
+        "object_left_rotation_rad": 3.620256552038442e-05,
+        "object_right_error_m": 5.980794255320384e-05,
+        "object_right_rotation_rad": 4.034567791364981e-05,
+        "physics_step": 267,
+        "relative_error_m": 2.2971810715943228e-05,
+        "relative_rotation_rad": 4.171173287645826e-06
+      },
+      {
+        "object_left_error_m": 4.1966146811384357e-05,
+        "object_left_rotation_rad": 3.431342345774343e-05,
+        "object_right_error_m": 6.353891110119162e-05,
+        "object_right_rotation_rad": 4.4017488240415025e-05,
+        "physics_step": 268,
+        "relative_error_m": 2.3955608113320123e-05,
+        "relative_rotation_rad": 9.728131597840971e-06
+      },
+      {
+        "object_left_error_m": 4.512944367863354e-05,
+        "object_left_rotation_rad": 3.613245780487829e-05,
+        "object_right_error_m": 6.664975054058241e-05,
+        "object_right_rotation_rad": 4.6049318835490716e-05,
+        "physics_step": 269,
+        "relative_error_m": 2.38236297962932e-05,
+        "relative_rotation_rad": 9.951645328924987e-06
+      },
+      {
+        "object_left_error_m": 4.8019853067419996e-05,
+        "object_left_rotation_rad": 3.800238990552473e-05,
+        "object_right_error_m": 6.621228056285978e-05,
+        "object_right_rotation_rad": 3.999298078546649e-05,
+        "physics_step": 270,
+        "relative_error_m": 1.9947896062769876e-05,
+        "relative_rotation_rad": 2.1556168910216118e-06
+      },
+      {
+        "object_left_error_m": 5.106107457863582e-05,
+        "object_left_rotation_rad": 3.994976500689585e-05,
+        "object_right_error_m": 6.605022551596161e-05,
+        "object_right_rotation_rad": 3.4405238992401614e-05,
+        "physics_step": 271,
+        "relative_error_m": 1.6203344215595782e-05,
+        "relative_rotation_rad": 5.677120815888972e-06
+      },
+      {
+        "object_left_error_m": 5.4056502256074816e-05,
+        "object_left_rotation_rad": 4.1858716525023205e-05,
+        "object_right_error_m": 6.587350818265627e-05,
+        "object_right_rotation_rad": 3.246885912903426e-05,
+        "physics_step": 272,
+        "relative_error_m": 1.2760348770413018e-05,
+        "relative_rotation_rad": 9.535946845208296e-06
+      },
+      {
+        "object_left_error_m": 5.342249206545684e-05,
+        "object_left_rotation_rad": 3.796113458566606e-05,
+        "object_right_error_m": 6.574411352888033e-05,
+        "object_right_rotation_rad": 3.0457998653457533e-05,
+        "physics_step": 273,
+        "relative_error_m": 1.3347462924616434e-05,
+        "relative_rotation_rad": 7.597189358837505e-06
+      },
+      {
+        "object_left_error_m": 5.2738968159096156e-05,
+        "object_left_rotation_rad": 3.437667315550163e-05,
+        "object_right_error_m": 6.506533448367786e-05,
+        "object_right_rotation_rad": 2.6752814157762526e-05,
+        "physics_step": 274,
+        "relative_error_m": 1.324115576661735e-05,
+        "relative_rotation_rad": 7.71818752931876e-06
+      },
+      {
+        "object_left_error_m": 5.2381459149807305e-05,
+        "object_left_rotation_rad": 3.051853113702838e-05,
+        "object_right_error_m": 6.436526549462358e-05,
+        "object_right_rotation_rad": 2.2763119512088813e-05,
+        "physics_step": 275,
+        "relative_error_m": 1.3061332824404485e-05,
+        "relative_rotation_rad": 7.868966110319891e-06
+      },
+      {
+        "object_left_error_m": 5.17266281818587e-05,
+        "object_left_rotation_rad": 2.6484457130668035e-05,
+        "object_right_error_m": 6.364530820573714e-05,
+        "object_right_rotation_rad": 2.293462283936184e-05,
+        "physics_step": 276,
+        "relative_error_m": 1.3506025697154532e-05,
+        "relative_rotation_rad": 3.6935775053831267e-06
+      },
+      {
+        "object_left_error_m": 5.086639616890542e-05,
+        "object_left_rotation_rad": 2.2692864283733617e-05,
+        "object_right_error_m": 6.307580469849035e-05,
+        "object_right_rotation_rad": 2.2868674055866037e-05,
+        "physics_step": 277,
+        "relative_error_m": 1.3995883267949196e-05,
+        "relative_rotation_rad": 7.247984460844096e-07
+      },
+      {
+        "object_left_error_m": 5.0730374512494005e-05,
+        "object_left_rotation_rad": 2.307917978390329e-05,
+        "object_right_error_m": 6.26246335595631e-05,
+        "object_right_rotation_rad": 2.3083007617521193e-05,
+        "physics_step": 278,
+        "relative_error_m": 1.3905716383208165e-05,
+        "relative_rotation_rad": 6.614050211878423e-07
+      },
+      {
+        "object_left_error_m": 5.0268931599359606e-05,
+        "object_left_rotation_rad": 2.2882887351894236e-05,
+        "object_right_error_m": 6.201961829150269e-05,
+        "object_right_rotation_rad": 2.319281728736713e-05,
+        "physics_step": 279,
+        "relative_error_m": 1.3622336015297236e-05,
+        "relative_rotation_rad": 8.723130157061945e-07
+      },
+      {
+        "object_left_error_m": 4.9393721932027105e-05,
+        "object_left_rotation_rad": 2.267651164568721e-05,
+        "object_right_error_m": 6.145254473568993e-05,
+        "object_right_rotation_rad": 2.3183395031504993e-05,
+        "physics_step": 280,
+        "relative_error_m": 1.398211482472931e-05,
+        "relative_rotation_rad": 5.886736337815759e-07
+      },
+      {
+        "object_left_error_m": 4.89666128870204e-05,
+        "object_left_rotation_rad": 2.2676548682375814e-05,
+        "object_right_error_m": 6.08028729332607e-05,
+        "object_right_rotation_rad": 2.3041032414492933e-05,
+        "physics_step": 281,
+        "relative_error_m": 1.4035589964843097e-05,
+        "relative_rotation_rad": 7.354887581227097e-07
+      },
+      {
+        "object_left_error_m": 4.84367723230759e-05,
+        "object_left_rotation_rad": 2.2705500534180083e-05,
+        "object_right_error_m": 6.027818077666302e-05,
+        "object_right_rotation_rad": 2.3107953863437757e-05,
+        "physics_step": 282,
+        "relative_error_m": 1.3924631865901604e-05,
+        "relative_rotation_rad": 6.756617740714824e-07
+      },
+      {
+        "object_left_error_m": 4.717864579218405e-05,
+        "object_left_rotation_rad": 2.0946412709171975e-05,
+        "object_right_error_m": 5.972450604158881e-05,
+        "object_right_rotation_rad": 2.2997411518454387e-05,
+        "physics_step": 283,
+        "relative_error_m": 1.4510807554316215e-05,
+        "relative_rotation_rad": 2.1230482957113173e-06
+      },
+      {
+        "object_left_error_m": 4.5978779200111456e-05,
+        "object_left_rotation_rad": 1.9106102398119836e-05,
+        "object_right_error_m": 5.9339550524817826e-05,
+        "object_right_rotation_rad": 2.6719077016515753e-05,
+        "physics_step": 284,
+        "relative_error_m": 1.549067538062799e-05,
+        "relative_rotation_rad": 7.631862490414914e-06
+      },
+      {
+        "object_left_error_m": 4.4869388803744964e-05,
+        "object_left_rotation_rad": 1.7504425177731334e-05,
+        "object_right_error_m": 5.8155029756401954e-05,
+        "object_right_rotation_rad": 2.892442381117483e-05,
+        "physics_step": 285,
+        "relative_error_m": 1.5666055746151617e-05,
+        "relative_rotation_rad": 1.1446633716959749e-05
+      },
+      {
+        "object_left_error_m": 4.3586094474150676e-05,
+        "object_left_rotation_rad": 1.5558785615300586e-05,
+        "object_right_error_m": 5.7143290467178154e-05,
+        "object_right_rotation_rad": 3.0440007061110316e-05,
+        "physics_step": 286,
+        "relative_error_m": 1.620112741779363e-05,
+        "relative_rotation_rad": 1.4967937813456933e-05
+      },
+      {
+        "object_left_error_m": 4.239598207875972e-05,
+        "object_left_rotation_rad": 1.333852686977462e-05,
+        "object_right_error_m": 5.619275822538106e-05,
+        "object_right_rotation_rad": 3.242728672871166e-05,
+        "physics_step": 287,
+        "relative_error_m": 1.6625979739586387e-05,
+        "relative_rotation_rad": 1.9204337507616714e-05
+      },
+      {
+        "object_left_error_m": 4.106680171656064e-05,
+        "object_left_rotation_rad": 1.1721809695059708e-05,
+        "object_right_error_m": 5.589993978664653e-05,
+        "object_right_rotation_rad": 3.654171809797836e-05,
+        "physics_step": 288,
+        "relative_error_m": 1.7928693755598137e-05,
+        "relative_rotation_rad": 2.5075433868252404e-05
+      },
+      {
+        "object_left_error_m": 3.991122760411614e-05,
+        "object_left_rotation_rad": 9.953430896752317e-06,
+        "object_right_error_m": 5.587714792312272e-05,
+        "object_right_rotation_rad": 4.045810121734315e-05,
+        "physics_step": 289,
+        "relative_error_m": 1.9185400049710572e-05,
+        "relative_rotation_rad": 3.086131196695476e-05
+      },
+      {
+        "object_left_error_m": 3.93372672032289e-05,
+        "object_left_rotation_rad": 9.863345999844585e-06,
+        "object_right_error_m": 5.535319523252947e-05,
+        "object_right_rotation_rad": 4.404032079921012e-05,
+        "physics_step": 290,
+        "relative_error_m": 1.949851831290521e-05,
+        "relative_rotation_rad": 3.453916754734045e-05
+      },
+      {
+        "object_left_error_m": 3.907307723392446e-05,
+        "object_left_rotation_rad": 1.0135676222195464e-05,
+        "object_right_error_m": 5.511939774374154e-05,
+        "object_right_rotation_rad": 4.79564910206436e-05,
+        "physics_step": 291,
+        "relative_error_m": 2.0000738107522532e-05,
+        "relative_rotation_rad": 3.819948534379568e-05
+      },
+      {
+        "object_left_error_m": 3.851738903285599e-05,
+        "object_left_rotation_rad": 9.830457966563742e-06,
+        "object_right_error_m": 5.4999532035053606e-05,
+        "object_right_rotation_rad": 5.1695812059420276e-05,
+        "physics_step": 292,
+        "relative_error_m": 2.063600348345366e-05,
+        "relative_rotation_rad": 4.232711239701624e-05
+      },
+      {
+        "object_left_error_m": 3.801867460193652e-05,
+        "object_left_rotation_rad": 1.0309809514620837e-05,
+        "object_right_error_m": 5.459397690655945e-05,
+        "object_right_rotation_rad": 5.530228423043294e-05,
+        "physics_step": 293,
+        "relative_error_m": 2.1014239963681083e-05,
+        "relative_rotation_rad": 4.5585365842655145e-05
+      },
+      {
+        "object_left_error_m": 3.762819395666424e-05,
+        "object_left_rotation_rad": 1.0090224908848346e-05,
+        "object_right_error_m": 5.431420235573164e-05,
+        "object_right_rotation_rad": 5.5707922498348476e-05,
+        "physics_step": 294,
+        "relative_error_m": 2.136911179060824e-05,
+        "relative_rotation_rad": 4.619499474037329e-05
+      },
+      {
+        "object_left_error_m": 3.725339342089296e-05,
+        "object_left_rotation_rad": 1.0079972856764194e-05,
+        "object_right_error_m": 5.392309840049619e-05,
+        "object_right_rotation_rad": 5.54286218484647e-05,
+        "physics_step": 295,
+        "relative_error_m": 2.1094878647074357e-05,
+        "relative_rotation_rad": 4.593997215403663e-05
+      },
+      {
+        "object_left_error_m": 3.635177831323787e-05,
+        "object_left_rotation_rad": 1.0114754770956726e-05,
+        "object_right_error_m": 5.3373333747991685e-05,
+        "object_right_rotation_rad": 5.572575331440132e-05,
+        "physics_step": 296,
+        "relative_error_m": 2.1424332019947966e-05,
+        "relative_rotation_rad": 4.6258596894483544e-05
+      },
+      {
+        "object_left_error_m": 3.582175809541725e-05,
+        "object_left_rotation_rad": 1.0039419967643596e-05,
+        "object_right_error_m": 5.26619982502673e-05,
+        "object_right_rotation_rad": 5.543479902087937e-05,
+        "physics_step": 297,
+        "relative_error_m": 2.111226508938787e-05,
+        "relative_rotation_rad": 4.610839772483847e-05
+      },
+      {
+        "object_left_error_m": 3.531380344032177e-05,
+        "object_left_rotation_rad": 1.042880513657776e-05,
+        "object_right_error_m": 5.24345289980427e-05,
+        "object_right_rotation_rad": 5.564365007654726e-05,
+        "physics_step": 298,
+        "relative_error_m": 2.1460432433541745e-05,
+        "relative_rotation_rad": 4.5918768307801484e-05
+      },
+      {
+        "object_left_error_m": 3.4820285178577186e-05,
+        "object_left_rotation_rad": 1.0355876293604021e-05,
+        "object_right_error_m": 5.2092408767661886e-05,
+        "object_right_rotation_rad": 5.555353087383255e-05,
+        "physics_step": 299,
+        "relative_error_m": 2.1538878778225762e-05,
+        "relative_rotation_rad": 4.596353168364861e-05
+      },
+      {
+        "object_left_error_m": 3.443670742038923e-05,
+        "object_left_rotation_rad": 1.0458716343689228e-05,
+        "object_right_error_m": 5.1535795555963894e-05,
+        "object_right_rotation_rad": 5.534063396040046e-05,
+        "physics_step": 300,
+        "relative_error_m": 2.12351075922232e-05,
+        "relative_rotation_rad": 4.5727334254241484e-05
+      },
+      {
+        "object_left_error_m": 3.39266978073646e-05,
+        "object_left_rotation_rad": 1.062300268780054e-05,
+        "object_right_error_m": 5.116525488128191e-05,
+        "object_right_rotation_rad": 5.531229217718239e-05,
+        "physics_step": 301,
+        "relative_error_m": 2.1287877864330502e-05,
+        "relative_rotation_rad": 4.550066168408959e-05
+      },
+      {
+        "object_left_error_m": 3.3102875787304733e-05,
+        "object_left_rotation_rad": 1.0347717523760533e-05,
+        "object_right_error_m": 5.074696073549249e-05,
+        "object_right_rotation_rad": 5.559136155717722e-05,
+        "physics_step": 302,
+        "relative_error_m": 2.1743781432463857e-05,
+        "relative_rotation_rad": 4.624894268717508e-05
+      },
+      {
+        "object_left_error_m": 3.350992250889662e-05,
+        "object_left_rotation_rad": 1.2259886183039713e-05,
+        "object_right_error_m": 5.0764117991422565e-05,
+        "object_right_rotation_rad": 5.744784753670302e-05,
+        "physics_step": 303,
+        "relative_error_m": 2.137221073699323e-05,
+        "relative_rotation_rad": 4.609412202795383e-05
+      },
+      {
+        "object_left_error_m": 3.335449845184271e-05,
+        "object_left_rotation_rad": 1.379429293296386e-05,
+        "object_right_error_m": 5.1030400117870054e-05,
+        "object_right_rotation_rad": 5.917587391946112e-05,
+        "physics_step": 304,
+        "relative_error_m": 2.1761953613085135e-05,
+        "relative_rotation_rad": 4.6103346129916804e-05
+      },
+      {
+        "object_left_error_m": 3.358390875918568e-05,
+        "object_left_rotation_rad": 1.597533417670562e-05,
+        "object_right_error_m": 5.117817665845621e-05,
+        "object_right_rotation_rad": 6.118452947923834e-05,
+        "physics_step": 305,
+        "relative_error_m": 2.154890690047091e-05,
+        "relative_rotation_rad": 4.592369810550511e-05
+      },
+      {
+        "object_left_error_m": 3.366943887172085e-05,
+        "object_left_rotation_rad": 1.7901403653227915e-05,
+        "object_right_error_m": 5.162265387204793e-05,
+        "object_right_rotation_rad": 6.328355237719006e-05,
+        "physics_step": 306,
+        "relative_error_m": 2.198529712925299e-05,
+        "relative_rotation_rad": 4.611141599989334e-05
+      },
+      {
+        "object_left_error_m": 3.353126896788505e-05,
+        "object_left_rotation_rad": 1.6269296929196928e-05,
+        "object_right_error_m": 5.147468022457642e-05,
+        "object_right_rotation_rad": 6.503525160712147e-05,
+        "physics_step": 307,
+        "relative_error_m": 2.2247606924932385e-05,
+        "relative_rotation_rad": 4.948349963051352e-05
+      },
+      {
+        "object_left_error_m": 3.352089126224927e-05,
+        "object_left_rotation_rad": 1.4396357511797285e-05,
+        "object_right_error_m": 5.181719201492409e-05,
+        "object_right_rotation_rad": 6.688703589501046e-05,
+        "physics_step": 308,
+        "relative_error_m": 2.310172003827143e-05,
+        "relative_rotation_rad": 5.350581441546335e-05
+      },
+      {
+        "object_left_error_m": 3.351859298733073e-05,
+        "object_left_rotation_rad": 1.2676218367101298e-05,
+        "object_right_error_m": 5.1492639266896716e-05,
+        "object_right_rotation_rad": 6.505263678361098e-05,
+        "physics_step": 309,
+        "relative_error_m": 2.2953334762001728e-05,
+        "relative_rotation_rad": 5.356151652121667e-05
+      },
+      {
+        "object_left_error_m": 3.3398442160685975e-05,
+        "object_left_rotation_rad": 1.1310483935689863e-05,
+        "object_right_error_m": 5.137288816308955e-05,
+        "object_right_rotation_rad": 6.286340969210657e-05,
+        "physics_step": 310,
+        "relative_error_m": 2.3032652549112235e-05,
+        "relative_rotation_rad": 5.312328427345108e-05
+      },
+      {
+        "object_left_error_m": 3.358302373077774e-05,
+        "object_left_rotation_rad": 9.84929321899958e-06,
+        "object_right_error_m": 5.1493995242266356e-05,
+        "object_right_rotation_rad": 6.106255478686969e-05,
+        "physics_step": 311,
+        "relative_error_m": 2.3438680724317062e-05,
+        "relative_rotation_rad": 5.333804367654278e-05
+      },
+      {
+        "object_left_error_m": 3.3428822965691185e-05,
+        "object_left_rotation_rad": 8.69655527852253e-06,
+        "object_right_error_m": 5.120265008473538e-05,
+        "object_right_rotation_rad": 5.9546043703957996e-05,
+        "physics_step": 312,
+        "relative_error_m": 2.3600380943384667e-05,
+        "relative_rotation_rad": 5.366655095825312e-05
+      },
+      {
+        "object_left_error_m": 3.311752143208831e-05,
+        "object_left_rotation_rad": 7.503195808454626e-06,
+        "object_right_error_m": 4.7432889142243565e-05,
+        "object_right_rotation_rad": 4.9860407794509356e-05,
+        "physics_step": 313,
+        "relative_error_m": 2.0398522058928748e-05,
+        "relative_rotation_rad": 4.5887768967265266e-05
+      },
+      {
+        "object_left_error_m": 3.3639991596232047e-05,
+        "object_left_rotation_rad": 7.746785910772904e-06,
+        "object_right_error_m": 4.4315540156928746e-05,
+        "object_right_rotation_rad": 4.252758087633401e-05,
+        "physics_step": 314,
+        "relative_error_m": 1.7341760827113264e-05,
+        "relative_rotation_rad": 3.852498664841074e-05
+      },
+      {
+        "object_left_error_m": 3.418070071618439e-05,
+        "object_left_rotation_rad": 7.838127523032036e-06,
+        "object_right_error_m": 4.096183953596499e-05,
+        "object_right_rotation_rad": 3.485674535163284e-05,
+        "physics_step": 315,
+        "relative_error_m": 1.4516777847110832e-05,
+        "relative_rotation_rad": 3.067969452834576e-05
+      },
+      {
+        "object_left_error_m": 3.472811638345694e-05,
+        "object_left_rotation_rad": 7.804689723308237e-06,
+        "object_right_error_m": 3.794294439555234e-05,
+        "object_right_rotation_rad": 2.7212101458504734e-05,
+        "physics_step": 316,
+        "relative_error_m": 1.2099964553782574e-05,
+        "relative_rotation_rad": 2.323069197548937e-05
+      },
+      {
+        "object_left_error_m": 3.5339384685018196e-05,
+        "object_left_rotation_rad": 8.151977482213475e-06,
+        "object_right_error_m": 3.5005067721933416e-05,
+        "object_right_rotation_rad": 2.353453884657182e-05,
+        "physics_step": 317,
+        "relative_error_m": 1.1048618723374459e-05,
+        "relative_rotation_rad": 1.9369599855099797e-05
+      },
+      {
+        "object_left_error_m": 3.572266551372465e-05,
+        "object_left_rotation_rad": 8.146909813513041e-06,
+        "object_right_error_m": 3.23702304001068e-05,
+        "object_right_rotation_rad": 1.994658063404093e-05,
+        "physics_step": 318,
+        "relative_error_m": 1.1041136385063455e-05,
+        "relative_rotation_rad": 1.5975374899899806e-05
+      },
+      {
+        "object_left_error_m": 3.634138209574745e-05,
+        "object_left_rotation_rad": 1.0660475785126578e-05,
+        "object_right_error_m": 2.9255177309831274e-05,
+        "object_right_rotation_rad": 1.606762882309017e-05,
+        "physics_step": 319,
+        "relative_error_m": 1.167829410767861e-05,
+        "relative_rotation_rad": 7.97301089125606e-06
+      },
+      {
+        "object_left_error_m": 3.681500786945672e-05,
+        "object_left_rotation_rad": 1.3830640954152849e-05,
+        "object_right_error_m": 2.6460822733876385e-05,
+        "object_right_rotation_rad": 1.2476107679507421e-05,
+        "physics_step": 320,
+        "relative_error_m": 1.3085341782128867e-05,
+        "relative_rotation_rad": 2.5286076246456428e-06
+      },
+      {
+        "object_left_error_m": 3.7410802113600796e-05,
+        "object_left_rotation_rad": 1.699175319671702e-05,
+        "object_right_error_m": 2.3637914998554908e-05,
+        "object_right_rotation_rad": 9.424076419427679e-06,
+        "physics_step": 321,
+        "relative_error_m": 1.536118467501242e-05,
+        "relative_rotation_rad": 7.808042543418399e-06
+      },
+      {
+        "object_left_error_m": 3.5175729311205e-05,
+        "object_left_rotation_rad": 1.414145828133229e-05,
+        "object_right_error_m": 2.0947710904140393e-05,
+        "object_right_rotation_rad": 6.746850622064722e-06,
+        "physics_step": 322,
+        "relative_error_m": 1.5764224141935647e-05,
+        "relative_rotation_rad": 8.281687812326982e-06
+      },
+      {
+        "object_left_error_m": 3.204188509288279e-05,
+        "object_left_rotation_rad": 9.995061793470206e-06,
+        "object_right_error_m": 1.8206863524503644e-05,
+        "object_right_rotation_rad": 5.406639059919642e-06,
+        "physics_step": 323,
+        "relative_error_m": 1.4942281278419539e-05,
+        "relative_rotation_rad": 7.592133370482874e-06
+      },
+      {
+        "object_left_error_m": 2.9132913025595343e-05,
+        "object_left_rotation_rad": 6.0601019060531316e-06,
+        "object_right_error_m": 1.5401385716308286e-05,
+        "object_right_rotation_rad": 6.916496814096832e-06,
+        "physics_step": 324,
+        "relative_error_m": 1.4624447651299505e-05,
+        "relative_rotation_rad": 7.705890914916637e-06
+      },
+      {
+        "object_left_error_m": 2.6261934837622994e-05,
+        "object_left_rotation_rad": 4.964678359958412e-06,
+        "object_right_error_m": 1.2577848073516554e-05,
+        "object_right_rotation_rad": 9.601646197625842e-06,
+        "physics_step": 325,
+        "relative_error_m": 1.4562446431891318e-05,
+        "relative_rotation_rad": 7.6189177538106795e-06
+      },
+      {
+        "object_left_error_m": 2.3707579152041126e-05,
+        "object_left_rotation_rad": 6.283140819859828e-06,
+        "object_right_error_m": 1.0034150522154827e-05,
+        "object_right_rotation_rad": 1.2863688302359656e-05,
+        "physics_step": 326,
+        "relative_error_m": 1.4458497007785977e-05,
+        "relative_rotation_rad": 7.73603412010997e-06
+      },
+      {
+        "object_left_error_m": 2.130426181893352e-05,
+        "object_left_rotation_rad": 9.628314260146953e-06,
+        "object_right_error_m": 7.361928760731187e-06,
+        "object_right_rotation_rad": 1.633785239156104e-05,
+        "physics_step": 327,
+        "relative_error_m": 1.4918520696070982e-05,
+        "relative_rotation_rad": 7.192064315850833e-06
+      },
+      {
+        "object_left_error_m": 1.873687469146643e-05,
+        "object_left_rotation_rad": 1.299691437844031e-05,
+        "object_right_error_m": 5.159966241009148e-06,
+        "object_right_rotation_rad": 1.9988030591273203e-05,
+        "physics_step": 328,
+        "relative_error_m": 1.4918933625284052e-05,
+        "relative_rotation_rad": 7.331461422405806e-06
+      },
+      {
+        "object_left_error_m": 1.6119713555432233e-05,
+        "object_left_rotation_rad": 1.6220710640561236e-05,
+        "object_right_error_m": 4.026976970794746e-06,
+        "object_right_rotation_rad": 2.3534559258475103e-05,
+        "physics_step": 329,
+        "relative_error_m": 1.4461175407083058e-05,
+        "relative_rotation_rad": 7.532634268216313e-06
+      },
+      {
+        "object_left_error_m": 1.396234890631877e-05,
+        "object_left_rotation_rad": 2.006325871051049e-05,
+        "object_right_error_m": 4.458615593161263e-06,
+        "object_right_rotation_rad": 2.7290128038749492e-05,
+        "physics_step": 330,
+        "relative_error_m": 1.4575789445071912e-05,
+        "relative_rotation_rad": 7.432394509983946e-06
+      },
+      {
+        "object_left_error_m": 1.2127067982603268e-05,
+        "object_left_rotation_rad": 2.366263652345822e-05,
+        "object_right_error_m": 6.378269313056506e-06,
+        "object_right_rotation_rad": 3.1037404307567183e-05,
+        "physics_step": 331,
+        "relative_error_m": 1.4940728771386794e-05,
+        "relative_rotation_rad": 7.549411887146018e-06
+      },
+      {
+        "object_left_error_m": 1.0394974584465905e-05,
+        "object_left_rotation_rad": 2.779554743836667e-05,
+        "object_right_error_m": 8.858359454152155e-06,
+        "object_right_rotation_rad": 3.472513964941459e-05,
+        "physics_step": 332,
+        "relative_error_m": 1.4973345763299416e-05,
+        "relative_rotation_rad": 7.119756960305026e-06
+      },
+      {
+        "object_left_error_m": 8.992580066348058e-06,
+        "object_left_rotation_rad": 3.123393290771038e-05,
+        "object_right_error_m": 1.1735446550728297e-05,
+        "object_right_rotation_rad": 3.86591095292923e-05,
+        "physics_step": 333,
+        "relative_error_m": 1.5020285337565294e-05,
+        "relative_rotation_rad": 7.53864106103285e-06
+      },
+      {
+        "object_left_error_m": 8.228349492326065e-06,
+        "object_left_rotation_rad": 3.1288581438689495e-05,
+        "object_right_error_m": 1.4172789649295527e-05,
+        "object_right_rotation_rad": 4.233053489604761e-05,
+        "physics_step": 334,
+        "relative_error_m": 1.4584291512140871e-05,
+        "relative_rotation_rad": 1.1267497366142192e-05
+      },
+      {
+        "object_left_error_m": 8.09851825756294e-06,
+        "object_left_rotation_rad": 3.1257079925285814e-05,
+        "object_right_error_m": 1.6984058545944523e-05,
+        "object_right_rotation_rad": 4.617011543495902e-05,
+        "physics_step": 335,
+        "relative_error_m": 1.4651483457917357e-05,
+        "relative_rotation_rad": 1.518155390689907e-05
+      },
+      {
+        "object_left_error_m": 9.0982105022068e-06,
+        "object_left_rotation_rad": 3.1249666964991555e-05,
+        "object_right_error_m": 1.9813332734120965e-05,
+        "object_right_rotation_rad": 4.990668588137506e-05,
+        "physics_step": 336,
+        "relative_error_m": 1.4843976895645064e-05,
+        "relative_rotation_rad": 1.8966234345302564e-05
+      },
+      {
+        "object_left_error_m": 1.0448872352737812e-05,
+        "object_left_rotation_rad": 2.937388499010464e-05,
+        "object_right_error_m": 2.2810188087995347e-05,
+        "object_right_rotation_rad": 5.390547226934322e-05,
+        "physics_step": 337,
+        "relative_error_m": 1.5203931111244994e-05,
+        "relative_rotation_rad": 2.4885177726231725e-05
+      },
+      {
+        "object_left_error_m": 1.187684823158116e-05,
+        "object_left_rotation_rad": 2.7578721662421315e-05,
+        "object_right_error_m": 2.5556232738223663e-05,
+        "object_right_rotation_rad": 5.402798722644157e-05,
+        "physics_step": 338,
+        "relative_error_m": 1.6103292371963155e-05,
+        "relative_rotation_rad": 2.6893381798791325e-05
+      },
+      {
+        "object_left_error_m": 1.3419509305850474e-05,
+        "object_left_rotation_rad": 2.5875523187737595e-05,
+        "object_right_error_m": 2.831235651989248e-05,
+        "object_right_rotation_rad": 5.376314409609841e-05,
+        "physics_step": 339,
+        "relative_error_m": 1.673054462972948e-05,
+        "relative_rotation_rad": 2.8326721545535627e-05
+      },
+      {
+        "object_left_error_m": 1.5276281642943035e-05,
+        "object_left_rotation_rad": 2.3936852976257476e-05,
+        "object_right_error_m": 3.075033427012949e-05,
+        "object_right_rotation_rad": 5.5865537781864154e-05,
+        "physics_step": 340,
+        "relative_error_m": 1.7033990266999814e-05,
+        "relative_rotation_rad": 3.243535126377173e-05
+      },
+      {
+        "object_left_error_m": 1.7379746350454862e-05,
+        "object_left_rotation_rad": 2.2149183917050305e-05,
+        "object_right_error_m": 3.313179502711937e-05,
+        "object_right_rotation_rad": 5.763974562456929e-05,
+        "physics_step": 341,
+        "relative_error_m": 1.7095667695697405e-05,
+        "relative_rotation_rad": 3.613882996342934e-05
+      },
+      {
+        "object_left_error_m": 1.92330603726711e-05,
+        "object_left_rotation_rad": 2.0073750600244732e-05,
+        "object_right_error_m": 3.544320917753228e-05,
+        "object_right_rotation_rad": 5.9368743291729786e-05,
+        "physics_step": 342,
+        "relative_error_m": 1.748873010589088e-05,
+        "relative_rotation_rad": 4.012932870383889e-05
+      },
+      {
+        "object_left_error_m": 2.153870857517383e-05,
+        "object_left_rotation_rad": 1.8435660406536097e-05,
+        "object_right_error_m": 3.778294358212305e-05,
+        "object_right_rotation_rad": 6.12854222373137e-05,
+        "physics_step": 343,
+        "relative_error_m": 1.746831109759942e-05,
+        "relative_rotation_rad": 4.379470976031982e-05
+      },
+      {
+        "object_left_error_m": 2.385617518198989e-05,
+        "object_left_rotation_rad": 1.6485409090794178e-05,
+        "object_right_error_m": 4.009986979328724e-05,
+        "object_right_rotation_rad": 6.306539806015171e-05,
+        "physics_step": 344,
+        "relative_error_m": 1.7576197368647476e-05,
+        "relative_rotation_rad": 4.7653151393690776e-05
+      },
+      {
+        "object_left_error_m": 2.5641601645771598e-05,
+        "object_left_rotation_rad": 1.6828822330374875e-05,
+        "object_right_error_m": 3.921939238926985e-05,
+        "object_right_rotation_rad": 5.7586205026348066e-05,
+        "physics_step": 345,
+        "relative_error_m": 1.4784313400443036e-05,
+        "relative_rotation_rad": 4.180853625732386e-05
+      },
+      {
+        "object_left_error_m": 2.7388989587487017e-05,
+        "object_left_rotation_rad": 1.6843505430460957e-05,
+        "object_right_error_m": 3.8976884384054875e-05,
+        "object_right_rotation_rad": 5.1599429083579884e-05,
+        "physics_step": 346,
+        "relative_error_m": 1.262568389520678e-05,
+        "relative_rotation_rad": 3.583723378326661e-05
+      },
+      {
+        "object_left_error_m": 2.8881032004526118e-05,
+        "object_left_rotation_rad": 1.67141037455762e-05,
+        "object_right_error_m": 3.7465990980242854e-05,
+        "object_right_rotation_rad": 4.4145297042915626e-05,
+        "physics_step": 347,
+        "relative_error_m": 9.91591191542112e-06,
+        "relative_rotation_rad": 2.849834943808675e-05
+      },
+      {
+        "object_left_error_m": 3.123923936724173e-05,
+        "object_left_rotation_rad": 1.583891841038853e-05,
+        "object_right_error_m": 3.611663439049144e-05,
+        "object_right_rotation_rad": 3.6579766927243646e-05,
+        "physics_step": 348,
+        "relative_error_m": 6.851098333348472e-06,
+        "relative_rotation_rad": 2.120623943067208e-05
+      },
+      {
+        "object_left_error_m": 3.3280265081181425e-05,
+        "object_left_rotation_rad": 1.6321092609961168e-05,
+        "object_right_error_m": 3.55628239743258e-05,
+        "object_right_rotation_rad": 2.888367942404115e-05,
+        "physics_step": 349,
+        "relative_error_m": 6.669391298072414e-06,
+        "relative_rotation_rad": 1.2881529811030104e-05
+      },
+      {
+        "object_left_error_m": 3.5005545635144835e-05,
+        "object_left_rotation_rad": 1.5869710763595376e-05,
+        "object_right_error_m": 3.4666140644476706e-05,
+        "object_right_rotation_rad": 2.1226415554893593e-05,
+        "physics_step": 350,
+        "relative_error_m": 7.95305753439656e-06,
+        "relative_rotation_rad": 5.578411269632294e-06
+      },
+      {
+        "object_left_error_m": 3.6196616955293884e-05,
+        "object_left_rotation_rad": 1.4253374665887732e-05,
+        "object_right_error_m": 3.399466947367846e-05,
+        "object_right_rotation_rad": 1.7580817863222294e-05,
+        "physics_step": 351,
+        "relative_error_m": 9.904590840366318e-06,
+        "relative_rotation_rad": 3.7151893695355767e-06
+      },
+      {
+        "object_left_error_m": 3.767075312058549e-05,
+        "object_left_rotation_rad": 1.5979803057916617e-05,
+        "object_right_error_m": 3.271304559015753e-05,
+        "object_right_rotation_rad": 1.1856508978407254e-05,
+        "physics_step": 352,
+        "relative_error_m": 1.2650351770199625e-05,
+        "relative_rotation_rad": 4.24433853614427e-06
+      },
+      {
+        "object_left_error_m": 3.905722225727376e-05,
+        "object_left_rotation_rad": 1.7957184876095902e-05,
+        "object_right_error_m": 3.1850227505250914e-05,
+        "object_right_rotation_rad": 6.864776499440605e-06,
+        "physics_step": 353,
+        "relative_error_m": 1.5826425022648824e-05,
+        "relative_rotation_rad": 1.1664651767042313e-05
+      },
+      {
+        "object_left_error_m": 4.0272180763188086e-05,
+        "object_left_rotation_rad": 1.9650034117428297e-05,
+        "object_right_error_m": 3.0728686662153456e-05,
+        "object_right_rotation_rad": 3.457838842912156e-06,
+        "physics_step": 354,
+        "relative_error_m": 1.9519868747999253e-05,
+        "relative_rotation_rad": 1.933750774567476e-05
+      },
+      {
+        "object_left_error_m": 4.105966171940192e-05,
+        "object_left_rotation_rad": 1.9708388997098024e-05,
+        "object_right_error_m": 3.0311378135909512e-05,
+        "object_right_rotation_rad": 6.585189044550613e-06,
+        "physics_step": 355,
+        "relative_error_m": 2.2476547152268124e-05,
+        "relative_rotation_rad": 2.4935147308471567e-05
+      },
+      {
+        "object_left_error_m": 4.1913856659450784e-05,
+        "object_left_rotation_rad": 1.9760630832942592e-05,
+        "object_right_error_m": 2.9228109615590024e-05,
+        "object_right_rotation_rad": 1.3602972422045128e-05,
+        "physics_step": 356,
+        "relative_error_m": 2.5953758313526807e-05,
+        "relative_rotation_rad": 3.2577979635507754e-05
+      },
+      {
+        "object_left_error_m": 3.972202959143616e-05,
+        "object_left_rotation_rad": 1.6041717706213133e-05,
+        "object_right_error_m": 2.800899631033909e-05,
+        "object_right_rotation_rad": 1.7286833768752702e-05,
+        "physics_step": 357,
+        "relative_error_m": 2.5918580965049273e-05,
+        "relative_rotation_rad": 3.2606185562565706e-05
+      },
+      {
+        "object_left_error_m": 3.732129895451925e-05,
+        "object_left_rotation_rad": 1.2296671735403386e-05,
+        "object_right_error_m": 2.7122148926426694e-05,
+        "object_right_rotation_rad": 2.117599777440469e-05,
+        "physics_step": 358,
+        "relative_error_m": 2.5639680137870587e-05,
+        "relative_rotation_rad": 3.263160922936899e-05
+      },
+      {
+        "object_left_error_m": 3.544520575188988e-05,
+        "object_left_rotation_rad": 8.75806174105504e-06,
+        "object_right_error_m": 2.6227689454401412e-05,
+        "object_right_rotation_rad": 2.4824260420337904e-05,
+        "physics_step": 359,
+        "relative_error_m": 2.580751394327403e-05,
+        "relative_rotation_rad": 3.259040813868492e-05
+      },
+      {
+        "object_left_error_m": 3.282128417385741e-05,
+        "object_left_rotation_rad": 4.473357398062299e-06,
+        "object_right_error_m": 2.5788144649421118e-05,
+        "object_right_rotation_rad": 2.8516750990134825e-05,
+        "physics_step": 360,
+        "relative_error_m": 2.5367929524052004e-05,
+        "relative_rotation_rad": 3.0653598999928895e-05
+      },
+      {
+        "object_left_error_m": 3.0060346344907876e-05,
+        "object_left_rotation_rad": 5.391174514330033e-06,
+        "object_right_error_m": 2.5353656951281667e-05,
+        "object_right_rotation_rad": 3.431189475346858e-05,
+        "physics_step": 361,
+        "relative_error_m": 2.507223830007074e-05,
+        "relative_rotation_rad": 3.043812142831025e-05
+      },
+      {
+        "object_left_error_m": 2.7805296580717283e-05,
+        "object_left_rotation_rad": 9.91236473597135e-06,
+        "object_right_error_m": 2.492158785144776e-05,
+        "object_right_rotation_rad": 3.982537294333345e-05,
+        "physics_step": 362,
+        "relative_error_m": 2.4787830968157265e-05,
+        "relative_rotation_rad": 3.059905327960919e-05
+      },
+      {
+        "object_left_error_m": 2.528461727643601e-05,
+        "object_left_rotation_rad": 1.1634090454182583e-05,
+        "object_right_error_m": 2.435060766327259e-05,
+        "object_right_rotation_rad": 4.201743853946761e-05,
+        "physics_step": 363,
+        "relative_error_m": 2.490699064499701e-05,
+        "relative_rotation_rad": 3.087517000207831e-05
+      },
+      {
+        "object_left_error_m": 2.3155685185983934e-05,
+        "object_left_rotation_rad": 1.3291264607858327e-05,
+        "object_right_error_m": 2.4242425260629655e-05,
+        "object_right_rotation_rad": 4.37576308735585e-05,
+        "physics_step": 364,
+        "relative_error_m": 2.527514315260772e-05,
+        "relative_rotation_rad": 3.083792508904319e-05
+      },
+      {
+        "object_left_error_m": 2.0304465983674946e-05,
+        "object_left_rotation_rad": 1.7175680401962122e-05,
+        "object_right_error_m": 2.434571989448591e-05,
+        "object_right_rotation_rad": 4.776339642927948e-05,
+        "physics_step": 365,
+        "relative_error_m": 2.4898665392528478e-05,
+        "relative_rotation_rad": 3.089500448868505e-05
+      },
+      {
+        "object_left_error_m": 1.7792809109008192e-05,
+        "object_left_rotation_rad": 2.114934794704309e-05,
+        "object_right_error_m": 2.4995874944354544e-05,
+        "object_right_rotation_rad": 5.151952186920202e-05,
+        "physics_step": 366,
+        "relative_error_m": 2.4884238838955975e-05,
+        "relative_rotation_rad": 3.0594966993405554e-05
+      },
+      {
+        "object_left_error_m": 1.5448118451003985e-05,
+        "object_left_rotation_rad": 2.483841237897218e-05,
+        "object_right_error_m": 2.359861631040877e-05,
+        "object_right_rotation_rad": 4.774779030571557e-05,
+        "physics_step": 367,
+        "relative_error_m": 2.1324535092830066e-05,
+        "relative_rotation_rad": 2.3118243352657207e-05
+      },
+      {
+        "object_left_error_m": 1.3307838936481758e-05,
+        "object_left_rotation_rad": 2.4722815605865107e-05,
+        "object_right_error_m": 2.1924302451802717e-05,
+        "object_right_rotation_rad": 4.3998910699928516e-05,
+        "physics_step": 368,
+        "relative_error_m": 1.8051579993130987e-05,
+        "relative_rotation_rad": 1.9444275844934993e-05
+      },
+      {
+        "object_left_error_m": 1.1897490874388437e-05,
+        "object_left_rotation_rad": 2.474253600153162e-05,
+        "object_right_error_m": 2.0420261889358965e-05,
+        "object_right_rotation_rad": 4.030131849959305e-05,
+        "physics_step": 369,
+        "relative_error_m": 1.491560450483478e-05,
+        "relative_rotation_rad": 1.5754356947544563e-05
+      },
+      {
+        "object_left_error_m": 1.0864960625754139e-05,
+        "object_left_rotation_rad": 2.509009633044781e-05,
+        "object_right_error_m": 1.8964862203553223e-05,
+        "object_right_rotation_rad": 3.618113811178283e-05,
+        "physics_step": 370,
+        "relative_error_m": 1.1986188352167381e-05,
+        "relative_rotation_rad": 1.1278275183883755e-05
+      },
+      {
+        "object_left_error_m": 1.067945351048983e-05,
+        "object_left_rotation_rad": 2.4641467960627625e-05,
+        "object_right_error_m": 1.7657188696606172e-05,
+        "object_right_rotation_rad": 3.256797919289345e-05,
+        "physics_step": 371,
+        "relative_error_m": 9.859072699265809e-06,
+        "relative_rotation_rad": 8.22062031365497e-06
+      },
+      {
+        "object_left_error_m": 1.1665582697405063e-05,
+        "object_left_rotation_rad": 2.6376358344805743e-05,
+        "object_right_error_m": 1.5832612404885836e-05,
+        "object_right_rotation_rad": 2.690447876221743e-05,
+        "physics_step": 372,
+        "relative_error_m": 7.1705821156396116e-06,
+        "relative_rotation_rad": 2.1585944422518724e-06
+      },
+      {
+        "object_left_error_m": 1.3897292901138677e-05,
+        "object_left_rotation_rad": 2.8406477617541375e-05,
+        "object_right_error_m": 1.4594903931128335e-05,
+        "object_right_rotation_rad": 2.4851598754968142e-05,
+        "physics_step": 373,
+        "relative_error_m": 6.159380797555254e-06,
+        "relative_rotation_rad": 4.003960099287752e-06
+      },
+      {
+        "object_left_error_m": 1.672064257992259e-05,
+        "object_left_rotation_rad": 3.0454135664285487e-05,
+        "object_right_error_m": 1.3628011343369856e-05,
+        "object_right_rotation_rad": 2.2582784223029006e-05,
+        "physics_step": 374,
+        "relative_error_m": 7.282945071091089e-06,
+        "relative_rotation_rad": 8.16690541559402e-06
+      },
+      {
+        "object_left_error_m": 1.6243601505579947e-05,
+        "object_left_rotation_rad": 2.4707344361489433e-05,
+        "object_right_error_m": 1.3100926449650935e-05,
+        "object_right_rotation_rad": 2.0985987370741527e-05,
+        "physics_step": 375,
+        "relative_error_m": 7.04887770687001e-06,
+        "relative_rotation_rad": 4.2316965635421434e-06
+      },
+      {
+        "object_left_error_m": 1.574260949973275e-05,
+        "object_left_rotation_rad": 1.8760122920303696e-05,
+        "object_right_error_m": 1.2635499050321741e-05,
+        "object_right_rotation_rad": 1.910546806120736e-05,
+        "physics_step": 376,
+        "relative_error_m": 7.059856522719014e-06,
+        "relative_rotation_rad": 2.056620671308838e-06
+      },
+      {
+        "object_left_error_m": 1.617863332547798e-05,
+        "object_left_rotation_rad": 1.7106296265430562e-05,
+        "object_right_error_m": 1.2368164044066357e-05,
+        "object_right_rotation_rad": 1.7137801975829623e-05,
+        "physics_step": 377,
+        "relative_error_m": 7.0062573282224736e-06,
+        "relative_rotation_rad": 1.9920969661394337e-06
+      },
+      {
+        "object_left_error_m": 1.6552909319342283e-05,
+        "object_left_rotation_rad": 1.5271941117174226e-05,
+        "object_right_error_m": 1.2205336293853088e-05,
+        "object_right_rotation_rad": 1.539828266156376e-05,
+        "physics_step": 378,
+        "relative_error_m": 6.874377326495837e-06,
+        "relative_rotation_rad": 2.088059972925581e-06
+      },
+      {
+        "object_left_error_m": 1.694706804489987e-05,
+        "object_left_rotation_rad": 1.3400618655903486e-05,
+        "object_right_error_m": 1.2657957959753272e-05,
+        "object_right_rotation_rad": 1.3547104126979197e-05,
+        "physics_step": 379,
+        "relative_error_m": 6.426585647739334e-06,
+        "relative_rotation_rad": 1.9941939537571605e-06
+      },
+      {
+        "object_left_error_m": 1.713794841507544e-05,
+        "object_left_rotation_rad": 1.1440857918022416e-05,
+        "object_right_error_m": 1.3016907472083154e-05,
+        "object_right_rotation_rad": 1.1966178007312675e-05,
+        "physics_step": 380,
+        "relative_error_m": 6.161331135622815e-06,
+        "relative_rotation_rad": 2.243990339827863e-06
+      },
+      {
+        "object_left_error_m": 1.7760865044889492e-05,
+        "object_left_rotation_rad": 9.399686906479982e-06,
+        "object_right_error_m": 1.3541961998918294e-05,
+        "object_right_rotation_rad": 1.0144253934440657e-05,
+        "physics_step": 381,
+        "relative_error_m": 6.012150985150422e-06,
+        "relative_rotation_rad": 2.2079960540087314e-06
+      },
+      {
+        "object_left_error_m": 1.775345123318306e-05,
+        "object_left_rotation_rad": 5.533257573627169e-06,
+        "object_right_error_m": 1.4095171264798518e-05,
+        "object_right_rotation_rad": 8.473693716383901e-06,
+        "physics_step": 382,
+        "relative_error_m": 5.243178784650967e-06,
+        "relative_rotation_rad": 3.1692245609164763e-06
+      },
+      {
+        "object_left_error_m": 1.750249199657787e-05,
+        "object_left_rotation_rad": 2.686649266086425e-06,
+        "object_right_error_m": 1.477673200050954e-05,
+        "object_right_rotation_rad": 7.0425154261240935e-06,
+        "physics_step": 383,
+        "relative_error_m": 4.792286869768277e-06,
+        "relative_rotation_rad": 4.60675754536431e-06
+      },
+      {
+        "object_left_error_m": 1.743759310816908e-05,
+        "object_left_rotation_rad": 3.1940725219143088e-06,
+        "object_right_error_m": 1.5132770836384144e-05,
+        "object_right_rotation_rad": 4.861502050942105e-06,
+        "physics_step": 384,
+        "relative_error_m": 4.760627619679701e-06,
+        "relative_rotation_rad": 4.7086641169172174e-06
+      },
+      {
+        "object_left_error_m": 1.749437221146354e-05,
+        "object_left_rotation_rad": 6.305366113519731e-06,
+        "object_right_error_m": 1.5407180870260673e-05,
+        "object_right_rotation_rad": 5.296517447504802e-06,
+        "physics_step": 385,
+        "relative_error_m": 4.489642074235423e-06,
+        "relative_rotation_rad": 8.191688359122356e-06
+      },
+      {
+        "object_left_error_m": 1.7299618409953483e-05,
+        "object_left_rotation_rad": 6.5316713858087415e-06,
+        "object_right_error_m": 1.5495206062293768e-05,
+        "object_right_rotation_rad": 5.5130413309999505e-06,
+        "physics_step": 386,
+        "relative_error_m": 4.444640655257e-06,
+        "relative_rotation_rad": 8.096437751575292e-06
+      },
+      {
+        "object_left_error_m": 1.7324214263808585e-05,
+        "object_left_rotation_rad": 6.795968821069412e-06,
+        "object_right_error_m": 1.5542311832038626e-05,
+        "object_right_rotation_rad": 5.9115875211895814e-06,
+        "physics_step": 387,
+        "relative_error_m": 4.348207697602035e-06,
+        "relative_rotation_rad": 8.034803293193651e-06
+      },
+      {
+        "object_left_error_m": 1.7100468162137782e-05,
+        "object_left_rotation_rad": 7.047541548905631e-06,
+        "object_right_error_m": 1.5528052852723765e-05,
+        "object_right_rotation_rad": 6.194898376100228e-06,
+        "physics_step": 388,
+        "relative_error_m": 4.356063801154536e-06,
+        "relative_rotation_rad": 8.119689242824801e-06
+      },
+      {
+        "object_left_error_m": 1.6807248372890248e-05,
+        "object_left_rotation_rad": 7.272255783174001e-06,
+        "object_right_error_m": 1.5899402189493062e-05,
+        "object_right_rotation_rad": 6.619867438129507e-06,
+        "physics_step": 389,
+        "relative_error_m": 4.266753157586418e-06,
+        "relative_rotation_rad": 8.007930456818305e-06
+      },
+      {
+        "object_left_error_m": 1.6692620092156807e-05,
+        "object_left_rotation_rad": 7.486033779017042e-06,
+        "object_right_error_m": 1.6086883292703704e-05,
+        "object_right_rotation_rad": 7.027383396162184e-06,
+        "physics_step": 390,
+        "relative_error_m": 4.50512643605102e-06,
+        "relative_rotation_rad": 7.923538236447198e-06
+      },
+      {
+        "object_left_error_m": 1.6667158204768274e-05,
+        "object_left_rotation_rad": 7.896381398717403e-06,
+        "object_right_error_m": 1.5962457256961286e-05,
+        "object_right_rotation_rad": 7.229506969433662e-06,
+        "physics_step": 391,
+        "relative_error_m": 4.8485647277409515e-06,
+        "relative_rotation_rad": 7.830603240928106e-06
+      },
+      {
+        "object_left_error_m": 1.639045041223059e-05,
+        "object_left_rotation_rad": 8.404967077136798e-06,
+        "object_right_error_m": 1.6062041780627084e-05,
+        "object_right_rotation_rad": 7.635937739317214e-06,
+        "physics_step": 392,
+        "relative_error_m": 5.0218636241173584e-06,
+        "relative_rotation_rad": 7.964258810273521e-06
+      }
+    ]
+  },
+  "metrics": {
+    "object_mean_m": 8.040567968169866e-05,
+    "object_over_frames": [],
+    "object_p95_m": 0.00022282694549507462,
+    "object_peak_m": 0.00023718320935481833,
+    "relative_over_frames": [],
+    "relative_peak_m": 6.528643602387225e-05,
+    "sample_count": 210
+  },
+  "output_hashes": {
+    "evidence/diagnostic/V10-B/child_lifecycle.jsonl": "5b353c2e4bebf1cc3adf0be4c6d8f3531fd574024ee38d577e861851f9381d21",
+    "evidence/diagnostic/V10-B/command_journal.jsonl": "7e4e260fcd9e038ce1ed764537d95106ce4353827a9a72d4d7f15a07f95ec11e",
+    "evidence/diagnostic/V10-B/frames.jsonl": "cd76b86a558998bb9722c3f0ff8a8ba335e576e5a6bf727f7a97bf4822cd51d5",
+    "evidence/diagnostic/V10-B/level1_evidence.json": "0d7033ed151d6e3e1d80d8f8c0ae1bae7655f85d56989f9e93e69b1c62896989",
+    "evidence/diagnostic/V10-B/reference_geometry.json": "db8f3b1f87d7971943474bdd219f101608398e2ccde3efdaad4c5bcd6a8a44a8",
+    "evidence/diagnostic/V10-B/result.json": "c5fbf63d82a16ab4e476d688a01d642ecf735df6b2f35ba67eb7473f25909b1d"
+  },
+  "process_clean_exit": true,
+  "process_isolated": true,
+  "repeat": 14,
+  "returncode": 0,
+  "schema": "TASK28_R13_FRESH_ISAAC_RUN_V1",
+  "source_unchanged": true,
+  "start_utc": "2026-10-30T07:53:07.469387+00:00"
+}

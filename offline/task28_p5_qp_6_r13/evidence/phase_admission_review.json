@@ -1,59 +1,257 @@
 {
   "FORMAL": {
-    "continuous_safety_required": false,
+    "continuous_safety_required_by_this_no_contact_registration": false,
     "execution_authorized": false,
-    "preconditions_bounded_perturbation_envelope": false,
-    "preconditions_deterministic_repetition": true,
-    "preconditions_discrete_A_B_C": true,
-    "status": "BLOCKED_R13_SCOPE_NO_EXECUTION_AND_ROBUSTNESS_ENVELOPE_NOT_ESTABLISHED"
+    "may_start": false,
+    "r13_repetition_or_perturbation_not_added_to_historical_registration": true,
+    "registered_all_ABC_gates_demonstrated": true,
+    "registered_conditions_demonstrated": true,
+    "registered_requirement_text": "all V10-A/B/C and two independent eligible diagnostics pass unchanged requirements",
+    "registered_two_independent_diagnostics": true,
+    "status": "NOT_RUN_R13_SCOPE"
+  },
+  "FORMAL_diagnostic_interpretation": {
+    "archive_eligible_independent_process_ids": [
+      "2026-10-30T02:02:56.266457+00:00:30855",
+      "2026-10-30T02:05:42.457351+00:00:32216",
+      "2026-10-30T02:08:40.371295+00:00:33638"
+    ],
+    "exact_requirement": "all V10-A/B/C and two independent eligible diagnostics pass unchanged requirements",
+    "interpretation": "The registration says two independent eligible diagnostics; it does not explicitly require identical feedback configuration or V10-D. A/B/C process identities count only when every frozen gate and source check passes.",
+    "two_fresh_same_configuration_runs_are_separate_evidence": true
+  },
+  "R13_review_findings_not_redefined_historical_gates": {
+    "all_three_fresh_repetition_sets_pass": true,
+    "recommendation": "Review fresh repetition and validated sensitivity evidence before requesting a later phase; this task never starts V10-D or FORMAL.",
+    "robustness": {
+      "status": "NOT_ESTABLISHED_NO_VALIDATED_DYNAMIC_PERTURBATION_EVIDENCE"
+    }
   },
   "V10-D": {
-    "continuous_safety_required": false,
+    "continuous_safety_required_by_this_no_contact_registration": false,
     "execution_authorized": false,
-    "preconditions_bounded_perturbation_envelope": false,
-    "preconditions_deterministic_repetition": true,
-    "preconditions_discrete_A_B_C": true,
-    "status": "BLOCKED_R13_SCOPE_NO_EXECUTION_AND_ROBUSTNESS_ENVELOPE_NOT_ESTABLISHED"
+    "may_start": false,
+    "r13_repetition_or_perturbation_not_added_to_historical_registration": true,
+    "registered_all_ABC_gates_demonstrated": true,
+    "registered_conditions_demonstrated": true,
+    "registered_requirement_text": "all V10-A/B/C independently pass unchanged gates",
+    "registered_two_independent_diagnostics": "NOT_A_V10_D_REQUIREMENT",
+    "status": "NOT_RUN_R13_SCOPE"
   },
   "baseline_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
   "cells": {
     "V10-A": {
-      "bounded_perturbation_envelope_pass": false,
-      "bounded_perturbation_worst_over_limit_count": 3,
-      "bounded_perturbation_worst_peak_mm": 0.2577110327257499,
-      "deterministic_repetition_20_pass": true,
-      "frozen_discrete_gate": true
+      "baseline_failed_or_missing": [],
+      "baseline_gates": {
+        "all_sample_cube_immobile": true,
+        "all_sample_frozen_R8_state_gate": true,
+        "all_sample_qp_fcl_joint_and_sink": true,
+        "independent_evaluator_eligible": true,
+        "independent_process": true,
+        "joint_tracking_peak_rad": true,
+        "native_dq_peak_rad_s": true,
+        "no_contact_cube_suction_d6_ros": true,
+        "per_joint_effort_and_rate": true,
+        "relative_tcp_rotation_peak_rad": true,
+        "relative_tcp_translation_peak_m": true,
+        "runtime_complete": true,
+        "source_and_frozen_controller": true,
+        "source_binding": true,
+        "timing": true,
+        "virtual_object_tracking_peak_m": true
+      },
+      "fresh_20_all_frozen_gates_pass": true,
+      "fresh_20_unique_processes": true,
+      "fresh_failed_or_missing": [],
+      "fresh_process_count": 20,
+      "frozen_baseline_all_gates": true
     },
     "V10-B": {
-      "bounded_perturbation_envelope_pass": false,
-      "bounded_perturbation_worst_over_limit_count": 29,
-      "bounded_perturbation_worst_peak_mm": 0.3015882694637521,
-      "deterministic_repetition_20_pass": true,
-      "frozen_discrete_gate": true
+      "baseline_failed_or_missing": [],
+      "baseline_gates": {
+        "all_sample_cube_immobile": true,
+        "all_sample_frozen_R8_state_gate": true,
+        "all_sample_qp_fcl_joint_and_sink": true,
+        "independent_evaluator_eligible": true,
+        "independent_process": true,
+        "joint_tracking_peak_rad": true,
+        "native_dq_peak_rad_s": true,
+        "no_contact_cube_suction_d6_ros": true,
+        "per_joint_effort_and_rate": true,
+        "relative_tcp_rotation_peak_rad": true,
+        "relative_tcp_translation_peak_m": true,
+        "runtime_complete": true,
+        "source_and_frozen_controller": true,
+        "source_binding": true,
+        "timing": true,
+        "virtual_object_tracking_peak_m": true
+      },
+      "fresh_20_all_frozen_gates_pass": true,
+      "fresh_20_unique_processes": true,
+      "fresh_failed_or_missing": [],
+      "fresh_process_count": 20,
+      "frozen_baseline_all_gates": true
     },
     "V10-C": {
-      "bounded_perturbation_envelope_pass": false,
-      "bounded_perturbation_worst_over_limit_count": 29,
-      "bounded_perturbation_worst_peak_mm": 0.31043980439615604,
-      "deterministic_repetition_20_pass": true,
-      "frozen_discrete_gate": true
+      "baseline_failed_or_missing": [],
+      "baseline_gates": {
+        "all_sample_cube_immobile": true,
+        "all_sample_frozen_R8_state_gate": true,
+        "all_sample_qp_fcl_joint_and_sink": true,
+        "independent_evaluator_eligible": true,
+        "independent_process": true,
+        "joint_tracking_peak_rad": true,
+        "native_dq_peak_rad_s": true,
+        "no_contact_cube_suction_d6_ros": true,
+        "per_joint_effort_and_rate": true,
+        "relative_tcp_rotation_peak_rad": true,
+        "relative_tcp_translation_peak_m": true,
+        "runtime_complete": true,
+        "source_and_frozen_controller": true,
+        "source_binding": true,
+        "timing": true,
+        "virtual_object_tracking_peak_m": true
+      },
+      "fresh_20_all_frozen_gates_pass": true,
+      "fresh_20_unique_processes": true,
+      "fresh_failed_or_missing": [],
+      "fresh_process_count": 20,
+      "frozen_baseline_all_gates": true
     }
   },
-  "continuous_safety": {
-    "closed_chain_continuous_proof": false,
-    "collision_continuous_proof": false,
-    "direct_negative_present": true,
-    "sampled_candidate_only": true,
-    "status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
-    "unresolved_interval_counts": [
-      7,
-      10,
-      16,
-      52
-    ]
-  },
-  "controller_frozen": true,
   "next_phase_auto_start": false,
+  "physical_approach": {
+    "continuous_proof_required_before_approach": true,
+    "continuous_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "execution_authorized": false,
+    "status": "BLOCKED_R13_SCOPE"
+  },
   "physical_execution": false,
-  "schema": "TASK28_R13_PHASE_ADMISSION_REVIEW_V1"
+  "schema": "TASK28_R13_PHASE_ADMISSION_REVIEW_V2",
+  "source_binding": {
+    "files": [
+      {
+        "baseline_sha256": "41dbdf13dba5939eeedd711ba11590b8508e81ed6211a213a3fce9de012449e8",
+        "current_sha256": "41dbdf13dba5939eeedd711ba11590b8508e81ed6211a213a3fce9de012449e8",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/__init__.py"
+      },
+      {
+        "baseline_sha256": "b38e568a6823934070fe1bb85f8107d7e22d86413955a311f3480fa7dbd99248",
+        "current_sha256": "b38e568a6823934070fe1bb85f8107d7e22d86413955a311f3480fa7dbd99248",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/approach_audit.py"
+      },
+      {
+        "baseline_sha256": "ded53d96466c94478b416abe676f36ec555e6d5ef4a89605643f1762d0b9e3ba",
+        "current_sha256": "ded53d96466c94478b416abe676f36ec555e6d5ef4a89605643f1762d0b9e3ba",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/audit_cpu.py"
+      },
+      {
+        "baseline_sha256": "6e5c0c132f40374548087fa4522e1d68184c3dbd1477e4f478f9cdfc1ece4e67",
+        "current_sha256": "6e5c0c132f40374548087fa4522e1d68184c3dbd1477e4f478f9cdfc1ece4e67",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/continuous_safety_audit.py"
+      },
+      {
+        "baseline_sha256": "a3c5534a2ae14924431d18efc9ac08555a87d8f97d059e217038413b2edbf3f1",
+        "current_sha256": "a3c5534a2ae14924431d18efc9ac08555a87d8f97d059e217038413b2edbf3f1",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/diagnostic.py"
+      },
+      {
+        "baseline_sha256": "fa4d3afe9cdbde1e710ced82cad5f159663656faa2c4e22bbdb1daa25a579fd2",
+        "current_sha256": "fa4d3afe9cdbde1e710ced82cad5f159663656faa2c4e22bbdb1daa25a579fd2",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/evaluate.py"
+      },
+      {
+        "baseline_sha256": "aa8a8c6f93e2e52de03c004979c9b580a46d519d1cd2e8f8ebdcdec5c64f69b9",
+        "current_sha256": "aa8a8c6f93e2e52de03c004979c9b580a46d519d1cd2e8f8ebdcdec5c64f69b9",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/offline_gain_sensitivity.py"
+      },
+      {
+        "baseline_sha256": "91cd0cab7c29301c3c441dccac9de457eea4f4c4f86c5a24f8f8abcd0ac0b7d8",
+        "current_sha256": "91cd0cab7c29301c3c441dccac9de457eea4f4c4f86c5a24f8f8abcd0ac0b7d8",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/offline_replay.py"
+      },
+      {
+        "baseline_sha256": "b7aabf96019bb48595d99229d8b62ff86f56141b3fe9beef6025106ae3dbe148",
+        "current_sha256": "b7aabf96019bb48595d99229d8b62ff86f56141b3fe9beef6025106ae3dbe148",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/preregistration.json"
+      },
+      {
+        "baseline_sha256": "f768fa232d57aec40ec29a526bb24463a865a1d33d2e5050453774be4c64e7d2",
+        "current_sha256": "f768fa232d57aec40ec29a526bb24463a865a1d33d2e5050453774be4c64e7d2",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/process_audit.py"
+      },
+      {
+        "baseline_sha256": "e71948d0e6b0112e58284eb3d5800cbe6e02347d0bef30a6098f9853fc704df0",
+        "current_sha256": "e71948d0e6b0112e58284eb3d5800cbe6e02347d0bef30a6098f9853fc704df0",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/process_runner.py"
+      },
+      {
+        "baseline_sha256": "3e02a4201586f7868cc7a6fbf55fc0304b53fa164a51431b496b53745da504f4",
+        "current_sha256": "3e02a4201586f7868cc7a6fbf55fc0304b53fa164a51431b496b53745da504f4",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/qp_math.py"
+      },
+      {
+        "baseline_sha256": "0c5745b90337397eeb53e8dcc231f02413130ed2684cdd1c25cce8861d555b9e",
+        "current_sha256": "0c5745b90337397eeb53e8dcc231f02413130ed2684cdd1c25cce8861d555b9e",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/registrations.json"
+      },
+      {
+        "baseline_sha256": "c84b1d2f8ca210f1c24e9ae4d68d5610767148060d0c4936e1798c03d78f913c",
+        "current_sha256": "c84b1d2f8ca210f1c24e9ae4d68d5610767148060d0c4936e1798c03d78f913c",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/run_prior_regressions.py"
+      },
+      {
+        "baseline_sha256": "9d3620afb184c55f1df74dad483d7389982fc4ea8b3ed607b44c4f3e1925f436",
+        "current_sha256": "9d3620afb184c55f1df74dad483d7389982fc4ea8b3ed607b44c4f3e1925f436",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/runtime_virtual.py"
+      },
+      {
+        "baseline_sha256": "4b3c501fe2574001290942eaefe4cbe46b41695b86594b62646bd60fc57ae171",
+        "current_sha256": "4b3c501fe2574001290942eaefe4cbe46b41695b86594b62646bd60fc57ae171",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/source_contract.json"
+      },
+      {
+        "baseline_sha256": "875037eecb8cd25cf287be5455e53d7e6fd2368e08df82d71851e8b41e4a6845",
+        "current_sha256": "875037eecb8cd25cf287be5455e53d7e6fd2368e08df82d71851e8b41e4a6845",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r12/virtual_frames.py"
+      },
+      {
+        "baseline_sha256": "3bc7d9e46fb88e4c8fe5ec43a4c3a9848810ec46711adfe828747e339715ec96",
+        "current_sha256": "3bc7d9e46fb88e4c8fe5ec43a4c3a9848810ec46711adfe828747e339715ec96",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r8/controller.py"
+      },
+      {
+        "baseline_sha256": "92a770b5a7c3da514f58c7eb10e6b893ce2cf2b3f5092d598eeb21f8c9c21c47",
+        "current_sha256": "92a770b5a7c3da514f58c7eb10e6b893ce2cf2b3f5092d598eeb21f8c9c21c47",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r8/source_gate.py"
+      },
+      {
+        "baseline_sha256": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33",
+        "current_sha256": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33",
+        "match": true,
+        "path": "offline/task28_p5_qp_6_r8/effort_adapter.py"
+      }
+    ],
+    "scope": "R12 top-level Python/JSON and frozen R8 controller/gate/adapter compared with baseline Git objects",
+    "verified": true
+  }
 }

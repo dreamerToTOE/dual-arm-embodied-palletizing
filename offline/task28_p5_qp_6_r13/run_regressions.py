@@ -22,10 +22,12 @@ def main():
     env={'PYTHONPATH':prior_env}
     r8=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r8/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r8_focused',15,env)
     r9=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r9/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r9_focused',17)
+    r10=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r10/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r10_focused',16)
+    r11=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r11/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r11_focused',19)
     r12=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r12/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r12_focused',19)
-    r13=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r13/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r13_focused',5)
+    r13=run(['/usr/bin/python3','-m','pytest','offline/task28_p5_qp_6_r13/tests','-q','-p','no:cacheprovider','--import-mode=importlib'],'r13_focused',47)
     prior=pre['total_passed']+pre['r7_focused_separate']['passed']+r8['passed']+r9['passed']
-    ok=pre['all_requested_historical_pass'] and r8['pass'] and r9['pass'] and r12['pass'] and r13['pass']
-    summary={'schema':'TASK28_R13_PRIOR_REGRESSION_SUMMARY_V1','status':'PASS' if ok else 'FAIL','historical_prior':prior,'r12_focused_passed':r12['passed'],'r13_focused_passed':r13['passed'],'new_total_including_r12_r13':prior+r12['passed']+r13['passed'],'expected_prior':1051,'expected_r12_focused':19,'expected_r13_focused':5,'physics_launched':False,'runs':{'pre_r8':pre,'r8_focused':r8,'r9_focused':r9,'r12_focused':r12,'r13_focused':r13}}
+    ok=prior==1051 and pre['all_requested_historical_pass'] and all(x['pass'] for x in (r8,r9,r10,r11,r12,r13))
+    summary={'schema':'TASK28_R13_PRIOR_REGRESSION_SUMMARY_V2','status':'PASS' if ok else 'FAIL','historical_through_r9':prior,'r10_focused_passed':r10['passed'],'r11_focused_passed':r11['passed'],'r12_focused_passed':r12['passed'],'r13_focused_passed':r13['passed'],'total_passed':prior+sum(x['passed'] for x in (r10,r11,r12,r13)),'expected_prior_through_r9':1051,'expected_r13_focused':47,'physics_launched':False,'runs':{'pre_r8':pre,'r8_focused':r8,'r9_focused':r9,'r10_focused':r10,'r11_focused':r11,'r12_focused':r12,'r13_focused':r13}}
     (OUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n'); print(json.dumps({'status':summary['status'],'prior':prior,'r12':r12['passed'],'r13':r13['passed']})); return 0 if ok else 1
 if __name__=='__main__': raise SystemExit(main())

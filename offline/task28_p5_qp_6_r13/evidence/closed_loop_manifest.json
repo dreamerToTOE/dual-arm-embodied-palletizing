@@ -1,0 +1,631 @@
+{
+  "acceptance": {
+    "object_peak_m": 0.00025,
+    "relative_translation_peak_m": 0.00015
+  },
+  "baseline_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
+  "controller": {
+    "changed": false,
+    "feedback_gain_scale": 0.75,
+    "tau_s": 0.1
+  },
+  "documentation_amendment_after_execution": {
+    "current_source_sha256": "99bae9668ac83ab491a60e38a1fdcc99ac1063b03054deb90ec631ece84a5c5d",
+    "executable_ast_excluding_docstrings_sha256": "89477402b2b316f4c5510356b85b67758c469ee31a42a5b9f5fa4da8f3c72505",
+    "executable_ast_unchanged": true,
+    "execution_manifest": "offline/task28_p5_qp_6_r13/evidence/closed_loop_execution_source/manifest_at_execution.json",
+    "execution_manifest_sha256": "f7ababa54bc0d046f61395c3e2e30ae4b57c7c1e953dc307994b1b01c6081c5b",
+    "execution_source": "offline/task28_p5_qp_6_r13/evidence/closed_loop_execution_source/closed_loop_replay.py",
+    "execution_source_sha256": "ecc5b07adea5e95d585607a7afdb9125770135362a87caf3bb72dc091bdce8ea",
+    "numeric_trace_reuse_basis": "Verified identical executable AST after removing only docstrings; original execution source and manifest retained. All numerical traces, parameters, scenarios, and qualification values are unchanged.",
+    "parameters_changed": false,
+    "reason": "Replace held-out wording with explicit archive kinematic-output comparison; the same archive supplies the exogenous gravity/Coriolis schedules. This is not independent plant validation."
+  },
+  "execution_authorized": false,
+  "feedback_timing_scope": "One-sample metadata fault injection exercises only the existing pair gate; delayed-feedback closed-loop dynamics and a wall-clock freshness guarantee are not established.",
+  "model_qualification": {
+    "comparison_scope": "Archive kinematic-output comparison conditional on archived g/c schedules; no independent plant validation or calibrated model-uncertainty qualification.",
+    "invalid_model_policy": "MODEL_NOT_QUALIFIED_FOR_MARGIN; robustness NOT_ESTABLISHED even if model metrics pass or fail thresholds",
+    "necessary_test": "max same-index predicted-versus-archived TCP translation discrepancy <= archived V10-C remaining object margin; necessary only, never sufficient for hardware qualification",
+    "v10c_remaining_margin_m": 2.3834269632750185e-06
+  },
+  "nominal_episodes_per_case": 20,
+  "perturbation_rationale": {
+    "delay": "Exactly one 60 Hz sample, tested only against existing gate with declared stale and coherent self-reported-fresh metadata. No delayed command is applied.",
+    "initial_ulp": "One adjacent float32 representable joint position in each signed direction; archive q is float32-derived. Numerical representation sensitivity only, not calibration uncertainty.",
+    "mass_delta": "Signed M0 plus/minus largest measured 7x7 spectral-norm departure in the archived trajectory, preserving SPD. Posture variation sensitivity, NOT a calibrated bound on model uncertainty.",
+    "measured_dt": "Plus/minus largest measured R12 post-state timestamp delta from nominal 1/60; existing 1e-8 s dt gate retained; does not cover arbitrary scheduler jitter."
+  },
+  "perturbations": {
+    "V10-A": {
+      "observed_fk_tcp_discrepancy_max_m": 5.833246920301289e-07,
+      "observed_mass_variation": {
+        "left": {
+          "delta_matrix": [
+            [
+              0.0010248422622680664,
+              3.337860107421875e-06,
+              0.0021259188652038574,
+              -2.7437694370746613e-05,
+              0.00012183189392089844,
+              -2.0815059542655945e-07,
+              -4.0140002965927124e-07
+            ],
+            [
+              3.337860107421875e-06,
+              0.0017616748809814453,
+              -2.8592534363269806e-05,
+              -0.0010075569152832031,
+              -2.481602132320404e-05,
+              -0.00016672909259796143,
+              -2.232263796031475e-08
+            ],
+            [
+              0.0021259188652038574,
+              -2.8592534363269806e-05,
+              0.001474142074584961,
+              2.839788794517517e-05,
+              0.00012160837650299072,
+              -8.167698979377747e-07,
+              -1.145852729678154e-05
+            ],
+            [
+              -2.7437694370746613e-05,
+              -0.0010075569152832031,
+              2.839788794517517e-05,
+              0.00025272369384765625,
+              2.5443732738494873e-06,
+              0.000125885009765625,
+              1.0692747309803963e-06
+            ],
+            [
+              0.00012183189392089844,
+              -2.481602132320404e-05,
+              0.00012160837650299072,
+              2.5443732738494873e-06,
+              -4.84660267829895e-05,
+              2.5117769837379456e-06,
+              6.265472620725632e-06
+            ],
+            [
+              -2.0815059542655945e-07,
+              -0.00016672909259796143,
+              -8.167698979377747e-07,
+              0.000125885009765625,
+              2.5117769837379456e-06,
+              5.960464477539063e-08,
+              -5.471520125865936e-09
+            ],
+            [
+              -4.0140002965927124e-07,
+              -2.232263796031475e-08,
+              -1.145852729678154e-05,
+              1.0692747309803963e-06,
+              6.265472620725632e-06,
+              -5.471520125865936e-09,
+              2.7939677238464355e-09
+            ]
+          ],
+          "minus_min_eigenvalue": 0.009009324967207463,
+          "plus_min_eigenvalue": 0.009009007292497087,
+          "relative_spectral_norm": 0.001456768961745502,
+          "source_post_step": 384
+        },
+        "right": {
+          "delta_matrix": [
+            [
+              0.0010046958923339844,
+              1.9073486328125e-06,
+              0.0021023154258728027,
+              -2.1433457732200623e-05,
+              0.00012717396020889282,
+              -1.1082738637924194e-07,
+              9.582145139575005e-06
+            ],
+            [
+              1.9073486328125e-06,
+              0.001742243766784668,
+              -2.5109387934207916e-05,
+              -0.0009961128234863281,
+              -1.7433427274227142e-05,
+              -0.00015705451369285583,
+              6.332993507385254e-08
+            ],
+            [
+              0.0021023154258728027,
+              -2.5109387934207916e-05,
+              0.001445770263671875,
+              2.4557113647460938e-05,
+              0.00012303143739700317,
+              1.3373792171478271e-06,
+              -1.803855411708355e-06
+            ],
+            [
+              -2.1433457732200623e-05,
+              -0.0009961128234863281,
+              2.4557113647460938e-05,
+              0.0002493858337402344,
+              6.332993507385254e-08,
+              0.00012478232383728027,
+              -4.094850737601519e-06
+            ],
+            [
+              0.00012717396020889282,
+              -1.7433427274227142e-05,
+              0.00012303143739700317,
+              6.332993507385254e-08,
+              -4.347413778305054e-05,
+              2.7939677238464355e-08,
+              5.06197102367878e-06
+            ],
+            [
+              -1.1082738637924194e-07,
+              -0.00015705451369285583,
+              1.3373792171478271e-06,
+              0.00012478232383728027,
+              2.7939677238464355e-08,
+              3.725290298461914e-08,
+              2.3283064365386963e-10
+            ],
+            [
+              9.582145139575005e-06,
+              6.332993507385254e-08,
+              -1.803855411708355e-06,
+              -4.094850737601519e-06,
+              5.06197102367878e-06,
+              2.3283064365386963e-10,
+              1.862645149230957e-09
+            ]
+          ],
+          "minus_min_eigenvalue": 0.008929966282312577,
+          "plus_min_eigenvalue": 0.008928906909578427,
+          "relative_spectral_norm": 0.0014561749063154634,
+          "source_post_step": 377
+        }
+      },
+      "observed_timestamp_dt_error_s": 8.692344032057431e-10,
+      "q_initial_ulp_minus_rad": [
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -7.275957614183426e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08,
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -3.637978807091713e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08
+      ],
+      "q_initial_ulp_plus_rad": [
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        7.275957614183426e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08,
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        3.637978807091713e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08
+      ]
+    },
+    "V10-B": {
+      "observed_fk_tcp_discrepancy_max_m": 5.82848111815309e-07,
+      "observed_mass_variation": {
+        "left": {
+          "delta_matrix": [
+            [
+              0.0010058879852294922,
+              -1.290440559387207e-05,
+              0.00211334228515625,
+              -1.620035618543625e-05,
+              0.00012379884719848633,
+              -1.3080425560474396e-06,
+              -4.2747706174850464e-07
+            ],
+            [
+              -1.290440559387207e-05,
+              0.0018640756607055664,
+              -3.357045352458954e-05,
+              -0.0010578036308288574,
+              -2.6864930987358093e-05,
+              -0.00016745179891586304,
+              4.572211764752865e-08
+            ],
+            [
+              0.00211334228515625,
+              -3.357045352458954e-05,
+              0.0015583038330078125,
+              2.882257103919983e-05,
+              0.00013244152069091797,
+              -2.9103830456733704e-06,
+              -1.1818483471870422e-05
+            ],
+            [
+              -1.620035618543625e-05,
+              -0.0010578036308288574,
+              2.882257103919983e-05,
+              0.00025081634521484375,
+              4.351139068603516e-06,
+              0.00012493133544921875,
+              9.795185178518295e-07
+            ],
+            [
+              0.00012379884719848633,
+              -2.6864930987358093e-05,
+              0.00013244152069091797,
+              4.351139068603516e-06,
+              -4.830211400985718e-05,
+              2.523418515920639e-06,
+              6.265589036047459e-06
+            ],
+            [
+              -1.3080425560474396e-06,
+              -0.00016745179891586304,
+              -2.9103830456733704e-06,
+              0.00012493133544921875,
+              2.523418515920639e-06,
+              -5.960464477539063e-08,
+              1.1292286217212677e-08
+            ],
+            [
+              -4.2747706174850464e-07,
+              4.572211764752865e-08,
+              -1.1818483471870422e-05,
+              9.795185178518295e-07,
+              6.265589036047459e-06,
+              1.1292286217212677e-08,
+              9.313225746154785e-10
+            ]
+          ],
+          "minus_min_eigenvalue": 0.009009327780785212,
+          "plus_min_eigenvalue": 0.009009004643738744,
+          "relative_spectral_norm": 0.0014687764988522089,
+          "source_post_step": 374
+        },
+        "right": {
+          "delta_matrix": [
+            [
+              0.0010072588920593262,
+              -7.033348083496094e-06,
+              0.002122044563293457,
+              -1.5220604836940765e-05,
+              0.00012961775064468384,
+              -6.747432053089142e-07,
+              9.74256545305252e-06
+            ],
+            [
+              -7.033348083496094e-06,
+              0.001860499382019043,
+              -2.8713606297969818e-05,
+              -0.001062154769897461,
+              -1.8911436200141907e-05,
+              -0.00016602128744125366,
+              8.381903171539307e-09
+            ],
+            [
+              0.002122044563293457,
+              -2.8713606297969818e-05,
+              0.0015437602996826172,
+              2.5581568479537964e-05,
+              0.000131949782371521,
+              4.032626748085022e-07,
+              -1.8583377823233604e-06
+            ],
+            [
+              -1.5220604836940765e-05,
+              -0.001062154769897461,
+              2.5581568479537964e-05,
+              0.00026345252990722656,
+              9.816139936447144e-07,
+              0.00013168156147003174,
+              -4.330184310674667e-06
+            ],
+            [
+              0.00012961775064468384,
+              -1.8911436200141907e-05,
+              0.000131949782371521,
+              9.816139936447144e-07,
+              -4.591047763824463e-05,
+              1.955777406692505e-08,
+              5.363719537854195e-06
+            ],
+            [
+              -6.747432053089142e-07,
+              -0.00016602128744125366,
+              4.032626748085022e-07,
+              0.00013168156147003174,
+              1.955777406692505e-08,
+              -7.450580596923828e-09,
+              -6.28642737865448e-09
+            ],
+            [
+              9.74256545305252e-06,
+              8.381903171539307e-09,
+              -1.8583377823233604e-06,
+              -4.330184310674667e-06,
+              5.363719537854195e-06,
+              -6.28642737865448e-09,
+              -2.7939677238464355e-09
+            ]
+          ],
+          "minus_min_eigenvalue": 0.008930002804685944,
+          "plus_min_eigenvalue": 0.008928870306279415,
+          "relative_spectral_norm": 0.0014894359422731717,
+          "source_post_step": 366
+        }
+      },
+      "observed_timestamp_dt_error_s": 8.692344032057431e-10,
+      "q_initial_ulp_minus_rad": [
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -7.275957614183426e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08,
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -3.637978807091713e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08
+      ],
+      "q_initial_ulp_plus_rad": [
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        7.275957614183426e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08,
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        3.637978807091713e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08
+      ]
+    },
+    "V10-C": {
+      "observed_fk_tcp_discrepancy_max_m": 5.751966105447606e-07,
+      "observed_mass_variation": {
+        "left": {
+          "delta_matrix": [
+            [
+              0.001009523868560791,
+              2.321600914001465e-05,
+              0.002099156379699707,
+              -3.7577468901872635e-05,
+              0.0001201629638671875,
+              2.1560117602348328e-06,
+              -4.1350722312927246e-07
+            ],
+            [
+              2.321600914001465e-05,
+              0.0017824172973632812,
+              -2.3548491299152374e-05,
+              -0.0010203123092651367,
+              -2.434849739074707e-05,
+              -0.00017020106315612793,
+              -1.0884832590818405e-08
+            ],
+            [
+              0.002099156379699707,
+              -2.3548491299152374e-05,
+              0.001489877700805664,
+              3.100186586380005e-05,
+              0.00012271106243133545,
+              2.40374356508255e-06,
+              -1.1599157005548477e-05
+            ],
+            [
+              -3.7577468901872635e-05,
+              -0.0010203123092651367,
+              3.100186586380005e-05,
+              0.0002582073211669922,
+              -1.2665987014770508e-07,
+              0.00012874603271484375,
+              1.2540258467197418e-06
+            ],
+            [
+              0.0001201629638671875,
+              -2.434849739074707e-05,
+              0.00012271106243133545,
+              -1.2665987014770508e-07,
+              -4.954636096954346e-05,
+              2.5783665478229523e-06,
+              6.428686901926994e-06
+            ],
+            [
+              2.1560117602348328e-06,
+              -0.00017020106315612793,
+              2.40374356508255e-06,
+              0.00012874603271484375,
+              2.5783665478229523e-06,
+              0.0,
+              2.270098775625229e-08
+            ],
+            [
+              -4.1350722312927246e-07,
+              -1.0884832590818405e-08,
+              -1.1599157005548477e-05,
+              1.2540258467197418e-06,
+              6.428686901926994e-06,
+              2.270098775625229e-08,
+              3.725290298461914e-09
+            ]
+          ],
+          "minus_min_eigenvalue": 0.009009329125717112,
+          "plus_min_eigenvalue": 0.00900900319298208,
+          "relative_spectral_norm": 0.001446043984876791,
+          "source_post_step": 381
+        },
+        "right": {
+          "delta_matrix": [
+            [
+              0.0010305047035217285,
+              1.3686716556549072e-05,
+              0.002124190330505371,
+              -2.8590671718120575e-05,
+              0.00012411177158355713,
+              9.816139936447144e-07,
+              9.786570444703102e-06
+            ],
+            [
+              1.3686716556549072e-05,
+              0.0017110109329223633,
+              -2.1544285118579865e-05,
+              -0.0009954571723937988,
+              -1.622084528207779e-05,
+              -0.00017263740301132202,
+              4.644971340894699e-07
+            ],
+            [
+              0.002124190330505371,
+              -2.1544285118579865e-05,
+              0.0014230012893676758,
+              2.4951063096523285e-05,
+              0.00011260062456130981,
+              2.8694048523902893e-06,
+              -2.0939623937010765e-06
+            ],
+            [
+              -2.8590671718120575e-05,
+              -0.0009954571723937988,
+              2.4951063096523285e-05,
+              0.0002791881561279297,
+              -1.389533281326294e-06,
+              0.00013950467109680176,
+              -4.584144335240126e-06
+            ],
+            [
+              0.00012411177158355713,
+              -1.622084528207779e-05,
+              0.00011260062456130981,
+              -1.389533281326294e-06,
+              -4.852563142776489e-05,
+              -5.587935447692871e-09,
+              5.675479769706726e-06
+            ],
+            [
+              9.816139936447144e-07,
+              -0.00017263740301132202,
+              2.8694048523902893e-06,
+              0.00013950467109680176,
+              -5.587935447692871e-09,
+              4.470348358154297e-08,
+              -9.546056389808655e-09
+            ],
+            [
+              9.786570444703102e-06,
+              4.644971340894699e-07,
+              -2.0939623937010765e-06,
+              -4.584144335240126e-06,
+              5.675479769706726e-06,
+              -9.546056389808655e-09,
+              0.0
+            ]
+          ],
+          "minus_min_eigenvalue": 0.008930027769650855,
+          "plus_min_eigenvalue": 0.008928844961386385,
+          "relative_spectral_norm": 0.0014646986612571076,
+          "source_post_step": 379
+        }
+      },
+      "observed_timestamp_dt_error_s": 8.692344032057431e-10,
+      "q_initial_ulp_minus_rad": [
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -7.275957614183426e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08,
+        -1.8189894035458565e-12,
+        -5.960464477539063e-08,
+        -3.637978807091713e-12,
+        -2.384185791015625e-07,
+        -7.275957614183426e-12,
+        -1.1920928955078125e-07,
+        -5.960464477539063e-08
+      ],
+      "q_initial_ulp_plus_rad": [
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        7.275957614183426e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08,
+        1.8189894035458565e-12,
+        5.960464477539063e-08,
+        3.637978807091713e-12,
+        2.384185791015625e-07,
+        7.275957614183426e-12,
+        1.1920928955078125e-07,
+        5.960464477539063e-08
+      ]
+    }
+  },
+  "plant": {
+    "equation": "dq_next=dq+dt*solve(M0+signed_observed_delta, P+D-archived_c); q_next=q+dt*dq_next",
+    "gravity": "R12 torque law uses archived g at each pre-state; plant subtracts identical g, an exact gravity-cancellation assumption.",
+    "omitted": [
+      "PhysX TGS solver projection and end-step velocity semantics",
+      "finger/arm dynamic coupling",
+      "joint friction and constraint forces",
+      "state-dependent mass/coriolis/gravity beyond archived schedule",
+      "collisions and contacts"
+    ],
+    "parameter_fitting": false,
+    "tcp": "RobotModel FK with one constant initial world rigid correction per arm fixed from ownership state; no trajectory error fitting."
+  },
+  "robot_command_writes": 0,
+  "safety_scope": "CPU diagnostic duplicates QP, per-joint effort/rate, joint/drift/native-dq checks; it does not implement the complete runtime scene/collision/source/finger/TCP-envelope gates and cannot authorize execution.",
+  "scenarios": [
+    "nominal",
+    "initial_ulp_minus",
+    "initial_ulp_plus",
+    "measured_dt_minus",
+    "measured_dt_plus",
+    "observed_mass_delta_minus",
+    "observed_mass_delta_plus"
+  ],
+  "schema": "TASK28_R13_CLOSED_LOOP_PREREGISTRATION_V1",
+  "sensitivity_episodes_per_case_scenario": 1,
+  "sources_sha256": {
+    "offline/task28_g1_1/task28_validator/model.py": "38ec5d2cd2fc348ce9c67737a3a59b8194eaaf84331165ff5b2e3a4adb5b4dfa",
+    "offline/task28_g1_1/task28_validator/se3.py": "b8ad8c23acf5a840155fea7cde35c38d1e747c11549ff07c5ede0c1e018f6bdf",
+    "offline/task28_p5_qp_0/solver.py": "1ebf678346d209f7ae0921e89f4b8b4faaeba01a0942a72795800b00df6d6811",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-A/frames.jsonl": "2afc87ccf065b892da99e467762ed4f00f254f2ebe74898ac073ce0eb7010b82",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-A/result.json": "378ed8d5d088b8fe90d57162c65c658ef52fd00e658287082f4c99309f7997bc",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-B/frames.jsonl": "93533985f56d3ad537c32e8981102a803b9b2c9abd2e87be4c53f5df8f6be456",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-B/result.json": "f8790c621e4085366088c35619fcc3e6b5c86768cc779fbfe65fa7a93ae02f64",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-C/frames.jsonl": "d9e37834b4991dc555b2d2dcb2e03e04814bbcf8095371a6ac6a58d0705df342",
+    "offline/task28_p5_qp_6_r12/evidence/diagnostic/V10-C/result.json": "acb03c14f427f813a0dfe4abc2b305eebf629ea1867919cec95c81de2885b061",
+    "offline/task28_p5_qp_6_r12/evidence/evaluation.json": "397f02d2fbf57632911da896f9cc73dcf4cab71aae331e25ad17829b58fffe78",
+    "offline/task28_p5_qp_6_r12/qp_math.py": "3e02a4201586f7868cc7a6fbf55fc0304b53fa164a51431b496b53745da504f4",
+    "offline/task28_p5_qp_6_r12/registrations.json": "0c5745b90337397eeb53e8dcc231f02413130ed2684cdd1c25cce8861d555b9e",
+    "offline/task28_p5_qp_6_r12/runtime_virtual.py": "9d3620afb184c55f1df74dad483d7389982fc4ea8b3ed607b44c4f3e1925f436",
+    "offline/task28_p5_qp_6_r12/source_contract.json": "4b3c501fe2574001290942eaefe4cbe46b41695b86594b62646bd60fc57ae171",
+    "offline/task28_p5_qp_6_r12/virtual_frames.py": "875037eecb8cd25cf287be5455e53d7e6fd2368e08df82d71851e8b41e4a6845",
+    "offline/task28_p5_qp_6_r13/closed_loop_replay.py": "99bae9668ac83ab491a60e38a1fdcc99ac1063b03054deb90ec631ece84a5c5d",
+    "offline/task28_p5_qp_6_r13/evidence/closed_loop_execution_source/closed_loop_replay.py": "ecc5b07adea5e95d585607a7afdb9125770135362a87caf3bb72dc091bdce8ea",
+    "offline/task28_p5_qp_6_r13/evidence/closed_loop_execution_source/manifest_at_execution.json": "f7ababa54bc0d046f61395c3e2e30ae4b57c7c1e953dc307994b1b01c6081c5b",
+    "offline/task28_p5_qp_6_r8/controller.py": "3bc7d9e46fb88e4c8fe5ec43a4c3a9848810ec46711adfe828747e339715ec96",
+    "offline/task28_p5_qp_6_r8/source_gate.py": "92a770b5a7c3da514f58c7eb10e6b893ce2cf2b3f5092d598eeb21f8c9c21c47",
+    "offline/task28_p5_qp_6_r9/qp_math.py": "0e996a006a23664a28aacef506ceb9a89dc20b4d222e2c4eb11c20a0395ac32e"
+  },
+  "statistics": "Per-step e=max(left_implied_object_translation,right_implied_object_translation); numpy.percentile(...,95,method=linear); equal 210 steps per trajectory. Repeatability is distribution of independently recomputed episode peaks. Trace hashes exclude calculation_time_s and solve_wall_time_s; elapsed_s remains in episode receipts."
+}
