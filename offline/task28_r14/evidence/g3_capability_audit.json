@@ -1,0 +1,784 @@
+{
+  "baseline_git_head": "72fbb8d5ea09ac9edb0a3869a07bed01e243741c",
+  "capabilities": [
+    {
+      "claims": [
+        "explicit applied readback is input provenance",
+        "measured effort is solver projected force"
+      ],
+      "id": "TORQUE_INTERFACE",
+      "missing": [
+        "hardware sensor equivalence",
+        "original-scene calibrated actuator torque/dynamic residual",
+        "D6 reaction source"
+      ],
+      "reuse": [
+        "offline/task28_p5_qp_6_r8/effort_adapter.py",
+        "offline/task28_p2_4_r2/analyze_source.py"
+      ],
+      "status": "SIMULATION_INPUT_SOURCE_QUALIFIED_WITH_SCOPE_LIMITS"
+    },
+    {
+      "equation": "tau_ext = M_full9*qdd_backward + c + g - tau_source; full9 before arm7 selection",
+      "id": "NO_CONTACT_OBSERVER",
+      "missing": [
+        "same-scene source qualification",
+        "online runtime timing and failure latch",
+        "qualified uncertainty and multiple-contact localization"
+      ],
+      "reuse": [
+        "offline/task28_p2_4/observer.py"
+      ],
+      "status": "STRICT_CAUSAL_CANDIDATE_IMPLEMENTED"
+    },
+    {
+      "id": "TCP_WRENCH",
+      "missing": [
+        "bilateral L-tool dynamic six-axis qualification",
+        "physical suction wrench"
+      ],
+      "reuse": [
+        "offline/task28_p2_2/estimator.py",
+        "offline/task28_p2_2_r1/adapter.py"
+      ],
+      "status": "SVD_ESTIMATOR_AND_STATIC_ISAAC_SIX_AXIS_CANDIDATE"
+    },
+    {
+      "id": "GRASP_AND_INTERNAL_SPACE",
+      "missing": [
+        "actual shared object and anchors",
+        "qualified bilateral contact wrench",
+        "physical internal-force feedback"
+      ],
+      "reuse": [
+        "offline/task28_p2_1/grasp.py",
+        "offline/task28_p2_3/integration.py",
+        "offline/task28_p2_3_r1/replay.py",
+        "offline/task28_p2_3_r1/oracle.py"
+      ],
+      "status": "MATH_PASS_VIRTUAL_REPLAY_ONLY"
+    },
+    {
+      "decision_vector": "qdd18,tau18,w_local12,a_object6",
+      "id": "COOPERATIVE_TASK_AND_FORCE_ALLOCATION",
+      "missing": [
+        "same-state constrained mounted-tool dynamics",
+        "object inertia/contact constraints",
+        "force observation and closed-loop validation"
+      ],
+      "reuse": [
+        "offline/task28_p5_qp_6/coupled.py",
+        "offline/task28_p5_qp_6/model.py",
+        "offline/task28_p5_qp_6/solver.py"
+      ],
+      "status": "SYNTHETIC_COUPLED_HQP_EXISTS_NOT_CONNECTED_TO_PHYSICAL_SINK"
+    },
+    {
+      "current_qp_constraints": [
+        "relative_pose_feedback",
+        "joint_velocity_box",
+        "position_lookahead"
+      ],
+      "current_qp_variable": "qdot14",
+      "id": "QP_TORQUE_AND_SAFETY",
+      "missing": [
+        "jointly constrained task and contact torque allocation",
+        "continuous original Cube approach safety"
+      ],
+      "reuse": [
+        "offline/task28_p5_qp_6_r12/qp_math.py",
+        "offline/task28_p5_qp_6_r8/controller.py",
+        "offline/task28_p5_qp_6_r8/effort_adapter.py"
+      ],
+      "separate_precommand_effort_rate_gate": true,
+      "status": "KINEMATIC_QP_PLUS_SEPARATE_EFFORT_GATE",
+      "torque_constraints_inside_current_runtime_qp": false
+    }
+  ],
+  "direct_next_offline_tasks": [
+    "strict observer adapter for zero-load source and timing records",
+    "new collector per-frame oracle and reject-path tests without rewriting history",
+    "reuse P2-1 and original QP6 coupled HQP for source/sign/unit/total-torque contract tests"
+  ],
+  "historical_final_statuses": [
+    {
+      "evidence_level": "READ_ONLY_SOURCE_AUDIT",
+      "historical_status": "G3_P2_0_PARTIAL",
+      "report": "docs/tasks/TASK28_G3_P2_0_OBSERVABILITY_AUDIT.md",
+      "stage": "P2-0"
+    },
+    {
+      "evidence_level": "SYNTHETIC_MATH",
+      "historical_status": "G3_P2_1_MATH_PASS",
+      "report": "docs/tasks/TASK28_G3_P2_1_GRASP_WRENCH_BASELINE.md",
+      "stage": "P2-1"
+    },
+    {
+      "evidence_level": "ISOLATED_SINGLE_ARM_STATIC_ISAAC_SIGN_REJECTION",
+      "historical_status": "G3_P2_2_PARTIAL",
+      "report": "docs/tasks/TASK28_G3_P2_2_B_ONLY_TORQUE_WRENCH_VALIDATION.md",
+      "stage": "P2-2"
+    },
+    {
+      "evidence_level": "ISOLATED_SINGLE_ARM_STATIC_ISAAC_PAIRED_RESETS",
+      "historical_status": "G3_P2_2_R1_STATIC_6D_PASS",
+      "report": "docs/tasks/TASK28_G3_P2_2_R1_SIGN_AND_STATIC_6D.md",
+      "stage": "P2-2-R1"
+    },
+    {
+      "evidence_level": "ISOLATED_BILATERAL_VIRTUAL_LOAD_GEOMETRY_REJECTED",
+      "historical_status": "G3_P2_3_BLOCKED",
+      "report": "docs/tasks/TASK28_G3_P2_3_BILATERAL_STATIC_INTEGRATION.md",
+      "stage": "P2-3"
+    },
+    {
+      "evidence_level": "ARCHIVED_CPU_VIRTUAL_WRENCH_REPLAY",
+      "historical_status": "G3_P2_3_R1_VIRTUAL_REPLAY_PASS",
+      "report": "docs/tasks/TASK28_G3_P2_3_R1_VIRTUAL_WRENCH_REPLAY.md",
+      "stage": "P2-3-R1"
+    },
+    {
+      "evidence_level": "ISOLATED_SINGLE_ARM_CAUSAL_CANDIDATE_DYNAMIC_SOURCE_REJECTED",
+      "historical_status": "G3_P2_4_PARTIAL",
+      "report": "docs/tasks/TASK28_G3_P2_4_ONLINE_B_OBSERVER.md",
+      "stage": "P2-4"
+    },
+    {
+      "evidence_level": "ARCHIVE_SOURCE_AUDIT_AND_READ_ONLY_MODE_PROBE",
+      "historical_status": "G3_P2_4_R1_BLOCKED",
+      "report": "docs/tasks/TASK28_G3_P2_4_R1_DYNAMIC_SOURCE_AUDIT.md",
+      "stage": "P2-4-R1"
+    },
+    {
+      "evidence_level": "EXPLICIT_SOURCE_CHARACTERIZATION_ONLINE_ZERO_LOAD_ABORT",
+      "historical_status": "G3_P2_4_R2_SOURCE_PASS_ONLY",
+      "report": "docs/tasks/TASK28_G3_P2_4_R2_EXPLICIT_EFFORT_VALIDATION.md",
+      "stage": "P2-4-R2"
+    },
+    {
+      "evidence_level": "ISOLATED_SINGLE_ARM_EXPLICIT_POSTURE_AND_CAUSAL_KNOWN_LOAD_CANDIDATE",
+      "historical_status": "G3_P2_4_R3_ONLINE_EXPLICIT_CANDIDATE_PASS",
+      "report": "docs/tasks/TASK28_G3_P2_4_R3_STABLE_EXPLICIT_ONLINE_OBSERVER.md",
+      "stage": "P2-4-R3"
+    }
+  ],
+  "historical_reports_modified": false,
+  "metrics": {
+    "P2_1_grasp_rank": 6,
+    "P2_2_R1": {
+      "all_cases_pass": true,
+      "cases": 20,
+      "max_force_error_N": 0.001473500461519995,
+      "max_joint_error_Nm": 0.0005222171629770123,
+      "max_moment_error_Nm": 0.0006567952226183408
+    },
+    "P2_3_R1": {
+      "all_virtual_replays_pass": true,
+      "cases": 9,
+      "max_object_force_error_N": 0.002655852885644915,
+      "max_object_moment_error_Nm": 0.000861042527891498,
+      "physical_contact_measured": false
+    },
+    "P2_3_historical_zero_geometry_from_report": {
+      "historical_rotation_gate_rad": 0.001,
+      "historical_translation_gate_mm": 0.1,
+      "left_translation_mm": 0.441309,
+      "relative_rotation_rad": 0.00133642,
+      "relative_translation_mm": 0.169917,
+      "right_translation_mm": 0.333326
+    },
+    "P2_4_R3": {
+      "archived_global_metrics": {
+        "max_condition": 8.677330062429972,
+        "max_force_error_n": 0.04735265154046725,
+        "max_joint_error_inf_nm": 0.017520006349249606,
+        "max_moment_error_nm": 0.011788771637107695,
+        "min_rank": 6
+      },
+      "archived_status": "ONLINE_EXPLICIT_CANDIDATE_PASS",
+      "case_metrics": {
+        "negative_fx": {
+          "evaluated_rows": 119,
+          "max_condition": 8.66217463777629,
+          "max_force_error_n": 0.04667887453833101,
+          "max_joint_error_inf_nm": 0.017520006349249606,
+          "max_moment_error_nm": 0.011788771637107695,
+          "min_rank": 6,
+          "observation_sha256": "6905634fb91ad9d9fe8dd51c4d7a1c3e30b9d03dba068813a1e6ccbdd85562c7",
+          "oracle_sha256": "66846cadb3a7dce5690586385a7f4507503fe902450e2da5839675f1424a0524",
+          "pass": true,
+          "reasons": [],
+          "sample_count": 120
+        },
+        "positive_fx": {
+          "evaluated_rows": 119,
+          "max_condition": 8.677330062429972,
+          "max_force_error_n": 0.04735265154046725,
+          "max_joint_error_inf_nm": 0.013857947810163362,
+          "max_moment_error_nm": 0.008410822244093471,
+          "min_rank": 6,
+          "observation_sha256": "438a3a36ba2df18580111af05b4d27b6efa5f01393dd5ba66eb449fd96f7703a",
+          "oracle_sha256": "a9714d7ffd712674c9ba9e743852e55ae6bdd6653983fdf6f7745cc2936d525d",
+          "pass": true,
+          "reasons": [],
+          "sample_count": 120
+        },
+        "zero_external": {
+          "evaluated_rows": 119,
+          "max_condition": 8.662223057210834,
+          "max_force_error_n": 2.5291548700879423e-05,
+          "max_joint_error_inf_nm": 9.685773161294264e-06,
+          "max_moment_error_nm": 4.7174649543517566e-06,
+          "min_rank": 6,
+          "observation_sha256": "02b47b2bc35fa57166969a996969a30ce93c87e14939633ce19233042188342b",
+          "oracle_sha256": "c13a04d3ff295d64cc73d31ef11b18b00d4382f482cef7af7b0b5d629335f919",
+          "pass": true,
+          "reasons": [],
+          "sample_count": 120
+        }
+      },
+      "does_not_certify_live_feedback_or_contact": true
+    },
+    "P2_4_motion_zero": {
+      "evaluation_rows": 959,
+      "evaluation_start_step": 1,
+      "full_sample_count": 960,
+      "max_abs_joint_torque_error_nm": 0.009108052289962143,
+      "max_arm_velocity_rad_s": 0.04523082077503204,
+      "max_force_error_n": 0.011338843580967508,
+      "max_jacobian_residual_nm": 0.002996161051805997,
+      "max_moment_error_nm": 0.007064237604636517,
+      "max_sample_age_s": 0.008333333333333748,
+      "max_sample_skew_s": 0.008333333333333748,
+      "min_jacobian_singular_value": 0.2159689643670879,
+      "observer_status_counts": {
+        "CANDIDATE_ESTIMATE": 959,
+        "WARMUP": 1
+      },
+      "pass": false,
+      "rejection_reasons": [
+        "INDEPENDENT_DYNAMIC_SOURCE_SEMANTICS_NOT_VALIDATED"
+      ]
+    },
+    "P2_4_static": {
+      "all_candidate_gates_pass": true,
+      "cases": 7,
+      "max_joint_error_Nm": 0.00013702305855578523
+    }
+  },
+  "minimal_validation_plan": {
+    "stage1": {
+      "prerequisites": [
+        "source/scene/asset/DOF hash",
+        "verified actual gains/modes before and after ownership",
+        "same-state full9 model and pre/post intervals",
+        "current per-joint effort and rate gate including first write",
+        "safe initial configuration and no-contact verification"
+      ],
+      "required_metrics": [
+        "bias",
+        "noise",
+        "drift",
+        "q/dq",
+        "gravity/P/D/inertial terms",
+        "rank/condition/reconstruction",
+        "candidate rejects",
+        "command/readback error"
+      ],
+      "scope": "new identity bounded zero-load fresh hold plus strict read-only observer",
+      "sufficiency": "zero-load consistency only; not external force sign, dynamic six-axis or contact validation"
+    },
+    "stage2": {
+      "original_approach_usable": false,
+      "prerequisites": [
+        "stage1 source and stability gates",
+        "per-step actual application point and independent oracle",
+        "strict observer negative controls",
+        "contact-specific initial-state and local swept safety",
+        "contact model/timestep stability/abort conditions"
+      ],
+      "scope": "bounded isolated known-load diagnosis, then separately qualified simulated contact"
+    },
+    "stage3": {
+      "physical_internal_force_pass_now": false,
+      "prerequisites": [
+        "shared actual body/anchors",
+        "synchronized left/right source",
+        "sign/frame/point verification",
+        "object net and internal reference oracle",
+        "total joint torque/rate budget including task and force terms"
+      ],
+      "scope": "reuse G, weighted split and synthetic HQP then bilateral measured/estimated source"
+    },
+    "stage4": {
+      "ideal_fixed_connection_proves_real_suction": false,
+      "prerequisites": [
+        "continuous safety for chosen experiment path",
+        "qualified observer and force allocation",
+        "finite attachment model and physical assumptions",
+        "body/anchor/event/break/detach/recapture logging",
+        "independent reaction or calibrated alternative"
+      ],
+      "scope": "Cube suction transport after experiment-specific entry gates"
+    }
+  },
+  "new_isaac_runs_by_this_audit": 0,
+  "new_physical_robot_commands": 0,
+  "overall_readiness": {
+    "bilateral_physical_contact_force_observer": "NOT_ESTABLISHED",
+    "independent_G3_offline_research": "READY_WITHOUT_REQUIRING_ALL_NEW_G2_PERTURBATIONS_PASS",
+    "internal_force_feedback": "NOT_ESTABLISHED",
+    "original_Cube_approach": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "real_robot_commands": "PROHIBITED"
+  },
+  "schema": "task28.r14.g3_capability_audit.v1",
+  "scope": "READ_ONLY_REVIEW_EXISTING_P2_0_THROUGH_P2_4_R3_AND_REUSABLE_G2_CODE",
+  "source_manifest": [
+    {
+      "bytes": 14071,
+      "path": "docs/tasks/TASK28_G3_P2_0_OBSERVABILITY_AUDIT.md",
+      "sha256": "156806f864375ea01735bd61f93429653de5c252cdd21bd904f47e8a3dd6dfec"
+    },
+    {
+      "bytes": 7906,
+      "path": "docs/tasks/TASK28_G3_P2_1_GRASP_WRENCH_BASELINE.md",
+      "sha256": "37f217691e5c678c7a0ce26b1a3a1a11d032abbbfad0fbf71b6e68f7377a7466"
+    },
+    {
+      "bytes": 11586,
+      "path": "docs/tasks/TASK28_G3_P2_2_B_ONLY_TORQUE_WRENCH_VALIDATION.md",
+      "sha256": "17533090d052ac177d541d1b9e18cf1668f61c4195a1d4b2743b5fd23b51103b"
+    },
+    {
+      "bytes": 13999,
+      "path": "docs/tasks/TASK28_G3_P2_2_R1_SIGN_AND_STATIC_6D.md",
+      "sha256": "547a0b35af12a2e193e54fcc815b0df499f4af5f2930ccbd336dadd894d29533"
+    },
+    {
+      "bytes": 11642,
+      "path": "docs/tasks/TASK28_G3_P2_3_BILATERAL_STATIC_INTEGRATION.md",
+      "sha256": "e60b7bce0d1caa5c75fd0653e3fa40d5967e40615df060193133ca40ee1ad9a2"
+    },
+    {
+      "bytes": 7417,
+      "path": "docs/tasks/TASK28_G3_P2_3_R1_VIRTUAL_WRENCH_REPLAY.md",
+      "sha256": "7b00c420e28ddb5d8c5633a0d74b7ef5aceda20f26fb55cdbae0493fa5b6e9da"
+    },
+    {
+      "bytes": 9457,
+      "path": "docs/tasks/TASK28_G3_P2_4_ONLINE_B_OBSERVER.md",
+      "sha256": "c2f68ebc13743d6fed2e4f9d6fb60d2a24e4910cd4431ebc17b87c75c45afc6d"
+    },
+    {
+      "bytes": 9227,
+      "path": "docs/tasks/TASK28_G3_P2_4_R1_DYNAMIC_SOURCE_AUDIT.md",
+      "sha256": "ecb9245ae0082bf244f53a7de7d066cdeed143d7c1d544d5762bad0bad232615"
+    },
+    {
+      "bytes": 7423,
+      "path": "docs/tasks/TASK28_G3_P2_4_R2_EXPLICIT_EFFORT_VALIDATION.md",
+      "sha256": "fcb784d94e73d2df52da9773a0237014302a00747f1ea6ddafea318a3987dd7f"
+    },
+    {
+      "bytes": 6133,
+      "path": "docs/tasks/TASK28_G3_P2_4_R3_STABLE_EXPLICIT_ONLINE_OBSERVER.md",
+      "sha256": "1a21463b65d2a6edfabd8a3b6c92e39f20ef14192aa4aa35804664250eb2b558"
+    },
+    {
+      "bytes": 6789,
+      "path": "offline/task28_p2_0/evidence/source_manifest.json",
+      "sha256": "280ac47d210e372d5f41e2c17d1c7583df55805a15dbfdc0007800d164f25c3d"
+    },
+    {
+      "bytes": 12827,
+      "path": "offline/task28_p2_1/evidence/synthetic_math.json",
+      "sha256": "1f8f44c2b8488775cb9355f95e286636003774f14f9d31bc6ad4934c5ec4f63a"
+    },
+    {
+      "bytes": 10020,
+      "path": "offline/task28_p2_1/grasp.py",
+      "sha256": "ff28a183c1f4844c48d522225bd7073d17bb752b645190ec495681d403639ad6"
+    },
+    {
+      "bytes": 6676,
+      "path": "offline/task28_p2_2/estimator.py",
+      "sha256": "0cfdba92e24620e772807a379484962777356c43b6324c5bb71c249e1ecd4703"
+    },
+    {
+      "bytes": 61858,
+      "path": "offline/task28_p2_2/evidence/isaac_run_02_evaluation_v2/evaluation.json",
+      "sha256": "0aa46580cf5b6f57b271c45efa820aa6a32d0e91b2e19efa07f33101cfa67cc3"
+    },
+    {
+      "bytes": 7724,
+      "path": "offline/task28_p2_2_r1/adapter.py",
+      "sha256": "88b6f2eb4baa48c9506bbe7aec6c1b9b3353f5b517b5d46c5e861557c2f1624e"
+    },
+    {
+      "bytes": 144015,
+      "path": "offline/task28_p2_2_r1/evidence/eval_complete_v2/evaluation.json",
+      "sha256": "d2b9642b4629520b3d3f704cf86ac0bac5d185d34b35bbd8511baa02c917b069"
+    },
+    {
+      "bytes": 27616,
+      "path": "offline/task28_p2_3/evidence/evaluation_final/evaluation.json",
+      "sha256": "cdb36655e5d1072724952a497410da6a1187a69b1c14ba96f1b4bff7624543f3"
+    },
+    {
+      "bytes": 12513,
+      "path": "offline/task28_p2_3/integration.py",
+      "sha256": "f4865e14598ff1e1d5ccd6d95b4a1fffaca224f891a5a836d57b5bd27417a9fa"
+    },
+    {
+      "bytes": 246548,
+      "path": "offline/task28_p2_3_r1/evidence/virtual_replay.json",
+      "sha256": "295b494c975d8e5e70254178c3419f0829f6c8eac22ca814be14ef7318f495a2"
+    },
+    {
+      "bytes": 4033,
+      "path": "offline/task28_p2_3_r1/oracle.py",
+      "sha256": "858a87aa0f5fdb7029147998aa961725a28c21ff91e127b9ab35f8882d51ac1b"
+    },
+    {
+      "bytes": 6901,
+      "path": "offline/task28_p2_3_r1/replay.py",
+      "sha256": "01e4ade4f29e89befc24c53a583e131e51395626d2677f0de2fe2636fd479407"
+    },
+    {
+      "bytes": 1673,
+      "path": "offline/task28_p2_4/evidence/motion_zero_evaluation_summary.json",
+      "sha256": "da3091d2a2d103665501c6d7d2650191d19f6eea5b583ba441d919ecf0e477e4"
+    },
+    {
+      "bytes": 5829,
+      "path": "offline/task28_p2_4/evidence/static_evaluation_summary.json",
+      "sha256": "3e1de62f459c9d7801a3a0612fa287a15d994c67ff0af903bf7b0a2f637fa760"
+    },
+    {
+      "bytes": 13135,
+      "path": "offline/task28_p2_4/observer.py",
+      "sha256": "d60f6d9909a450fa4429cfa3a27f945a13a4ef49efcacedd82cb220b91a7d067"
+    },
+    {
+      "bytes": 29628,
+      "path": "offline/task28_p2_4_r1/evidence/motion_archive_diagnostics.json",
+      "sha256": "eecb8222a41cf32269bc5dab615253cc7d6e6d34cad424bd6f5d707b36e1ff30"
+    },
+    {
+      "bytes": 2391,
+      "path": "offline/task28_p2_4_r2/analyze_source.py",
+      "sha256": "18ee2518ade661fe04be4b35ae91df6e370e6811758d2eca19c9ebdb1393f37d"
+    },
+    {
+      "bytes": 1126,
+      "path": "offline/task28_p2_4_r2/evidence/formal_online_failed/evaluation.json",
+      "sha256": "ed663a995bb47ad572b7a27c123021f2497fede8e95cf186d92cc7e51869925a"
+    },
+    {
+      "bytes": 4942,
+      "path": "offline/task28_p2_4_r2/evidence/source_metrics.json",
+      "sha256": "f1fba1267e54ba94b3f6ca03e8d3451ea8af23d53b8fa264e135dee329c4712c"
+    },
+    {
+      "bytes": 7530,
+      "path": "offline/task28_p2_4_r3/collector.py",
+      "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+    },
+    {
+      "bytes": 2814,
+      "path": "offline/task28_p2_4_r3/evaluate.py",
+      "sha256": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb"
+    },
+    {
+      "bytes": 344923,
+      "path": "offline/task28_p2_4_r3/evidence/online_known_load/evaluation.json",
+      "sha256": "851750e4555c2d3069552392d1d8e92627d125fdbb02e8d2eef2094b12cbf097"
+    },
+    {
+      "bytes": 350,
+      "path": "offline/task28_p2_4_r3/evidence/stability_pass/evaluation.json",
+      "sha256": "964a11c89c9c48d0e95807938664b65ab5726830f22cf94b46eb99204f5a2c7d"
+    },
+    {
+      "bytes": 2210,
+      "path": "offline/task28_p2_4_r3/experiment_preregistration.json",
+      "sha256": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5"
+    },
+    {
+      "bytes": 4962,
+      "path": "offline/task28_p2_4_r3/online_evaluate.py",
+      "sha256": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b"
+    },
+    {
+      "bytes": 6050,
+      "path": "offline/task28_p5_qp_6/coupled.py",
+      "sha256": "10e3fe0b4f262f42ff89bba56b6f9e2f42ff6c5d070948391f5d4d098ec2a62f"
+    },
+    {
+      "bytes": 4990,
+      "path": "offline/task28_p5_qp_6/model.py",
+      "sha256": "8fed272f37b1d368ddefe163c7270743c59d393ddcfb8bdef267bb20eac168cb"
+    },
+    {
+      "bytes": 3261,
+      "path": "offline/task28_p5_qp_6/solver.py",
+      "sha256": "08ce3713e4c51dee43ec5692a24fa5c689f239412bc860f1dae42e0c0cfe234a"
+    },
+    {
+      "bytes": 16027,
+      "path": "offline/task28_p5_qp_6_r11/qp_math.py",
+      "sha256": "5b74b4b88f4640149365d0b859cf6b007818e7cabe3d83964cee74e3cbd6aa96"
+    },
+    {
+      "bytes": 16027,
+      "path": "offline/task28_p5_qp_6_r12/qp_math.py",
+      "sha256": "3e02a4201586f7868cc7a6fbf55fc0304b53fa164a51431b496b53745da504f4"
+    },
+    {
+      "bytes": 30961,
+      "path": "offline/task28_p5_qp_6_r12/runtime_virtual.py",
+      "sha256": "9d3620afb184c55f1df74dad483d7389982fc4ea8b3ed607b44c4f3e1925f436"
+    },
+    {
+      "bytes": 1763,
+      "path": "offline/task28_p5_qp_6_r8/controller.py",
+      "sha256": "3bc7d9e46fb88e4c8fe5ec43a4c3a9848810ec46711adfe828747e339715ec96"
+    },
+    {
+      "bytes": 10456,
+      "path": "offline/task28_p5_qp_6_r8/effort_adapter.py",
+      "sha256": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33"
+    }
+  ],
+  "unresolved": [
+    {
+      "details": {
+        "negative_fx": {
+          "arm_q_range_inf_rad": 0.03569602966308594,
+          "samples": 120,
+          "source": [
+            {
+              "bytes": 770228,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/negative_fx_observations.json",
+              "sha256": "6905634fb91ad9d9fe8dd51c4d7a1c3e30b9d03dba068813a1e6ccbdd85562c7"
+            },
+            {
+              "bytes": 11042,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/negative_fx_oracle.json",
+              "sha256": "66846cadb3a7dce5690586385a7f4507503fe902450e2da5839675f1424a0524"
+            }
+          ],
+          "unique_oracle_application_points": 1
+        },
+        "positive_fx": {
+          "arm_q_range_inf_rad": 0.03570747375488281,
+          "samples": 120,
+          "source": [
+            {
+              "bytes": 771402,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/positive_fx_observations.json",
+              "sha256": "438a3a36ba2df18580111af05b4d27b6efa5f01393dd5ba66eb449fd96f7703a"
+            },
+            {
+              "bytes": 10561,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/positive_fx_oracle.json",
+              "sha256": "a9714d7ffd712674c9ba9e743852e55ae6bdd6653983fdf6f7745cc2936d525d"
+            }
+          ],
+          "unique_oracle_application_points": 1
+        },
+        "zero_external": {
+          "arm_q_range_inf_rad": 2.485442084435019e-08,
+          "samples": 120,
+          "source": [
+            {
+              "bytes": 773749,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/zero_external_observations.json",
+              "sha256": "02b47b2bc35fa57166969a996969a30ce93c87e14939633ce19233042188342b"
+            },
+            {
+              "bytes": 5523,
+              "path": "offline/task28_p2_4_r3/evidence/online_known_load/zero_external_oracle.json",
+              "sha256": "c13a04d3ff295d64cc73d31ef11b18b00d4382f482cef7af7b0b5d629335f919"
+            }
+          ],
+          "unique_oracle_application_points": 1
+        }
+      },
+      "id": "ORACLE_APPLICATION_POINT_REPEATED",
+      "impact": "Per-frame pre-step applied point truth absent; archive final point cannot certify all instantaneous moments. Do not rewrite historical evidence.",
+      "source": {
+        "bytes": 7530,
+        "lines": [
+          54
+        ],
+        "path": "offline/task28_p2_4_r3/collector.py",
+        "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+      },
+      "support": "SOURCE_AND_ARCHIVE_VERIFIED"
+    },
+    {
+      "id": "R3_EVALUATOR_BYPASSES_STRICT_OBSERVER",
+      "impact": "Current finite full-rank positive records retained; evaluator alone is not sufficient fail-closed admission. Need finite/SPD/order/time/source/rank/condition/reconstruction gates and negative controls.",
+      "inspection": {
+        "ast_imports": [
+          "from __future__ import annotations",
+          "import argparse, hashlib, json",
+          "from pathlib import Path",
+          "import numpy as np",
+          "from offline.task28_g1_1.task28_validator.model import RobotModel",
+          "from task28_validator.model import RobotModel"
+        ],
+        "note": "Static evidence, not a fault-injection experiment. Rank and condition are reported; the numeric known-wrench gate compares only joint/force/moment errors.",
+        "path": "offline/task28_p2_4_r3/online_evaluate.py",
+        "strict_observer_import_present": false
+      },
+      "source": {
+        "bytes": 4962,
+        "lines": [
+          24,
+          28,
+          31,
+          32,
+          33,
+          34
+        ],
+        "path": "offline/task28_p2_4_r3/online_evaluate.py",
+        "sha256": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b"
+      },
+      "support": "STATIC_SOURCE_VERIFIED"
+    },
+    {
+      "id": "NO_LIVE_ESTIMATOR_FEEDBACK_LOOP",
+      "impact": "R3 collector records data; causal model residual is calculated after collection. No estimator-to-force-controller loop or runtime deadline validation established.",
+      "source": {
+        "bytes": 7530,
+        "lines": [
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "path": "offline/task28_p2_4_r3/collector.py",
+        "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+      },
+      "support": "STATIC_SOURCE_VERIFIED"
+    },
+    {
+      "R8_source_arm_limits": [
+        87,
+        87,
+        87,
+        87,
+        12,
+        12,
+        12
+      ],
+      "historical_R3_arm_effort_bounds": [
+        60,
+        60,
+        60,
+        60,
+        60,
+        60,
+        60
+      ],
+      "id": "RATE_UNITS_AND_LIMIT_SCOPE",
+      "impact": "Never silently import historical all60/rate semantics into current original-scene gate; preserve historical config and explicitly preregister current per-joint limits.",
+      "rate_formula_R3": "clip(cmd,previous-rate,previous+rate) per step",
+      "rate_formula_R8": "abs(u-previous) <= rate_Nm_s*dt",
+      "source": [
+        {
+          "bytes": 7530,
+          "lines": [
+            37,
+            46
+          ],
+          "path": "offline/task28_p2_4_r3/collector.py",
+          "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+        },
+        {
+          "bytes": 2210,
+          "path": "offline/task28_p2_4_r3/experiment_preregistration.json",
+          "sha256": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5"
+        },
+        {
+          "bytes": 10456,
+          "lines": [
+            68,
+            178
+          ],
+          "path": "offline/task28_p5_qp_6_r8/effort_adapter.py",
+          "sha256": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33"
+        }
+      ],
+      "support": "STATIC_SOURCE_AND_CONFIG_VERIFIED"
+    },
+    {
+      "id": "DRIVE_OWNERSHIP_EVIDENCE_GAP",
+      "impact": "pre_gains sampled after set_gains(0); runtime_drive_gains_zero is hardcoded true. Future acquisition requires independent before/after values and gate comparisons.",
+      "source": {
+        "bytes": 7530,
+        "lines": [
+          38,
+          39
+        ],
+        "path": "offline/task28_p2_4_r3/collector.py",
+        "sha256": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c"
+      },
+      "support": "STATIC_SOURCE_VERIFIED"
+    },
+    {
+      "id": "SCENE_MODEL_NONTRANSFER",
+      "impact": "Bare single FR3 cannot qualify mounted L-tool mass/inertia, native finger/limit reaction, TGS derivative timing or bilateral original-scene contact.",
+      "source": [
+        {
+          "bytes": 8256,
+          "path": "docs/tasks/TASK28_G2_P5_QP_6_R6_ACTIVE_TORQUE_IDENTIFICATION.md",
+          "sha256": "7cc1aa4fb3663a4786b5b7790d82bdb8acf3f1e1a39827cb96207fc613339db9"
+        },
+        {
+          "bytes": 537,
+          "path": "offline/task28_p5_qp_6_r9/evidence/computed_torque_readiness.json",
+          "sha256": "2e4a67fa8d5086de63a0a6d05eb5a66eab7f3c72fc080c9d4eb43d5650a02c85"
+        }
+      ],
+      "support": "EXISTING_SOURCE_AUDIT_AND_SCENE_CODE"
+    },
+    {
+      "id": "AXIS_AND_DYNAMIC_COVERAGE",
+      "impact": "R3 zero and +/-Fx only; static paired-reset six-axis evidence from different mode is not dynamic six-axis validation.",
+      "source": {
+        "bytes": 2210,
+        "path": "offline/task28_p2_4_r3/experiment_preregistration.json",
+        "sha256": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5"
+      },
+      "support": "REGISTERED_EXPERIMENT_MATRIX"
+    },
+    {
+      "id": "GEOMETRY_AND_SUCTION_UNQUALIFIED",
+      "impact": "No qualified shared physical Cube grasp, bilateral contact wrench, actual anchor/event sequence or physical suction capacity.",
+      "source": [
+        {
+          "bytes": 27616,
+          "path": "offline/task28_p2_3/evidence/evaluation_final/evaluation.json",
+          "sha256": "cdb36655e5d1072724952a497410da6a1187a69b1c14ba96f1b4bff7624543f3"
+        },
+        {
+          "bytes": 14071,
+          "path": "docs/tasks/TASK28_G3_P2_0_OBSERVABILITY_AUDIT.md",
+          "sha256": "156806f864375ea01735bd61f93429653de5c252cdd21bd904f47e8a3dd6dfec"
+        }
+      ],
+      "support": "EXISTING_REJECTIONS_AND_SOURCE_AUDIT"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "baseline_head": "72fbb8d5ea09ac9edb0a3869a07bed01e243741c",
+  "baseline_results_reused_not_new_runs": true,
+  "continuous_approach_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+  "frozen_acceptance": {
+    "cube_displacement_m": 1e-08,
+    "joint_tracking_peak_rad": 0.02,
+    "native_dq_peak_rad_s": 0.3,
+    "relative_tcp_rotation_peak_rad": 0.001,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "unexpected_fcl": 0,
+    "virtual_object_tracking_peak_m": 0.00025
+  },
+  "frozen_limits": {
+    "arm_effort_rate_max_Nm_s": [
+      2400,
+      600,
+      240,
+      2400,
+      240,
+      240,
+      240
+    ],
+    "joint_position_margin_rad": 0.02,
+    "joint_velocity_rad_s": 0.12,
+    "qdot_abs_max_rad_s": 0.12,
+    "research_effort_abs_max_Nm": [
+      35,
+      12,
+      8,
+      35,
+      4,
+      4,
+      4
+    ],
+    "source_effort_abs_max_Nm": [
+      87,
+      87,
+      87,
+      87,
+      12,
+      12,
+      12
+    ],
+    "virtual_duration_s": 3.5,
+    "virtual_translation_m": 0.0005
+  },
+  "frozen_registrations": {
+    "V10-A": {
+      "amplitude_m": 0.0005,
+      "axis": "world_x",
+      "duration_s": 3.5,
+      "execute": true,
+      "feedback": "none",
+      "feedback_gain_scale": 0.75,
+      "feedback_scale_scope": "global common and relative pose feedback; same value for A/B/C; no QP constraint/limit change",
+      "kind": "development",
+      "steps": 210,
+      "strategy": "quintic_time_parameterization_reference_consistency_only_plus_frozen_velocity_capture_and_global_feedback_scale",
+      "velocity_capture": {
+        "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+        "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+        "tau_s": 0.1
+      }
+    },
+    "V10-B": {
+      "amplitude_m": 0.0005,
+      "axis": "world_x",
+      "duration_s": 3.5,
+      "execute": true,
+      "feedback": "common_object",
+      "feedback_gain_scale": 0.75,
+      "feedback_scale_scope": "global common and relative pose feedback; same value for A/B/C; no QP constraint/limit change",
+      "kind": "development",
+      "steps": 210,
+      "strategy": "quintic_plus_common_virtual_se3_feedback_plus_frozen_velocity_capture_and_global_feedback_scale",
+      "velocity_capture": {
+        "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+        "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+        "tau_s": 0.1
+      }
+    },
+    "V10-C": {
+      "amplitude_m": 0.0005,
+      "axis": "world_x",
+      "duration_s": 3.5,
+      "execute": true,
+      "feedback": "common_object_and_relative_pose",
+      "feedback_gain_scale": 0.75,
+      "feedback_scale_scope": "global common and relative pose feedback; same value for A/B/C; no QP constraint/limit change",
+      "kind": "development",
+      "steps": 210,
+      "strategy": "quintic_plus_common_and_relative_pose_feedback_plus_frozen_velocity_capture_and_global_feedback_scale",
+      "velocity_capture": {
+        "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+        "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+        "tau_s": 0.1
+      }
+    }
+  },
+  "original_unverified_approach_may_enter_contact_or_carry": false,
+  "r13_nominal_isaac": {
+    "V10-A": {
+      "all_frozen_gates_pass": true,
+      "baseline_matching_runs": 20,
+      "fresh_runs": 20,
+      "object_exceeded_runs": 0,
+      "object_peak_m": 0.00019977726808718564,
+      "relative_peak_m": 2.987216642037498e-05
+    },
+    "V10-B": {
+      "all_frozen_gates_pass": true,
+      "baseline_matching_runs": 20,
+      "fresh_runs": 20,
+      "object_exceeded_runs": 0,
+      "object_peak_m": 0.00023718320935481833,
+      "relative_peak_m": 6.528643602387225e-05
+    },
+    "V10-C": {
+      "all_frozen_gates_pass": true,
+      "baseline_matching_runs": 20,
+      "fresh_runs": 20,
+      "object_exceeded_runs": 0,
+      "object_peak_m": 0.000247616573036725,
+      "relative_peak_m": 5.917278981065507e-05
+    }
+  },
+  "r14_large_perturbation_campaign": false,
+  "r14_new_cpu_episodes": 8,
+  "r14_new_isaac_g2_launches": 0,
+  "r14_new_perturbed_cpu_episodes": 6,
+  "robustness_status": "NOT_ESTABLISHED",
+  "schema": "TASK28_R14_G2_FROZEN_BASELINE_V1",
+  "scope": "G2 extended optimization and large perturbation campaigns closed; independent G3 offline work may proceed under its own admission gates.",
+  "sources_sha256": {
+    "offline/task28_p5_qp_6_r12/registrations.json": "0c5745b90337397eeb53e8dcc231f02413130ed2684cdd1c25cce8861d555b9e",
+    "offline/task28_p5_qp_6_r12/source_contract.json": "4b3c501fe2574001290942eaefe4cbe46b41695b86594b62646bd60fc57ae171",
+    "offline/task28_p5_qp_6_r13/evidence/continuous_safety_audit.json": "26cee10a8a60d423f81cad468575e224cf44643117a2c99e38a841703e0e2036",
+    "offline/task28_p5_qp_6_r13/evidence/final_status.json": "c02d2edc6ee68110b3a24063932bb27f837ae257b3cf5dd38d67c39906019ddd",
+    "offline/task28_p5_qp_6_r13/evidence/isaac_repetitions/summary.json": "fb28f5ab7911ffafa219f08b97890040e1d15e8778685e48b8b677a1dc21d97c"
+  },
+  "sources_verified_byte_identical_to_baseline_git": true
+}

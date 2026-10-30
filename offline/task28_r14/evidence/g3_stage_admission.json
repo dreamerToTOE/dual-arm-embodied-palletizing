@@ -1,0 +1,283 @@
+{
+  "assessment_kind": "SOURCE_AND_HISTORICAL_EVIDENCE_REVIEW_WITH_PROSPECTIVE_EXPERIMENT_REQUIREMENTS",
+  "authorization": {
+    "additional_user_permission_required_for_already_authorized_no_contact_scope": false,
+    "automatic_V10_D_or_FORMAL": false,
+    "cube_contact_motion_suction": "CONDITIONAL_ON_EXPERIMENT_SPECIFIC_SAFETY_ADMISSION",
+    "g2_new_perturbation_all_pass_required_for_independent_g3_offline": false,
+    "hardware_commands": false,
+    "isolated_isaac_research_without_hardware_commands": true,
+    "offline_and_virtual_replay": true
+  },
+  "baseline_head": "72fbb8d5ea09ac9edb0a3869a07bed01e243741c",
+  "criteria": {
+    "historical_G1_bilateral_closure": {
+      "applies_to": "bilateral_attached_states",
+      "detached_precontact_uses_this_as_attachment_gate": false,
+      "rotation_rad": 0.001,
+      "source": "offline/task28_g1_1/task28_validator/closed_chain.py",
+      "translation_m": 0.0001
+    },
+    "historical_R3_single_arm_probe": {
+      "R14_effective_arm_limits_are_intersection_with_R8": true,
+      "physics_dt_s": 0.008333333333333333,
+      "scope": "same isolated source probe only",
+      "source": "offline/task28_p2_4_r3/experiment_preregistration.json",
+      "strict_observer_all_gates_previously_proved": false,
+      "zero_load_steps": 240
+    },
+    "legacy_D_FORMAL_requirements_redefined": false,
+    "prospective_contact_control": {
+      "arbitrary_new_numeric_thresholds_added": false,
+      "contact_stiffness_damping": null,
+      "controller_gains": null,
+      "energy_stop_limit": null,
+      "force_reference": null,
+      "motion_envelope": null,
+      "status": "REQUIRES_SOURCE_JUSTIFIED_PREREGISTRATION_BEFORE_CONTACT"
+    }
+  },
+  "frozen_g2": {
+    "controller_and_safety_limits_changed": false,
+    "feedback_gain_scale": 0.75,
+    "original_cube_approach_continuous_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "original_cube_approach_may_be_used_for_contact_or_transport": false,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "startup_velocity_capture_tau_s": 0.1,
+    "virtual_object_tracking_peak_m": 0.00025
+  },
+  "next_executable_g3_task": {
+    "can_start_now": [
+      "read-only analysis of R14 no-contact raw observations and strict rejection reasons",
+      "reuse P2-4 causal observer and independent negative controls",
+      "new experimental source adapter with explicit rate units, gain readback and per-step oracle",
+      "separately preregistered bounded no-contact validation within existing authorized scope",
+      "offline contact-scene and safe-initial-state/continuous-envelope qualification"
+    ],
+    "contact_execution_requires_S2_readiness": true,
+    "do_not_modify": [
+      "frozen R12/R13 controllers or historical evidence",
+      "fixture/ACM to bypass safety",
+      "unqualified approach status"
+    ],
+    "g2_perturbation_all_pass_is_not_a_blocker": true,
+    "id": "G3-P2-4-R4",
+    "output": [
+      "raw/source-bound strict observer evidence",
+      "contact preflight verdict with unresolved items",
+      "source-justified experiment preregistration",
+      "complete failures and regressions"
+    ],
+    "title": "STRICT_OBSERVER_SOURCE_ADAPTATION_AND_CONTACT_PREFLIGHT"
+  },
+  "schema": "TASK28_R14_G3_STAGE_ADMISSION_V1",
+  "source_findings": [
+    {
+      "blocks": "promotion_to_hardware_or_arbitrary_contact_force_source",
+      "evidence_level": "HISTORICAL_SOURCE_AND_RECORDED_MODE",
+      "finding": "applied-effort readback is explicit input provenance; projected effort is not independently calibrated actuator torque or hardware tau_J.",
+      "id": "F1",
+      "source": "offline/task28_p2_4_r3/collector.py"
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "R3 collector repeats final load application point for the entire oracle; nonzero-load moment truth is not a per-step application-point log.",
+      "id": "F2",
+      "line": 54,
+      "source": "offline/task28_p2_4_r3/collector.py",
+      "zero_force_hold_depends_on_moment_arm": false
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "R3 online evaluator reports rank/condition but its rejection logic does not enforce them or invoke the full P2-4 observer contract.",
+      "historical_candidate_output_preserved": true,
+      "id": "F3",
+      "lines": [
+        28,
+        32
+      ],
+      "source": "offline/task28_p2_4_r3/online_evaluate.py"
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "R3 effort_rate_bounds is applied as a per-step increment without dt; it is not enforced Nm/s.",
+      "historical_values_reinterpreted_as_hardware_limits": false,
+      "id": "F4",
+      "line": 46,
+      "source": "offline/task28_p2_4_r3/collector.py"
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "R3 pre_gains is read after zeroing; runtime_drive_gains_zero is assigned true, not an independent per-step gain assertion.",
+      "id": "F5",
+      "lines": [
+        38,
+        39
+      ],
+      "source": "offline/task28_p2_4_r3/collector.py"
+    },
+    {
+      "evidence_level": "EXPLICIT_MODEL_SCOPE_AND_SOURCE_FAILURE",
+      "finding": "Single FR3 source checks do not qualify original bilateral L-tool constrained dynamics, actual grasp identity or contact wrench observability.",
+      "id": "F6",
+      "source": "offline/task28_p5_qp_6/MATHEMATICAL_SPECIFICATION.md"
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "Existing contact-mode transitions validate endpoint metadata, closure and collision; they explicitly do not prove edge safety. Offline synthetic attachment evidence is not actual runtime feedback.",
+      "id": "F7",
+      "source": "offline/task28_g1_2a/task28_contact/validator.py"
+    },
+    {
+      "evidence_level": "DIRECT_SOURCE",
+      "finding": "R12 is joint-velocity QP plus torque impedance/adapter; offline 54D HQP already has wrench/internal objectives but remains an ideal source-conditional model.",
+      "id": "F8",
+      "source": "offline/task28_p5_qp_6/coupled.py"
+    }
+  ],
+  "source_sha256": {
+    "docs/tasks/TASK28_G3_P2_0_OBSERVABILITY_AUDIT.md": "156806f864375ea01735bd61f93429653de5c252cdd21bd904f47e8a3dd6dfec",
+    "docs/tasks/TASK28_G3_P2_4_R3_STABLE_EXPLICIT_ONLINE_OBSERVER.md": "1a21463b65d2a6edfabd8a3b6c92e39f20ef14192aa4aa35804664250eb2b558",
+    "offline/task28_g1_1/task28_validator/closed_chain.py": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+    "offline/task28_g1_2a/task28_contact/modes.py": "30deaf6360cdd43bfc5858367dfee62e471fa0e8618de1d50aefa4c347780b4f",
+    "offline/task28_g1_2a/task28_contact/validator.py": "ac62d2465f50b1088bbf14a980c6befa399fe50a71cc9139e07499d60a0e1e8f",
+    "offline/task28_p2_1/grasp.py": "ff28a183c1f4844c48d522225bd7073d17bb752b645190ec495681d403639ad6",
+    "offline/task28_p2_4/observer.py": "d60f6d9909a450fa4429cfa3a27f945a13a4ef49efcacedd82cb220b91a7d067",
+    "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+    "offline/task28_p2_4_r3/evaluate.py": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb",
+    "offline/task28_p2_4_r3/experiment_preregistration.json": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "offline/task28_p2_4_r3/online_evaluate.py": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b",
+    "offline/task28_p5_qp_6/MATHEMATICAL_SPECIFICATION.md": "0f91e43d5a31eb943bf7a24ba8f3c4d3e0a8a17c54a709227c63311cef154b73",
+    "offline/task28_p5_qp_6/coupled.py": "10e3fe0b4f262f42ff89bba56b6f9e2f42ff6c5d070948391f5d4d098ec2a62f",
+    "offline/task28_p5_qp_6_r12/qp_math.py": "3e02a4201586f7868cc7a6fbf55fc0304b53fa164a51431b496b53745da504f4",
+    "offline/task28_p5_qp_6_r12/source_contract.json": "4b3c501fe2574001290942eaefe4cbe46b41695b86594b62646bd60fc57ae171",
+    "offline/task28_p5_qp_6_r13/acceptance_review.py": "fea52e1433220b16031425de3ba922c40bc417eaff85ffc61ad04fef5252ab22",
+    "offline/task28_p5_qp_6_r13/evidence/continuous_safety_audit.json": "26cee10a8a60d423f81cad468575e224cf44643117a2c99e38a841703e0e2036",
+    "offline/task28_p5_qp_6_r13/evidence/final_status.json": "c02d2edc6ee68110b3a24063932bb27f837ae257b3cf5dd38d67c39906019ddd",
+    "offline/task28_p5_qp_6_r8/effort_adapter.py": "a5a82b3c555aced2164c675d80ddfc3e86a85af97ad88db7cb5f44193ff28a33"
+  },
+  "stages": [
+    {
+      "R14_rejecting_guards": {
+        "arm_absolute_effort_limits_Nm": [
+          35,
+          12,
+          8,
+          35,
+          4,
+          4,
+          4
+        ],
+        "controller_values_reclipped_or_tuned": false,
+        "first_command": "Original R3 full-gravity bootstrap exemption from later rate gate; not R8 original-scene first-command admission",
+        "later_arm_effort_rate_Nm_s": [
+          2400,
+          600,
+          240,
+          2400,
+          240,
+          240,
+          240
+        ],
+        "legacy_R3_per_step_delta_check_retained": true,
+        "registered_acceleration_checked": true,
+        "runtime_gain_mode_cursor_readback": true,
+        "source": "offline/task28_r14/no_contact.py"
+      },
+      "can_start_with_current_evidence": true,
+      "claim_limit": "One isolated no-contact posture only; no bilateral, contact, dynamic-load or hardware qualification",
+      "conditions": [
+        "isolated fresh process and exact asset/source/config hashes",
+        "no Cube/suction/D6/ROS or hardware sink",
+        "original limits retained",
+        "complete exit/raw evidence and independent strict audit; preserve all rejections",
+        "initialization timeout/incomplete process is failure, never a completed 240-frame run"
+      ],
+      "fresh_R14_result_location": "R14 main report and dedicated no-contact runtime evidence; this admission file does not assert its outcome",
+      "historical_reuse": "Unmodified P2-4-R3 original collector and controller, zero_load_hold 240-step protocol, surrounded by new rejecting guards",
+      "id": "S1",
+      "may_apply_contact": false,
+      "may_move_or_attach_cube": false,
+      "name": "NO_CONTACT_TORQUE_AND_GRAVITY_CHECK",
+      "readiness": "READY_FOR_BOUNDED_SINGLE_POSE_ZERO_LOAD_RECHECK",
+      "user_scope_authorized": true
+    },
+    {
+      "can_start_with_current_evidence": false,
+      "claim_limit": "A no-contact injected-force probe is not this contact stage",
+      "id": "S2",
+      "may_apply_contact": false,
+      "may_move_or_attach_cube": false,
+      "missing_evidence": [
+        "strict same-scene observer/source qualification with per-step independent oracle",
+        "scene-specific validated safe initial state and no initial penetration",
+        "continuous conservative bound for the local contact experiment motion envelope",
+        "declared intended contact pairs and independent contact-force frame/sign/time validation",
+        "pre-registered force/energy/motion/time budgets with source justification",
+        "pre-command failure latch and independent live cursor binding"
+      ],
+      "name": "CONTROLLED_SIMULATED_CONTACT_AND_SINGLE_ARM_FORCE_FEEDBACK",
+      "prospective_requirements_not_historical_gates": true,
+      "readiness": "NOT_READY",
+      "user_scope_authorized": "CONDITIONAL"
+    },
+    {
+      "can_start_with_current_evidence": false,
+      "claim_limit": "Algebraic nullspace/reference success is not measured physical internal force",
+      "id": "S3",
+      "may_apply_contact": false,
+      "may_move_or_attach_cube": false,
+      "missing_evidence": [
+        "S2 qualified for both arms in actual tool configuration",
+        "synchronized valid bilateral observed wrench and actual object/body/anchor identity",
+        "G1 full SE3, support/contact-mode and continuous local-motion safety",
+        "validated contact-feasibility set and joint torque/rate feasibility",
+        "observer-driven feedback comparison separating object-net and metric-defined internal components"
+      ],
+      "name": "BILATERAL_LOAD_ALLOCATION_AND_INTERNAL_FORCE_REGULATION",
+      "readiness": "NOT_READY",
+      "reuse": [
+        "P2-1 GraspModel and weighted projection",
+        "P2-3-R1 independent KKT/virtual-power checks",
+        "QP-6 coupled mathematical allocation; no implied runtime source pass"
+      ],
+      "user_scope_authorized": "CONDITIONAL"
+    },
+    {
+      "can_start_with_current_evidence": false,
+      "claim_limit": "Ideal fixed connection or very high break threshold does not establish real suction stability",
+      "id": "S4",
+      "may_apply_contact": false,
+      "may_move_or_attach_cube": false,
+      "missing_evidence": [
+        "S1-S3 qualified in intended simulation configuration",
+        "finite adhesion proxy assumptions/capacity/parameters validated for declared simulation use",
+        "independent attach/body/anchor/break/detach/recapture events",
+        "supported attach, lift, transport, place and release mode-specific gates",
+        "continuous collision and attached-closure certificates for every executed segment"
+      ],
+      "name": "DUAL_ARM_CUBE_SUCTION_TRANSPORT",
+      "original_approach_reuse_forbidden": true,
+      "readiness": "NOT_READY",
+      "user_scope_authorized": "CONDITIONAL"
+    }
+  ],
+  "suction_model_scope": {
+    "allowed_claim_without_real_calibration": "FINITE_ATTACHMENT_SIMULATION_PROXY_ONLY",
+    "ideal_fixed_joint_is_physical_suction_proof": false,
+    "one_aggregate_gripper_per_arm_is_four_independent_measured_cups": false,
+    "real_suction_capacity_requires_additional_calibration": [
+      "vacuum pressure",
+      "effective seal area",
+      "leakage",
+      "eccentric-load/dynamic response"
+    ],
+    "required_declared_proxy_properties": [
+      "transmissible normal/shear/moment set",
+      "stiffness and damping",
+      "break and retry/recapture law",
+      "integration-step dependence",
+      "load oracle and event validation"
+    ]
+  }
+}

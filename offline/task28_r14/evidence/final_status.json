@@ -1,0 +1,40 @@
+{
+  "schema": "TASK28_R14_FINAL_STATUS_V1",
+  "baseline_head": "72fbb8d5ea09ac9edb0a3869a07bed01e243741c",
+  "status": "R14_G2_FROZEN_G3_S1_NO_CONTACT_CANDIDATE_PASS_S2_S4_NOT_READY",
+  "g2": {
+    "controller_frozen": true,
+    "perturbation_episode_count": 8,
+    "computed_qp_calls": 1680,
+    "continuous_approach_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "robustness": "NOT_ESTABLISHED"
+  },
+  "g3": {
+    "p2_capability_audit": "COMPLETE",
+    "s1_no_contact": "NO_CONTACT_SINGLE_POSE_CANDIDATE_PASS",
+    "contact_observation_validated": false,
+    "closed_loop_force_control": false,
+    "s2_ready": false,
+    "s3_ready": false,
+    "s4_ready": false,
+    "next_task": "G3-P2-4-R4"
+  },
+  "execution_boundaries": {
+    "hardware_commands": false,
+    "ros_commands": false,
+    "cube_contact_motion": false,
+    "suction": false,
+    "d6": false,
+    "v10_d_or_formal": false
+  },
+  "report": "docs/tasks/TASK28_G2_P5_QP_6_R14_G2_FREEZE_AND_G3_FORCE_CONTROL_RECOVERY.md",
+  "artifact_manifest": "offline/task28_r14/evidence/r14_artifact_hashes.json",
+  "regression": {
+    "historical_passed": 1152,
+    "r14_focused_passed": 13,
+    "total_passed": 1165,
+    "status": "PASS"
+  },
+  "artifact_count": 45,
+  "report_sha256": "486eb7c28e3293e1a4f8216506f93c580521bee58f1767fb207d55132b249e70"
+}

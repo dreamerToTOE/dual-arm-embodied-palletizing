@@ -1,0 +1,49 @@
+{
+  "arm_absolute_limits": [
+    35.0,
+    12.0,
+    8.0,
+    35.0,
+    4.0,
+    4.0,
+    4.0
+  ],
+  "baseline_head": "72fbb8d5ea09ac9edb0a3869a07bed01e243741c",
+  "collector": "offline.task28_p2_4_r3.collector",
+  "contact_stage_admission": false,
+  "controller_modified": false,
+  "first_command_policy": "P2-4-R3 registered full gravity bootstrap; per-second rate gate begins at second write, NOT R8 original-scene admission",
+  "hardware_commands": false,
+  "later_arm_rate_limits_Nm_s": [
+    2400,
+    600,
+    240,
+    2400,
+    240,
+    240,
+    240
+  ],
+  "legacy_finger_abs_and_per_step_limits": [
+    [
+      10.0,
+      10.0
+    ],
+    [
+      10.0,
+      10.0
+    ]
+  ],
+  "observer": "postcollection strict P2-4 observer, raw unsymmetrized M; command effort candidate source; no feedback from estimate to actuation",
+  "physics_dt_s": 0.008333333333333333,
+  "scene": "isolated single /World/ProbeFR3, no Cube or ground plane",
+  "schema": "TASK28_R14_NO_CONTACT_PLAN_V1",
+  "sources": {
+    "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+    "offline/task28_p2_4_r3/evaluate.py": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb",
+    "offline/task28_p2_4_r3/experiment_preregistration.json": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "offline/task28_p5_qp_6_r8/source_contract.json": "40afbfe40c6b87a650944ad31dd767ef369ce17159b911990965d018d9ad5a8b",
+    "offline/task28_r14/no_contact.py": "9de6859dc8fcba9318063cfb110858d2669efe2891be1c533001d5b057481c8c"
+  },
+  "stage": "stability",
+  "steps": 240
+}

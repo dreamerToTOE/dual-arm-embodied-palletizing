@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/bin/bash",
+    "-c",
+    "set -e\nexport CARB_APP_PATH=/home/ubuntu2004/isaacsim-4.5.0/kit\nexport ISAAC_PATH=/home/ubuntu2004/isaacsim-4.5.0\nexport EXP_PATH=/home/ubuntu2004/isaacsim-4.5.0/apps\nsource /home/ubuntu2004/isaacsim-4.5.0/setup_python_env.sh\nexport LD_PRELOAD=/home/ubuntu2004/isaacsim-4.5.0/kit/libcarb.so\nexec /home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 \"$@\"\n",
+    "r14-stage1",
+    "-m",
+    "offline.task28_r14.no_contact",
+    "--output",
+    "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_r14/evidence/no_contact/attempt_01/raw",
+    "--portable-root",
+    "/tmp/task28-r14-stage1-sne_xpri",
+    "--plan",
+    "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_r14/evidence/no_contact/preregistration.json"
+  ],
+  "cache_isolated": true,
+  "child_pid": 226146,
+  "clean_exit": true,
+  "elapsed_s": 38.186669803006225,
+  "ended_utc": "2026-10-30T12:06:43.285825+00:00",
+  "exit_code": 0,
+  "isolation_verified": true,
+  "kit_tokens": {
+    "appcache": "/tmp/task28-r14-stage1-sne_xpri/appcache",
+    "cache": "/tmp/task28-r14-stage1-sne_xpri/cache/Kit/106.5/d02c707b",
+    "data": "/tmp/task28-r14-stage1-sne_xpri/data/Kit/Isaac-Sim Python/4.5",
+    "logs": "/tmp/task28-r14-stage1-sne_xpri/logs/Kit/Isaac-Sim Python/4.5"
+  },
+  "pgid": 226146,
+  "portable_resources_removed": true,
+  "portable_root": "/tmp/task28-r14-stage1-sne_xpri",
+  "postflight_competing": [],
+  "preflight_competing": [],
+  "residual_owned": [],
+  "schema": "TASK28_R14_PROCESS_V1",
+  "signals_sent": [],
+  "source_hashes": {
+    "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+    "offline/task28_p2_4_r3/evaluate.py": "b23699933e53ca0b559aefca5930ccec7ef3a5377edb2b84fe0f10140b276feb",
+    "offline/task28_p2_4_r3/experiment_preregistration.json": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "offline/task28_p5_qp_6_r8/source_contract.json": "40afbfe40c6b87a650944ad31dd767ef369ce17159b911990965d018d9ad5a8b",
+    "offline/task28_r14/no_contact.py": "9de6859dc8fcba9318063cfb110858d2669efe2891be1c533001d5b057481c8c"
+  },
+  "sources_unchanged": true,
+  "started_utc": "2026-10-30T12:06:05.046887+00:00"
+}
