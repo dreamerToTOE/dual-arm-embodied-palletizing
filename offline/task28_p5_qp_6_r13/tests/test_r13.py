@@ -20,6 +20,15 @@ def test_deterministic_replays_pass_and_are_identical():
         assert x['all_acceptance_pass'] is True
         assert x['solver_status']['all_qp_optimal'] is True
 
+def test_independent_cpu_process_replays_pass():
+    d=json.loads((HERE/'evidence/independent_replay.json').read_text())
+    for cell in ('V10-A','V10-B','V10-C'):
+        x=d['cells'][cell]
+        assert x['independent_processes']==20
+        assert x['all_exit_zero'] is True
+        assert x['identical_record_fingerprint'] is True
+        assert x['all_acceptance_pass'] is True
+
 def test_margin_and_perturbation_are_not_promoted_to_acceptance():
     d=json.loads((HERE/'evidence/robustness_replay.json').read_text())
     assert d['cells']['V10-C']['r12_acceptance_margin_mm'] > 0.0023
