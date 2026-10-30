@@ -1,0 +1,21 @@
+Task28 Issue #1 regression summary (2026-10-31)
+
+G1/G1-2A:
+  PYTHONPATH=offline/task28_g1_1:offline/task28_g1_2a python3 -m pytest -q offline/task28_g1_1/tests offline/task28_g1_2a/tests
+  296 passed in 28.74s
+
+G3-P2-4-R4:
+  PYTHONPATH=. python3 -m pytest -q offline/task28_g3_p2_4_r4/tests
+  15 passed in 0.14s
+
+R8:
+  PYTHONPATH=. python3 -m pytest -q offline/task28_p5_qp_6_r8/tests
+  15 passed in 0.57s
+
+T0:
+  PYTHONPATH=. python3 -m pytest -q offline/task28_t0/tests
+  7 passed in 0.08s
+
+ROS workspace:
+  source /opt/ros/humble/setup.bash && colcon build --symlink-install
+  6 packages finished
