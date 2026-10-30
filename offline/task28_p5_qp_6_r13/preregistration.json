@@ -1,0 +1,40 @@
+{
+  "schema": "TASK28_R13_PREREGISTRATION_V1",
+  "created_from_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
+  "controller_frozen": {
+    "feedback_gain_scale": 0.75,
+    "velocity_capture_tau_s": 0.1,
+    "object_tracking_limit_m": 0.00025,
+    "relative_tcp_translation_limit_m": 0.00015,
+    "qp_constraints_and_limits_changed": false
+  },
+  "repetition_plan": {
+    "cells": ["V10-A", "V10-B", "V10-C"],
+    "deterministic_repetitions_per_cell": 20,
+    "deterministic_source": "immutable R12 evaluator virtual_tracking_records",
+    "deterministic_acceptance": "all 20 records identical and each frozen gate passes"
+  },
+  "perturbation_plan": {
+    "initial_joint_offset_rad": {
+      "values": [-0.0001, 0.0001],
+      "basis": "0.285 of largest R12 joint tracking peak 0.0003511005 rad and below 0.02 rad gate"
+    },
+    "control_period_scale": {
+      "values": [0.99, 1.01],
+      "basis": "pre-registered +/-1% envelope around fixed 1/60 s period; R12 callback period was constant"
+    },
+    "feedback_delay_steps": {
+      "values": [0, 1],
+      "basis": "zero or one 60 Hz sample; one sample is 16.667 ms discrete state-ordering delay"
+    },
+    "model_mass_scale": {
+      "values": [0.97, 1.03],
+      "basis": "rounded outward from largest archived R12 diagonal-M range of 3.073%"
+    },
+    "combined_extremes": "all 16 combinations of the registered values"
+  },
+  "diagnostic_boundary": "perturbations replay recorded q geometry and do not re-solve QP; they are robustness evidence, not acceptance or hardware validation",
+  "execution_authorized": false,
+  "physical_execution": false,
+  "next_phase_auto_start": false
+}

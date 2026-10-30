@@ -1,0 +1,14 @@
+{
+  "schema": "TASK28_R13_SOURCE_CONTRACT_V1",
+  "created_from_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
+  "baseline": "R12 common/relative feedback scale 0.75 and tau 0.10 s",
+  "acceptance": {
+    "virtual_object_tracking_peak_m": 0.00025,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "joint_tracking_peak_rad": 0.02,
+    "native_dq_peak_rad_s": 0.3
+  },
+  "forbidden": ["real robot", "Cube motion", "physical contact", "suction", "D6", "ROS control commands", "V10-D", "FORMAL"],
+  "diagnostic_only": true,
+  "continuous_safety_status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED"
+}

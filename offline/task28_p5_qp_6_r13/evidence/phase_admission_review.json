@@ -1,0 +1,59 @@
+{
+  "FORMAL": {
+    "continuous_safety_required": false,
+    "execution_authorized": false,
+    "preconditions_bounded_perturbation_envelope": false,
+    "preconditions_deterministic_repetition": true,
+    "preconditions_discrete_A_B_C": true,
+    "status": "BLOCKED_R13_SCOPE_NO_EXECUTION_AND_ROBUSTNESS_ENVELOPE_NOT_ESTABLISHED"
+  },
+  "V10-D": {
+    "continuous_safety_required": false,
+    "execution_authorized": false,
+    "preconditions_bounded_perturbation_envelope": false,
+    "preconditions_deterministic_repetition": true,
+    "preconditions_discrete_A_B_C": true,
+    "status": "BLOCKED_R13_SCOPE_NO_EXECUTION_AND_ROBUSTNESS_ENVELOPE_NOT_ESTABLISHED"
+  },
+  "baseline_head": "52d07e6a9c4ac482db4887483cbf8ab0cbf510d1",
+  "cells": {
+    "V10-A": {
+      "bounded_perturbation_envelope_pass": false,
+      "bounded_perturbation_worst_over_limit_count": 3,
+      "bounded_perturbation_worst_peak_mm": 0.2577110327257499,
+      "deterministic_repetition_20_pass": true,
+      "frozen_discrete_gate": true
+    },
+    "V10-B": {
+      "bounded_perturbation_envelope_pass": false,
+      "bounded_perturbation_worst_over_limit_count": 29,
+      "bounded_perturbation_worst_peak_mm": 0.3015882694637521,
+      "deterministic_repetition_20_pass": true,
+      "frozen_discrete_gate": true
+    },
+    "V10-C": {
+      "bounded_perturbation_envelope_pass": false,
+      "bounded_perturbation_worst_over_limit_count": 29,
+      "bounded_perturbation_worst_peak_mm": 0.31043980439615604,
+      "deterministic_repetition_20_pass": true,
+      "frozen_discrete_gate": true
+    }
+  },
+  "continuous_safety": {
+    "closed_chain_continuous_proof": false,
+    "collision_continuous_proof": false,
+    "direct_negative_present": true,
+    "sampled_candidate_only": true,
+    "status": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "unresolved_interval_counts": [
+      7,
+      10,
+      16,
+      52
+    ]
+  },
+  "controller_frozen": true,
+  "next_phase_auto_start": false,
+  "physical_execution": false,
+  "schema": "TASK28_R13_PHASE_ADMISSION_REVIEW_V1"
+}

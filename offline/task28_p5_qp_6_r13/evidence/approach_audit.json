@@ -1,0 +1,494 @@
+{
+  "cube": {
+    "T_WCube": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.65
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.26
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "identity": "PRE_CONTACT_ORIGINAL_CUBE",
+    "nominal_gap_m": 0.001,
+    "nominal_grasps": {
+      "left": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.061
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "right": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.061
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "direct_home_to_nominal_negative": {
+    "acm_modified": false,
+    "continuous_safety": false,
+    "cube_pose_modified": false,
+    "fcl_modified": false,
+    "first_unexpected_collision": {
+      "fraction": 0.92,
+      "reasons": [
+        "COLLISION:left_fr3_side_suction/3|Cube_01/box",
+        "COLLISION:left_fr3_side_suction/5|Cube_01/box"
+      ],
+      "sample": 46
+    },
+    "samples_checked": 47,
+    "source": "R3 archived approach_audit.json",
+    "tool_shape_modified": false
+  },
+  "endpoint_ik": {
+    "HIGH_OUTER": {
+      "left": {
+        "attempts": 1,
+        "function_evaluations": 260,
+        "q": [
+          0.6099395635756293,
+          -1.033868915397438,
+          0.4852150250266073,
+          -2.269920237786934,
+          0.4270666098129436,
+          1.315416518224929,
+          0.9878190759061659
+        ],
+        "rotation_error_rad": 4.62199844508311e-10,
+        "success": true,
+        "translation_error_m": 5.542981212595267e-11
+      },
+      "right": {
+        "attempts": 1,
+        "function_evaluations": 391,
+        "q": [
+          -0.4283290973703599,
+          -1.1201592692541527,
+          -0.537762963775288,
+          -2.2547177057642953,
+          -0.5090880106762286,
+          1.2407849360438872,
+          -0.8614050960683372
+        ],
+        "rotation_error_rad": 4.174420968880043e-10,
+        "success": true,
+        "translation_error_m": 3.538895312652718e-11
+      }
+    },
+    "OUTER_CONTACT": {
+      "left": {
+        "attempts": 1,
+        "function_evaluations": 33,
+        "q": [
+          0.9283814174671386,
+          -0.9383532998756507,
+          0.7336973612715207,
+          -2.9532137988564626,
+          0.6577557239958505,
+          2.0583621612614325,
+          1.0707989706138632
+        ],
+        "rotation_error_rad": 8.381227240245557e-10,
+        "success": true,
+        "translation_error_m": 9.721425850033331e-11
+      },
+      "right": {
+        "attempts": 1,
+        "function_evaluations": 49,
+        "q": [
+          -1.0123612082583846,
+          -0.8881096811337292,
+          -0.6453832193075395,
+          -2.9628102176440922,
+          -0.5737482056499476,
+          2.1066780479893543,
+          -1.1370902330562025
+        ],
+        "rotation_error_rad": 1.6572869683119402e-10,
+        "success": true,
+        "translation_error_m": 1.2688859617381368e-11
+      }
+    },
+    "PRE_CONTACT_READY": {
+      "left": {
+        "attempts": 1,
+        "function_evaluations": 29,
+        "q": [
+          0.3467830864966832,
+          -0.9640644254431812,
+          1.1988968977775654,
+          -2.6321813921189334,
+          0.9575029710947552,
+          1.9307271912095292,
+          0.8536403164182598
+        ],
+        "rotation_error_rad": 2.0027539454828339e-13,
+        "success": true,
+        "translation_error_m": 2.4076742010101843e-14
+      },
+      "right": {
+        "attempts": 1,
+        "function_evaluations": 33,
+        "q": [
+          -0.8011803218995219,
+          -0.5019690664868635,
+          -0.7971476303691706,
+          -2.692311008799747,
+          -0.4664643906601776,
+          2.2700132424482202,
+          -1.2192046013378868
+        ],
+        "rotation_error_rad": 5.921430354744483e-11,
+        "success": true,
+        "translation_error_m": 1.543536884006776e-11
+      }
+    }
+  },
+  "joint_interpolation_is_not_continuous_proof": true,
+  "physical_execution": {
+    "reason": "No continuous proof or qualified dynamic/torque margin; R9 forbids forcing long HOME-to-Cube motion into R8 small-motion controller.",
+    "status": "SKIPPED"
+  },
+  "scope": "CPU-only synchronized bilateral IK/FCL screen; no trajectory execution, suction, D6 or Cube motion",
+  "solutions": {
+    "FREE_HOME": {
+      "left": [
+        1.8516155250836164e-05,
+        -0.784332275390625,
+        6.924563058419153e-05,
+        -2.356692314147949,
+        0.00010101984662469476,
+        1.5707885026931763,
+        0.7853949069976807
+      ],
+      "right": [
+        1.710735341475811e-05,
+        -0.7843459844589233,
+        5.438336302177049e-05,
+        -2.356705904006958,
+        8.91408053576015e-05,
+        1.5707899332046509,
+        0.7853959798812866
+      ]
+    },
+    "HIGH_OUTER": {
+      "left": [
+        0.6099395635756293,
+        -1.033868915397438,
+        0.4852150250266073,
+        -2.269920237786934,
+        0.4270666098129436,
+        1.315416518224929,
+        0.9878190759061659
+      ],
+      "right": [
+        -0.4283290973703599,
+        -1.1201592692541527,
+        -0.537762963775288,
+        -2.2547177057642953,
+        -0.5090880106762286,
+        1.2407849360438872,
+        -0.8614050960683372
+      ]
+    },
+    "OUTER_CONTACT": {
+      "left": [
+        0.9283814174671386,
+        -0.9383532998756507,
+        0.7336973612715207,
+        -2.9532137988564626,
+        0.6577557239958505,
+        2.0583621612614325,
+        1.0707989706138632
+      ],
+      "right": [
+        -1.0123612082583846,
+        -0.8881096811337292,
+        -0.6453832193075395,
+        -2.9628102176440922,
+        -0.5737482056499476,
+        2.1066780479893543,
+        -1.1370902330562025
+      ]
+    },
+    "PRE_CONTACT_READY": {
+      "left": [
+        0.3467830864966832,
+        -0.9640644254431812,
+        1.1988968977775654,
+        -2.6321813921189334,
+        0.9575029710947552,
+        1.9307271912095292,
+        0.8536403164182598
+      ],
+      "right": [
+        -0.8011803218995219,
+        -0.5019690664868635,
+        -0.7971476303691706,
+        -2.692311008799747,
+        -0.4664643906601776,
+        2.2700132424482202,
+        -1.2192046013378868
+      ]
+    }
+  },
+  "stage_targets": {
+    "HIGH_OUTER": {
+      "left": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.65
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.161
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.54
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "right": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.65
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.161
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.54
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "OUTER_CONTACT": {
+      "left": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.65
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.161
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "right": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.65
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.161
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "PRE_CONTACT_READY": {
+      "left": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.65
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.061
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "right": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.65
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.061
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.26
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "stages": [
+    "HIGH_OUTER",
+    "OUTER_CONTACT",
+    "PRE_CONTACT_READY"
+  ],
+  "status": "SAMPLED_CANDIDATE_ONLY",
+  "synchronized_edges": {
+    "FREE_HOME_TO_HIGH_OUTER": {
+      "continuous_safety": "NOT_ESTABLISHED_FINITE_SAMPLING_ONLY",
+      "first_unexpected_collision": null,
+      "sampled_valid": true,
+      "samples": 51,
+      "unexpected_collision_count": 0
+    },
+    "HIGH_OUTER_TO_OUTER_CONTACT": {
+      "continuous_safety": "NOT_ESTABLISHED_FINITE_SAMPLING_ONLY",
+      "first_unexpected_collision": null,
+      "sampled_valid": true,
+      "samples": 51,
+      "unexpected_collision_count": 0
+    },
+    "OUTER_CONTACT_TO_PRE_CONTACT_READY": {
+      "continuous_safety": "NOT_ESTABLISHED_FINITE_SAMPLING_ONLY",
+      "first_unexpected_collision": null,
+      "sampled_valid": true,
+      "samples": 51,
+      "unexpected_collision_count": 0
+    }
+  },
+  "task24_sequence_reference": [
+    "HIGH_PRE_CONTACT",
+    "OUTER_DESCENT",
+    "LEFT_RIGHT_CONTACT_MICROTIMING",
+    "COMMON_LIFT"
+  ]
+}
