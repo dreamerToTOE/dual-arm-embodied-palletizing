@@ -58,6 +58,38 @@ SCENE_PROFILES = {
         "scene_root": "/World/Task28G10SingleCube",
         "tcp_suffix": "/fr3_link8/side_suction_tool/side_suction_tcp",
     },
+    "task27": {
+        "label": "TASK27_ORIGINAL_FIVE_CUBE_CENTER_INSERT",
+        "roots": {"left": "/World/left_fr3", "right": "/World/right_fr3"},
+        "scene_root": "/World/Task27",
+        "tcp_suffix": "/fr3_link8/side_suction_tool/side_suction_tcp",
+        "graph_path": "/World/Task27ROSGraph",
+        "signature_extra_roots": ("/World/Table", "/physicsScene", "/World/Task27ROSGraph"),
+        "signature_paths": (
+            "/World/Table",
+            "/physicsScene",
+            "/World/Task27ROSGraph",
+            "/World/Task27/TruckBox/WallDeep",
+            "/World/Task27/TruckBox/WallMinusY",
+            "/World/Task27/TruckBox/WallPlusY",
+            "/World/Task27/Supply/Cube_01",
+            "/World/Task27/Supply/Cube_02",
+            "/World/Task27/Supply/Cube_03",
+            "/World/Task27/Supply/Cube_04",
+            "/World/Task27/Supply/Cube_05",
+            "/World/Task27/TargetMarkers/Cell_01",
+            "/World/Task27/TargetMarkers/Cell_02",
+            "/World/Task27/TargetMarkers/Cell_03",
+            "/World/Task27/TargetMarkers/Cell_04",
+            "/World/Task27/TargetMarkers/Cell_05",
+            "/World/Task27/TargetMarkers/PrePush_01",
+            "/World/Task27/TargetMarkers/PrePush_02",
+            "/World/Task27/TargetMarkers/PrePush_03",
+            "/World/Task27/TargetMarkers/PrePush_04",
+            "/World/Task27/TargetMarkers/PrePush_05",
+            "/World/Task27/HighFrictionMaterial",
+        ),
+    },
 }
 REGISTRY_NAME = "_task28_t0_torque_bridge"
 TORQUE_FRAME = "task28_t0_dual_sync"
@@ -86,7 +118,7 @@ def _finite(value, shape, label):
     return array.copy()
 
 
-def _stage_signature(stage, roots, extra_roots=()):
+def _stage_signature(stage, roots, extra_roots=(), extra_paths=()):
     """Hash protected scene identity, excluding live transforms and references.
 
     PhysX can finish loading referenced descendants after the first frame.  A
@@ -103,6 +135,9 @@ def _stage_signature(stage, roots, extra_roots=()):
             path = root + suffix if suffix else root
             prim = stage.GetPrimAtPath(path)
             rows.append((path, prim.GetTypeName() if prim.IsValid() else "<missing>"))
+    for path in extra_paths:
+        prim = stage.GetPrimAtPath(path)
+        rows.append((path, prim.GetTypeName() if prim.IsValid() else "<missing>"))
     rows = sorted(set(rows))
     return hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode()).hexdigest()
 
@@ -157,10 +192,16 @@ class Task28T0TorqueBridge:
             existing = getattr(builtins, registry, None)
             if existing is not None and existing is not self:
                 self._abort("POSITION_SINK_PRESENT:" + registry)
-        self.scene_signature_before = _stage_signature(
-            self.stage, self.profile["roots"], (self.profile["scene_root"],)
+        signature_roots = (self.profile["scene_root"],) + tuple(
+            self.profile.get("signature_extra_roots", ())
         )
-        graph = self.stage.GetPrimAtPath(self.profile["scene_root"] + "/ROSGraph")
+        self.scene_signature_before = _stage_signature(
+            self.stage, self.profile["roots"], signature_roots,
+            self.profile.get("signature_paths", ()),
+        )
+        graph = self.stage.GetPrimAtPath(
+            self.profile.get("graph_path", self.profile["scene_root"] + "/ROSGraph")
+        )
         if graph.IsValid():
             self._graph_active_before = bool(graph.IsActive())
             # The scene graph only publishes telemetry.  Keep it out of the
@@ -538,8 +579,12 @@ class Task28T0TorqueBridge:
                     )
                 except Exception as exc:
                     self._write({"event": "R8_POST_STEP_STOP_CHECK", "error": repr(exc)})
+            signature_roots = (self.profile["scene_root"],) + tuple(
+                self.profile.get("signature_extra_roots", ())
+            )
             self._scene_signature_after = _stage_signature(
-                self.stage, self.profile["roots"], (self.profile["scene_root"],)
+                self.stage, self.profile["roots"], signature_roots,
+                self.profile.get("signature_paths", ()),
             )
             self._write({"event": "TORQUE_BRIDGE_STOPPED", "scene_signature_before": self.scene_signature_before,
                          "scene_signature_after": self._scene_signature_after,
@@ -547,7 +592,9 @@ class Task28T0TorqueBridge:
                          "position_write_count": 0, "suction_commands": 0, "d6_commands": 0,
                          "latched_error": self._latched_error})
         finally:
-            graph = self.stage.GetPrimAtPath(self.profile["scene_root"] + "/ROSGraph")
+            graph = self.stage.GetPrimAtPath(
+                self.profile.get("graph_path", self.profile["scene_root"] + "/ROSGraph")
+            )
             if graph.IsValid() and self._graph_active_before is not None:
                 graph.SetActive(self._graph_active_before)
             try:

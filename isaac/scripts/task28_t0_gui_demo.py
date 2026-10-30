@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import sys
 import time
+import argparse
 
 REPO = Path(__file__).resolve().parents[2]
 ISAAC_ROOT = Path("/home/ubuntu2004/isaacsim-4.5.0")
@@ -19,7 +20,7 @@ from isaacsim import SimulationApp
 
 
 def _load_scene(path):
-    namespace = {"__name__": "__task28_t0_original_task24_scene__"}
+    namespace = {"__name__": "__task28_t0_selected_scene__"}
     source = path.read_text(encoding="utf-8")
     exec(compile(source, str(path), "exec"), namespace, namespace)
     if "build_scene" in namespace:
@@ -30,7 +31,7 @@ def _load_scene(path):
 def _enable_default_viewport_lighting():
     """Enable Isaac's built-in viewport light rig in the session layer.
 
-    The frozen Task28 fixture intentionally has no authored light.  The
+    The selected frozen scene may have no authored light.  The
     viewport lighting menu mounts its ``Default`` rig in the USD session
     layer, so this changes only the GUI presentation and does not edit or
     save the scene, robot asset, tools, or physics configuration.
@@ -65,7 +66,26 @@ def _capture_viewport(app, viewport, path):
 
 
 def main():
-    output = REPO / "offline/task28_t0/evidence/gui_task24_torque_frames.jsonl"
+    parser = argparse.ArgumentParser(description="Task28-T0 non-headless torque GUI demo")
+    parser.add_argument(
+        "--scene-profile", choices=("task27", "task28_g1_0"), default="task27",
+        help="Existing scene entry to reuse; default is the user-selected original Task27 scene.",
+    )
+    parser.add_argument("--demo-frames", type=int, default=90)
+    args = parser.parse_args()
+    if args.demo_frames <= 0:
+        raise SystemExit("--demo-frames must be positive")
+    if args.scene_profile == "task27":
+        scene = REPO / "isaac/scripts/task27_five_cube_center_insert_scene.py"
+        evidence_prefix = "gui_task27_torque"
+        camera_eye = [2.8, -3.2, 2.3]
+        camera_target = [0.92, 0.0, 0.38]
+    else:
+        scene = REPO / "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py"
+        evidence_prefix = "gui_task28_g1_0_torque"
+        camera_eye = [1.9, -2.6, 1.5]
+        camera_target = [0.65, 0.0, 0.55]
+    output = REPO / f"offline/task28_t0/evidence/{evidence_prefix}_frames.jsonl"
     app = SimulationApp({
         "headless": False,
         "create_new_stage": True,
@@ -83,25 +103,27 @@ def main():
     UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.z)
     UsdGeom.SetStageMetersPerUnit(stage, 1.0)
     UsdGeom.Xform.Define(stage, "/World")
-    # This is the already approved Task28 A/G1 fixture derived from the
-    # historical Task24-H geometry.  It is loaded from the repository and is
-    # never exported or modified on disk.
-    scene = REPO / "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py"
-    os.environ["TASK28_FR3_USD"] = "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd"
-    os.environ["TASK28_FR3_USD_SHA256"] = "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f"
+    # Reuse the selected existing Task24/26/27-derived scene entry.  The
+    # runner never exports or modifies the scene on disk.
+    if args.scene_profile == "task28_g1_0":
+        os.environ["TASK28_FR3_USD"] = "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd"
+        os.environ["TASK28_FR3_USD_SHA256"] = "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f"
+    else:
+        os.environ.pop("TASK28_FR3_USD", None)
+        os.environ.pop("TASK28_FR3_USD_SHA256", None)
     _load_scene(scene)
     lighting_result = _enable_default_viewport_lighting()
     print(f"Task28-T0 viewport lighting: {lighting_result!r}")
     timeline = omni.timeline.get_timeline_interface()
     timeline.play()
-    # Let the original position drives settle at their authored HOME target
+    # Let the selected scene's original position drives settle at their authored HOME target
     # before runtime-only effort ownership is enabled.
     for _ in range(120):
         app.update()
     from isaacsim.core.utils.viewports import set_camera_view
     from omni.kit.viewport.utility import get_active_viewport
     set_camera_view(
-        eye=[1.9, -2.6, 1.5], target=[0.65, 0.0, 0.55],
+        eye=camera_eye, target=camera_target,
         camera_prim_path="/OmniverseKit_Persp",
     )
     viewport = get_active_viewport()
@@ -119,18 +141,18 @@ def main():
         app.update()
     screenshot_dir = REPO / "offline/task28_t0/evidence"
     screenshot_dir.mkdir(parents=True, exist_ok=True)
-    _capture_viewport(app, viewport, screenshot_dir / "gui_viewport_scene_loaded.png")
+    _capture_viewport(app, viewport, screenshot_dir / f"{evidence_prefix}_scene_loaded.png")
     bridge_module_path = REPO / "isaac/scripts/task28_t0_torque_bridge.py"
     spec = importlib.util.spec_from_file_location("task28_t0_torque_bridge", bridge_module_path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    bridge = module.start_torque_bridge(scene_profile="task28_g1_0", demo=True,
-                                        output=output, demo_frames=90)
+    bridge = module.start_torque_bridge(scene_profile=args.scene_profile, demo=True,
+                                        output=output, demo_frames=args.demo_frames)
     # The bridge stops itself after the hold plus small HOME-neighbourhood move.
     while getattr(bridge, "_physics_sub", None) is not None and not bridge._latched_error:
         app.update()
-    _capture_viewport(app, viewport, screenshot_dir / "gui_viewport_torque_final.png")
+    _capture_viewport(app, viewport, screenshot_dir / f"{evidence_prefix}_final.png")
     time.sleep(1.0)
     timeline.stop()
     app.update()
