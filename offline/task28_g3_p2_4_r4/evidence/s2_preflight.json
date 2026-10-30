@@ -1,0 +1,221 @@
+{
+  "baseline_head_expected": "bfbbab1606e3afe7f06a48aeee4437c3d6cd1aba",
+  "branch": "side-suction-palletizing",
+  "fixture_inventory": {
+    "active_cube_count": 1,
+    "asset_fallback_allowed": false,
+    "controller_commands_implemented": false,
+    "controller_status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+    "cube_dynamic": true,
+    "cube_mass_kg": 0.8,
+    "cube_size_m": [
+      0.12,
+      0.12,
+      0.12
+    ],
+    "existing_fixture_is_s2_contact_fixture": false,
+    "fixture_id": "task28_g1_0_new_single_cube_v0",
+    "fixture_status": "NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED",
+    "foreign_task_or_physics_roots": "REJECT_WITHOUT_REMOVAL",
+    "physics": {
+      "enable_ccd": true,
+      "enable_stabilization": true,
+      "gravity_direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "gravity_magnitude_m_s2": 9.81,
+      "path": "/World/Task28G10SingleCube/physicsScene",
+      "provenance": "Explicit NEW fixture construction defaults; not recovered historical runtime settings.",
+      "solver_type": "TGS",
+      "steps_per_second": 60
+    },
+    "scene_requires_stopped_timeline": true,
+    "scene_ros_graph_present": true,
+    "scene_tools_include_surface_gripper": true,
+    "table_top_z_m": 0.2
+  },
+  "gates": [
+    {
+      "blocks_s2": false,
+      "evidence": "P2-4 observer contract and R14 audit explicitly separate applied/projected effort from FR3 tau_J",
+      "id": "source_identity_and_tauJ_separation",
+      "status": "PASS_FOR_PREFLIGHT"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "R14 admission and P2-4-R3 source audit; only bare single-arm candidate exists",
+      "id": "strict_same_scene_observer_source_qualification",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "R3 collector logs applied force only as repeated final point and evaluator uses posthoc oracle; no independent PhysX contact-frame truth contract",
+      "id": "independent_contact_force_oracle",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "fixture is marked NEW_BASELINE_NOT_YET_PHYSICALLY_VALIDATED; no fresh S2 scene receipt or initial overlap measurement",
+      "id": "scene_specific_safe_initial_state_no_penetration",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "static collision envelopes are planning geometry; no contact-clamp swept/narrowphase interval certificate for an S2 run",
+      "id": "local_continuous_motion_envelope",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "no independent contact pair, force frame, sign and step/timestamp record in R3/P2-4 evidence",
+      "id": "contact_pair_frame_sign_time_validation",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "R14 explicitly leaves force reference, stiffness/damping, energy stop and motion envelope unset",
+      "id": "pre_registered_force_energy_motion_time_budgets",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "R14 admission lists independent live cursor binding and pre-command failure latch as S2 prerequisites",
+      "id": "precommand_failure_latch_live_cursor",
+      "status": "MISSING"
+    },
+    {
+      "blocks_s2": true,
+      "evidence": "existing SurfaceGripper uses aggregate fixed D6-style connection and 1e6 force/torque limits; finite physical suction capacity is uncalibrated",
+      "id": "contact_model_limitations_declared",
+      "status": "PARTIAL"
+    },
+    {
+      "blocks_s2": false,
+      "evidence": "8 conservative envelopes and fixture static checks pass; this is not runtime PhysX contact safety",
+      "id": "historical_static_collision_geometry",
+      "status": "PASS_STATIC_ONLY"
+    }
+  ],
+  "generated_utc": "2026-10-30T12:28:35.455814+00:00",
+  "historical_evidence": {
+    "p2_5_qp6_r1_actual_grasp_attachment_geometry": {
+      "D6_static_or_moving_test_run": false,
+      "G1_rotation_threshold_rad": 0.001,
+      "G1_translation_threshold_m": 0.0001,
+      "frozen_nominal_offset_m": 0.061,
+      "no_new_anchor_or_gap": true,
+      "status": "NOT_ESTABLISHED"
+    },
+    "p2_5_qp6_r1_contact_readiness_status": "NOT_READY_REVIEW_ONLY",
+    "p2_5_qp6_r1_finite_suction": {
+      "old_1e6_break_values_not_capacity": true,
+      "required": [
+        "normal traction/compression range",
+        "shear/friction coupling",
+        "moment capacity versus centre of pressure",
+        "cup pressure/area and seal state",
+        "break/detach dynamics",
+        "source-valid reaction evaluation"
+      ],
+      "status": "UNAVAILABLE_CALIBRATION"
+    },
+    "p2_5_qp6_r1_reaction_observability": {
+      "D6_predicted_reaction_not_measured": true,
+      "finger_constraint_residual_not_Cube_wrench": true,
+      "projected_joint_effort_not_actuator_only": true,
+      "status": "UNAVAILABLE_SOURCE_VALID_CONTACT_REACTION"
+    },
+    "r14_stage_admission_missing_evidence": [
+      "strict same-scene observer/source qualification with per-step independent oracle",
+      "scene-specific validated safe initial state and no initial penetration",
+      "continuous conservative bound for the local contact experiment motion envelope",
+      "declared intended contact pairs and independent contact-force frame/sign/time validation",
+      "pre-registered force/energy/motion/time budgets with source justification",
+      "pre-command failure latch and independent live cursor binding"
+    ],
+    "r14_stage_admission_s2_readiness": "NOT_READY"
+  },
+  "observed_head": "bfbbab1606e3afe7f06a48aeee4437c3d6cd1aba",
+  "permitted_next_steps": [
+    "Implement and test strict source adapter and negative controls in a new R4 identity.",
+    "Build a separate single-arm contact fixture without Cube/suction/D6/ROS command path, with explicit contact body and independent truth channel.",
+    "Record initial overlap, all contact pairs, frame/sign/timestamp, power/energy, bounded motion and failure latch before any contact command.",
+    "Run CPU/offline contract tests before any Isaac contact."
+  ],
+  "prohibited_next_steps": [
+    "Do not run existing dual-arm Cube fixture as S2 contact evidence.",
+    "Do not enable SurfaceGripper/D6 or use ideal fixed connection as physical suction proof.",
+    "Do not reuse original Cube approach path; continuous safety remains unestablished.",
+    "Do not emit ROS or real robot commands."
+  ],
+  "schema": "TASK28_G3_P2_4_R4_S2_PREFLIGHT_V1",
+  "scope": {
+    "cube_motion_started": false,
+    "g2_controller_modified": false,
+    "isaac_contact_started": false,
+    "physical_robot_commands": false,
+    "ros_control_commands_started": false,
+    "suction_or_d6_started": false
+  },
+  "source_semantics": {
+    "estimator_output": "TCP-equivalent mathematical fit, candidate model residual, not measured physical contact wrench",
+    "independent_contact_truth": "not recorded or exposed by existing R3 collector/evaluator",
+    "isaac_applied_joint_efforts": "explicit command/input buffer readback; not FR3 tau_J",
+    "isaac_measured_joint_efforts": "solver projected DOF force; not independently calibrated FR3 tau_J",
+    "observer_equation": "M(q) qdd + c(q,dq) + g(q) = tau_actuator_on_robot + tau_external_on_robot",
+    "p2_4_observer_status": "SOURCE_UNVALIDATED_CANDIDATE outputs CANDIDATE_ESTIMATE only; never promoted to validated contact force",
+    "real_fr3_tau_J": "not present in this Isaac-only evidence",
+    "units_and_order": "R3/P2-4 contract declares full nine-DOF order, SI generalized units, Jacobian linear-then-angular"
+  },
+  "source_sha256": {
+    "docs/tasks/TASK28_G2_P5_QP_6_R14_G2_FREEZE_AND_G3_FORCE_CONTROL_RECOVERY.md": "486eb7c28e3293e1a4f8216506f93c580521bee58f1767fb207d55132b249e70",
+    "docs/tasks/TASK28_R14_G3_CAPABILITY_AUDIT.md": "b56bc245649b81fa8e0eb5bebfaaeabae48f1d06ea4c733dc163caebb87a66f7",
+    "docs/tasks/TASK28_R14_G3_EXPERIMENT_PLAN.md": "ec9ad23a250bd27e21b1c0e23ea84d2adcf7d9566c54d9803c4e0b4aa9e60bcd",
+    "fixtures/task28_g1_0_new_single_cube_v0/bridge/task28_single_cube_bridge.py": "15759cde17b389dd4ae29c90c1c2b107d76f67ccaffee14e2cbb8876445e108b",
+    "fixtures/task28_g1_0_new_single_cube_v0/controller/task28_g1_0_controller_contract.json": "33fa2d90be42f0b493b5e521daf8af8ec4a0b7b027dd84f6ddfb7019296579d4",
+    "fixtures/task28_g1_0_new_single_cube_v0/fixture_manifest.json": "f809a4a57ec8b2a3719f6bcd9c53a467b8ed2f5353928f62d8adfb02d91f3286",
+    "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_g1_0_scene_contract.json": "239c00e3ad82ae86313bcb841fbcecddfd4925d2f08b7b7ed96cfab3a888c5a9",
+    "fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py": "acb5ba60138685ce37351fde4da338183dcb15c8012d4d25c01d04b2adb37c87",
+    "fixtures/task28_g1_0_new_single_cube_v0/tests/check_collision_envelopes.py": "62e8c6bee80e1bc2ac68a208cecbf4d1f484a162ffd24fef6a63bf4e987d4427",
+    "fixtures/task28_g1_0_new_single_cube_v0/tests/static_check.py": "9c0fdad71429e9a8a6b7759349d7a565b82e518c04a826b977b9c55f6d9ef737",
+    "offline/task28_g1_2a/task28_contact/collision.py": "d8ca290e0a0d0443f3307a02f6e97b4cdccc096e861cdecb149dd2e72d559fe9",
+    "offline/task28_g1_2a/task28_contact/modes.py": "30deaf6360cdd43bfc5858367dfee62e471fa0e8618de1d50aefa4c347780b4f",
+    "offline/task28_g1_2a/task28_contact/support.py": "e64fc8135a716185a773c1bc96dd78c816c7ed96c3a8ebe7f4e0802711cfab3c",
+    "offline/task28_g1_2a/task28_contact/validator.py": "ac62d2465f50b1088bbf14a980c6befa399fe50a71cc9139e07499d60a0e1e8f",
+    "offline/task28_p2_4/observer.py": "d60f6d9909a450fa4429cfa3a27f945a13a4ef49efcacedd82cb220b91a7d067",
+    "offline/task28_p2_4_r3/collector.py": "8fbd3324ea2b32352e0fda21153006d26ec2f3517d79a7d0307c9632a3e3968c",
+    "offline/task28_p2_4_r3/experiment_preregistration.json": "18abd8d41674b1be28f7e1f9c3bc5c69e9f338f5581205079d71f385278796d5",
+    "offline/task28_p2_4_r3/online_evaluate.py": "0b073aac04142605f9146cb6bd1de5370ef9cdd2c681a8251da7c5df615c520b",
+    "offline/task28_p5_qp_6_r1/evidence/contact_readiness.json": "e0d426ad87eb963f0963710d0d761b12b5fb0a2eb46b00792353c511523c3f5b",
+    "offline/task28_r14/evidence/g3_stage_admission.json": "442fadb4de5eef42ae05f11238326e95026009b6bbf207be5f0478919dfe3f9c",
+    "offline/task28_r14/evidence/no_contact/attempt_01/evaluation.json": "f45cedfecd0bd608d478a9960a6e1e7a29362f9efb96a07bab29c41de68eb840",
+    "offline/task28_r14/evidence/no_contact/attempt_01/lifecycle.json": "88ff11b3c960555b36c0a9f07bedffbf2ba4cf88ebb7c32509f339fa9fd7f4bb"
+  },
+  "static_checks": [
+    {
+      "command": "python3 fixtures/task28_g1_0_new_single_cube_v0/tests/check_collision_envelopes.py",
+      "id": "conservative_collision_envelopes_static",
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "Collision envelopes PASS: 8 source containments, closed meshes and outlier rejections"
+    },
+    {
+      "command": "python3 fixtures/task28_g1_0_new_single_cube_v0/tests/static_check.py",
+      "id": "fixture_static_contract",
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "G1-0B static PASS: 17 bundle, 4 task-input, 5 renderer and 8 envelope negative cases; 25 external model hashes\nNo Isaac/ROS/MoveIt runtime, launch, motion planning, or robot commands executed."
+    }
+  ],
+  "task": "G3-P2-4-R4",
+  "verdict": {
+    "action": "PREFLIGHT_ONLY_NO_CONTACT_RUN",
+    "can_start_contact_with_current_evidence": false,
+    "continuous_safety_original_cube_approach": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "s2_readiness": "NOT_READY"
+  }
+}

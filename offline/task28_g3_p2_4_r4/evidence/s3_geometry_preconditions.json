@@ -1,0 +1,454 @@
+{
+  "baseline_head": "bfbbab1606e3afe7f06a48aeee4437c3d6cd1aba",
+  "decision": {
+    "reason_codes": [
+      "P2_3_STEADY_TCP_GRASP_MISMATCH",
+      "P2_3_RELATIVE_OBJECT_CLOSURE_MISMATCH",
+      "NO_QUALIFIED_SHARED_OBJECT_OR_ANCHOR_SOURCE",
+      "NO_BILATERAL_CONTACT_WRENCH_SOURCE",
+      "NO_CONTACT_MODEL_AND_LOCAL_SWEPT_SAFETY_CERTIFICATE"
+    ],
+    "s3_entry": "BLOCKED",
+    "virtual_replay_does_not_override_geometry": true
+  },
+  "frozen_geometry_contract": {
+    "closure_policy": {
+      "per_side_rotation_max_rad": 0.001,
+      "per_side_translation_max_m": 0.0001,
+      "relative_object_rotation_max_rad": 0.001,
+      "relative_object_translation_max_m": 0.0001
+    },
+    "frame_convention": "T_A_B maps B-frame column vectors to A; wrenches are force-then-torque and must declare reference point and frame",
+    "nominal_contact_gap_m": 0.001,
+    "nominal_object_to_tcp_translations_m": {
+      "left": [
+        0.0,
+        -0.061,
+        0.0
+      ],
+      "right": [
+        0.0,
+        0.061,
+        0.0
+      ]
+    },
+    "object_id": "Cube_01",
+    "object_pose_world_m": {
+      "position": [
+        0.65,
+        0.0,
+        0.4
+      ],
+      "yaw_rad": 0.0
+    },
+    "tcp_ids": [
+      "left_fr3_side_suction_tcp",
+      "right_fr3_side_suction_tcp"
+    ]
+  },
+  "minimum_s3_entry_sequence": [
+    "Create a new isolated supported/contact fixture with immutable scene, asset, body, anchor, and contact-pair hashes.",
+    "Resolve steady-state bilateral geometry in a new run; preserve every rejected frame and require full G1 closure.",
+    "Qualify each arm's observer source and synchronized bilateral wrench stream independently before any bilateral force command.",
+    "Validate the independent contact-force reference and bounded contact model without using ideal fixed attachment as proof.",
+    "Run zero-load, same-net-wrench/nonzero-internal, and release/abort controls with task and force torque/rate budgets.",
+    "Only then consider S4 Cube suction integration; the original approach remains prohibited."
+  ],
+  "new_contact_or_suction_runs": 0,
+  "new_isaac_runs": 0,
+  "new_ros_or_robot_commands": 0,
+  "offline_g1_baseline": {
+    "collision_valid": true,
+    "ik_rotation_error_rad": {
+      "left": 1.6461120532494998e-08,
+      "right": 4.264264599273112e-09
+    },
+    "ik_translation_error_m": {
+      "left": 1.8692019588673947e-09,
+      "right": 5.432953036533675e-10
+    },
+    "interpretation": "valid seed geometry does not guarantee Isaac steady-state geometry after position hold",
+    "relative_closure_rotation_rad": 2.057176726892049e-08,
+    "relative_closure_translation_m": 1.8669382763819707e-09,
+    "scope": "single_state_offline_only",
+    "source": "offline/task28_g1_1/evidence/validation_results.json#positive_full_pipeline_controls[lifted_symmetric]"
+  },
+  "original_cube_approach": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+  "p2_3_formal_failure": {
+    "across_formal_cases": {
+      "all_cases_rejected": true,
+      "relative_object_rotation_rad_max": 0.0013746526522789649,
+      "relative_object_rotation_rad_min": 0.0012660257225205359,
+      "relative_object_translation_mm_max": 0.18112360661431404,
+      "relative_object_translation_mm_min": 0.14684201920964002,
+      "wrench_estimation_after_geometry_gate": false
+    },
+    "cases": [
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008185978338236508,
+          "left_object_translation_m": 0.00048436180478440534,
+          "left_right_rotation_rad": 0.001336417459386783,
+          "left_right_translation_m": 0.00016991736977826883,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006312000389675183,
+          "right_object_translation_m": 0.00036965498502413693,
+          "valid": false
+        },
+        "id": "zero",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0008185978338236508,
+            "translation_m": 0.0004413093464534519
+          },
+          "right": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0006312000389675183,
+            "translation_m": 0.0003333260783885495
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008133055090313593,
+          "left_object_translation_m": 0.00047793474785412006,
+          "left_right_rotation_rad": 0.0013243163542631213,
+          "left_right_translation_m": 0.00016318539647830198,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006312000389675183,
+          "right_object_translation_m": 0.00036965498502413693,
+          "valid": false
+        },
+        "id": "left_positive_fx",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 3.6835670471191406e-05,
+            "rotation_rad": 0.0008133055090313593,
+            "translation_m": 0.0004357949548219165
+          },
+          "right": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0006312000389675183,
+            "translation_m": 0.0003333260783885495
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0007841733462078167,
+          "left_object_translation_m": 0.00046908146753470566,
+          "left_right_rotation_rad": 0.0013102803257282246,
+          "left_right_translation_m": 0.00015958714367850487,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006312000389675183,
+          "right_object_translation_m": 0.00036965498502413693,
+          "valid": false
+        },
+        "id": "left_negative_fx",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 3.2007694244384766e-05,
+            "rotation_rad": 0.0007841733462078167,
+            "translation_m": 0.0004271023976148636
+          },
+          "right": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0006312000389675183,
+            "translation_m": 0.0003333260783885495
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008185978338236508,
+          "left_object_translation_m": 0.00048436180478440534,
+          "left_right_rotation_rad": 0.0013221646957286102,
+          "left_right_translation_m": 0.0001763190677035578,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006289016004291873,
+          "right_object_translation_m": 0.00036381068244606033,
+          "valid": false
+        },
+        "id": "right_positive_fx",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0008185978338236508,
+            "translation_m": 0.0004413093464534519
+          },
+          "right": {
+            "pair_q_inf_rad": 3.203749656677246e-05,
+            "rotation_rad": 0.0006289016004291873,
+            "translation_m": 0.00032805104986921146
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008185978338236508,
+          "left_object_translation_m": 0.00048436180478440534,
+          "left_right_rotation_rad": 0.001355629872160723,
+          "left_right_translation_m": 0.00016242364662220522,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006432366977628845,
+          "right_object_translation_m": 0.0003751459664851845,
+          "valid": false
+        },
+        "id": "right_negative_fx",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 0.0,
+            "rotation_rad": 0.0008185978338236508,
+            "translation_m": 0.0004413093464534519
+          },
+          "right": {
+            "pair_q_inf_rad": 3.30507755279541e-05,
+            "rotation_rad": 0.0006432366977628845,
+            "translation_m": 0.0003377982512492466
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008410649320141367,
+          "left_object_translation_m": 0.0004998632701230344,
+          "left_right_rotation_rad": 0.0013746526522789649,
+          "left_right_translation_m": 0.00018112360661431403,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006523421372076276,
+          "right_object_translation_m": 0.00038594487384000734,
+          "valid": false
+        },
+        "id": "opposing_contact_line",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 2.6702880859375e-05,
+            "rotation_rad": 0.0008410649320141367,
+            "translation_m": 0.0004556548004276389
+          },
+          "right": {
+            "pair_q_inf_rad": 2.9802322387695312e-05,
+            "rotation_rad": 0.0006523421372076276,
+            "translation_m": 0.00034856903217372876
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0007708681829455814,
+          "left_object_translation_m": 0.00045292987093519254,
+          "left_right_rotation_rad": 0.0012660257225205359,
+          "left_right_translation_m": 0.00014684201920964,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0005987696919288128,
+          "right_object_translation_m": 0.0003447019064870454,
+          "valid": false
+        },
+        "id": "same_direction",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 5.054473876953125e-05,
+            "rotation_rad": 0.0007708681829455814,
+            "translation_m": 0.0004122973603461505
+          },
+          "right": {
+            "pair_q_inf_rad": 4.673004150390625e-05,
+            "rotation_rad": 0.0005987696919288128,
+            "translation_m": 0.0003099763613044593
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0008133055090313593,
+          "left_object_translation_m": 0.00047793474785412006,
+          "left_right_rotation_rad": 0.00134267104741277,
+          "left_right_translation_m": 0.00015742547957940445,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006432366977628845,
+          "right_object_translation_m": 0.0003751459664851845,
+          "valid": false
+        },
+        "id": "opposing_offset_forces",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 3.6835670471191406e-05,
+            "rotation_rad": 0.0008133055090313593,
+            "translation_m": 0.0004357949548219165
+          },
+          "right": {
+            "pair_q_inf_rad": 3.30507755279541e-05,
+            "rotation_rad": 0.0006432366977628845,
+            "translation_m": 0.0003377982512492466
+          }
+        },
+        "status": "REJECTED"
+      },
+      {
+        "failure_basis": "full frozen G1 bilateral closure rejected before wrench integration",
+        "frozen_g1_closure": {
+          "left_object_rotation_rad": 0.0007894828425371827,
+          "left_object_translation_m": 0.0004614646976216453,
+          "left_right_rotation_rad": 0.001292188142454227,
+          "left_right_translation_m": 0.0001499591456212693,
+          "reasons": [
+            "LEFT_RIGHT_OBJECT_TRANSLATION_MISMATCH",
+            "LEFT_RIGHT_OBJECT_ROTATION_MISMATCH",
+            "LEFT_GRASP_TRANSLATION_MISMATCH",
+            "RIGHT_GRASP_TRANSLATION_MISMATCH"
+          ],
+          "right_object_rotation_rad": 0.0006088644578833178,
+          "right_object_translation_m": 0.0003556591017546942,
+          "valid": false
+        },
+        "id": "asymmetric",
+        "pre_gate_grasp_residuals": {
+          "left": {
+            "pair_q_inf_rad": 4.100799560546875e-05,
+            "rotation_rad": 0.0007894828425371827,
+            "translation_m": 0.00041999283638993555
+          },
+          "right": {
+            "pair_q_inf_rad": 2.3126602172851562e-05,
+            "rotation_rad": 0.0006088644578833178,
+            "translation_m": 0.0003203729937290453
+          }
+        },
+        "status": "REJECTED"
+      }
+    ],
+    "formal_case_count": 9,
+    "source_evaluation": "offline/task28_p2_3/evidence/evaluation_final/evaluation.json",
+    "source_report": "docs/tasks/TASK28_G3_P2_3_BILATERAL_STATIC_INTEGRATION.md",
+    "source_sha256": {
+      "docs/tasks/TASK28_G3_P2_3_BILATERAL_STATIC_INTEGRATION.md": "e60b7bce0d1caa5c75fd0653e3fa40d5967e40615df060193133ca40ee1ad9a2",
+      "offline/task28_g1_1/task28_validator/closed_chain.py": "2d5d1402580c3b0787dffa034ac38d14479458a422e49de0073370d2e7749b51",
+      "offline/task28_p2_1/grasp.py": "ff28a183c1f4844c48d522225bd7073d17bb752b645190ec495681d403639ad6",
+      "offline/task28_p2_3/evidence/evaluation_final/evaluation.json": "cdb36655e5d1072724952a497410da6a1187a69b1c14ba96f1b4bff7624543f3",
+      "offline/task28_p2_3/integration.py": "f4865e14598ff1e1d5ccd6d95b4a1fffaca224f891a5a836d57b5bd27417a9fa"
+    },
+    "zero_case_summary": {
+      "left_grasp_rotation_rad": 0.0008185978338236508,
+      "left_grasp_translation_mm": 0.4413093464534519,
+      "relative_object_rotation_rad": 0.001336417459386783,
+      "relative_object_translation_mm": 0.16991736977826882,
+      "result": "REJECTED",
+      "right_grasp_rotation_rad": 0.0006312000389675183,
+      "right_grasp_translation_mm": 0.3333260783885495
+    }
+  },
+  "p2_3_r1_boundary": {
+    "claim_limit": "virtual net/internal decomposition and KKT checks do not establish shared physical grasp geometry or contact-force feedback",
+    "original_g3_p2_3_status": "BLOCKED",
+    "physical_contact_measured": false,
+    "scope": "ARCHIVED_VIRTUAL_WRENCH_ONLY",
+    "source_evidence": "offline/task28_p2_3_r1/evidence/virtual_replay.json",
+    "source_report": "docs/tasks/TASK28_G3_P2_3_R1_VIRTUAL_WRENCH_REPLAY.md",
+    "status": "G3_P2_3_R1_VIRTUAL_REPLAY_PASS",
+    "unloaded_loaded_physically_synchronous": false
+  },
+  "s3_preconditions": [
+    {
+      "evidence": "P2-3 loaded windows fail per-side and relative gates; no valid bilateral frame set exists.",
+      "id": "geometry_identity",
+      "required": "Same-step left/right live TCP poses, frozen object pose, object-to-TCP transforms, and per-side plus relative full-SE(3) closure within 1e-4 m / 1e-3 rad for every S3 frame.",
+      "status": "BLOCKED"
+    },
+    {
+      "evidence": "P2-3 only provides static tail windows and those tails fail; R13 original Cube approach remains continuous-safety-unestablished.",
+      "id": "relative_pose_and_closed_loop_residual",
+      "required": "Continuous or frame-complete residual record over the chosen S3 motion envelope; max relative translation/rotation and per-side FK residuals stay within the frozen G1 policy, with pre/post step identities.",
+      "status": "BLOCKED"
+    },
+    {
+      "evidence": "P2-3 scene had no Cube, suction, grasp constraint, or common contact; P2-3-R1 is archived virtual replay.",
+      "id": "shared_body_anchor_contact_identity",
+      "required": "Independent runtime identity for Cube body, both contact/anchor frames, attachment mode, contact pairs, and attach/break/release events; no synthetic attachment metadata.",
+      "status": "MISSING"
+    },
+    {
+      "evidence": "P2-3 used standalone Isaac measured joint efforts and paired resets; P2-3-R1 explicitly has no physical contact measured.",
+      "id": "bilateral_wrench_source",
+      "required": "Both arms must provide source-adapted, same-step, frame/point/symbol/unit-qualified wrench estimates with independent validity and failure latch; estimator input cannot be oracle.",
+      "status": "MISSING"
+    },
+    {
+      "evidence": "No S3 contact model or independent contact reference is present in the audited P2-3 evidence.",
+      "id": "contact_model_and_oracle",
+      "required": "Finite contact stiffness/damping/friction and wrench capacity, stable timestep, declared unilateral/bilateral subspace, independent PhysX contact reference, and abort thresholds for force, power, penetration, and solver failure.",
+      "status": "MISSING"
+    },
+    {
+      "evidence": "Original Cube approach is CONTINUOUS_SAFETY_NOT_ESTABLISHED; P2-3 was no-contact and cannot certify S3 contact motion.",
+      "id": "local_swept_safety",
+      "required": "New experiment-specific initial state and conservative continuous local swept collision/support certificate for every executed edge; hidden ACM or endpoint-only checks are insufficient.",
+      "status": "BLOCKED"
+    },
+    {
+      "evidence": "P2-1/P2-3-R1 provide math-only G/W/KKT reusable checks; current QP6 torque/contact sink is not connected to qualified physical contact sources.",
+      "id": "force_allocation_and_torque_budget",
+      "required": "Independent object net-wrench and internal-wrench references, G/W/nullspace reconstruction, per-joint effort/rate/QP feasibility under task plus force terms, and relative-pose safety gates.",
+      "status": "UNREADY"
+    }
+  ],
+  "schema": "task28.g3_p2_4_r4.s3_geometry_preconditions.v1",
+  "scope": "READ_ONLY_P2_3_GEOMETRY_AUDIT",
+  "source_scope_note": "Historical P2-3/P2-3-R1/G1 evidence was read-only; no historical file or G2 parameter was changed.",
+  "task": "TASK28 G3-P2-4-R4"
+}

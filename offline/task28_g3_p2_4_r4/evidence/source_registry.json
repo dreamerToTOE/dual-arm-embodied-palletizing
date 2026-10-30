@@ -1,0 +1,70 @@
+{
+  "schema": "task28.g3.p2_4.r4.source_registry.v1",
+  "status": "STRICT_SOURCE_ADAPTER_DEFINED",
+  "common": {
+    "joint_frame": "joint",
+    "units": "N*m",
+    "sign_convention": "positive_on_robot",
+    "joint_order": "contract-bound exact tuple; R14 FR3 order is fr3_joint1..7, fr3_finger_joint1..2",
+    "candidate_estimate_is_validated_contact_force": false
+  },
+  "sources": {
+    "simulation_drive_effort": {
+      "physical_definition": "Isaac articulation drive effort command applied over the following interval; not a sensor torque",
+      "source_identity": "isaacsim.SingleArticulation.set_joint_efforts",
+      "origin": "isaac_simulation",
+      "validation": "SIMULATION_CANDIDATE",
+      "allowed_role": "dynamics_effort_input"
+    },
+    "simulation_applied_effort": {
+      "physical_definition": "Isaac articulation effort readback actually applied by the physics actuator",
+      "source_identity": "isaacsim.get_applied_joint_efforts",
+      "origin": "isaac_simulation",
+      "validation": "SIMULATION_CANDIDATE",
+      "allowed_role": "dynamics_effort_input"
+    },
+    "simulation_projected_effort": {
+      "physical_definition": "Isaac projected/measured generalized joint effort from the solver; not a motor sensor",
+      "source_identity": "isaacsim.get_measured_joint_efforts",
+      "origin": "isaac_simulation",
+      "validation": "SIMULATION_CANDIDATE",
+      "allowed_role": "dynamics_effort_input"
+    },
+    "simulation_joint_reaction_torque": {
+      "physical_definition": "Isaac joint reaction torque reported by the physics joint/body interface",
+      "source_identity": "isaacsim.joint_reaction_torque",
+      "origin": "isaac_simulation",
+      "validation": "SIMULATION_CANDIDATE",
+      "allowed_role": "dynamics_effort_input"
+    },
+    "model_inferred_torque": {
+      "physical_definition": "model-inferred LHS torque M(q)qdd+c(q,qd)+g(q), not actuator effort",
+      "source_identity": "p2_4_model_inference",
+      "origin": "offline_model",
+      "validation": "SYNTHETIC_ONLY",
+      "allowed_role": "model_term_input"
+    },
+    "real_fr3_tau_J": {
+      "physical_definition": "libfranka RobotState.tau_J measured joint torque on the robot",
+      "source_identity": "libfranka::RobotState.tau_J",
+      "origin": "real_fr3",
+      "validation": "REAL_API_VALIDATED only after exact API, calibration, timing, sign, and order evidence",
+      "allowed_role": "dynamics_effort_input"
+    },
+    "estimated_external_torque": {
+      "physical_definition": "observer residual estimate of external generalized torque on the robot",
+      "source_identity": "task28_p2_4_observer.external_torque_estimate",
+      "origin": "offline_observer",
+      "validation": "SYNTHETIC_ONLY or SIMULATION_CANDIDATE",
+      "allowed_role": "external_torque_estimate"
+    }
+  },
+  "simulation_tau_J_equivalence": false,
+  "notes": [
+    "All signal identity, physical definition, sign, units, frame, timestamp, period, freshness and evidence hash are checked by source_adapter.py.",
+    "Simulation values carry SIMULATION_CANDIDATE provenance and cannot be labelled libfranka tau_J.",
+    "Model inferred torque and estimated external torque are rejected as actuator inputs.",
+    "Real tau_J requires exact libfranka::RobotState.tau_J identity, REAL_API_VALIDATED status, and franka_control_time_s clock.",
+    "Rejected samples do not advance the adapter sequence/timestamp cursor."
+  ]
+}
