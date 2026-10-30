@@ -5,7 +5,6 @@ from __future__ import annotations
 import importlib.util
 import os
 from pathlib import Path
-import subprocess
 import sys
 import time
 
@@ -26,6 +25,43 @@ def _load_scene(path):
     if "build_scene" in namespace:
         namespace["build_scene"]()
     return namespace
+
+
+def _enable_default_viewport_lighting():
+    """Enable Isaac's built-in viewport light rig in the session layer.
+
+    The frozen Task28 fixture intentionally has no authored light.  The
+    viewport lighting menu mounts its ``Default`` rig in the USD session
+    layer, so this changes only the GUI presentation and does not edit or
+    save the scene, robot asset, tools, or physics configuration.
+    """
+    import omni.kit.commands
+
+    result = omni.kit.commands.execute(
+        "SetLightingMenuModeCommand",
+        lighting_mode="Default",
+        usd_context_name="",
+    )
+    # The command returns (success, (mode, source)); keep a strict diagnostic
+    # so a future Kit change cannot silently recreate the black-viewport gate.
+    if not result or result[0] is not True:
+        raise RuntimeError(f"VIEWPORT_LIGHTING_DEFAULT_REJECTED:{result!r}")
+    return result
+
+
+def _capture_viewport(app, viewport, path):
+    """Capture only the active Isaac viewport, independent of desktop windows."""
+    from omni.kit.viewport.utility import capture_viewport_to_file
+
+    path = Path(path)
+    helper = capture_viewport_to_file(viewport, file_path=str(path), is_hdr=False)
+    # Kit completes the future-like capture on subsequent render updates.  Do
+    # not use a root-window screenshot: another GUI window can cover it.
+    for _ in range(15):
+        app.update()
+    if not path.is_file() or path.stat().st_size == 0:
+        raise RuntimeError(f"VIEWPORT_CAPTURE_MISSING:{path}")
+    return helper
 
 
 def main():
@@ -54,6 +90,8 @@ def main():
     os.environ["TASK28_FR3_USD"] = "/home/ubuntu2004/Documents/Codex/2026-10-25/files-pasted-by-the-user-task/work/g1_0b_asset_audit/fr3.usd"
     os.environ["TASK28_FR3_USD_SHA256"] = "3feceb47747b49f908f9719299132deb9759f2d5edb390d14f0f3ed62c63255f"
     _load_scene(scene)
+    lighting_result = _enable_default_viewport_lighting()
+    print(f"Task28-T0 viewport lighting: {lighting_result!r}")
     timeline = omni.timeline.get_timeline_interface()
     timeline.play()
     # Let the original position drives settle at their authored HOME target
@@ -67,11 +105,10 @@ def main():
         camera_prim_path="/OmniverseKit_Persp",
     )
     viewport = get_active_viewport()
-    # The fixture has no authored lights.  Wireframe is a viewport display
-    # state, so the screenshot remains readable without adding a light prim to
-    # the frozen scene.
+    # Keep the full GUI renderer visible.  The light rig above is a viewport
+    # session-layer setting; no light prim is added to the frozen scene.
     try:
-        viewport.render_mode = "Wireframe"
+        viewport.render_mode = "RaytracedLighting"
     except Exception:
         pass
     try:
@@ -82,8 +119,7 @@ def main():
         app.update()
     screenshot_dir = REPO / "offline/task28_t0/evidence"
     screenshot_dir.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["/usr/bin/import", "-window", "root",
-                    str(screenshot_dir / "gui_viewport_scene_loaded.png")], check=False)
+    _capture_viewport(app, viewport, screenshot_dir / "gui_viewport_scene_loaded.png")
     bridge_module_path = REPO / "isaac/scripts/task28_t0_torque_bridge.py"
     spec = importlib.util.spec_from_file_location("task28_t0_torque_bridge", bridge_module_path)
     module = importlib.util.module_from_spec(spec)
@@ -94,8 +130,7 @@ def main():
     # The bridge stops itself after the hold plus small HOME-neighbourhood move.
     while getattr(bridge, "_physics_sub", None) is not None and not bridge._latched_error:
         app.update()
-    subprocess.run(["/usr/bin/import", "-window", "root",
-                    str(screenshot_dir / "gui_viewport_torque_final.png")], check=False)
+    _capture_viewport(app, viewport, screenshot_dir / "gui_viewport_torque_final.png")
     time.sleep(1.0)
     timeline.stop()
     app.update()
