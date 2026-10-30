@@ -1,0 +1,307 @@
+{
+  "comparison": {
+    "V10-A": {
+      "R10": {
+        "effort_peak_Nm": 28.005210807938575,
+        "effort_rate_peak_Nm_s": 4.406856310488632,
+        "joint_tracking_peak_rad": 0.0009980120567012474,
+        "native_dq_peak_rad_s": 0.010721740312874317,
+        "relative_tcp_rotation_peak_rad": 1.174037804388388e-05,
+        "relative_tcp_translation_peak_m": 8.930067553529052e-05,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+        "virtual_object_tracking_peak_m": 0.0005786200449342479
+      },
+      "R11": {
+        "effort_peak_Nm": 28.008895498002566,
+        "effort_rate_peak_Nm_s": 3.9023878950778546,
+        "joint_tracking_peak_rad": 0.00035110051068976134,
+        "native_dq_peak_rad_s": 0.00786183774471283,
+        "relative_tcp_rotation_peak_rad": 9.715867510060218e-06,
+        "relative_tcp_translation_peak_m": 2.987216642037498e-05,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_PASS",
+        "virtual_object_tracking_peak_m": 0.00019977726808718564
+      }
+    },
+    "V10-B": {
+      "R10": {
+        "effort_peak_Nm": 28.042824113298312,
+        "effort_rate_peak_Nm_s": 3.7235930912205717,
+        "joint_tracking_peak_rad": 0.0009819965186539381,
+        "native_dq_peak_rad_s": 0.010721740312874317,
+        "relative_tcp_rotation_peak_rad": 5.5989157557228354e-05,
+        "relative_tcp_translation_peak_m": 0.0002873018951127113,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+        "virtual_object_tracking_peak_m": 0.000982210059761932
+      },
+      "R11": {
+        "effort_peak_Nm": 28.02573459131479,
+        "effort_rate_peak_Nm_s": 4.583225312306407,
+        "joint_tracking_peak_rad": 0.00042102005912836304,
+        "native_dq_peak_rad_s": 0.00786183774471283,
+        "relative_tcp_rotation_peak_rad": 3.1028503974046714e-05,
+        "relative_tcp_translation_peak_m": 7.172790556409382e-05,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+        "virtual_object_tracking_peak_m": 0.00029982901047308024
+      }
+    },
+    "V10-C": {
+      "R10": {
+        "effort_peak_Nm": 28.04708174964257,
+        "effort_rate_peak_Nm_s": 3.755185541253354,
+        "joint_tracking_peak_rad": 0.0009704616554176981,
+        "native_dq_peak_rad_s": 0.010721740312874317,
+        "relative_tcp_rotation_peak_rad": 8.235867621938606e-05,
+        "relative_tcp_translation_peak_m": 0.00021200663831528416,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+        "virtual_object_tracking_peak_m": 0.0009835231666172953
+      },
+      "R11": {
+        "effort_peak_Nm": 28.027873764915004,
+        "effort_rate_peak_Nm_s": 4.616290059530552,
+        "joint_tracking_peak_rad": 0.00043769561404150004,
+        "native_dq_peak_rad_s": 0.00786183774471283,
+        "relative_tcp_rotation_peak_rad": 3.446963046874841e-05,
+        "relative_tcp_translation_peak_m": 6.261548062970387e-05,
+        "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL",
+        "virtual_object_tracking_peak_m": 0.0003157614746869888
+      }
+    }
+  },
+  "decomposition": [
+    {
+      "evidence": "actual implied virtual object error; 0.578620 mm peak at step 195",
+      "interpretation": "Most of the peak is common object-space deviation because relative TCP remains 0.093523 mm.",
+      "strength": "SUPPORTED_PRIMARY_DESCRIPTIVE",
+      "term": "common_motion_deviation",
+      "value_m": 0.0005786200449342479
+    },
+    {
+      "evidence": "measured TCP relative SE(3); peak at step 196",
+      "interpretation": "Below unchanged 0.150 mm gate; not the dominant R10 V10-A peak.",
+      "strength": "SUPPORTED_PRIMARY",
+      "term": "bilateral_relative_error",
+      "value_m": 9.352281099111376e-05
+    },
+    {
+      "evidence": "direct FK of logged q_ref versus virtual goal; peak at step 186",
+      "interpretation": "At actual peak step 195 reference error is 0.000417 mm; reference path is not sufficient to explain the peak.",
+      "strength": "SUPPORTED_SECONDARY",
+      "term": "reference_trajectory_error",
+      "value_m": 0.00018435180106543872
+    },
+    {
+      "evidence": "measured TCP-implied virtual pose minus FK(q_ref), peak at step 195; native dq peak 0.0107217403 rad/s at step 183",
+      "interpretation": "Primary supported source: inherited native velocity produces joint drift while reference is already near the target.",
+      "strength": "SUPPORTED_PRIMARY",
+      "term": "dynamic_lag_after_ownership",
+      "value_m": 0.0005785558920201424
+    },
+    {
+      "evidence": "210/210 QP_OPTIMAL; qdot active 0; lookahead active 0; qdot peak 0.000844635 versus 0.12; minimum lookahead margin 0.666261 rad",
+      "interpretation": "No logged box/lookahead activation; constraint infeasibility is not supported.",
+      "strength": "SUPPORTED_PRIMARY_EXCLUSION",
+      "term": "qp_constraint_effect",
+      "value_m": 0.0
+    },
+    {
+      "evidence": "hard residual 1.19756e-10 and common residual 1.48274e-9",
+      "interpretation": "Residuals are far below the runtime fail-closed 2e-7 check; numerical residual is not supported as the source.",
+      "strength": "SUPPORTED_PRIMARY_EXCLUSION",
+      "term": "numerical_solver_residual",
+      "value_m": 1.1975606891236924e-10
+    }
+  ],
+  "execution_authorized": false,
+  "peak_attribution": {
+    "actual_common_object_error_m": 0.0005786200449342479,
+    "actual_vs_reference_error_m": 0.0005785558920201424,
+    "peak_physics_step": 195,
+    "peak_time_s": 3.2500001695007086,
+    "reference_common_object_error_m": 0.00018435180106543872,
+    "relative_tcp_translation_error_m": 9.352281099111376e-05
+  },
+  "per_time_records_file": "single_variable_diagnostics.json",
+  "physical_execution": false,
+  "replay_interpretation": "Frozen CPU semi-implicit replay reproduces the baseline peak and predicts lower startup error for velocity capture; this is diagnostic-only and not a causal proof until the R11 runtime results.",
+  "safety_status": {
+    "contact_cube_suction_D6_ros_real_commands": "FORBIDDEN",
+    "continuous_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+    "physical_approach": "BLOCKED"
+  },
+  "schema": "TASK28_R11_ERROR_DECOMPOSITION_V1",
+  "single_variable_replay": "single_variable_replay.json",
+  "source_archive": "offline/task28_p5_qp_6_r10/evidence/diagnostic/V10-A",
+  "source_head": "e6d474157f7c1adf4ff984027ac2d531555713d0",
+  "startup_transition_records": [
+    {
+      "actual_common_object_error_m": 0.00010284994121959225,
+      "actual_vs_reference_error_m": 0.00010287204079392477,
+      "applied_effort_inf_Nm": 28.000232696533203,
+      "joint_tracking_inf_rad": 0.000179290771484375,
+      "native_dq_inf_rad_s": 0.010721740312874317,
+      "physics_step": 183,
+      "qdot_inf_rad_s": 7.251699241095366e-13,
+      "qp_common_residual_inf": 7.036728225846784e-17,
+      "qp_hard_residual_inf": 5.921133226106304e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 5.429519498962509e-07,
+      "relative_tcp_rotation_error_rad": 4.414946216942845e-06,
+      "relative_tcp_translation_error_m": 1.628541408464983e-05,
+      "time_s": 3.0500001590698957
+    },
+    {
+      "actual_common_object_error_m": 0.00020402064021455158,
+      "actual_vs_reference_error_m": 0.00010692873405841299,
+      "applied_effort_inf_Nm": 27.977346420288086,
+      "joint_tracking_inf_rad": 0.0001854725171835936,
+      "native_dq_inf_rad_s": 0.010457717813551426,
+      "physics_step": 184,
+      "qdot_inf_rad_s": 3.0341442334991253e-07,
+      "qp_common_residual_inf": 3.61186637266719e-11,
+      "qp_hard_residual_inf": 7.166935025642787e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 9.709213880958203e-05,
+      "relative_tcp_rotation_error_rad": 7.069013073368029e-06,
+      "relative_tcp_translation_error_m": 3.217569310071943e-05,
+      "time_s": 3.066666826605797
+    },
+    {
+      "actual_common_object_error_m": 0.00037809697294094647,
+      "actual_vs_reference_error_m": 0.00019374539226686265,
+      "applied_effort_inf_Nm": 27.884353637695312,
+      "joint_tracking_inf_rad": 0.00033456460445158154,
+      "native_dq_inf_rad_s": 0.008308657445013523,
+      "physics_step": 186,
+      "qdot_inf_rad_s": 2.6787841198860907e-06,
+      "qp_common_residual_inf": 1.7574647178519486e-10,
+      "qp_hard_residual_inf": 7.112112141620733e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 0.00018435180106543872,
+      "relative_tcp_rotation_error_rad": 7.942275114995558e-06,
+      "relative_tcp_translation_error_m": 6.0940344289628066e-05,
+      "time_s": 3.100000161677599
+    },
+    {
+      "actual_common_object_error_m": 0.0004892350954151992,
+      "actual_vs_reference_error_m": 0.0003678479871823278,
+      "applied_effort_inf_Nm": 27.84910774230957,
+      "joint_tracking_inf_rad": 0.000635870061882815,
+      "native_dq_inf_rad_s": 0.004883113782852888,
+      "physics_step": 188,
+      "qdot_inf_rad_s": 7.297690377328081e-06,
+      "qp_common_residual_inf": 3.071727080407625e-10,
+      "qp_hard_residual_inf": 1.0606292455634173e-16,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 0.00012138730641301362,
+      "relative_tcp_rotation_error_rad": 1.1375790094856157e-05,
+      "relative_tcp_translation_error_m": 7.823718545078903e-05,
+      "time_s": 3.133333496749401
+    },
+    {
+      "actual_common_object_error_m": 0.0005597576323397073,
+      "actual_vs_reference_error_m": 0.0005555663833453358,
+      "applied_effort_inf_Nm": 27.936891555786133,
+      "joint_tracking_inf_rad": 0.0009547884644960369,
+      "native_dq_inf_rad_s": 0.0015067202039062977,
+      "physics_step": 191,
+      "qdot_inf_rad_s": 1.8138745097304176e-05,
+      "qp_common_residual_inf": 4.894225167529842e-10,
+      "qp_hard_residual_inf": 4.2135879445430273e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 4.2002590660499925e-06,
+      "relative_tcp_rotation_error_rad": 1.1160687739727435e-05,
+      "relative_tcp_translation_error_m": 9.032380983377427e-05,
+      "time_s": 3.1833334993571043
+    },
+    {
+      "actual_common_object_error_m": 0.0005786200449342479,
+      "actual_vs_reference_error_m": 0.0005785558920201424,
+      "applied_effort_inf_Nm": 27.970441818237305,
+      "joint_tracking_inf_rad": 0.0009980120567012474,
+      "native_dq_inf_rad_s": 2.189444967370946e-05,
+      "physics_step": 195,
+      "qdot_inf_rad_s": 3.9211918457959793e-05,
+      "qp_common_residual_inf": 7.054900961247492e-10,
+      "qp_hard_residual_inf": 5.4908063772812765e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 4.168143129102871e-07,
+      "relative_tcp_rotation_error_rad": 1.1565949637457368e-05,
+      "relative_tcp_translation_error_m": 9.311793778772438e-05,
+      "time_s": 3.2500001695007086
+    },
+    {
+      "actual_common_object_error_m": 0.0005774846885652229,
+      "actual_vs_reference_error_m": 0.0005774070574733477,
+      "applied_effort_inf_Nm": 27.97390365600586,
+      "joint_tracking_inf_rad": 0.000992943542777125,
+      "native_dq_inf_rad_s": 0.00029121743864379823,
+      "physics_step": 196,
+      "qdot_inf_rad_s": 4.555609592533927e-05,
+      "qp_common_residual_inf": 7.54828278095416e-10,
+      "qp_hard_residual_inf": 3.051690302367793e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 4.641064134612206e-07,
+      "relative_tcp_rotation_error_rad": 1.138438748815411e-05,
+      "relative_tcp_translation_error_m": 9.352281099111376e-05,
+      "time_s": 3.2666668370366096
+    },
+    {
+      "actual_common_object_error_m": 0.00012774442994352208,
+      "actual_vs_reference_error_m": 0.00012669166101337653,
+      "applied_effort_inf_Nm": 28.0020694732666,
+      "joint_tracking_inf_rad": 0.00021551110917161775,
+      "native_dq_inf_rad_s": 0.0010798292933031917,
+      "physics_step": 240,
+      "qdot_inf_rad_s": 0.0005284816442861218,
+      "qp_common_residual_inf": 1.3920037532854593e-09,
+      "qp_hard_residual_inf": 8.315830662963819e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 4.283381792516419e-06,
+      "relative_tcp_rotation_error_rad": 4.900253545656693e-06,
+      "relative_tcp_translation_error_m": 1.895619282174605e-05,
+      "time_s": 4.000000208616257
+    },
+    {
+      "actual_common_object_error_m": 4.376275746036859e-05,
+      "actual_vs_reference_error_m": 4.165999521359551e-05,
+      "applied_effort_inf_Nm": 28.00174331665039,
+      "joint_tracking_inf_rad": 6.971958905810371e-05,
+      "native_dq_inf_rad_s": 0.0009597415919415653,
+      "physics_step": 270,
+      "qdot_inf_rad_s": 0.0007957310046218524,
+      "qp_common_residual_inf": 6.540240783301475e-10,
+      "qp_hard_residual_inf": 1.2780033108172884e-16,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 6.389861454125898e-06,
+      "relative_tcp_rotation_error_rad": 7.522800934777522e-06,
+      "relative_tcp_translation_error_m": 5.5691301031493414e-06,
+      "time_s": 4.500000234693289
+    },
+    {
+      "actual_common_object_error_m": 2.7666415267549188e-05,
+      "actual_vs_reference_error_m": 2.7556832594859907e-05,
+      "applied_effort_inf_Nm": 28.004920959472656,
+      "joint_tracking_inf_rad": 3.885421711968817e-05,
+      "native_dq_inf_rad_s": 8.900831744540483e-05,
+      "physics_step": 392,
+      "qdot_inf_rad_s": 3.03892062764044e-07,
+      "qp_common_residual_inf": 1.070680105136483e-10,
+      "qp_hard_residual_inf": 8.174671629687155e-17,
+      "qp_status": "QP_OPTIMAL",
+      "reference_common_object_error_m": 5.415330661632091e-07,
+      "relative_tcp_rotation_error_rad": 3.578670206075391e-06,
+      "relative_tcp_translation_error_m": 1.2481347180924495e-06,
+      "time_s": 6.533333674073219
+    }
+  ],
+  "thresholds_changed": false,
+  "torque_response": {
+    "D_peak_Nm": 0.1968876915044288,
+    "P_peak_Nm": 0.03280849445203608,
+    "feedback_peak_Nm": 0.2151318073190205,
+    "gravity_peak_Nm": 28.0048828125,
+    "interpretation": "Descriptive torque/readback evidence; no saturation or rate limiting was observed.",
+    "registered_effort_peak_Nm": 28.005210876464844,
+    "registered_effort_rate_peak_Nm_s": 4.406856310488632
+  }
+}

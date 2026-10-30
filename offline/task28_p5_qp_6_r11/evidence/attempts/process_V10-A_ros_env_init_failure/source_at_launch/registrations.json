@@ -1,0 +1,70 @@
+{
+  "FORMAL": {
+    "execute": false,
+    "kind": "formal_frozen_no_contact_validation",
+    "precondition": "all V10-A/B/C and two independent eligible diagnostics pass unchanged requirements"
+  },
+  "V10-A": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "execute": true,
+    "feedback": "none",
+    "kind": "development",
+    "steps": 210,
+    "strategy": "quintic_time_parameterization_reference_consistency_only_plus_frozen_velocity_capture",
+    "velocity_capture": {
+      "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+      "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+      "tau_s": 0.1
+    }
+  },
+  "V10-B": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "execute": true,
+    "feedback": "common_object",
+    "kind": "development",
+    "steps": 210,
+    "strategy": "quintic_plus_common_virtual_se3_feedback_plus_frozen_velocity_capture",
+    "velocity_capture": {
+      "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+      "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+      "tau_s": 0.1
+    }
+  },
+  "V10-C": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "execute": true,
+    "feedback": "common_object_and_relative_pose",
+    "kind": "development",
+    "steps": 210,
+    "strategy": "quintic_plus_common_and_relative_pose_feedback_plus_frozen_velocity_capture",
+    "velocity_capture": {
+      "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+      "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+      "tau_s": 0.1
+    }
+  },
+  "V10-D": {
+    "execute": false,
+    "kind": "fresh_repeat",
+    "selection_precondition": "all V10-A/B/C independently pass unchanged R10 gates",
+    "strategy": "selected_first_eligible_A_or_B_or_C"
+  },
+  "comparison": {
+    "execute": false,
+    "kind": "historical",
+    "source": "R10 HEAD e6d474157f7c1adf4ff984027ac2d531555713d0"
+  },
+  "physical_approach": {
+    "execute": false,
+    "kind": "cpu_only_continuous_safety_audit",
+    "reason": "R10 continuous safety remains unresolved; no physical approach"
+  },
+  "schema": "TASK28_R11_REGISTRATIONS_V1",
+  "selection_rule": "Run V10-A, V10-B, V10-C in preregistered order with the single frozen velocity-capture variable. Select only a cell satisfying every unchanged R10 gate. V10-D and FORMAL remain disabled unless all required A-C cells pass."
+}

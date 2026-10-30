@@ -1,0 +1,51 @@
+{
+  "actual_effort_commands": 0,
+  "callback_dts_s": [],
+  "configuration": "V10-A",
+  "cube_contact_commands": 0,
+  "explicit_physics_steps": 0,
+  "first_failure": {
+    "last_frame_index": -1,
+    "message": "OmniGraphError: Could not create node using unrecognized type 'isaacsim.ros2.bridge.ROS2Context'. Perhaps the extension 'isaacsim.ros2.bridge' is not loaded?",
+    "phase": "BUILD",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/runtime_virtual.py\", line 148, in main\n    scene_mod.build_scene()\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py\", line 358, in build_scene\n    _build_ros_graph()\n  File \"/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/fixtures/task28_g1_0_new_single_cube_v0/scene/task28_single_cube_scene.py\", line 297, in _build_ros_graph\n    og.Controller.edit(\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/controller.py\", line 1171, in edit\n    return obj.__edit(obj, args=args, kwargs=kwargs)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/controller.py\", line 1372, in __edit\n    return __do_the_edits()\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/controller.py\", line 1288, in __do_the_edits\n    nodes_constructed = obj._process_create_nodes(  # noqa: PLW0212\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/controller.py\", line 512, in _process_create_nodes\n    nodes_constructed = [\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/controller.py\", line 513, in <listcomp>\n    obj.create_node(\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/graph_controller.py\", line 225, in create_node\n    return obj.__create_node(obj, args=args, kwargs=kwargs)\n  File \"/home/ubuntu2004/isaacsim-4.5.0/extscache/omni.graph-1.140.2+d02c707b.lx64.r.cp310/omni/graph/core/_impl/graph_controller.py\", line 307, in __create_node\n    raise og.OmniGraphError(f\"Could not create node using unrecognized type '{node_type_id}'{more}\")\nomni.graph.core._impl.errors.OmniGraphError: OmniGraphError: Could not create node using unrecognized type 'isaacsim.ros2.bridge.ROS2Context'. Perhaps the extension 'isaacsim.ros2.bridge' is not loaded?\n",
+    "type": "OmniGraphError"
+  },
+  "headless_viewport_updates_disabled": true,
+  "journal_sha256": null,
+  "kit_tokens": {
+    "appcache": "/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+    "cache": "/tmp/task28-r11-V10-A-1xtllj_4/cache/Kit/106.5/d02c707b",
+    "data": "/tmp/task28-r11-V10-A-1xtllj_4/data/Kit/Isaac-Sim Python/4.5",
+    "logs": "/tmp/task28-r11-V10-A-1xtllj_4/logs/Kit/Isaac-Sim Python/4.5"
+  },
+  "level1_source": "PENDING",
+  "level2_source": "PENDING",
+  "non_baseline_diagnostic": false,
+  "phase": "BUILD",
+  "physical_cube_identity": "PRE_CONTACT_ORIGINAL_CUBE",
+  "r11_feedback": null,
+  "recorded_frames": 0,
+  "registration": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "execute": true,
+    "feedback": "none",
+    "kind": "development",
+    "steps": 210,
+    "strategy": "quintic_time_parameterization_reference_consistency_only_plus_frozen_velocity_capture",
+    "velocity_capture": {
+      "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s); q_ref position unchanged",
+      "scope": "startup dynamic capture only; no gain, limit, QP, scene, Cube or contact change",
+      "tau_s": 0.1
+    }
+  },
+  "result_written_before_close": true,
+  "robot_command_writes": 0,
+  "ros_bridge_enabled_at_app_start": false,
+  "ros_graph_suppressed": false,
+  "status": "REJECTED",
+  "suction_commands": 0,
+  "virtual_object_identity": "FREE_HOME_VIRTUAL_COOPERATION"
+}

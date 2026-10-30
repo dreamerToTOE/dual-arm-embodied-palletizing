@@ -1,0 +1,101 @@
+{
+  "acceptance": {
+    "D6_commands": 0,
+    "clean_process_exit": true,
+    "cube_translation_m": 1e-08,
+    "joint_tracking_peak_rad": 0.02,
+    "native_dq_peak_rad_s": 0.3,
+    "relative_tcp_rotation_peak_rad": 0.001,
+    "relative_tcp_translation_peak_m": 0.00015,
+    "suction_commands": 0,
+    "unexpected_fcl_collisions": 0,
+    "virtual_object_tracking_peak_m": 0.00025
+  },
+  "created_from_head": "e6d474157f7c1adf4ff984027ac2d531555713d0",
+  "diagnostic": {
+    "offline_replay": {
+      "execution_authorized": false,
+      "model": "frozen CPU semi-implicit replay of recorded R10 V10-A qdot/M/Kp/Kd/dq0",
+      "selection_rule": "Freeze tau_s=0.10 before Isaac runs because it is the first fixed replay candidate predicted below 0.25 mm while preserving relative error below 0.15 mm; no post-run tuning",
+      "variables": [
+        "baseline native handoff",
+        "immediate zero velocity",
+        "velocity capture tau_s in [0.05,0.075,0.10,0.125]"
+      ]
+    },
+    "read_only": true,
+    "single_runtime_change": {
+      "forbidden_changes": [
+        "acceptance thresholds",
+        "QP constraints",
+        "effort gains",
+        "effort limits",
+        "rate limits",
+        "scene",
+        "fixture",
+        "Cube",
+        "suction",
+        "D6",
+        "ROS",
+        "contact"
+      ],
+      "formula": "dq_ref = qdot - dq0 * exp(-t/tau_s)",
+      "position_reference": "unchanged q_ref=q_hold+integrated_qdot",
+      "tau_s": 0.1
+    },
+    "source": "R10 V10-A immutable archive"
+  },
+  "feedback": {
+    "common_rotation_gain_s_inv": 4.0,
+    "common_translation_gain_s_inv": 4.0,
+    "correction_twist_limit_angular_rad_s": 0.01,
+    "correction_twist_limit_linear_m_s": 0.002,
+    "relative_equality": "affine measured relative pose correction",
+    "relative_rotation_gain_s_inv": 3.0,
+    "relative_translation_gain_s_inv": 3.0
+  },
+  "qp": {
+    "dimension": 14,
+    "hard": [
+      "finite source",
+      "joint velocity box",
+      "joint position lookahead q+dt*qdot within original limits with 0.02 rad margin",
+      "affine relative virtual-object twist correction"
+    ],
+    "soft": [
+      "common virtual-object feedforward plus pose feedback",
+      "joint smoothness"
+    ],
+    "solver": "strict SPD box/equality QP via shifted affine equality and independent KKT"
+  },
+  "safety": {
+    "continuous_collision_certificate": false,
+    "effort_abs_and_rate": "R8 unchanged limits",
+    "first_rejection_latches": true,
+    "no_cube_identity_promotion": true,
+    "no_physical_execution": true
+  },
+  "schema": "TASK28_R11_PREREGISTRATION_V1",
+  "scope": "R11 targeted error attribution and single-variable velocity capture on the R10 virtual no-contact runtime; unchanged acceptance thresholds and safety limits",
+  "selection": {
+    "formal": "disabled unless all V10-A/B/C and two independent diagnostics pass",
+    "order": [
+      "V10-A",
+      "V10-B",
+      "V10-C"
+    ],
+    "repeat": "disabled unless all V10-A/B/C pass unchanged gates"
+  },
+  "virtual": {
+    "amplitude_m": 0.0005,
+    "axis": "world_x",
+    "duration_s": 3.5,
+    "identity": "FREE_HOME_VIRTUAL_COOPERATION",
+    "initial_state": "actual observed FREE_HOME ownership state; no teleport",
+    "physics_dt_s": 0.016666666666666666,
+    "preflight_sample_dt_s": 0.016666666666666666,
+    "reference_dt_s": 0.016666666666666666,
+    "steps": 210,
+    "trajectory": "quintic C2 s=10u^3-15u^4+6u^5"
+  }
+}

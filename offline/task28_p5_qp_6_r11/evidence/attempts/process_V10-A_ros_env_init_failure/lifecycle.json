@@ -1,0 +1,681 @@
+{
+  "argv": [
+    "/bin/bash",
+    "-c",
+    "set -e\nexport CARB_APP_PATH=/home/ubuntu2004/isaacsim-4.5.0/kit\nexport ISAAC_PATH=/home/ubuntu2004/isaacsim-4.5.0\nexport EXP_PATH=/home/ubuntu2004/isaacsim-4.5.0/apps\nsource /home/ubuntu2004/isaacsim-4.5.0/setup_python_env.sh\nexport LD_PRELOAD=/home/ubuntu2004/isaacsim-4.5.0/kit/libcarb.so\nexec /home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 \"$@\"",
+    "r9-worker",
+    "-m",
+    "offline.task28_p5_qp_6_r11.runtime_virtual",
+    "--configuration",
+    "V10-A",
+    "--output",
+    "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A",
+    "--portable-root",
+    "/tmp/task28-r11-V10-A-1xtllj_4",
+    "--/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache"
+  ],
+  "cache_isolated": true,
+  "child_pid": 10721,
+  "clean_exit": true,
+  "configuration": "V10-A",
+  "controller_status": "REJECTED",
+  "elapsed_s": 92.97686469600012,
+  "end_utc": "2026-10-30T01:15:59.648720+00:00",
+  "exit_code": 0,
+  "isolation_verified": true,
+  "kit_tokens": {
+    "appcache": "/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+    "cache": "/tmp/task28-r11-V10-A-1xtllj_4/cache/Kit/106.5/d02c707b",
+    "data": "/tmp/task28-r11-V10-A-1xtllj_4/data/Kit/Isaac-Sim Python/4.5",
+    "logs": "/tmp/task28-r11-V10-A-1xtllj_4/logs/Kit/Isaac-Sim Python/4.5"
+  },
+  "kvdb_lock_warning": false,
+  "normal_shutdown_marker": true,
+  "owned_samples": [
+    {
+      "elapsed_s": 0.019358511000064027,
+      "members": [
+        {
+          "argv": "/bin/bash -c set -e\nexport CARB_APP_PATH=/home/ubuntu2004/isaacsim-4.5.0/kit\nexport ISAAC_PATH=/home/ubuntu2004/isaacsim-4.5.0\nexport EXP_PATH=/home/ubuntu2004/isaacsim-4.5.0/apps\nsource /home/ubuntu2004/isaacsim-4.5.0/setup_python_env.sh\nexport LD_PRELOAD=/home/ubuntu2004/isaacsim-4.5.0/kit/libcarb.so\nexec /home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 \"$@\" r9-worker -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 2.0403631090000545,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 4.061121582000055,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 6.080707607000022,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 8.100488544000086,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 10.12043497000002,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 12.139907188000052,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 14.159803677000014,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 16.179450353999982,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 18.199438026000053,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 20.218065696000053,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 22.23756025700004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 24.257209202000013,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 26.27665683300006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 28.296329040000046,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 30.32324717000006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 32.34392627700004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 34.36376050700005,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 36.38368304800008,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 38.403994503000035,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 40.425133104999986,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 42.44520371600004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 44.465054792000046,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 46.485512425000024,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 48.50438763500006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 50.524500827,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 52.54484327900002,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 54.56483654600004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 56.584043000000065,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 58.60431517100005,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 60.62490479100006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 62.64559181499999,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 64.66440312100008,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 66.68445547400006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 68.704774284,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 70.72611074300005,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 72.74626311899999,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 74.76608297100006,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 76.78605607400004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 78.80601453500003,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 80.82621123000001,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 82.84714628200004,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 84.86762761199998,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 86.88801421700009,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        },
+        {
+          "argv": "/bin/sh -c ./isaacsim.ros2.bridge.check \"/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.ros2.bridge/humble/lib/\"",
+          "pgid": 10721,
+          "pid": 11211,
+          "ppid": 10721,
+          "start_ticks": 102645,
+          "state": "S"
+        },
+        {
+          "argv": "./isaacsim.ros2.bridge.check /home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.ros2.bridge/humble/lib/",
+          "pgid": 10721,
+          "pid": 11212,
+          "ppid": 11211,
+          "start_ticks": 102645,
+          "state": "D"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 88.90846184299994,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed_s": 90.93557238900007,
+      "members": [
+        {
+          "argv": "/home/ubuntu2004/isaacsim-4.5.0/kit/python/bin/python3 -m offline.task28_p5_qp_6_r11.runtime_virtual --configuration V10-A --output /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_p5_qp_6_r11/evidence/diagnostic/V10-A --portable-root /tmp/task28-r11-V10-A-1xtllj_4 --/app/tokens/appcache=/tmp/task28-r11-V10-A-1xtllj_4/appcache",
+          "pgid": 10721,
+          "pid": 10721,
+          "ppid": 10719,
+          "start_ticks": 93966,
+          "state": "S"
+        }
+      ]
+    }
+  ],
+  "parent_pid": 10719,
+  "pgid": 10721,
+  "portable_resources_removed": true,
+  "portable_root": "/tmp/task28-r11-V10-A-1xtllj_4",
+  "postflight_competing": [],
+  "preflight_competing": [],
+  "residual_owned": [],
+  "signal": null,
+  "signals_sent": [],
+  "source_hashes": {
+    "offline/task28_p5_qp_6_r11/__init__.py": "8717978974250633271418669ff03e49519d40f9154628caffe1bb98fd6f68c7",
+    "offline/task28_p5_qp_6_r11/approach_audit.py": "b38e568a6823934070fe1bb85f8107d7e22d86413955a311f3480fa7dbd99248",
+    "offline/task28_p5_qp_6_r11/audit_cpu.py": "d1dd91eca0f110322540e6014191d75d012b69e454fca3b38af69fba55c7aa72",
+    "offline/task28_p5_qp_6_r11/continuous_safety_audit.py": "a2fe1c468fb8f8642ecb4c17ee2b40a756360aaa5d493926a086856d65fb9c59",
+    "offline/task28_p5_qp_6_r11/diagnostic.py": "0976227dad0cd6fba2067aac119d57c4413dbba7c94c1e2aeb5f30f02877dfaf",
+    "offline/task28_p5_qp_6_r11/evaluate.py": "76aa30887ba94ef6abe6f5c5ca47a76c7af16064cb0ebb5974a2d62c52656f7f",
+    "offline/task28_p5_qp_6_r11/literature_and_source_review.md": "e523b2e026654a53ec1c5b1f56aeabc68f7dfa3449c50446e9189d2687cd309a",
+    "offline/task28_p5_qp_6_r11/offline_replay.py": "0a76b59cbd4ef827e4915a27224fedf4bdb9a1d5ca8853557d670c512cf26c5e",
+    "offline/task28_p5_qp_6_r11/preregistration.json": "04d1b25e4d1055d06eac89c133f8d4be00ce66112d47b3a01b6c1f5444f0e1fe",
+    "offline/task28_p5_qp_6_r11/process_audit.py": "92130f81b1e06baa4eef9614e6f8e387deaf7dba3b58e1ca8ed32b668abc9aab",
+    "offline/task28_p5_qp_6_r11/process_runner.py": "e15b7a87c1745bd1aef1922b769bb57bb78933f515b2c5eae01f6b4b59d0b5bd",
+    "offline/task28_p5_qp_6_r11/qp_math.py": "5b74b4b88f4640149365d0b859cf6b007818e7cabe3d83964cee74e3cbd6aa96",
+    "offline/task28_p5_qp_6_r11/registrations.json": "4cdd020a9588b0a952f54d21ea612a2472dab55575d130da3aa9b3bf696fec10",
+    "offline/task28_p5_qp_6_r11/run_prior_regressions.py": "bc544aabeef40a4ae9846ff8efe629205fe5b33647efa0490c0130d6ccbc1b99",
+    "offline/task28_p5_qp_6_r11/runtime_virtual.py": "86df4e38d97401b4a1993bad6ffdf38e6384243ca635e32986cf20e03c9a17a9",
+    "offline/task28_p5_qp_6_r11/source_contract.json": "650647704e326191fc7865c7fe5b24d610e5f4d5428302241f0ecde3946928fc",
+    "offline/task28_p5_qp_6_r11/virtual_frames.py": "875037eecb8cd25cf287be5455e53d7e6fd2368e08df82d71851e8b41e4a6845"
+  },
+  "start_monotonic_s": 939.661592319,
+  "start_utc": "2026-10-30T01:14:26.460093+00:00",
+  "status": "EXITED"
+}

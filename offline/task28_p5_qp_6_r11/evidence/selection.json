@@ -1,0 +1,29 @@
+{
+  "cells": {
+    "V10-A": {
+      "eligible": true,
+      "status": "PASS_NO_CONTACT_ACCURACY_GATE_PASS"
+    },
+    "V10-B": {
+      "eligible": false,
+      "reason": "virtual_object_tracking_peak_m=0.00029982901047308024 > 0.00025",
+      "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL"
+    },
+    "V10-C": {
+      "eligible": false,
+      "reason": "virtual_object_tracking_peak_m=0.0003157614746869888 > 0.00025",
+      "status": "PASS_NO_CONTACT_ACCURACY_GATE_FAIL"
+    }
+  },
+  "continuous_safety": "CONTINUOUS_SAFETY_NOT_ESTABLISHED",
+  "formal_status": "SKIPPED_REQUIRED_A_B_C_NOT_ALL_PASS",
+  "order": [
+    "V10-A",
+    "V10-B",
+    "V10-C"
+  ],
+  "physical_execution": false,
+  "schema": "TASK28_R11_SELECTION_V1",
+  "selected_for_v10d": null,
+  "v10d_status": "SKIPPED_REQUIRED_A_B_C_NOT_ALL_PASS"
+}
