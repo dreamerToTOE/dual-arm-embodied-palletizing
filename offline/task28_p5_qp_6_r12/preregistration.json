@@ -15,6 +15,12 @@
   "diagnostic": {
     "offline_replay": {
       "model": "frozen CPU semi-implicit replay of recorded R11 qdot/M/Kp/Kd/dq0",
+      "proxy_scale_set": [
+        1.0,
+        0.75,
+        0.5,
+        0.25
+      ],
       "selection_rule": "Freeze global feedback_gain_scale=0.75 before R12 Isaac runs because the fixed proxy predicts all A/B/C below 0.25 mm with larger margin than 0.50; proxy is diagnostic only and no post-run tuning is allowed",
       "variables": [
         "R11 tau=0.10 baseline",
