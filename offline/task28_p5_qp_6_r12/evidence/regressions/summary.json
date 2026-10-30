@@ -1,0 +1,438 @@
+{
+  "schema": "TASK28_R12_PRIOR_REGRESSION_SUMMARY_V1",
+  "status": "PASS",
+  "historical_1034": 1051,
+  "r12_focused_passed": 19,
+  "new_total_including_r12": 1070,
+  "expected_prior": 1051,
+  "expected_r12_focused": 19,
+  "physics_launched": false,
+  "runs": {
+    "pre_r8": {
+      "status": "PASS",
+      "total_passed": 1015,
+      "expected_total": 1015,
+      "no_duplicate_test_directories": true,
+      "r7_tests_included": false,
+      "physics_launched": false,
+      "suites": [
+        {
+          "name": "historical",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_g1_1/tests",
+            "offline/task28_g1_2a/tests",
+            "offline/task28_g1_2b_0/tests",
+            "offline/task28_g1_2b_1/tests",
+            "offline/task28_p2_1/tests",
+            "offline/task28_p2_2/tests",
+            "offline/task28_p2_2_r1/tests",
+            "offline/task28_p2_3/tests",
+            "offline/task28_p2_3_r1/tests",
+            "offline/task28_p2_4/tests",
+            "offline/task28_p2_4_r1/tests",
+            "offline/task28_p2_4_r2/tests",
+            "offline/task28_p2_4_r3/tests",
+            "offline/task28_p4_nr_0/tests",
+            "offline/task28_p5_qp_0/tests",
+            "offline/task28_p5_qp_1/tests",
+            "offline/task28_p5_qp_2/tests",
+            "offline/task28_p5_qp_3/tests",
+            "-q",
+            "-s",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 99.65651681399959,
+          "passed": 789,
+          "expected": 789,
+          "test_directories": [
+            "offline/task28_g1_1/tests",
+            "offline/task28_g1_2a/tests",
+            "offline/task28_g1_2b_0/tests",
+            "offline/task28_g1_2b_1/tests",
+            "offline/task28_p2_1/tests",
+            "offline/task28_p2_2/tests",
+            "offline/task28_p2_2_r1/tests",
+            "offline/task28_p2_3/tests",
+            "offline/task28_p2_3_r1/tests",
+            "offline/task28_p2_4/tests",
+            "offline/task28_p2_4_r1/tests",
+            "offline/task28_p2_4_r2/tests",
+            "offline/task28_p2_4_r3/tests",
+            "offline/task28_p4_nr_0/tests",
+            "offline/task28_p5_qp_0/tests",
+            "offline/task28_p5_qp_1/tests",
+            "offline/task28_p5_qp_2/tests",
+            "offline/task28_p5_qp_3/tests"
+          ],
+          "log_sha256": "fdd3fce0179211d4615676d9e8721f72f2b4d0045d3e4a88f20a17c7936c7b87",
+          "pass": true
+        },
+        {
+          "name": "qp4",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_4/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 6.12327322100009,
+          "passed": 53,
+          "expected": 53,
+          "test_directories": [
+            "offline/task28_p5_qp_4/tests"
+          ],
+          "log_sha256": "64a69735c14866e3f0a68595cdc37bbaaadf5a0226faaab9e25de240b8227327",
+          "pass": true
+        },
+        {
+          "name": "qp5",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_5/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.5631882910001877,
+          "passed": 5,
+          "expected": 5,
+          "test_directories": [
+            "offline/task28_p5_qp_5/tests"
+          ],
+          "log_sha256": "d750c6b5c659a924d0d725e172c3aa31d18a3378e9696a5ccd110b8e346a1587",
+          "pass": true
+        },
+        {
+          "name": "qp6_r1",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r1/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:../qp6_deps",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 1.4266318330001013,
+          "passed": 30,
+          "expected": 30,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r1/tests"
+          ],
+          "log_sha256": "da0f30d45a99a366e6c9137473920cdacd63d66441706b7c0873ae73cf44eb7f",
+          "pass": true
+        },
+        {
+          "name": "qp6_r2",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r2/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.4610099089995856,
+          "passed": 12,
+          "expected": 12,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r2/tests"
+          ],
+          "log_sha256": "6b68487be8cb7888dd484c4315bec7c57a83f116ca55d197780f04e35f0d7f77",
+          "pass": true
+        },
+        {
+          "name": "qp6_r3",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r3/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.40826366399960534,
+          "passed": 7,
+          "expected": 7,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r3/tests"
+          ],
+          "log_sha256": "8e77b268860e20bfd1a0c8f416d4da525a08324403608345305a9eebf76ca0b2",
+          "pass": true
+        },
+        {
+          "name": "qp6",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:../qp6_deps",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 2.6302666020001197,
+          "passed": 54,
+          "expected": 54,
+          "test_directories": [
+            "offline/task28_p5_qp_6/tests"
+          ],
+          "log_sha256": "d5b0ff798887204254cb2ac993798d1de227167ccd96757e50ef1564d0c4606e",
+          "pass": true
+        },
+        {
+          "name": "p5_r1",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_5_r1/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.5980801989999236,
+          "passed": 6,
+          "expected": 6,
+          "test_directories": [
+            "offline/task28_p5_qp_5_r1/tests"
+          ],
+          "log_sha256": "7910c4bc2f96d85dac2302aa9be0ebcc503449d857d4a908140cf5d9d7e2319c",
+          "pass": true
+        },
+        {
+          "name": "p5_r2",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_5_r2/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 1.7569788169994354,
+          "passed": 22,
+          "expected": 22,
+          "test_directories": [
+            "offline/task28_p5_qp_5_r2/tests"
+          ],
+          "log_sha256": "b005eb10c68815d38a7b900bd9895b066f0dbd798dacf7724b930b5c0ec98ae6",
+          "pass": true
+        },
+        {
+          "name": "r4_focused",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r4/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.76419744299983,
+          "passed": 12,
+          "expected": 12,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r4/tests"
+          ],
+          "log_sha256": "53be7140f900ef6e183370cb444be05ef41f3eae4a7fb98efb93ba1d06e4e405",
+          "pass": true
+        },
+        {
+          "name": "r5_focused",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r5/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.8007997660006367,
+          "passed": 13,
+          "expected": 13,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r5/tests"
+          ],
+          "log_sha256": "e275b3c321e2583052541b0383af38771c5356b8795c30980e55e9bd428de0dc",
+          "pass": true
+        },
+        {
+          "name": "r6_focused",
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "pytest",
+            "offline/task28_p5_qp_6_r6/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib"
+          ],
+          "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+          "PYTHONPATH": ".:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "exit_code": 0,
+          "elapsed_s": 0.34219173500059696,
+          "passed": 12,
+          "expected": 12,
+          "test_directories": [
+            "offline/task28_p5_qp_6_r6/tests"
+          ],
+          "log_sha256": "0becb50d8f51974359e92415eab80f734b323f7a5c7a502e83098703486c56a5",
+          "pass": true
+        }
+      ],
+      "r7_focused_separate": {
+        "name": "r7_focused",
+        "argv": [
+          "/usr/bin/python3",
+          "-m",
+          "pytest",
+          "offline/task28_p5_qp_6_r7/tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=importlib"
+        ],
+        "cwd": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing",
+        "PYTHONPATH": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing:.:offline:offline/task28_g1_1:offline/task28_g1_2a:offline/task28_g1_2b_0:offline/task28_g1_2b_1:offline/task28_p2_1:offline/task28_p2_2:offline/task28_p2_2_r1:offline/task28_p2_3:offline/task28_p2_3_r1:offline/task28_p2_4:offline/task28_p2_4_r1:offline/task28_p2_4_r2:offline/task28_p2_4_r3:offline/task28_p4_nr_0:offline/task28_p5_qp_0:offline/task28_p5_qp_1:offline/task28_p5_qp_2:offline/task28_p5_qp_3:offline/task28_p5_qp_4:offline/task28_g1_1/tests:offline/task28_g1_2a/tests:offline/task28_g1_2b_0/tests:offline/task28_g1_2b_1/tests:offline/task28_p2_1/tests:offline/task28_p2_2/tests:offline/task28_p2_2_r1/tests:offline/task28_p2_3/tests:offline/task28_p2_3_r1/tests:offline/task28_p2_4/tests:offline/task28_p2_4_r1/tests:offline/task28_p2_4_r2/tests:offline/task28_p2_4_r3/tests:offline/task28_p4_nr_0/tests:offline/task28_p5_qp_0/tests:offline/task28_p5_qp_1/tests:offline/task28_p5_qp_2/tests:offline/task28_p5_qp_3/tests:offline/task28_p5_qp_4/tests",
+        "exit_code": 0,
+        "elapsed_s": 0.336601748999783,
+        "passed": 4,
+        "expected": 4,
+        "included_in_previous_1015": false,
+        "log_sha256": "f87e1ec159e73ceaff96b34a3bc29b017111816d05b56b64e23a829128ce891b",
+        "pass": true
+      },
+      "all_requested_historical_pass": true,
+      "new_r8_tests_included": false
+    },
+    "r8_focused": {
+      "name": "r8_focused",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "offline/task28_p5_qp_6_r8/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--import-mode=importlib"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.7875531800000317,
+      "passed": 15,
+      "expected": 15,
+      "pass": true,
+      "log_sha256": "0cd84d8f58cf2301d81dd1ccc3dc72c742a1c22c4c937f1c717e2010220f3b25"
+    },
+    "r9_focused": {
+      "name": "r9_focused",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "offline/task28_p5_qp_6_r9/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--import-mode=importlib"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.6275868610000543,
+      "passed": 17,
+      "expected": 17,
+      "pass": true,
+      "log_sha256": "101c85aa2fabcf7fb5b874412f32c47064aa79128ea74f6f3829dea7502de09b"
+    },
+    "r12_focused": {
+      "name": "r12_focused",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "offline/task28_p5_qp_6_r12/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--import-mode=importlib"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.6469116709995433,
+      "passed": 19,
+      "expected": 19,
+      "pass": true,
+      "log_sha256": "0ab3d0bc86e49e6f2d8562528c6ee05c060d8f03d998eedc60f16364e607b054"
+    }
+  }
+}
