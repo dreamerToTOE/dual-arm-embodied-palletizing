@@ -101,5 +101,8 @@ The startup handoff is now bounded and repeatable. The remaining blocker is bila
 
 ## Delivery
 
-Final commit and remote status are recorded in the delivery commit below. The selected GUI receipts are committed with this report.
+- Final commit: `da5af2d77b6b9d9c2a8b0b2efee0daace99b53ff`
+- Remote: `origin/side-suction-palletizing` at the same commit
+- Worktree: clean after push
+- The selected GUI receipts, screenshots, summaries, metrics, and JSONL logs are committed with this report.
 
