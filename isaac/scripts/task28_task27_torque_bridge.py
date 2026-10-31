@@ -157,6 +157,14 @@ class Task27TorqueBridge:
         self._qp_prev_J = None
         self._qp_prev_dq = None
         self._previous_measured_dq14 = None
+        self._attached_transition_pending = False
+        self._attached_hold_active = False
+        self._attached_hold_frames = 0
+        self._attached_hold_duration_frames = 60
+        self._attached_hold_q14 = None
+        self._attached_hold_transforms = None
+        self._cube_previous_linear_velocity = None
+        self._cube_previous_angular_velocity = None
         self._fd_prev_transforms = None
         self._task27_fk_model = None
         self._simulation_torque_config = None
@@ -175,10 +183,16 @@ class Task27TorqueBridge:
         # relative drift, so it is not promoted into the final controller.
         self._qp_relative_kp = np.array([20., 20., 20., 8., 8., 8.])
         self._qp_relative_kd = np.array([6., 6., 6., 2., 2., 2.])
-        # Preserve the validated R12/R11 posture objective.  A separate
-        # sim-only weight-10 diagnostic was run and did not reduce relative
-        # drift, so it is not promoted into the final controller.
+        # Preserve the validated R12/R11 posture objective for free approach.
+        # Loaded motion uses a separate simulation-only value; it is applied
+        # only in DUAL_ATTACHED and never changes the free-approach baseline.
         self._qp_joint_posture_weight = 0.2
+        # The cooperative objective is scaled at 1e4.  A loaded posture
+        # weight of the same order is needed for the joint-limit recovery
+        # direction to remain effective when contact reactions oppose the
+        # queued arm trajectory; the hard torque/velocity/position boxes are
+        # still authoritative.
+        self._qp_loaded_posture_weight = 1.0e4
         if self._live_qp:
             if self._qp_experiment not in ("hold", "common", "relative", "combined"):
                 raise RuntimeError(f"QP_EXPERIMENT:{self._qp_experiment}")
@@ -322,6 +336,7 @@ class Task27TorqueBridge:
                 "kd": self._qp_relative_kd.tolist() if self._live_qp else None,
             },
             "joint_posture_weight": self._qp_joint_posture_weight if self._live_qp else None,
+            "loaded_joint_posture_weight": self._qp_loaded_posture_weight if self._live_qp else None,
             "simulation_torque_config": self._simulation_torque_config,
         })
 
@@ -348,6 +363,8 @@ class Task27TorqueBridge:
         if next_mode != self._task_mode:
             previous = self._task_mode
             self._task_mode = next_mode
+            if next_mode == "DUAL_ATTACHED":
+                self._attached_transition_pending = True
             self._log({
                 "event": "TASK_MODE_EVENT_TRANSITION",
                 "physics_step": self._step,
@@ -357,6 +374,26 @@ class Task27TorqueBridge:
                 "suction_closed": surface_closed,
                 "source": "Task27_original_feed_bridge_suction_command_state",
             })
+
+    def _initialize_attached_hold(self, states, transforms):
+        if not self._attached_transition_pending or self._task_mode != "DUAL_ATTACHED":
+            return
+        self._attached_hold_q14 = np.r_[states["left"][0][:7], states["right"][0][:7]].copy()
+        self._attached_hold_transforms = {side: transforms[side].copy() for side in SIDES}
+        self._attached_hold_frames = 0
+        self._attached_hold_active = True
+        self._attached_transition_pending = False
+        self._log({
+            "event": "DUAL_ATTACHED_REFERENCE_INITIALIZED",
+            "physics_step": self._step,
+            "time_s": self._time_s,
+            "hold_frames": self._attached_hold_duration_frames,
+            "source": "measured_post_close_TCP_and_joint_state",
+            "q_hold_rad": self._attached_hold_q14.tolist(),
+            "tcp_hold_world_m": {
+                side: self._attached_hold_transforms[side][:3, 3].tolist() for side in SIDES
+            },
+        })
 
     def _surface_grippers_closed(self):
         grippers = getattr(self.feed, "grippers", None)
@@ -373,30 +410,97 @@ class Task27TorqueBridge:
         This is a runtime model term for the existing Cube_01 mass.  It does
         not alter the USD, create a D6, or infer contact from a command alone.
         """
+        cube_z = None
+        try:
+            cube_z = float(np.asarray(self.feed.rigids[0].get_world_pose()[0], dtype=float).reshape(3)[2])
+        except Exception:
+            pass
+        # While Cube_01 is still supported by the table, do not assume that
+        # either arm carries half of its weight.  Ramp the model term only
+        # after the Cube COM rises above the support plane.
+        support_z = 0.260
+        load_fraction = 0.0 if cube_z is None else float(np.clip((cube_z - support_z) / 0.010, 0.0, 1.0))
         active = (
             self._task_mode == "DUAL_ATTACHED"
             and self._cube_mass_kg is not None
             and self._surface_grippers_closed()
+            and load_fraction > 0.0
         )
         if not active:
             return np.zeros(14, dtype=float), {
                 "active": False,
                 "mass_kg": self._cube_mass_kg,
+                "cube_z_m": cube_z,
+                "load_fraction": load_fraction,
                 "source": "Task27_Cube_01_scene_metadata",
             }
         # The object gravity load is split equally between the two TCPs.  The
         # upward wrench is the generalized compensation required by
         # tau=M*qdd+h, with the original arm model and hard QP bounds intact.
-        wrench = np.array([0.0, 0.0, 0.5 * self._cube_mass_kg * 9.81, 0.0, 0.0, 0.0])
+        wrench = np.array([0.0, 0.0, load_fraction * 0.5 * self._cube_mass_kg * 9.81, 0.0, 0.0, 0.0])
         term = np.r_[jacobian_left.T @ wrench, jacobian_right.T @ wrench]
         return term, {
             "active": True,
             "mass_kg": self._cube_mass_kg,
+            "cube_z_m": cube_z,
+            "load_fraction": load_fraction,
             "split": "equal_left_right",
             "wrench_world_N_Nm_each_tcp": wrench.tolist(),
             "term_Nm": term.tolist(),
             "source": "Task27_Cube_01_scene_metadata_plus_current_frozen_TCP_Jacobian",
         }
+
+    def _cube_runtime_state(self, dt):
+        """Read Cube_01 state and runtime inertial data for load diagnostics."""
+        try:
+            cube = self.feed.rigids[0]
+            position, orientation = cube.get_world_pose()
+            linear = np.asarray(cube.get_linear_velocity(), dtype=float).reshape(3)
+            angular = np.asarray(cube.get_angular_velocity(), dtype=float).reshape(3)
+            mass = float(np.asarray(cube.get_mass(), dtype=float).reshape(-1)[0])
+            inertias = np.asarray(cube._rigid_prim_view.get_inertias(), dtype=float).reshape(-1)
+            if inertias.shape != (9,):
+                raise RuntimeError("CUBE_INERTIA_SHAPE")
+            previous_linear = self._cube_previous_linear_velocity
+            previous_angular = self._cube_previous_angular_velocity
+            self._cube_previous_linear_velocity = linear.copy()
+            self._cube_previous_angular_velocity = angular.copy()
+            return {
+                "source": "Isaac_PhysX_SingleRigidPrim_Cube_01",
+                "path": "/World/Task27/Supply/Cube_01",
+                "pose_world": {
+                    "position_m": np.asarray(position, dtype=float).reshape(3).tolist(),
+                    "orientation_xyzw": np.asarray(orientation, dtype=float).reshape(4).tolist(),
+                },
+                "linear_velocity_m_s": linear.tolist(),
+                "angular_velocity_rad_s": angular.tolist(),
+                "linear_acceleration_m_s2": (
+                    None if previous_linear is None else ((linear - previous_linear) / float(dt)).tolist()
+                ),
+                "angular_acceleration_rad_s2": (
+                    None if previous_angular is None else ((angular - previous_angular) / float(dt)).tolist()
+                ),
+                "mass_kg": mass,
+                "inertia_runtime_9": inertias.tolist(),
+                "gravity_state_source": "Task27 feed bridge runtime policy; boolean not queried here",
+                "contact_wrench_source": "not_directly_exposed_by_SurfaceGripper_D6",
+            }
+        except Exception as exc:
+            return {"source": "Isaac_PhysX_SingleRigidPrim_Cube_01", "valid": False, "error": repr(exc)}
+
+    def _d6_runtime_state(self):
+        state = {}
+        for side in SIDES:
+            path = f"/World/{side}_fr3/fr3_link8/task26_side_surface_gripper_joint"
+            prim = self.feed.stage.GetPrimAtPath(path)
+            state[side] = {"path": path, "valid": bool(prim.IsValid())}
+            if prim.IsValid():
+                for attr in ("physics:body0", "physics:body1"):
+                    try:
+                        state[side][attr] = [str(p) for p in prim.GetRelationship(attr).GetTargets()]
+                    except Exception:
+                        state[side][attr] = None
+        return state
 
     def _apply_joint_command(self, feed, side, command):
         stamp, names, positions = command
@@ -608,6 +712,15 @@ class Task27TorqueBridge:
         position sink as a target source while preventing a stale ROS point
         from creating an indefinite velocity bias.
         """
+        if self._attached_hold_active and self._attached_hold_q14 is not None:
+            offset = 0 if side == "left" else 7
+            return (
+                self._attached_hold_q14[offset:offset + 7].copy(),
+                np.zeros(7, dtype=float),
+                np.zeros(7, dtype=float),
+                int(self._attached_hold_frames),
+                "measured_dual_attached_transition_hold",
+            )
         adapter = self._trajectory_adapters[side]
         if adapter.point_count and self._trajectory_clock_origin_s is not None:
             elapsed = max(0.0, float(self._time_s) - float(self._trajectory_clock_start_s))
@@ -777,6 +890,20 @@ class Task27TorqueBridge:
             a_common_ff = 0.5 * (a_left_target + a_right_target)
             v_relative = None
             a_relative_ff = None
+        # The first attached interval is a measured configuration hold.  A
+        # queued Task27 lift point may already be present in the adapters by
+        # the time both Surface Grippers report CLOSED; allowing that point
+        # to replace the measured TCP targets would reintroduce a task-space
+        # jump even though the joint posture target is latched.  Keep all
+        # common/relative references at the measured attachment transforms
+        # until the hold interval is explicitly completed.
+        if self._attached_hold_active and self._attached_hold_transforms is not None:
+            TL_des = self._attached_hold_transforms["left"].copy()
+            TR_des = self._attached_hold_transforms["right"].copy()
+            v_common = np.zeros(6, dtype=float)
+            a_common_ff = np.zeros(6, dtype=float)
+            v_relative = np.zeros(6, dtype=float)
+            a_relative_ff = np.zeros(6, dtype=float)
         e_left = np.r_[TL_des[:3, 3] - TL[:3, 3], self._rotation_error(TL, TL_des)]
         e_right = np.r_[TR_des[:3, 3] - TR[:3, 3], self._rotation_error(TR, TR_des)]
         v_left = JL @ dq[:7]
@@ -800,6 +927,12 @@ class Task27TorqueBridge:
         else:
             v_relative = D_rel @ np.r_[np.zeros(6), v_relative]
             a_relative_ff = D_rel @ np.r_[np.zeros(6), a_relative_ff]
+        if self._attached_hold_active and self._attached_hold_transforms is not None:
+            # Reapply the hold after the trajectory-relative transport above;
+            # the adapter remains available for diagnostics but cannot command
+            # motion during the measured POST_CLOSE stabilization interval.
+            v_relative = np.zeros(6, dtype=float)
+            a_relative_ff = np.zeros(6, dtype=float)
         relative_velocity = Jrel @ dq
         if self._task_mode in ("FREE_APPROACH", "SINGLE_ARM_PUSH"):
             # These modes do not assume an attached bilateral object.  Keep
@@ -885,6 +1018,17 @@ class Task27TorqueBridge:
                 joint_posture_weight=10.0,
                 independent_joint_tracking=True,
             )
+        elif relative_objective_enabled:
+            # Loaded contact introduces unmodeled bilateral reaction forces.
+            # Keep a stronger joint reference term throughout DUAL_ATTACHED so
+            # the measured trajectory remains the tie-breaker under the
+            # cooperative task, while retaining the same hard dynamics and
+            # joint/velocity/torque boxes.  The measured POST_CLOSE hold also
+            # uses this value, so its target transition is continuous.
+            qp_config = replace(
+                qp_config,
+                joint_posture_weight=self._qp_loaded_posture_weight,
+            )
         elif not relative_objective_enabled:
             qp_config = replace(qp_config, relative_weight=0.0)
         result = solve_cooperative_torque_qp(
@@ -964,6 +1108,17 @@ class Task27TorqueBridge:
             raise RuntimeError("LIVE_QP_TORQUE_INVALID")
         self._qp_previous_tau = tau.copy()
         self._qp_solve_count += 1
+        if self._attached_hold_active:
+            self._attached_hold_frames += 1
+            if self._attached_hold_frames >= self._attached_hold_duration_frames:
+                self._attached_hold_active = False
+                self._log({
+                    "event": "DUAL_ATTACHED_REFERENCE_HOLD_COMPLETE",
+                    "physics_step": self._step,
+                    "time_s": self._time_s,
+                    "frames": self._attached_hold_frames,
+                    "source": "measured_post_close_TCP_and_joint_state",
+                })
         return {"left": tau[:7], "right": tau[7:]}, self._qp_last_diag, {
             "q_ref_rad": {side: q_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
             "dq_ref_rad_s": {side: dq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
@@ -1020,6 +1175,8 @@ class Task27TorqueBridge:
                 )
         states = {side: self._state(side) for side in SIDES}
         transforms = {side: self._tcp_transform(side) for side in SIDES}
+        cube_runtime = self._cube_runtime_state(dt)
+        d6_runtime = self._d6_runtime_state()
         measured_dq14 = np.r_[states["left"][1][:7], states["right"][1][:7]]
         if self._previous_measured_dq14 is None:
             measured_qdd14 = None
@@ -1027,6 +1184,7 @@ class Task27TorqueBridge:
             measured_qdd14 = (measured_dq14 - self._previous_measured_dq14) / float(dt)
         self._previous_measured_dq14 = measured_dq14.copy()
         self._update_task_mode_from_scene_event()
+        self._initialize_attached_hold(states, transforms)
         efforts, components = {}, {}
         clipped = {}
         dqref_decay = {}
@@ -1160,6 +1318,8 @@ class Task27TorqueBridge:
             "gravity_Nm": {side: states[side][2][:7].tolist() for side in SIDES},
             "tcp_world_m": {side: transforms[side][:3, 3].tolist() for side in SIDES},
             "tcp_pose_world": {side: transforms[side].tolist() for side in SIDES},
+            "cube_runtime": cube_runtime,
+            "surface_gripper_d6_runtime": d6_runtime,
             "qp": (dict(qp_diag, solve_count=self._qp_solve_count,
                         status=qp_diag.get("status", "UNKNOWN")) if self._live_qp else qp_diag),
             "measured_qdd14_rad_s2": (

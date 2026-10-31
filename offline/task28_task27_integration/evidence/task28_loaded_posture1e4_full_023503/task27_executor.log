@@ -1,0 +1,528 @@
+[INFO] [1793468136.204922051] [task27_five_cube_center_insert]: ========== Task26 BATCHED-FEED SIDE-SUCTION TIGHT: batches=1, cubes=5, planning_only=false, time_scale=16.00 ==========
+[INFO] [1793468136.450602566] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.0247797 seconds
+[INFO] [1793468136.450639591] [moveit_robot_model.robot_model]: Loading robot model 'dual_fr3_side_suction'...
+[INFO] [1793468136.450645102] [moveit_robot_model.robot_model]: No root/virtual joint specified in SRDF. Assuming fixed joint
+[WARN] [1793468136.459051459] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1793468136.470048543] [move_group_interface]: Ready to take commands for planning group left_arm.
+[INFO] [1793468136.474668340] [move_group_interface]: Ready to take commands for planning group right_arm.
+[INFO] [1793468136.525607760] [task27_five_cube_center_insert]: Task26 启动滑轨同步：left=0.6500 right=0.6500 rest=0.6500 world_shift_x=+0.0000 m。
+[INFO] [1793468136.525954392] [task27_five_cube_center_insert]: 推入控制参数已载入 /home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/ros_ws/install/fr3_dual_palletize/share/fr3_dual_palletize/config/task26_push_control.yaml：F_contact=1.50 N, F_target=4.00 N, M_d=2.00 kg, B_d=250.0 N*s/m, K_d=0.00, v_push<=0.016 m/s, F_jam=12.0 N
+[INFO] [1793468137.331563812] [task27_five_cube_center_insert]: Task27 槽 A 设计值=(0.500, 0.000, 0.260) 实际=(0.500, 0.000, 0.260) 偏差=0.00 mm。
+[INFO] [1793468137.331620522] [task27_five_cube_center_insert]: ########## Task27 batch 1/1: Cube_01 ##########
+[INFO] [1793468137.913164897] [task27_five_cube_center_insert]: ---------- task27_plus_outer: source=(0.500, 0.000, 0.260), target=(0.790, 0.060, 0.260) ----------
+[INFO] [1793468137.913289456] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468137.913855069] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.009147071] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.009240142] [move_group_interface]: time taken to generate plan: 0.027964 seconds
+[INFO] [1793468138.009262428] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=1/8 points=50 joint_travel=3.329.
+[INFO] [1793468138.009334625] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.009484840] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.076811414] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.077598673] [move_group_interface]: time taken to generate plan: 0.0266821 seconds
+[INFO] [1793468138.077631277] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=2/8 points=59 joint_travel=3.463.
+[INFO] [1793468138.077724790] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.077922815] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.151700514] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.152712806] [move_group_interface]: time taken to generate plan: 0.0276193 seconds
+[INFO] [1793468138.152746019] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=3/8 points=26 joint_travel=3.484.
+[INFO] [1793468138.152834702] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.153101747] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.227916666] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.228835577] [move_group_interface]: time taken to generate plan: 0.0280777 seconds
+[INFO] [1793468138.228863664] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=4/8 points=26 joint_travel=3.489.
+[INFO] [1793468138.228956233] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.229174363] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.297589513] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.297721112] [move_group_interface]: time taken to generate plan: 0.0295877 seconds
+[INFO] [1793468138.297736362] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=5/8 points=26 joint_travel=3.493.
+[INFO] [1793468138.297807230] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.297983882] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.381902032] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.382939099] [move_group_interface]: time taken to generate plan: 0.0328886 seconds
+[INFO] [1793468138.382962720] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=6/8 points=34 joint_travel=4.110.
+[INFO] [1793468138.383043685] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.383260943] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.469526780] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.470278617] [move_group_interface]: time taken to generate plan: 0.0281741 seconds
+[INFO] [1793468138.470305465] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=7/8 points=27 joint_travel=3.490.
+[INFO] [1793468138.470383084] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.470584569] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.562203245] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.562892588] [move_group_interface]: time taken to generate plan: 0.0284697 seconds
+[INFO] [1793468138.562921039] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidate sample=8/8 points=78 joint_travel=4.234.
+[INFO] [1793468138.562971611] [task27_five_cube_center_insert]: left task27_plus_outer LEFT HIGH_PRE_CONTACT RRTConnect candidates ready=8 shortest_joint_travel=3.329.
+[INFO] [1793468138.563036231] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.563231412] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.662892789] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.663943003] [move_group_interface]: time taken to generate plan: 0.0339473 seconds
+[INFO] [1793468138.663978823] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=1/8 points=41 joint_travel=4.735.
+[INFO] [1793468138.664075349] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.664323548] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.737938828] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.738659766] [move_group_interface]: time taken to generate plan: 0.0277248 seconds
+[INFO] [1793468138.738687443] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=2/8 points=34 joint_travel=5.004.
+[INFO] [1793468138.738787694] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.738969907] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.803553485] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.803870824] [move_group_interface]: time taken to generate plan: 0.0286935 seconds
+[INFO] [1793468138.803896276] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=3/8 points=39 joint_travel=4.773.
+[INFO] [1793468138.803977964] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.804171293] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.900297951] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.900768369] [move_group_interface]: time taken to generate plan: 0.035236 seconds
+[INFO] [1793468138.900792157] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=4/8 points=40 joint_travel=4.731.
+[INFO] [1793468138.900880865] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.901048465] [move_group_interface]: Planning request accepted
+[INFO] [1793468138.977878688] [move_group_interface]: Planning request complete!
+[INFO] [1793468138.978858806] [move_group_interface]: time taken to generate plan: 0.0263645 seconds
+[INFO] [1793468138.978881048] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=5/8 points=39 joint_travel=4.801.
+[INFO] [1793468138.978958284] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468138.979131752] [move_group_interface]: Planning request accepted
+[INFO] [1793468139.057557707] [move_group_interface]: Planning request complete!
+[INFO] [1793468139.057945014] [move_group_interface]: time taken to generate plan: 0.0355888 seconds
+[INFO] [1793468139.057970642] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=6/8 points=42 joint_travel=4.657.
+[INFO] [1793468139.058054584] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468139.058231825] [move_group_interface]: Planning request accepted
+[INFO] [1793468139.130357237] [move_group_interface]: Planning request complete!
+[INFO] [1793468139.131243338] [move_group_interface]: time taken to generate plan: 0.0322974 seconds
+[INFO] [1793468139.131273635] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=7/8 points=49 joint_travel=4.847.
+[INFO] [1793468139.131360649] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468139.131541715] [move_group_interface]: Planning request accepted
+[INFO] [1793468139.214741901] [move_group_interface]: Planning request complete!
+[INFO] [1793468139.214930747] [move_group_interface]: time taken to generate plan: 0.0281449 seconds
+[INFO] [1793468139.214952876] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidate sample=8/8 points=86 joint_travel=9.079.
+[INFO] [1793468139.214997329] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect candidates ready=8 shortest_joint_travel=4.657.
+[INFO] [1793468139.215007457] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT HIGH_PRE_CONTACT RRTConnect selected points=42.
+[INFO] [1793468139.497994280] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 HIGH_LEFT synchronized FCL PASS, samples=488.
+[INFO] [1793468139.514775334] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 HIGH_RIGHT synchronized FCL PASS, samples=409.
+[INFO] [1793468139.515333051] [moveit_ros.current_state_monitor]: Listening to joint states on topic 'joint_states'
+[INFO] [1793468139.569279420] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 OUTER_DESCENT Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468139.576287463] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 OUTER_DESCENT synchronized FCL PASS, samples=195.
+[INFO] [1793468139.631099160] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 CONTACT Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468139.636574352] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 CONTACT synchronized FCL PASS, samples=131.
+[INFO] [1793468139.708574140] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 LEFT_LOADED_LIFT_PROBE Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468139.718335682] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 LEFT_LOADED_LIFT_PROBE synchronized FCL PASS, samples=263.
+[INFO] [1793468139.779345505] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 LEFT_LOADED_X_PROBE Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468139.786198289] [task27_five_cube_center_insert]: task27_plus_outer LEFT_CANDIDATE_1 LEFT_LOADED_X_PROBE synchronized FCL PASS, samples=142.
+[INFO] [1793468139.786313234] [task27_five_cube_center_insert]: task27_plus_outer selected LEFT_CANDIDATE_1/8: HIGH_PRE_CONTACT -> OUTER_DESCENT -> CONTACT FCL PASS.
+[INFO] [1793468219.767288120] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468219.767367895] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468219.767394341] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468219.767405032] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468252.853821790] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.003 deg.
+[INFO] [1793468252.853883468] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468275.740629999] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.005 deg.
+[INFO] [1793468275.740702481] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.008 deg.
+[INFO] [1793468276.241342462] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.241667829] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.293079964] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.293796141] [move_group_interface]: time taken to generate plan: 0.033758 seconds
+[INFO] [1793468276.293825481] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=1/8 points=25 joint_travel=2.104.
+[INFO] [1793468276.293912447] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.294120690] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.389071646] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.389817391] [move_group_interface]: time taken to generate plan: 0.0426715 seconds
+[INFO] [1793468276.389847730] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=2/8 points=121 joint_travel=10.636.
+[INFO] [1793468276.389932532] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.390101186] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.485432805] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.485666022] [move_group_interface]: time taken to generate plan: 0.0717904 seconds
+[INFO] [1793468276.485685579] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=3/8 points=83 joint_travel=12.093.
+[INFO] [1793468276.485766966] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.485924093] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.603009275] [move_group_interface]: Planning request aborted
+[ERROR] [1793468276.603267404] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468276.603291555] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample failed=4/8.
+[INFO] [1793468276.603348781] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.603549157] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.676320690] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.677156569] [move_group_interface]: time taken to generate plan: 0.0510402 seconds
+[INFO] [1793468276.677183875] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=5/8 points=108 joint_travel=9.740.
+[INFO] [1793468276.677283467] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.677501942] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.721068096] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.721846466] [move_group_interface]: time taken to generate plan: 0.0304832 seconds
+[INFO] [1793468276.721871805] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=6/8 points=22 joint_travel=2.877.
+[INFO] [1793468276.721949027] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.722119998] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.788941851] [move_group_interface]: Planning request complete!
+[INFO] [1793468276.789654266] [move_group_interface]: time taken to generate plan: 0.0331313 seconds
+[INFO] [1793468276.789681161] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample=7/8 points=27 joint_travel=3.393.
+[INFO] [1793468276.789751752] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.789924950] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.894670437] [move_group_interface]: Planning request aborted
+[ERROR] [1793468276.894900622] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468276.894941261] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidate sample failed=8/8.
+[INFO] [1793468276.894969222] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=1 RRTConnect candidates ready=6 shortest_joint_travel=2.104.
+[INFO] [1793468276.895033038] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.895359155] [move_group_interface]: Planning request accepted
+[INFO] [1793468276.958407731] [move_group_interface]: Planning request aborted
+[ERROR] [1793468276.958437311] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468276.958467168] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample failed=1/8.
+[INFO] [1793468276.958531522] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468276.958712152] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.020389210] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.021347111] [move_group_interface]: time taken to generate plan: 0.0309586 seconds
+[INFO] [1793468277.021375779] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=2/8 points=114 joint_travel=11.563.
+[INFO] [1793468277.021468758] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.021765652] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.125347057] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.126185554] [move_group_interface]: time taken to generate plan: 0.0726087 seconds
+[INFO] [1793468277.126221697] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=3/8 points=78 joint_travel=11.173.
+[INFO] [1793468277.126328509] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.126530401] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.273456525] [move_group_interface]: Planning request aborted
+[ERROR] [1793468277.274106888] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468277.274132663] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample failed=4/8.
+[INFO] [1793468277.274193800] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.274416528] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.387706343] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.388068242] [move_group_interface]: time taken to generate plan: 0.0428304 seconds
+[INFO] [1793468277.388099734] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=5/8 points=66 joint_travel=9.491.
+[INFO] [1793468277.388194053] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.388454763] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.467353561] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.468425306] [move_group_interface]: time taken to generate plan: 0.0415811 seconds
+[INFO] [1793468277.468453571] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=6/8 points=111 joint_travel=12.695.
+[INFO] [1793468277.468550497] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.468839661] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.570228457] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.570670057] [move_group_interface]: time taken to generate plan: 0.0459071 seconds
+[INFO] [1793468277.570695218] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=7/8 points=143 joint_travel=15.369.
+[INFO] [1793468277.570785101] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.570944945] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.615378333] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.616123843] [move_group_interface]: time taken to generate plan: 0.0257782 seconds
+[INFO] [1793468277.616166750] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidate sample=8/8 points=54 joint_travel=6.014.
+[INFO] [1793468277.616214441] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=2 RRTConnect candidates ready=6 shortest_joint_travel=6.014.
+[INFO] [1793468277.616284309] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.616462094] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.747635601] [move_group_interface]: Planning request aborted
+[ERROR] [1793468277.749166482] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468277.749212482] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample failed=1/8.
+[INFO] [1793468277.749283489] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.749564165] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.860694121] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.861456760] [move_group_interface]: time taken to generate plan: 0.0367404 seconds
+[INFO] [1793468277.861484830] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=2/8 points=104 joint_travel=14.754.
+[INFO] [1793468277.861578000] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.861750830] [move_group_interface]: Planning request accepted
+[INFO] [1793468277.908973010] [move_group_interface]: Planning request complete!
+[INFO] [1793468277.909904803] [move_group_interface]: time taken to generate plan: 0.0271891 seconds
+[INFO] [1793468277.909927592] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=3/8 points=27 joint_travel=3.475.
+[INFO] [1793468277.909994775] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468277.910165793] [move_group_interface]: Planning request accepted
+[INFO] [1793468278.011519736] [move_group_interface]: Planning request complete!
+[INFO] [1793468278.011648997] [move_group_interface]: time taken to generate plan: 0.0430069 seconds
+[INFO] [1793468278.011693612] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=4/8 points=107 joint_travel=12.233.
+[INFO] [1793468278.011803369] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468278.011971645] [move_group_interface]: Planning request accepted
+[INFO] [1793468278.105220444] [move_group_interface]: Planning request complete!
+[INFO] [1793468278.105672377] [move_group_interface]: time taken to generate plan: 0.0569559 seconds
+[INFO] [1793468278.105696245] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=5/8 points=119 joint_travel=12.393.
+[INFO] [1793468278.105783033] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468278.105971530] [move_group_interface]: Planning request accepted
+[INFO] [1793468278.195311556] [move_group_interface]: Planning request complete!
+[INFO] [1793468278.195828903] [move_group_interface]: time taken to generate plan: 0.0262141 seconds
+[INFO] [1793468278.195851852] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=6/8 points=38 joint_travel=4.577.
+[INFO] [1793468278.195926674] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468278.196148097] [move_group_interface]: Planning request accepted
+[INFO] [1793468278.287676758] [move_group_interface]: Planning request complete!
+[INFO] [1793468278.288622510] [move_group_interface]: time taken to generate plan: 0.040025 seconds
+[INFO] [1793468278.288648692] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=7/8 points=82 joint_travel=10.904.
+[INFO] [1793468278.288730829] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468278.288884407] [move_group_interface]: Planning request accepted
+[INFO] [1793468278.371364195] [move_group_interface]: Planning request complete!
+[INFO] [1793468278.371499505] [move_group_interface]: time taken to generate plan: 0.0558844 seconds
+[INFO] [1793468278.371521934] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidate sample=8/8 points=97 joint_travel=15.521.
+[INFO] [1793468278.371573003] [task27_five_cube_center_insert]: right task27_plus_outer RIGHT_OUTER_APPROACH batch=3 RRTConnect candidates ready=7 shortest_joint_travel=3.475.
+[INFO] [1793468278.621679602] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_OUTER_APPROACH evaluating 19 candidates from 3 batches.
+[INFO] [1793468278.635428677] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_OUTER_CANDIDATE_1 synchronized FCL PASS, samples=232.
+[INFO] [1793468278.666429066] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CONTACT_CANDIDATE_1 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468278.669328275] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CONTACT_CANDIDATE_1 synchronized FCL PASS, samples=75.
+[INFO] [1793468278.752506339] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_COMMON_LIFT_1 left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468278.825837385] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_COMMON_LIFT_1 right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468278.840959659] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_COMMON_LIFT_1 synchronized FCL PASS, samples=263.
+[INFO] [1793468278.888991905] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_X_TRAVEL left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468278.958279433] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_X_TRAVEL right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468278.968487546] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_X_TRAVEL synchronized FCL PASS, samples=244.
+[INFO] [1793468279.012868306] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_Y_ALIGN left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.083963914] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_Y_ALIGN right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.087189898] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_Y_ALIGN synchronized FCL PASS, samples=85.
+[INFO] [1793468279.167163928] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DESCENT_TO_ENTRY left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.247885217] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DESCENT_TO_ENTRY right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468279.264599247] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DESCENT_TO_ENTRY synchronized FCL PASS, samples=288.
+[INFO] [1793468279.300247133] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_SIDE_SHORT_PUSH left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.362596094] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_SIDE_SHORT_PUSH right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468279.364587929] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_SIDE_SHORT_PUSH synchronized FCL PASS, samples=39.
+[INFO] [1793468279.435712676] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DROP_TO_TABLE left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.507617049] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DROP_TO_TABLE right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.509724145] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 COMMON_DROP_TO_TABLE synchronized FCL PASS, samples=49.
+[INFO] [1793468279.627104665] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 PREPLANNED_COMMON_RETREAT left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468279.668428298] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 PREPLANNED_COMMON_RETREAT right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468279.692972468] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CANDIDATE_1 PREPLANNED_COMMON_RETREAT synchronized FCL PASS, samples=589.
+[INFO] [1793468279.693052077] [task27_five_cube_center_insert]: task27_plus_outer selected right outer candidate=1/19 after full loaded-chain preflight.
+[INFO] [1793468279.693093221] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CONTACT final command q=[-1.0696, -0.6307, -0.9430, -2.7017, -0.6289, 2.1932, -1.5080].
+[INFO] [1793468318.714286377] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.003 deg.
+[INFO] [1793468318.714361883] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468318.714389024] [task27_five_cube_center_insert]: task27_plus_outer RIGHT_CONTACT final command q=[-0.9364, -0.4992, -1.0189, -2.6005, -0.5491, 2.2441, -1.5309].
+[INFO] [1793468332.607456579] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.003 deg.
+[INFO] [1793468332.607523371] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.012 deg.
+[INFO] [1793468332.857611214] [task27_five_cube_center_insert]: task27_plus_outer PRE_CLOSE_GEOMETRY ATTACHMENT: x=0.013 mm z=0.033 mm left_gap=1.008 mm right_gap=0.984 mm gap_delta=0.025 mm tilt=0.000 deg.
+[INFO] [1793468332.908760808] [task27_five_cube_center_insert]: task27_plus_outer PRE_CLOSE_COMMON_LIFT_PREFLIGHT left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468332.976960197] [task27_five_cube_center_insert]: task27_plus_outer PRE_CLOSE_COMMON_LIFT_PREFLIGHT right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468332.987267966] [task27_five_cube_center_insert]: task27_plus_outer PRE_CLOSE_COMMON_LIFT_PREFLIGHT synchronized FCL PASS, samples=263.
+[INFO] [1793468333.439371315] [task27_five_cube_center_insert]: task27_plus_outer POST_CLOSE ATTACHMENT: x=0.012 mm z=0.036 mm left_gap=1.008 mm right_gap=0.993 mm gap_delta=0.014 mm tilt=0.000 deg.
+[INFO] [1793468333.494787058] [task27_five_cube_center_insert]: task27_plus_outer COMMON_LIFT left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468333.568797410] [task27_five_cube_center_insert]: task27_plus_outer COMMON_LIFT right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468333.578995683] [task27_five_cube_center_insert]: task27_plus_outer COMMON_LIFT synchronized FCL PASS, samples=263.
+[INFO] [1793468377.625706728] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.035 deg.
+[INFO] [1793468377.625796028] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.037 deg.
+[INFO] [1793468377.875878293] [task27_five_cube_center_insert]: task27_plus_outer COMMON_LIFT GT=(0.500, 0.000, 0.540), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468377.875945996] [task27_five_cube_center_insert]: task27_plus_outer COMMON_LIFT ATTACHMENT: x=0.013 mm z=0.036 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.040 deg.
+[INFO] [1793468377.937254669] [task27_five_cube_center_insert]: task27_plus_outer COMMON_X_TRAVEL left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468378.027281731] [task27_five_cube_center_insert]: task27_plus_outer COMMON_X_TRAVEL right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468378.041574500] [task27_five_cube_center_insert]: task27_plus_outer COMMON_X_TRAVEL synchronized FCL PASS, samples=255.
+[INFO] [1793468420.781617963] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.032 deg.
+[INFO] [1793468420.781690702] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.036 deg.
+[INFO] [1793468421.031769367] [task27_five_cube_center_insert]: task27_plus_outer COMMON_X_TRAVEL GT=(0.770, -0.000, 0.540), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468421.031819972] [task27_five_cube_center_insert]: task27_plus_outer COMMON_X_TRAVEL ATTACHMENT: x=0.012 mm z=0.037 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.069 deg.
+[INFO] [1793468421.040400618] [task27_five_cube_center_insert]: task27_plus_outer COMMON_Y_ALIGN left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468421.116531528] [task27_five_cube_center_insert]: task27_plus_outer COMMON_Y_ALIGN right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468421.121530662] [task27_five_cube_center_insert]: task27_plus_outer COMMON_Y_ALIGN synchronized FCL PASS, samples=85.
+[INFO] [1793468436.571282282] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.051 deg.
+[INFO] [1793468436.571348759] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.025 deg.
+[INFO] [1793468436.821428587] [task27_five_cube_center_insert]: task27_plus_outer COMMON_Y_ALIGN GT=(0.770, 0.060, 0.540), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468436.821489816] [task27_five_cube_center_insert]: task27_plus_outer COMMON_Y_ALIGN ATTACHMENT: x=0.012 mm z=0.069 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.069 deg.
+[INFO] [1793468436.864251092] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DESCENT_TO_ENTRY left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468436.953506720] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DESCENT_TO_ENTRY right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468436.970168253] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DESCENT_TO_ENTRY synchronized FCL PASS, samples=288.
+[INFO] [1793468484.872604851] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.073 deg.
+[INFO] [1793468484.872671249] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.079 deg.
+[INFO] [1793468485.122745355] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DESCENT_TO_ENTRY GT=(0.770, 0.060, 0.280), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468485.122808598] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DESCENT_TO_ENTRY ATTACHMENT: x=0.016 mm z=0.042 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.000 deg.
+[INFO] [1793468485.172517846] [task27_five_cube_center_insert]: task27_plus_outer COMMON_SIDE_SHORT_PUSH left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468485.247095001] [task27_five_cube_center_insert]: task27_plus_outer COMMON_SIDE_SHORT_PUSH right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468485.249027100] [task27_five_cube_center_insert]: task27_plus_outer COMMON_SIDE_SHORT_PUSH synchronized FCL PASS, samples=39.
+[INFO] [1793468493.346407801] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.087 deg.
+[INFO] [1793468493.346461542] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.112 deg.
+[INFO] [1793468493.596531520] [task27_five_cube_center_insert]: task27_plus_outer COMMON_SIDE_SHORT_PUSH GT=(0.790, 0.060, 0.280), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468493.596579824] [task27_five_cube_center_insert]: task27_plus_outer COMMON_SIDE_SHORT_PUSH ATTACHMENT: x=0.012 mm z=0.036 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.131 deg.
+[INFO] [1793468493.600384468] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DROP_TO_TABLE left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468493.682064378] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DROP_TO_TABLE right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468493.684492906] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DROP_TO_TABLE synchronized FCL PASS, samples=49.
+[INFO] [1793468503.422075666] [task27_five_cube_center_insert]: left final joint-state settled: max_error=1.783 deg.
+[INFO] [1793468503.422137419] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.986 deg.
+[INFO] [1793468503.672160695] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DROP_TO_TABLE GT=(0.773, 0.060, 0.271), suction=(left:CLOSED right:CLOSED).
+[INFO] [1793468503.672211173] [task27_five_cube_center_insert]: task27_plus_outer COMMON_DROP_TO_TABLE ATTACHMENT: x=0.185 mm z=0.037 mm left_gap=1.006 mm right_gap=0.993 mm gap_delta=0.013 mm tilt=0.511 deg.
+[INFO] [1793468503.874668594] [task27_five_cube_center_insert]: Task26 after COMMON_DROP_TO_TABLE: cube is on the table: both side suctions are OPEN.
+[INFO] [1793468504.005139779] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_COMMON_RETREAT left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468504.056477966] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_COMMON_RETREAT right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468504.091434036] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_COMMON_RETREAT synchronized FCL PASS, samples=589.
+[INFO] [1793468600.155108181] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468600.155171974] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468600.155214757] [task27_five_cube_center_insert]: task27_plus_outer 推入段几何改用实测 Cube：entry_x=0.7124 cube_y=0.0598 cube_z=0.2600（标称 entry_x=0.7290，差 -16.6 mm）。
+[INFO] [1793468600.155229510] [task27_five_cube_center_insert]: task27_plus_outer 双臂共同退出已使推入臂到达高位；不重复执行 REGRASP_LIFT。
+[INFO] [1793468602.857600590] [task27_five_cube_center_insert]: left rail 已到位 x=0.750（目标 0.750）。
+[INFO] [1793468604.309344045] [task27_five_cube_center_insert]: right rail 已到位 x=0.750（目标 0.750）。
+[INFO] [1793468604.910200072] [task27_five_cube_center_insert]: task27_plus_outer 滑轨站位完成：基座 0.650 -> 0.750（世界偏移 0.100 m，规划世界已按偏移重建）。
+[INFO] [1793468605.179168934] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.179439792] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.310102900] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.311001963] [move_group_interface]: time taken to generate plan: 0.0526447 seconds
+[INFO] [1793468605.311089806] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.311300671] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.413765116] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.414185583] [move_group_interface]: time taken to generate plan: 0.0353189 seconds
+[INFO] [1793468605.414306592] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.414485549] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.494691958] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.495289024] [move_group_interface]: time taken to generate plan: 0.049069 seconds
+[INFO] [1793468605.495383329] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.495600292] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.573276078] [move_group_interface]: Planning request aborted
+[ERROR] [1793468605.573325843] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468605.573354951] [task27_five_cube_center_insert]: right task27_plus_outer REGRASP_NEG_X batch=1 RRTConnect candidate failed=4/8.
+[INFO] [1793468605.573425140] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.573606495] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.696466088] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.696550758] [move_group_interface]: time taken to generate plan: 0.0320629 seconds
+[INFO] [1793468605.696644739] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.696802384] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.746295584] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.747321832] [move_group_interface]: time taken to generate plan: 0.033779 seconds
+[INFO] [1793468605.747433270] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.747652620] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.813443301] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.813796395] [move_group_interface]: time taken to generate plan: 0.0381903 seconds
+[INFO] [1793468605.813879011] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.814083305] [move_group_interface]: Planning request accepted
+[INFO] [1793468605.886827990] [move_group_interface]: Planning request complete!
+[INFO] [1793468605.887541991] [move_group_interface]: time taken to generate plan: 0.0373326 seconds
+[INFO] [1793468605.887591358] [task27_five_cube_center_insert]: right task27_plus_outer REGRASP_NEG_X batch=1 candidates=7, shortest_joint_travel=7.194.
+[INFO] [1793468605.901949609] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468605.902304359] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.032640925] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.032716986] [move_group_interface]: time taken to generate plan: 0.0433688 seconds
+[INFO] [1793468606.032832252] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.033003620] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.094169308] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.094983251] [move_group_interface]: time taken to generate plan: 0.0445002 seconds
+[INFO] [1793468606.095096588] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.095385809] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.205039064] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.206032371] [move_group_interface]: time taken to generate plan: 0.0355406 seconds
+[INFO] [1793468606.206121108] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.206287690] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.276264187] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.277120093] [move_group_interface]: time taken to generate plan: 0.0300927 seconds
+[INFO] [1793468606.277211239] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.277378558] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.339705489] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.340426743] [move_group_interface]: time taken to generate plan: 0.0367689 seconds
+[INFO] [1793468606.340518986] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.340694704] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.417856904] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.418698395] [move_group_interface]: time taken to generate plan: 0.0360477 seconds
+[INFO] [1793468606.418820097] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.419019860] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.492430369] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.492656768] [move_group_interface]: time taken to generate plan: 0.0494334 seconds
+[INFO] [1793468606.492747394] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.492893048] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.629097032] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.630101056] [move_group_interface]: time taken to generate plan: 0.0501579 seconds
+[INFO] [1793468606.630148530] [task27_five_cube_center_insert]: right task27_plus_outer REGRASP_NEG_X batch=2 candidates=8, shortest_joint_travel=9.823.
+[INFO] [1793468606.633124543] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.633428935] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.757691433] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.758755110] [move_group_interface]: time taken to generate plan: 0.0518213 seconds
+[INFO] [1793468606.758858433] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.759072880] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.881782334] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.882391916] [move_group_interface]: time taken to generate plan: 0.0462769 seconds
+[INFO] [1793468606.882490314] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.882700544] [move_group_interface]: Planning request accepted
+[INFO] [1793468606.937265852] [move_group_interface]: Planning request complete!
+[INFO] [1793468606.937406061] [move_group_interface]: time taken to generate plan: 0.0281571 seconds
+[INFO] [1793468606.937510983] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468606.937999318] [move_group_interface]: Planning request accepted
+[INFO] [1793468607.042676076] [move_group_interface]: Planning request complete!
+[INFO] [1793468607.043672635] [move_group_interface]: time taken to generate plan: 0.0682196 seconds
+[INFO] [1793468607.043777412] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468607.043978295] [move_group_interface]: Planning request accepted
+[INFO] [1793468607.095290315] [move_group_interface]: Planning request complete!
+[INFO] [1793468607.095422953] [move_group_interface]: time taken to generate plan: 0.0343595 seconds
+[INFO] [1793468607.095516529] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468607.095683795] [move_group_interface]: Planning request accepted
+[INFO] [1793468607.188863147] [move_group_interface]: Planning request complete!
+[INFO] [1793468607.189554815] [move_group_interface]: time taken to generate plan: 0.0635318 seconds
+[INFO] [1793468607.189641808] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468607.189844606] [move_group_interface]: Planning request accepted
+[INFO] [1793468607.253564734] [move_group_interface]: Planning request aborted
+[ERROR] [1793468607.254221084] [move_group_interface]: MoveGroupInterface::plan() failed or timeout reached
+[WARN] [1793468607.254253720] [task27_five_cube_center_insert]: right task27_plus_outer REGRASP_NEG_X batch=3 RRTConnect candidate failed=7/8.
+[INFO] [1793468607.254326499] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468607.254608152] [move_group_interface]: Planning request accepted
+[INFO] [1793468607.304577908] [move_group_interface]: Planning request complete!
+[INFO] [1793468607.304988008] [move_group_interface]: time taken to generate plan: 0.0328416 seconds
+[INFO] [1793468607.305032908] [task27_five_cube_center_insert]: right task27_plus_outer REGRASP_NEG_X batch=3 candidates=7, shortest_joint_travel=7.064.
+[INFO] [1793468607.305069333] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_NEG_X evaluating 22 candidates from 3 batches, shortest_joint_travel=7.064.
+[INFO] [1793468607.332583967] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_1 synchronized FCL PASS, samples=672.
+[INFO] [1793468607.388810814] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.000 mm.
+[INFO] [1793468607.491105273] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=346.037 mm.
+[WARN] [1793468607.491140725] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right rejected: 中间状态离线 346.0 mm（超过 5.0 mm）；换步长重规划。
+[INFO] [1793468607.583033611] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right Cartesian fraction=1.0000 error=1 step=0.0015 attempt=1/3 line_deviation=1264.452 mm.
+[WARN] [1793468607.583068125] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right rejected: 中间状态离线 1264.5 mm（超过 5.0 mm）；换步长重规划。
+[INFO] [1793468607.605444403] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right Cartesian fraction=1.0000 error=1 step=0.0030 attempt=1/3 line_deviation=184.336 mm.
+[WARN] [1793468607.605480163] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right rejected: 中间状态离线 184.3 mm（超过 5.0 mm）；换步长重规划。
+[INFO] [1793468607.725602098] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right Cartesian fraction=1.0000 error=1 step=0.0010 attempt=1/3 line_deviation=288.964 mm.
+[WARN] [1793468607.725641492] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right rejected: 中间状态离线 289.0 mm（超过 5.0 mm）；换步长重规划。
+[WARN] [1793468607.725657799] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_1/22 passed FCL but its PUSH_INTO_BOX / CELL_RETREAT preflight failed; trying the next candidate.
+[INFO] [1793468607.749146221] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 synchronized FCL PASS, samples=574.
+[INFO] [1793468607.775985549] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.000 mm.
+[INFO] [1793468607.868522933] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468607.879679264] [task27_five_cube_center_insert]: task27_plus_outer PUSH_INTO_BOX synchronized FCL PASS, samples=288.
+[INFO] [1793468607.903638698] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_CELL_EXIT left Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.000 mm.
+[INFO] [1793468607.936421983] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_CELL_EXIT right Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468607.950125271] [task27_five_cube_center_insert]: task27_plus_outer PREPLANNED_CELL_EXIT synchronized FCL PASS, samples=295.
+[INFO] [1793468608.227096940] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.227369986] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.328505543] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.329050535] [move_group_interface]: time taken to generate plan: 0.0304079 seconds
+[INFO] [1793468608.329137916] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.329318230] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.398839521] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.398871724] [move_group_interface]: time taken to generate plan: 0.031725 seconds
+[INFO] [1793468608.398979024] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.399193388] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.465042777] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.465254151] [move_group_interface]: time taken to generate plan: 0.0305733 seconds
+[INFO] [1793468608.465358286] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.466959652] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.521338714] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.522248483] [move_group_interface]: time taken to generate plan: 0.026869 seconds
+[INFO] [1793468608.522345440] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.522663916] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.581384159] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.581778298] [move_group_interface]: time taken to generate plan: 0.0255645 seconds
+[INFO] [1793468608.581875203] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.582057734] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.656345585] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.656493416] [move_group_interface]: time taken to generate plan: 0.0278926 seconds
+[INFO] [1793468608.656568310] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.656754574] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.716868071] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.717480015] [move_group_interface]: time taken to generate plan: 0.0267021 seconds
+[INFO] [1793468608.717553845] [move_group_interface]: MoveGroup action client/server ready
+[INFO] [1793468608.717749612] [move_group_interface]: Planning request accepted
+[INFO] [1793468608.797935056] [move_group_interface]: Planning request complete!
+[INFO] [1793468608.798663131] [move_group_interface]: time taken to generate plan: 0.0356216 seconds
+[INFO] [1793468608.798708275] [task27_five_cube_center_insert]: left task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_HIGH_APPROACH candidates=8, shortest_joint_travel=3.366.
+[INFO] [1793468608.818568611] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_HIGH_APPROACH_1 synchronized FCL PASS, samples=430.
+[INFO] [1793468608.889849008] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_CONTACT_1 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468608.901468684] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_CONTACT_1 synchronized FCL PASS, samples=212.
+[INFO] [1793468609.221513323] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_PRESS_1 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.002 mm.
+[INFO] [1793468609.265197203] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_1 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.330876491] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_2 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.398142724] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_3 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.461096402] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_4 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.530947145] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_5 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.597099953] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_6 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.657657363] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_7 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.723732214] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_BACKSTOP_Y_1_SEGMENT_8 Cartesian fraction=1.0000 error=1 step=0.0020 attempt=1/3 line_deviation=0.001 mm.
+[INFO] [1793468609.746677834] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_PRESS_1 synchronized FCL PASS, samples=426.
+[INFO] [1793468609.746785783] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT SIDE_COMPACTION selected candidate=1/8: left arm presses 183.2 mm toward +Y wall.
+[INFO] [1793468609.746851718] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_CANDIDATE_2 PREPUSH_SIDE_PREFLIGHT PASS: 推入前已从同一 PUSH 末端验证侧压整链。
+[INFO] [1793468609.996969754] [task27_five_cube_center_insert]: task27_plus_outer selected shortest safe REGRASP_CANDIDATE_2/22 with full PUSH/RETREAT preflight (pusher=right).
+[INFO] [1793468609.997045178] [task27_five_cube_center_insert]: task27_plus_outer REGRASP selected goal q=[-0.0387, -1.1542, -1.5261, -1.9911, -1.1713, 1.6995, -2.7773].
+[INFO] [1793468609.997175058] [task27_five_cube_center_insert]: task27_plus_outer REGRASP_SWING 时长=5.72 s，点数=59。
+[INFO] [1793468703.856806418] [task27_five_cube_center_insert]: right final joint-state settled: max_error=0.021 deg.
+[INFO] [1793468704.106941206] [task27_five_cube_center_insert]: task27_plus_outer after REGRASP: cube=(0.773, 0.060, 0.260), drift since regrasp start=0.00 mm.
+[INFO] [1793468709.306710685] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.069 deg.
+[INFO] [1793468709.306768973] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468709.306806398] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 1/16: commanded_cube_x=0.7822, actual=0.7737, lag=8.53 mm, peak_torque=33.27 Nm.
+[INFO] [1793468714.301526087] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.627 deg.
+[INFO] [1793468714.301574623] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468714.301612084] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 2/16: commanded_cube_x=0.7938, actual=0.7819, lag=11.87 mm, peak_torque=33.18 Nm.
+[INFO] [1793468719.298049550] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.676 deg.
+[INFO] [1793468719.298111775] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468719.298141787] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 3/16: commanded_cube_x=0.8041, actual=0.7907, lag=13.43 mm, peak_torque=33.07 Nm.
+[INFO] [1793468724.297848568] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.706 deg.
+[INFO] [1793468724.297914521] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468724.297949744] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 4/16: commanded_cube_x=0.8145, actual=0.8024, lag=12.07 mm, peak_torque=32.96 Nm.
+[INFO] [1793468729.293460379] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.743 deg.
+[INFO] [1793468729.293520348] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468729.293552090] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 5/16: commanded_cube_x=0.8251, actual=0.8136, lag=11.58 mm, peak_torque=32.84 Nm.
+[INFO] [1793468734.294692392] [task27_five_cube_center_insert]: right final joint-state settled: max_error=1.778 deg.
+[INFO] [1793468734.294767545] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468734.294808894] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 6/16: commanded_cube_x=0.8362, actual=0.8248, lag=11.39 mm, peak_torque=32.73 Nm.
+[INFO] [1793468736.980945150] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[WARN] [1793468739.528349389] [task27_five_cube_center_insert]: right final joint-state at rest with bounded residual: max_error=2.492 deg (<= 3.438 deg).
+[INFO] [1793468739.528373806] [task27_five_cube_center_insert]: left final joint-state settled: max_error=0.004 deg.
+[INFO] [1793468739.528418630] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 7/16: commanded_cube_x=0.8475, actual=0.8277, lag=19.80 mm, peak_torque=32.70 Nm.
+[INFO] [1793468744.981104253] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [1793468769.548744738] [task27_five_cube_center_insert]: right final joint-state did not settle within 25.0 s: max_error=3.737781 deg.
+[ERROR] [1793468769.548800765] [task27_five_cube_center_insert]: right 超时细节（残差deg / 速度rad_s）： fr3_joint1 -1.43deg/0.013rad_s fr3_joint2 -0.13deg/0.003rad_s fr3_joint3 -0.33deg/0.002rad_s fr3_joint4 1.78deg/-0.013rad_s fr3_joint5 -0.44deg/0.003rad_s fr3_joint6 -0.73deg/0.005rad_s fr3_joint7 -3.74deg/0.025rad_s
+[ERROR] [1793468769.548807611] [task27_five_cube_center_insert]: task27_plus_outer PUSH slice 8/16 execution failed.
+[ERROR] [1793468775.751837095] [task27_five_cube_center_insert]: Task26 emergency SUCTION OFF was not confirmed on both arms.

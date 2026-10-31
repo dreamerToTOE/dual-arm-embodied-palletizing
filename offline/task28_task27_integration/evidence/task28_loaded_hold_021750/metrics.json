@@ -1,0 +1,333 @@
+{
+  "cube_initial_z_m": 0.25999972224235535,
+  "cube_lift_delta_m": 0.19057011604309082,
+  "cube_max_abs_vz_m_s": 0.07608916610479355,
+  "cube_max_z_m": 0.45056983828544617,
+  "events": [
+    {
+      "event": "TASK_MODE_EVENT_TRANSITION",
+      "physics_step": 5341,
+      "previous_mode": "FREE_APPROACH",
+      "source": "Task27_original_feed_bridge_suction_command_state",
+      "suction_closed": true,
+      "suction_commanded": {
+        "left": true,
+        "right": true
+      },
+      "task_mode": "DUAL_ATTACHED"
+    },
+    {
+      "event": "DUAL_ATTACHED_REFERENCE_INITIALIZED",
+      "hold_frames": 60,
+      "physics_step": 5341,
+      "q_hold_rad": [
+        1.3280994892120361,
+        -0.3336857557296753,
+        0.627063512802124,
+        -2.621673822402954,
+        0.2690027356147766,
+        2.3302271366119385,
+        1.7405548095703125,
+        -0.995788037776947,
+        -0.4597560465335846,
+        -0.9611817002296448,
+        -2.6057119369506836,
+        -0.49457743763923645,
+        2.266862154006958,
+        -1.5714703798294067
+      ],
+      "source": "measured_post_close_TCP_and_joint_state",
+      "tcp_hold_world_m": {
+        "left": [
+          0.5000113049964818,
+          -0.06100710526843783,
+          0.25996202940557195
+        ],
+        "right": [
+          0.5000068889691996,
+          0.060986115046352624,
+          0.25996884806239706
+        ]
+      },
+      "time_s": 89.0166666666629
+    },
+    {
+      "event": "DUAL_ATTACHED_REFERENCE_HOLD_COMPLETE",
+      "frames": 60,
+      "physics_step": 5400,
+      "source": "measured_post_close_TCP_and_joint_state",
+      "time_s": 89.99999999999618
+    },
+    {
+      "error": "RuntimeError('LIVE_QP_QP_INFEASIBLE:EMPTY_ACCELERATION_OR_TORQUE_BOX')",
+      "event": "FAIL_CLOSED",
+      "failure_applied_readback_Nm": {
+        "left": [
+          -0.2732764482498169,
+          -40.57330322265625,
+          3.431912422180176,
+          24.64724349975586,
+          -1.901519536972046,
+          1.8233410120010376,
+          -0.10387002676725388,
+          0.0,
+          0.0
+        ],
+        "right": [
+          8.206327438354492,
+          44.53517532348633,
+          42.77938461303711,
+          10.487935066223145,
+          3.083707809448242,
+          3.6293182373046875,
+          0.05687286704778671,
+          0.0,
+          0.0
+        ]
+      },
+      "failure_readback_difference_Nm": {
+        "left": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "right": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "failure_readback_difference_raw_Nm": {
+        "left": [
+          -5.192603014236852e-09,
+          -1.217535171349482e-06,
+          -5.345220177588317e-08,
+          6.541977874974236e-07,
+          6.489320636404727e-09,
+          -7.482943376047047e-09,
+          3.0078280283118985e-09,
+          0.0,
+          0.0
+        ],
+        "right": [
+          2.694160343708063e-07,
+          -8.605293899677235e-07,
+          -1.4209602738901594e-07,
+          -8.073411272846442e-08,
+          1.69895684187793e-08,
+          1.1512172992667047e-07,
+          4.3992567921868897e-10,
+          0.0,
+          0.0
+        ]
+      },
+      "last_raw_requested_effort_Nm": {
+        "left": [
+          -0.2732764430572139,
+          -40.57330200512108,
+          3.4319124756323776,
+          24.647242845558072,
+          -1.9015195434613665,
+          1.823341019483981,
+          -0.1038700297750819
+        ],
+        "right": [
+          8.206327168938458,
+          44.53517618401572,
+          42.77938475513314,
+          10.487935146957257,
+          3.0837077924586738,
+          3.6293181221829576,
+          0.05687286660786103
+        ]
+      },
+      "last_raw_requested_full_effort_Nm": {
+        "left": [
+          -0.2732764430572139,
+          -40.57330200512108,
+          3.4319124756323776,
+          24.647242845558072,
+          -1.9015195434613665,
+          1.823341019483981,
+          -0.1038700297750819,
+          0.0,
+          0.0
+        ],
+        "right": [
+          8.206327168938458,
+          44.53517618401572,
+          42.77938475513314,
+          10.487935146957257,
+          3.0837077924586738,
+          3.6293181221829576,
+          0.05687286660786103,
+          0.0,
+          0.0
+        ]
+      },
+      "last_requested_full_effort_Nm": {
+        "left": [
+          -0.2732764482498169,
+          -40.57330322265625,
+          3.431912422180176,
+          24.64724349975586,
+          -1.901519536972046,
+          1.8233410120010376,
+          -0.10387002676725388,
+          0.0,
+          0.0
+        ],
+        "right": [
+          8.206327438354492,
+          44.53517532348633,
+          42.77938461303711,
+          10.487935066223145,
+          3.083707809448242,
+          3.6293182373046875,
+          0.05687286704778671,
+          0.0,
+          0.0
+        ]
+      },
+      "physics_step": 5752,
+      "position_arm_write_count": 0
+    },
+    {
+      "event": "TASK27_TORQUE_BRIDGE_STOPPED",
+      "latched_error": "RuntimeError('LIVE_QP_QP_INFEASIBLE:EMPTY_ACCELERATION_OR_TORQUE_BOX')",
+      "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
+      "physics_steps": 5752,
+      "position_arm_write_count": 0,
+      "qp_solve_count": 5751,
+      "qp_status": "LIVE_TASK27_TORQUE_QP",
+      "qp_status_counts": {
+        "QP_INFEASIBLE": 1,
+        "QP_OPTIMAL": 5751
+      },
+      "qp_stop_reason": "EMPTY_ACCELERATION_OR_TORQUE_BOX",
+      "target_count": {
+        "left": 5143,
+        "right": 5143
+      },
+      "torque_writes": 5752
+    }
+  ],
+  "frame_count": 5752,
+  "max_q_error_deg": 81.55357900491803,
+  "max_q_error_rad": 1.4233784704211405,
+  "mode_transitions": [
+    {
+      "mode": "FREE_APPROACH",
+      "step": 1,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "mode": "DUAL_ATTACHED",
+      "step": 5341,
+      "time_s": 89.0166666666629
+    }
+  ],
+  "raw_trace": "task27_torque_bridge.jsonl.gz",
+  "run_id": "task28_loaded_hold_021750",
+  "schema": "task28.loaded_qp.receipt.v1",
+  "summary": {
+    "arm_roots": [
+      "/World/left_fr3",
+      "/World/right_fr3"
+    ],
+    "execution_time_scale": 16.0,
+    "executor_exit": -15,
+    "executor_name": "task27_five_cube_center_insert",
+    "executor_started": true,
+    "experiment": "hold",
+    "headless": false,
+    "lighting": "(True, ('Default', 'stage'))",
+    "live_qp": true,
+    "local_sweep_limit_m": 2.0,
+    "max_batches": 1,
+    "mode": "integrated",
+    "moveit_exit": 0,
+    "moveit_started": true,
+    "native_settle": {
+      "consecutive_observed": 10,
+      "consecutive_required": 10,
+      "dq_arm_rad_s": [
+        -0.00019085436360910535,
+        -0.010700101032853127,
+        -0.0006957091391086578,
+        0.005689768586307764,
+        -0.0010107556590810418,
+        6.82528770994395e-05,
+        2.8241793188499287e-05,
+        -0.0001733113022055477,
+        -0.010585050098598003,
+        -0.0005469790194183588,
+        0.005202353000640869,
+        -0.0008944892906583846,
+        5.538084587897174e-05,
+        1.7193950043292716e-05
+      ],
+      "frames": 10,
+      "max_abs_dq_rad_s": 0.010700101032853127,
+      "max_frames": 360,
+      "q_arm_rad": [
+        1.8674674720386975e-05,
+        -0.7843349575996399,
+        6.91303939674981e-05,
+        -2.3567605018615723,
+        0.00010053407459054142,
+        1.5707885026931763,
+        0.7853948473930359,
+        1.7120733900810592e-05,
+        -0.7843460440635681,
+        5.437589425127953e-05,
+        -2.356712579727173,
+        8.909473399398848e-05,
+        1.5707899332046509,
+        0.7853962182998657
+      ],
+      "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+      "settled": true,
+      "velocity_tol_rad_s": 0.05
+    },
+    "original_task26_bridge_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py",
+    "original_task26_bridge_source_sha256": "0f7123657ea8422cf0efd468e7bcd59624e144ae8c9ca315a82af57576b68dc6",
+    "original_task26_scene_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+    "original_task26_scene_source_sha256": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+    "planning_only": false,
+    "position_arm_write_count": 0,
+    "pre_contact_only": false,
+    "pre_torque_settle_frames": 360,
+    "qp_solve_count": 5751,
+    "qp_status_counts": {
+      "QP_INFEASIBLE": 1,
+      "QP_OPTIMAL": 5751
+    },
+    "qp_stop_reason": "EMPTY_ACCELERATION_OR_TORQUE_BOX",
+    "run_id": "task28_loaded_hold_021750",
+    "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py",
+    "scene_entry_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+    "scene_root": "/World/Task27",
+    "schema": "task28.task27.one_pass.v1",
+    "small_motion": false,
+    "status": "TORQUE_BRIDGE_FAIL_CLOSED",
+    "task_mode": "FREE_APPROACH",
+    "timeout_reached": true,
+    "torque_latched_error": "RuntimeError('LIVE_QP_QP_INFEASIBLE:EMPTY_ACCELERATION_OR_TORQUE_BOX')",
+    "torque_log": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_task27_integration/evidence/task28_loaded_hold_021750/task27_torque_bridge.jsonl",
+    "torque_steps": 5752,
+    "torque_writes": 5752
+  }
+}
