@@ -263,23 +263,29 @@ def main():
         for _ in range(120):
             app.update()
         capture(app, viewport, out / "scene_loaded.png")
-        if args.live_qp:
-            # Keep the original authored position drives active until native
-            # startup velocity has dissipated.  Constructing the torque bridge
-            # before this point transfers ownership while the arm is moving,
-            # which was the main source of the large first-frame dq in the
-            # previous live-QP receipt.
-            import builtins
-            feed_bridge = getattr(builtins, "_task26_batched_feed_bridge", None)
-            summary["native_settle"] = wait_native_settle(
-                app, feed_bridge, max_frames=max(1, int(args.pre_torque_settle_frames))
-            )
         spec = importlib.util.spec_from_file_location("task28_task27_torque_bridge", TORQUE_BRIDGE)
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
+        feed_bridge = None
+        if args.live_qp:
+            import builtins
+            # The original Task27 scene normally creates its feed bridge as
+            # part of scene construction.  Reuse that exact instance so
+            # startup settling does not tear down and recreate ROS/PhysX
+            # ownership.  A direct start is only a recovery path for a scene
+            # that did not register one.
+            feed_bridge = getattr(builtins, "_task26_batched_feed_bridge", None)
+            if feed_bridge is None:
+                feed_bridge = module.start_original_task27_feed_bridge()
+            if feed_bridge is None or not hasattr(feed_bridge, "articulations"):
+                raise RuntimeError("ORIGINAL_FEED_BRIDGE_INVALID")
+            summary["native_settle"] = wait_native_settle(
+                app, feed_bridge, max_frames=max(1, int(args.pre_torque_settle_frames))
+            )
         torque = module.start_task27_torque_bridge(
-            output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment
+            output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment,
+            feed_bridge=feed_bridge,
         )
         for _ in range(60):
             app.update()

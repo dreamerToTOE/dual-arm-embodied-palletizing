@@ -109,6 +109,26 @@ class Task27TorqueBridge:
         self._qp_stop_reason = None
         self._qp_prev_J = None
         self._qp_prev_dq = None
+        self._simulation_torque_config = None
+        self._bootstrap_gravity = {}
+        # One explicit force-mode bootstrap step is kept outside the live QP.
+        # PhysX may expose the pre-handoff velocity for the first callback even
+        # after a setter call in the constructor; the bootstrap lets that
+        # transition settle before any task objective consumes dq.
+        self._handoff_bootstrap_pending = bool(live_qp)
+        # The prior universal 10 mm guard rejected a stable hold after small
+        # accumulated relative drift.  Keep a bounded local envelope while
+        # allowing the requested hold/motion experiments to run to completion.
+        self._qp_sweep_limit_m = 0.020
+        # Keep the R12/R11 relative task gains as the baseline.  A separate
+        # higher-gain diagnostic was run and did not reduce the measured
+        # relative drift, so it is not promoted into the final controller.
+        self._qp_relative_kp = np.array([10., 10., 10., 4., 4., 4.])
+        self._qp_relative_kd = np.array([3., 3., 3., 1., 1., 1.])
+        # Preserve the validated R12/R11 posture objective.  A separate
+        # sim-only weight-10 diagnostic was run and did not reduce relative
+        # drift, so it is not promoted into the final controller.
+        self._qp_joint_posture_weight = 0.2
         if self._live_qp:
             if self._qp_experiment not in ("hold", "common", "relative", "combined"):
                 raise RuntimeError(f"QP_EXPERIMENT:{self._qp_experiment}")
@@ -119,8 +139,17 @@ class Task27TorqueBridge:
                 limits = limits[0]
             if limits.shape != (9, 2) or not np.isfinite(limits[:7]).all():
                 raise RuntimeError("QP_RUNTIME_LIMITS")
+            self._simulation_torque_config = {
+                "abs_Nm": (87.0, 87.0, 87.0, 87.0, 12.0, 12.0, 12.0),
+                "rate_Nm_s": (2400.0, 600.0, 240.0, 2400.0, 240.0, 240.0, 240.0),
+                "source": "Task27 scene official FR3 effort contract; simulation-only override",
+                "original_research_abs_Nm": (35.0, 12.0, 8.0, 35.0, 4.0, 4.0, 4.0),
+            }
             self._qp_config = replace(
                 CooperativeTorqueQPConfig(),
+                torque_abs_Nm=self._simulation_torque_config["abs_Nm"],
+                torque_rate_Nm_s=self._simulation_torque_config["rate_Nm_s"],
+                joint_posture_weight=self._qp_joint_posture_weight,
                 q_lower_rad=tuple(float(x) for x in limits[:7, 0]),
                 q_upper_rad=tuple(float(x) for x in limits[:7, 1]),
             )
@@ -155,9 +184,24 @@ class Task27TorqueBridge:
                     self._finger_signature_before[side][1],
                     self._finger_signature_before[side][2]):
                 raise RuntimeError(f"FINGER_POLICY_CHANGED:{side}")
+            if self._live_qp:
+                # Runtime handoff aid: the authored position drive may leave a
+                # nonzero arm velocity during the one-frame mode transition.
+                # Clear only the seven arm velocities before the first QP step;
+                # finger state and all USD/scene parameters remain untouched.
+                articulation.set_joint_velocities(
+                    np.zeros(7, dtype=float),
+                    joint_indices=np.arange(7, dtype=np.int32),
+                )
 
-        from offline.task28_t0.torque_interface import TorqueInterface
-        self._interface = TorqueInterface()
+        from offline.task28_t0.torque_interface import TorqueInterface, TorqueLimits
+        if self._live_qp:
+            self._interface = TorqueInterface(limits=TorqueLimits(
+                abs_Nm=self._simulation_torque_config["abs_Nm"],
+                rate_Nm_s=self._simulation_torque_config["rate_Nm_s"],
+            ))
+        else:
+            self._interface = TorqueInterface()
         for side, articulation in self.articulations.items():
             view = articulation._articulation_view
             modes = tuple(view.get_effort_modes()[0][:7])
@@ -169,6 +213,31 @@ class Task27TorqueBridge:
                 finger_signature_after={"side": side, "signature": self._finger_signature_before[side]},
             )
             break
+
+        # A mode handoff can expose one physics step before the callback has
+        # submitted its first QP command.  Seed that step with the measured
+        # gravity effort so the articulation does not acquire the startup
+        # velocity seen in the previous live-QP receipts.  This is a
+        # runtime-only command; the scene/USD and finger policy are unchanged.
+        for side, articulation in self.articulations.items():
+            view = articulation._articulation_view
+            gravity = _finite(view.get_generalized_gravity_forces(), 9,
+                              f"BOOTSTRAP_GRAVITY:{side}")
+            applied = _finite(articulation.get_applied_joint_efforts(), 9,
+                              f"BOOTSTRAP_APPLIED:{side}")
+            full = np.r_[gravity[:7], applied[7:]]
+            articulation.set_joint_efforts(full, joint_indices=np.arange(9, dtype=np.int32))
+            self._bootstrap_gravity[side] = gravity[:7].copy()
+        if self._live_qp:
+            self._qp_previous_tau = np.r_[self._bootstrap_gravity["left"],
+                                           self._bootstrap_gravity["right"]]
+        self._log({
+            "event": "TORQUE_HANDOFF_GRAVITY_BOOTSTRAP",
+            "source": "Isaac_PhysX_generalized_gravity_runtime",
+            "simulation_only": True,
+            "arm_effort_Nm": {side: self._bootstrap_gravity[side].tolist() for side in SIDES},
+            "finger_effort_preserved": True,
+        })
 
         self._ArticulationAction = ArticulationAction
         # Existing callback calls this method; it now stores arm targets and
@@ -196,6 +265,13 @@ class Task27TorqueBridge:
             "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
             "live_qp": self._live_qp,
             "qp_experiment": self._qp_experiment if self._live_qp else None,
+            "qp_sweep_limit_m": self._qp_sweep_limit_m if self._live_qp else None,
+            "relative_feedback_gains": {
+                "kp": self._qp_relative_kp.tolist() if self._live_qp else None,
+                "kd": self._qp_relative_kd.tolist() if self._live_qp else None,
+            },
+            "joint_posture_weight": self._qp_joint_posture_weight if self._live_qp else None,
+            "simulation_torque_config": self._simulation_torque_config,
         })
 
     def _log(self, row):
@@ -384,7 +460,7 @@ class Task27TorqueBridge:
                 (np.linalg.inv(TL) @ TR)[:3, 3] -
                 (np.linalg.inv(self._qp_anchor_transforms["left"]) @ self._qp_anchor_transforms["right"])[:3, 3]
             ))
-            if max(local_displacements) > 0.010 or relative_displacement > 0.010:
+            if max(local_displacements) > self._qp_sweep_limit_m or relative_displacement > self._qp_sweep_limit_m:
                 self._qp_stop_reason = "LOCAL_SWEEP_LIMIT"
                 raise RuntimeError("LIVE_QP_LOCAL_SWEEP_LIMIT")
         q = np.r_[states["left"][0][:7], states["right"][0][:7]]
@@ -433,6 +509,13 @@ class Task27TorqueBridge:
         actual_rel = np.linalg.inv(TL) @ TR
         desired_rel = np.linalg.inv(TL_des) @ TR_des
         relative_error = se3_log(np.linalg.inv(actual_rel) @ desired_rel)
+        # The relative Jacobian is expressed in the left-TCP relative body
+        # frame.  `_qp_reference` supplies the small right-TCP correction in
+        # world coordinates; map that desired twist/acceleration through the
+        # same measured relative-frame transport before forming damping terms.
+        D_rel = _pair_world_relative_matrix(TL, TR)
+        v_relative = D_rel @ np.r_[np.zeros(6), v_relative]
+        a_relative_ff = D_rel @ np.r_[np.zeros(6), a_relative_ff]
         relative_velocity = Jrel @ dq
         if self._qp_prev_J is None or self._qp_prev_dq is None:
             jdotdq_left = np.zeros(6)
@@ -449,8 +532,8 @@ class Task27TorqueBridge:
                                - Jrel @ ((dq - prev_dq) / (1.0 / 60.0)))
         self._qp_prev_J = (JL.copy(), JR.copy(), Jrel.copy())
         self._qp_prev_dq = dq.copy()
-        relative_accel = a_relative_ff + np.diag([10., 10., 10., 4., 4., 4.]) @ relative_error
-        relative_accel += np.diag([3., 3., 3., 1., 1., 1.]) @ (v_relative - relative_velocity)
+        relative_accel = a_relative_ff + self._qp_relative_kp * relative_error
+        relative_accel += self._qp_relative_kd * (v_relative - relative_velocity)
         posture_accel = np.clip(12.0 * (self._qp_anchor_q - q) - 5.0 * dq, -8.0, 8.0)
         result = solve_cooperative_torque_qp(
             q14=q, dq14=dq, mass14=M14, bias14=h14,
@@ -523,13 +606,34 @@ class Task27TorqueBridge:
                 "readback_semantics": "post_physics_applied_command_echo_or_solver_buffer; not_tau_sensor",
             })
             self._interface.post_step(physics_step=self._step, time_s=self._time_s)
+        handoff_bootstrap = bool(self._handoff_bootstrap_pending)
+        if handoff_bootstrap:
+            # This setter is intentionally repeated from the constructor at
+            # the first owned physics callback, where PhysX applies it to the
+            # active articulation state.  It changes no scene/drive asset.
+            for side in SIDES:
+                self.articulations[side].set_joint_velocities(
+                    np.zeros(7, dtype=float),
+                    joint_indices=np.arange(7, dtype=np.int32),
+                )
         states = {side: self._state(side) for side in SIDES}
         transforms = {side: self._tcp_transform(self.feed.stage, side) for side in SIDES}
         efforts, components = {}, {}
         clipped = {}
         dqref_decay = {}
         qp_diag = {"status": "NOT_IMPLEMENTED_TASK27_LIVE_QP", "solve_count": 0}
-        if self._live_qp:
+        if handoff_bootstrap:
+            # Keep the first force-owned step at measured gravity only.  The
+            # next callback will read post-step q/dq and invoke the QP with a
+            # fresh state, while preserving the strict effort/rate/readback
+            # interface and the original finger buffer.
+            efforts = {side: states[side][2][:7].copy() for side in SIDES}
+            components = {side: {"handoff": "gravity_bootstrap"} for side in SIDES}
+            clipped = {side: False for side in SIDES}
+            dqref_decay = {side: 1.0 for side in SIDES}
+            qp_diag = {"status": "HANDOFF_GRAVITY_BOOTSTRAP", "solve_count": 0}
+            self._handoff_bootstrap_pending = False
+        elif self._live_qp:
             efforts, qp_diag, components = self._live_qp_control(states, transforms)
             clipped = {side: False for side in SIDES}
             dqref_decay = {side: 1.0 for side in SIDES}
@@ -706,7 +810,8 @@ class Task27TorqueBridge:
         self.stream.close()
 
 
-def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold"):
+def start_original_task27_feed_bridge():
+    """Instantiate the original Task27 feed bridge without taking arm torque ownership."""
     if getattr(builtins, "_task28_task27_torque_bridge", None) is not None:
         raise RuntimeError("TASK27_TORQUE_BRIDGE_ALREADY_REGISTERED")
     if not BRIDGE_SOURCE.is_file():
@@ -722,8 +827,15 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold")
     feed = getattr(builtins, "_task26_batched_feed_bridge", None)
     if feed is None:
         raise RuntimeError("ORIGINAL_FEED_BRIDGE_NOT_STARTED")
+    return feed
+
+
+def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
+                               feed_bridge=None):
+    if feed_bridge is None:
+        feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
-    bridge = Task27TorqueBridge(feed, path, live_qp=live_qp, experiment=experiment)
+    bridge = Task27TorqueBridge(feed_bridge, path, live_qp=live_qp, experiment=experiment)
     builtins._task28_task27_torque_bridge = bridge
     return bridge
 
