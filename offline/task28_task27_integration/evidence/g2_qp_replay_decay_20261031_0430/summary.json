@@ -1,0 +1,85 @@
+{
+  "calculation_time_s_max": 0.01324509699952614,
+  "calculation_time_s_mean": 0.00920550733415509,
+  "common_task_residual_inf_max": 0.0199147381842487,
+  "execution_authorized": false,
+  "first_frames": [
+    {
+      "calculation_time_s": 0.009526380999886896,
+      "common_task_residual_inf": 3.7877946627486885e-16,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 7.606997200775459e-17,
+      "inverse_dynamics_claim": false,
+      "physics_step": 100,
+      "qdot_inf": 1.5491774529863278e-12,
+      "status": "QP_OPTIMAL"
+    },
+    {
+      "calculation_time_s": 0.00940003599953343,
+      "common_task_residual_inf": 1.3030906639857485e-05,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 1.5181667975170364e-16,
+      "inverse_dynamics_claim": false,
+      "physics_step": 101,
+      "qdot_inf": 0.0006078464233575526,
+      "status": "QP_OPTIMAL"
+    },
+    {
+      "calculation_time_s": 0.009166582999569073,
+      "common_task_residual_inf": 2.6322758542776507e-05,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 6.417121608398579e-17,
+      "inverse_dynamics_claim": false,
+      "physics_step": 102,
+      "qdot_inf": 0.001146938282499177,
+      "status": "QP_OPTIMAL"
+    }
+  ],
+  "frame_count": 416,
+  "hard_relative_residual_inf_max": 2.21001060334014e-16,
+  "inverse_dynamics_claim": false,
+  "last_frames": [
+    {
+      "calculation_time_s": 0.009064331999979913,
+      "common_task_residual_inf": 0.00024453696269537595,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 1.0234868508263162e-16,
+      "inverse_dynamics_claim": false,
+      "physics_step": 513,
+      "qdot_inf": 0.011224636273290789,
+      "status": "QP_OPTIMAL"
+    },
+    {
+      "calculation_time_s": 0.009376818999953684,
+      "common_task_residual_inf": 0.0002445506391154505,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 9.378348791999613e-17,
+      "inverse_dynamics_claim": false,
+      "physics_step": 514,
+      "qdot_inf": 0.011224657353250997,
+      "status": "QP_OPTIMAL"
+    },
+    {
+      "calculation_time_s": 0.00919032399997377,
+      "common_task_residual_inf": 0.00024456325051566566,
+      "execution_authorized": false,
+      "hard_relative_residual_inf": 6.58652819784944e-17,
+      "inverse_dynamics_claim": false,
+      "physics_step": 515,
+      "qdot_inf": 0.011224676295997715,
+      "status": "QP_OPTIMAL"
+    }
+  ],
+  "model_fk_tcp_translation_residual_max_mm": 0.11281101217263294,
+  "model_fk_tcp_translation_residual_p95_mm": 0.0537346219744431,
+  "model_identity": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/fixtures/task28_g1_0_new_single_cube_v0",
+  "physical_feedback": "joint_positions_and_logged_tcp_translation_only; orientation/J/M/c/g not bound",
+  "qp_status_counts": {
+    "QP_OPTIMAL": 416
+  },
+  "reason": "R12 is a kinematic velocity QP and remains unauthorized for Task27 torque execution",
+  "settle_index": 100,
+  "solve_count": 416,
+  "source": "offline/task28_task27_integration/evidence/g2_recovery_small_motion_decay_20261031_0420/task27_torque_bridge.jsonl",
+  "status": "DIAGNOSTIC_ONLY"
+}

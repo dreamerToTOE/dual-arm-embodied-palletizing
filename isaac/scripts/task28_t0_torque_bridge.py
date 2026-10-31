@@ -523,7 +523,15 @@ class Task28T0TorqueBridge:
             applied = {}
             for side in SIDES:
                 _, _, previous_applied, _, _ = states[side]
-                full[side] = np.r_[efforts[side], previous_applied[7:]]
+                # TorqueInterface canonicalizes the arm effort to the same
+                # float32 representation used by Isaac's command buffer.
+                # Keep the raw ``efforts`` for audit, but write the canonical
+                # values so the strict readback gate compares like-for-like.
+                canonical = np.asarray(
+                    command.canonical_left_Nm if side == "left" else command.canonical_right_Nm,
+                    dtype=float,
+                )
+                full[side] = np.r_[canonical, previous_applied[7:]]
             if self._r8_adapter is None:
                 from isaacsim.core.utils.types import ArticulationAction
                 for side in SIDES:
@@ -537,6 +545,10 @@ class Task28T0TorqueBridge:
                 "event": "TORQUE_FRAME", "physics_step": step, "time_s": now,
                 "dt_s": dt, "phase": "hold" if self._demo_index < 60 else "small_motion",
                 "requested_arm_effort_Nm": {side: efforts[side].tolist() for side in SIDES},
+                "canonical_command_arm_effort_Nm": {
+                    side: np.asarray(command.canonical_left_Nm if side == "left" else command.canonical_right_Nm, dtype=float).tolist()
+                    for side in SIDES
+                },
                 "applied_effort_command_Nm": {side: applied[side][:7].tolist() for side in SIDES},
                 "projected_effort_not_sensor_Nm": {side: states[side][3][:7].tolist() for side in SIDES},
                 "q_rad": {side: states[side][0][:7].tolist() for side in SIDES},

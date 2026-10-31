@@ -63,7 +63,7 @@ class TorqueLimits:
 
 @dataclass(frozen=True)
 class TorqueCommand:
-    """A synchronized pair accepted for one future physics step."""
+    """A synchronized raw/canonical pair accepted for one future step."""
 
     physics_step: int
     time_s: float
@@ -72,6 +72,23 @@ class TorqueCommand:
     frame_id: str
     units: str = "N*m"
     source: str = "task28_t0_torque_interface"
+    # ``left_Nm``/``right_Nm`` retain the caller's raw float64 values for
+    # auditability.  Isaac's command buffer is float32, so the values written
+    # to the articulation are the explicit float32->float64 canonical values
+    # below.  Keeping both prevents a readback comparison from silently
+    # treating a representational ULP as a rejected actuator command.
+    canonical_left_Nm: tuple[float, ...] = ()
+    canonical_right_Nm: tuple[float, ...] = ()
+
+    @property
+    def raw_left_Nm(self) -> tuple[float, ...]:
+        """Explicit audit alias for the pre-canonical controller output."""
+        return self.left_Nm
+
+    @property
+    def raw_right_Nm(self) -> tuple[float, ...]:
+        """Explicit audit alias for the pre-canonical controller output."""
+        return self.right_Nm
 
 
 class TorqueInterface:
@@ -170,6 +187,9 @@ class TorqueInterface:
         left = _vector(left_Nm, 7, "LEFT_TORQUE")
         right = _vector(right_Nm, 7, "RIGHT_TORQUE")
         limits = np.asarray(self.limits.abs_Nm, dtype=float)
+        # Apply the hard limits to the raw controller output.  This preserves
+        # the source/rate/absolute gate semantics and avoids a float32
+        # round-trip weakening a safety limit at the boundary.
         if np.any(np.abs(left) > limits) or np.any(np.abs(right) > limits):
             self._fail("TORQUE_ABS_LIMIT")
         if self._last_step is not None:
@@ -186,7 +206,18 @@ class TorqueInterface:
             if (np.any(np.abs(left - previous[:7]) > rate * self.limits.dt_s) or
                     np.any(np.abs(right - previous[7:]) > rate * self.limits.dt_s)):
                 self._fail("TORQUE_RATE_LIMIT")
-        command = TorqueCommand(int(physics_step), t, tuple(left), tuple(right), frame_id, units)
+        # Isaac Sim's effort command buffer is float32.  Canonicalize exactly
+        # once before the write and carry that value through the readback gate;
+        # do not compare a float64 controller value against a float32 echo.
+        canonical_left = np.asarray(left, dtype=np.float32).astype(np.float64)
+        canonical_right = np.asarray(right, dtype=np.float32).astype(np.float64)
+        if not np.isfinite(canonical_left).all() or not np.isfinite(canonical_right).all():
+            self._fail("TORQUE_CANONICAL_OVERFLOW")
+        command = TorqueCommand(
+            int(physics_step), t, tuple(left), tuple(right), frame_id, units,
+            canonical_left_Nm=tuple(canonical_left),
+            canonical_right_Nm=tuple(canonical_right),
+        )
         self._pending = command
         return command
 
@@ -216,11 +247,27 @@ class TorqueInterface:
             self._fail("WRITE_CURSOR")
         left = _vector(applied_left, 7, "APPLIED_LEFT")
         right = _vector(applied_right, 7, "APPLIED_RIGHT")
-        requested = np.r_[command.left_Nm, command.right_Nm]
+        # Commands produced by ``submit_pair`` always have explicit canonical
+        # fields.  The fallback keeps direct construction of the historical
+        # dataclass fail-closed and deterministic for older callers.
+        if len(command.canonical_left_Nm) == 7 and len(command.canonical_right_Nm) == 7:
+            requested = np.r_[command.canonical_left_Nm, command.canonical_right_Nm]
+        else:
+            requested = np.r_[
+                np.asarray(command.left_Nm, dtype=np.float32).astype(np.float64),
+                np.asarray(command.right_Nm, dtype=np.float32).astype(np.float64),
+            ]
         applied = np.r_[left, right]
-        if not np.allclose(applied, requested, atol=1.0e-6, rtol=0.0):
+        # The accepted readback is the exact canonical command-buffer value.
+        # A one-ULP mismatch is rejected; a broad numeric tolerance would hide
+        # stale/indexed writes and was the source of the previous ambiguity.
+        if not np.array_equal(applied, requested):
             self._fail("APPLIED_READBACK")
-        self._last_command = requested.copy()
+        # Keep the raw controller output as the rate-limit reference.  The
+        # canonical buffer is only the representation written/read back; using
+        # it for the next raw gate would make the safety boundary depend on a
+        # float32 rounding artifact.
+        self._last_command = np.r_[command.left_Nm, command.right_Nm]
         self._last_written_command = command
         self._last_step = command.physics_step
         self._last_time = command.time_s

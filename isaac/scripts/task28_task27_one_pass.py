@@ -29,6 +29,16 @@ BASE_ROS_ENV = os.environ.copy()
 
 os.environ.setdefault("OMNI_KIT_ACCEPT_EULA", "YES")
 os.environ.setdefault("TASK28_T0_GUI", "1")
+os.environ.setdefault("ROS_DISTRO", "humble")
+os.environ.setdefault("RMW_IMPLEMENTATION", "rmw_fastrtps_cpp")
+_isaac_ros_lib = ISAAC_ROOT / "exts/isaacsim.ros2.bridge/humble/lib"
+_ld_parts = [part for part in os.environ.get("LD_LIBRARY_PATH", "").split(":") if part]
+for _required_lib in (Path("/opt/ros/humble/lib/x86_64-linux-gnu"),
+                      Path("/opt/ros/humble/lib"), _isaac_ros_lib):
+    if _required_lib.is_dir() and str(_required_lib) not in _ld_parts:
+        _ld_parts.append(str(_required_lib))
+if _ld_parts:
+    os.environ["LD_LIBRARY_PATH"] = ":".join(_ld_parts)
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
@@ -122,6 +132,9 @@ def main():
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--planning-only", action="store_true",
                         help="Run the Task27 executor's strict zero-command planning gate.")
+    parser.add_argument("--max-batches", type=int, default=5)
+    parser.add_argument("--small-motion", action="store_true",
+                        help="Run a bounded 5 mrad arm target and return-to-home in the torque bridge without ROS/Cube commands.")
     args = parser.parse_args()
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
@@ -132,6 +145,8 @@ def main():
         "run_id": run_id,
         "mode": args.mode,
         "planning_only": bool(args.planning_only),
+        "max_batches": int(args.max_batches),
+        "small_motion": bool(args.small_motion),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -194,7 +209,9 @@ def main():
             if moveit.poll() is not None:
                 raise RuntimeError(f"MOVEIT_EXIT_EARLY:{moveit.returncode}")
             planning_flag = " -p planning_only:=true" if args.planning_only else ""
-            executor = start_process("ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args -p first_batch:=1 -p max_batches:=5 -p execution_time_scale:=3.0" + planning_flag, out / "task27_executor.log", ros_ws)
+            if args.max_batches < 1 or args.max_batches > 5:
+                raise ValueError("max-batches must be in 1..5")
+            executor = start_process("ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=3.0" + planning_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             start = time.monotonic()
             while executor.poll() is None and time.monotonic() - start < args.timeout_s:
@@ -204,7 +221,24 @@ def main():
                 time.sleep(0.01)
             summary["timeout_reached"] = executor.poll() is None
         else:
-            for _ in range(max(1, args.frames)):
+            if args.small_motion:
+                # This is a no-contact controller diagnostic.  It injects two
+                # timestamped target captures through the same patched sink
+                # used by ROS, while leaving the original feed/gripper/rail
+                # owners untouched and never publishing a ROS command.
+                names = tuple(module.ARM_DOF_NAMES)
+                stamp0 = (0, 0)
+                for side, sign in (("left", 1.0), ("right", -1.0)):
+                    target = torque._q0[side].copy()
+                    target[0] += sign * 0.005
+                    torque.feed._apply_joint_command(side, (stamp0, names, target))
+            for index in range(max(1, args.frames)):
+                if args.small_motion and index == max(1, args.frames) // 2:
+                    names = tuple(module.ARM_DOF_NAMES)
+                    for side in ("left", "right"):
+                        torque.feed._apply_joint_command(
+                            side, ((1, 0), names, torque._q0[side].copy())
+                        )
                 app.update()
         capture(app, viewport, out / "final.png")
         summary["status"] = "COMPLETED" if not getattr(torque, "_latched_error", None) else "TORQUE_BRIDGE_FAIL_CLOSED"
@@ -235,7 +269,7 @@ def main():
                 summary["app_close_error"] = repr(exc)
         (out / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2, sort_keys=True))
-    return 0 if summary["status"] in ("COMPLETED", "TORQUE_BRIDGE_FAIL_CLOSED") else 2
+    return 0 if summary["status"] == "COMPLETED" else 2
 
 
 if __name__ == "__main__":

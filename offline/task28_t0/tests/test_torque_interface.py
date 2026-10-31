@@ -93,3 +93,57 @@ def test_rate_rejects_and_does_not_continue_after_latch():
         interface.submit_pair(physics_step=2, time_s=2 / 60,
                               left_Nm=np.zeros(7), right_Nm=np.zeros(7))
 
+
+def test_float32_command_buffer_is_canonical_and_logged_separately():
+    interface = TorqueInterface(); activate(interface)
+    raw_left = np.array([1.0 / 3.0, 0, 0, 0, 0, 0, 0], dtype=float)
+    raw_right = np.array([-1.0 / 7.0, 0, 0, 0, 0, 0, 0], dtype=float)
+    command = interface.submit_pair(physics_step=0, time_s=0.0,
+                                    left_Nm=raw_left, right_Nm=raw_right)
+    expected_left = np.asarray(raw_left, dtype=np.float32).astype(np.float64)
+    expected_right = np.asarray(raw_right, dtype=np.float32).astype(np.float64)
+    assert np.array_equal(np.asarray(command.left_Nm), raw_left)
+    assert np.array_equal(np.asarray(command.canonical_left_Nm), expected_left)
+    assert np.array_equal(np.asarray(command.canonical_right_Nm), expected_right)
+    interface.take_pending(physics_step=0, time_s=0.0)
+    interface.record_write(command=command, applied_left=expected_left,
+                           applied_right=expected_right, physics_step=0, time_s=0.0)
+
+
+def test_float32_readback_over_ulp_rejects_fail_closed():
+    interface = TorqueInterface(); activate(interface)
+    raw = np.array([1.0 / 3.0, 0, 0, 0, 0, 0, 0], dtype=float)
+    command = interface.submit_pair(physics_step=0, time_s=0.0,
+                                    left_Nm=raw, right_Nm=np.zeros(7))
+    interface.take_pending(physics_step=0, time_s=0.0)
+    applied_left = np.asarray(command.canonical_left_Nm, dtype=float)
+    # A one-float32-ULP change is not an accepted command-buffer echo.  The
+    # comparison must not widen back to the old 1e-6 tolerance.
+    applied_left[0] = float(np.nextafter(np.float32(raw[0]), np.float32(np.inf)))
+    with pytest.raises(TorqueReject, match="APPLIED_READBACK"):
+        interface.record_write(command=command, applied_left=applied_left,
+                               applied_right=np.zeros(7), physics_step=0, time_s=0.0)
+    assert interface.latched_failure == "APPLIED_READBACK"
+
+
+def test_float32_command_buffer_roundtrip_is_explicit_and_strict():
+    interface = TorqueInterface(); activate(interface)
+    raw = np.array([33.87004262397471, 0, 0, 0, 0, 0, 0], dtype=float)
+    command = interface.submit_pair(physics_step=0, time_s=0.0,
+                                    left_Nm=raw, right_Nm=np.zeros(7))
+    interface.take_pending(physics_step=0, time_s=0.0)
+    canonical = np.asarray(command.canonical_left_Nm)
+    assert canonical[0] == float(np.float32(raw[0]))
+    assert canonical[0] != raw[0]
+    interface.record_write(command=command, applied_left=canonical,
+                           applied_right=np.zeros(7), physics_step=0, time_s=0.0)
+
+    interface = TorqueInterface(); activate(interface)
+    command = interface.submit_pair(physics_step=0, time_s=0.0,
+                                    left_Nm=raw, right_Nm=np.zeros(7))
+    interface.take_pending(physics_step=0, time_s=0.0)
+    bad = canonical.copy(); bad[0] += float(np.spacing(np.float32(raw[0])))
+    with pytest.raises(TorqueReject, match="APPLIED_READBACK"):
+        interface.record_write(command=command, applied_left=bad,
+                               applied_right=np.zeros(7), physics_step=0, time_s=0.0)
+

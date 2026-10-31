@@ -70,12 +70,15 @@ class Task27TorqueBridge:
             "finger_sink_preserved": True,
             "torque_frame": TORQUE_FRAME,
             "arm_dof_names": list(ARM_DOF_NAMES),
+            "finger_dof_names": list(FINGER_DOF_NAMES),
+            "all_dof_names": list(ARM_DOF_NAMES + FINGER_DOF_NAMES),
             "real_robot": False,
         })
         self._old_apply_joint_command = feed_bridge._apply_joint_command
         self._old_physics_step = feed_bridge._physics_step
         self._qref = {}
         self._dqref = {side: np.zeros(7) for side in SIDES}
+        self._dqref_capture_step = {side: -1 for side in SIDES}
         self._qref_stamp = {side: None for side in SIDES}
         self._q0 = {}
         self._previous_effort = {side: np.zeros(7) for side in SIDES}
@@ -87,6 +90,9 @@ class Task27TorqueBridge:
         self._target_count = {side: 0 for side in SIDES}
         self._last_tcp = {}
         self._interface = None
+        self._last_full_command = None
+        self._last_raw_command = None
+        self._last_raw_full_command = None
 
         # Snapshot and take over only the seven arm DOFs.  Finger policy is
         # checked before and after and remains untouched.
@@ -185,9 +191,20 @@ class Task27TorqueBridge:
             if not np.isfinite(arm).all():
                 raise RuntimeError("NONFINITE_QREF")
             previous = self._qref[side]
-            self._dqref[side] = (arm - previous) * 60.0
+            previous_stamp = self._qref_stamp[side]
+            stamp_dt = None
+            if previous_stamp is not None:
+                stamp_dt = (float(stamp[0]) + float(stamp[1]) * 1e-9) - (
+                    float(previous_stamp[0]) + float(previous_stamp[1]) * 1e-9
+                )
+            self._dqref[side] = (
+                (arm - previous) / stamp_dt
+                if stamp_dt is not None and 1e-5 <= stamp_dt <= 1.0
+                else np.zeros(7)
+            )
             self._qref[side] = arm
             self._qref_stamp[side] = tuple(stamp)
+            self._dqref_capture_step[side] = self._step
             self._target_count[side] += 1
             # This is a target capture, never a position actuator write.
             self._position_arm_write_count = 0
@@ -222,12 +239,50 @@ class Task27TorqueBridge:
         if abs(float(dt) - 1.0 / 60.0) > 1e-6:
             raise RuntimeError("PHYSICS_DT")
         if self._step > 0:
+            post_applied = {
+                side: _finite(self.articulations[side].get_applied_joint_efforts(), 9, f"POST_APPLIED:{side}")
+                for side in SIDES
+            }
+            post_projected = {
+                side: _finite(self.articulations[side].get_measured_joint_efforts(), 9, f"POST_PROJECTED:{side}")
+                for side in SIDES
+            }
+            self._log({
+                "event": "POST_STEP_READBACK",
+                "physics_step": self._step,
+                "time_s": self._time_s,
+                "canonical_command_effort_Nm": (
+                    {side: self._last_full_command[side].tolist() for side in SIDES}
+                    if self._last_full_command is not None else None
+                ),
+                "applied_effort_command_Nm": {side: post_applied[side].tolist() for side in SIDES},
+                "per_joint_difference_Nm": (
+                    {side: (post_applied[side] - self._last_full_command[side]).tolist() for side in SIDES}
+                    if self._last_full_command is not None else None
+                ),
+                "projected_effort_not_sensor_Nm": {side: post_projected[side].tolist() for side in SIDES},
+                "readback_semantics": "post_physics_applied_command_echo_or_solver_buffer; not_tau_sensor",
+            })
             self._interface.post_step(physics_step=self._step, time_s=self._time_s)
         states = {side: self._state(side) for side in SIDES}
         efforts, components = {}, {}
         clipped = {}
+        dqref_decay = {}
         for side in SIDES:
             q, dq, gravity, _, _, mass, _ = states[side]
+            # A ROS trajectory point's finite-difference velocity is valid for
+            # its timestamped transition, not indefinitely after the point has
+            # been captured.  Blend it to zero on the Isaac timeline whenever
+            # no newer point arrived.  This prevents a stale dq_ref from
+            # holding a repeatable joint-position bias after a return target.
+            if self._dqref_capture_step[side] < self._step:
+                decay = math.exp(-float(dt) / 0.05)
+                self._dqref[side] *= decay
+                if np.max(np.abs(self._dqref[side])) < 1.0e-5:
+                    self._dqref[side].fill(0.0)
+                dqref_decay[side] = decay
+            else:
+                dqref_decay[side] = 1.0
             kp, kd = gains(mass, "frozen_mass_hold")
             raw, comp = torque({"q": q, "dq": dq, "g": gravity}, self._qref[side], self._dqref[side], kp, kd)
             limits = np.asarray(self._interface.limits.abs_Nm, dtype=float)
@@ -243,21 +298,57 @@ class Task27TorqueBridge:
             frame_id=TORQUE_FRAME, units="N*m",
         )
         self._interface.take_pending(physics_step=self._step, time_s=self._time_s)
+        # Use the exact float32-canonical command returned by the interface for
+        # the Isaac write.  ``efforts`` remains the raw controller output for
+        # audit logs and for the strict pre-canonical safety gates.
+        canonical_efforts = {
+            "left": np.asarray(command.canonical_left_Nm, dtype=float),
+            "right": np.asarray(command.canonical_right_Nm, dtype=float),
+        }
+        full = {}
+        raw_full = {}
         for side in SIDES:
-            self.articulations[side].apply_action(self._ArticulationAction(
-                joint_efforts=efforts[side], joint_indices=np.arange(7, dtype=np.int64)
-            ))
-        applied = {side: _finite(self.articulations[side].get_applied_joint_efforts(), 9, f"APPLIED_AFTER:{side}")[:7] for side in SIDES}
+            previous_full = states[side][3]
+            full[side] = np.r_[canonical_efforts[side], previous_full[7:]]
+            raw_full[side] = np.r_[efforts[side], previous_full[7:]]
+            self.articulations[side].set_joint_efforts(
+                full[side], joint_indices=np.arange(9, dtype=np.int32)
+            )
+        immediate = {
+            side: _finite(self.articulations[side].get_applied_joint_efforts(), 9, f"IMMEDIATE_APPLIED:{side}")
+            for side in SIDES
+        }
+        self._log({
+            "event": "IMMEDIATE_READBACK",
+            "physics_step": self._step,
+            "time_s": self._time_s,
+            "raw_requested_effort_Nm": {side: efforts[side].tolist() for side in SIDES},
+            "canonical_command_effort_Nm": {side: canonical_efforts[side].tolist() for side in SIDES},
+            "raw_requested_full_effort_Nm": {side: raw_full[side].tolist() for side in SIDES},
+            "requested_full_effort_Nm": {side: full[side].tolist() for side in SIDES},
+            "immediate_applied_effort_command_Nm": {side: immediate[side].tolist() for side in SIDES},
+            "per_joint_difference_Nm": {side: (immediate[side] - full[side]).tolist() for side in SIDES},
+            "readback_semantics": "immediate_applied_command_echo; not_tau_sensor",
+        })
+        applied = {side: immediate[side][:7] for side in SIDES}
+        self._last_full_command = {side: full[side].copy() for side in SIDES}
+        self._last_raw_command = {side: efforts[side].copy() for side in SIDES}
+        self._last_raw_full_command = {side: raw_full[side].copy() for side in SIDES}
         self._interface.record_write(command=command, applied_left=applied["left"], applied_right=applied["right"], physics_step=self._step, time_s=self._time_s)
         self._writes += 1
         self._log({
             "event": "TORQUE_FRAME", "physics_step": self._step, "time_s": self._time_s, "dt_s": float(dt),
             "q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
             "dq_ref_rad_s": {side: self._dqref[side].tolist() for side in SIDES},
+            "dq_ref_decay": dqref_decay,
+            "q_full_rad": {side: states[side][0].tolist() for side in SIDES},
+            "dq_full_rad_s": {side: states[side][1].tolist() for side in SIDES},
             "q_rad": {side: states[side][0][:7].tolist() for side in SIDES},
             "dq_rad_s": {side: states[side][1][:7].tolist() for side in SIDES},
             "requested_effort_Nm": {side: efforts[side].tolist() for side in SIDES},
+            "canonical_command_effort_Nm": {side: canonical_efforts[side].tolist() for side in SIDES},
             "applied_effort_command_Nm": {side: applied[side].tolist() for side in SIDES},
+            "applied_effort_command_full_Nm": {side: immediate[side].tolist() for side in SIDES},
             "projected_effort_not_sensor_Nm": {side: states[side][4][:7].tolist() for side in SIDES},
             "gravity_Nm": {side: states[side][2][:7].tolist() for side in SIDES},
             "tcp_world_m": {side: self._tcp(self.feed.stage, side) for side in SIDES},
@@ -276,8 +367,36 @@ class Task27TorqueBridge:
             self._old_physics_step(dt)
         except Exception as exc:
             self._latched_error = repr(exc)
-            self._log({"event": "FAIL_CLOSED", "error": self._latched_error,
-                       "physics_step": self._step, "position_arm_write_count": 0})
+            details = {"event": "FAIL_CLOSED", "error": self._latched_error,
+                       "physics_step": self._step, "position_arm_write_count": 0}
+            if self._last_raw_command is not None:
+                details["last_raw_requested_effort_Nm"] = {
+                    side: self._last_raw_command[side].tolist() for side in SIDES
+                }
+            if self._last_full_command is not None:
+                details["last_requested_full_effort_Nm"] = {
+                    side: self._last_full_command[side].tolist() for side in SIDES
+                }
+                if self._last_raw_full_command is not None:
+                    details["last_raw_requested_full_effort_Nm"] = {
+                        side: self._last_raw_full_command[side].tolist() for side in SIDES
+                    }
+                try:
+                    rb = {
+                        side: _finite(self.articulations[side].get_applied_joint_efforts(), 9, f"FAIL_APPLIED:{side}")
+                        for side in SIDES
+                    }
+                    details["failure_applied_readback_Nm"] = {side: rb[side].tolist() for side in SIDES}
+                    details["failure_readback_difference_Nm"] = {
+                        side: (rb[side] - self._last_full_command[side]).tolist() for side in SIDES
+                    }
+                    if self._last_raw_full_command is not None:
+                        details["failure_readback_difference_raw_Nm"] = {
+                            side: (rb[side] - self._last_raw_full_command[side]).tolist() for side in SIDES
+                        }
+                except Exception as readback_exc:
+                    details["failure_readback_error"] = repr(readback_exc)
+            self._log(details)
             try:
                 self.feed.physics_sub.unsubscribe()
             except Exception:
