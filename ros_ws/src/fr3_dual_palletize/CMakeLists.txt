@@ -691,6 +691,25 @@ ament_target_dependencies(task27_five_cube_center_insert
   moveit_ros_planning_interface
 )
 
+# Task27 独立预接触门：复用原始场景和执行器，但只运行到 HIGH_PRE_CONTACT，
+# 在任何 OUTER_DESCENT、CONTACT 或 Surface Gripper 命令前严格停止。
+add_executable(task27_pre_contact_gate
+  src/task27_pre_contact_gate.cpp
+)
+target_link_libraries(task27_pre_contact_gate yaml-cpp)
+ament_target_dependencies(task27_pre_contact_gate
+  ament_index_cpp
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  shape_msgs
+  trajectory_msgs
+  moveit_msgs
+  moveit_core
+  moveit_ros_planning_interface
+)
+
 rosidl_target_interfaces(task23_gripper_stage_push
   ${PROJECT_NAME} "rosidl_typesupport_cpp"
 )
@@ -735,6 +754,7 @@ install(
     task25_batched_side_suction
     task26_truck_box_push_in
     task27_five_cube_center_insert
+    task27_pre_contact_gate
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

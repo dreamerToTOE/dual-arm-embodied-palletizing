@@ -877,6 +877,25 @@ public:
   bool isLeft() const { return left_; }
   bool isClosed() const { return closed_.load(); }
 
+  // The pre-contact gate uses this read-only value to distinguish a settled
+  // terminal state from a position residual that is still moving.  It is
+  // intentionally derived from the live joint-state stream, never from the
+  // commanded trajectory.
+  double maxJointVelocity() const
+  {
+    std::lock_guard<std::mutex> lock(joint_mutex_);
+    double peak = 0.0;
+    for (const auto& [name, velocity] : joint_velocities_)
+    {
+      (void)name;
+      if (std::isfinite(velocity))
+      {
+        peak = std::max(peak, std::abs(velocity));
+      }
+    }
+    return peak;
+  }
+
   bool waitBridge() const
   {
     for (int attempt = 0; attempt < 100; ++attempt)
@@ -2570,11 +2589,22 @@ int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<rclcpp::Node>(
-    std::string(kTaskLabel) == "Task27" ? "task27_five_cube_center_insert" : "task26_batched_side_suction");
+    #ifdef TASK27_PRECONTACT_ONLY
+    "task27_pre_contact_gate"
+    #else
+    std::string(kTaskLabel) == "Task27" ? "task27_five_cube_center_insert" : "task26_batched_side_suction"
+    #endif
+  );
   // max_batches 始终表示“从 first_batch 起连续执行多少批”，保持既有单批
   // -p max_batches:=1 的含义。Task27 因此可先执行 first_batch=1/max=4，
   // 再在同一 Isaac 场景中只执行 first_batch=5/max=1 的中心插入阶段。
-  const int max_batches = node->declare_parameter<int>("max_batches", kBatchCount);
+  const int max_batches = node->declare_parameter<int>("max_batches",
+#ifdef TASK27_PRECONTACT_ONLY
+    1
+#else
+    kBatchCount
+#endif
+  );
   const int first_batch = node->declare_parameter<int>("first_batch", 1);
   const double time_scale = node->declare_parameter<double>("execution_time_scale", 3.0);
 #ifdef TASK27_FIVE_CUBE
@@ -2592,6 +2622,15 @@ int main(int argc, char** argv)
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
   // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
+  // 独立的 Task27 预接触门：只执行到两臂 HIGH_PRE_CONTACT，并在任何
+  // OUTER_DESCENT / CONTACT / Surface Gripper 命令前停止。它不是完整任务的
+  // 缩写，也不复用历史规划-only 结果；该可执行文件仅用于验证新鲜的 Task27
+  // 入口路径、实际 torque sink 反馈和终端净空。
+#ifdef TASK27_PRECONTACT_ONLY
+  const bool pre_contact_only = true;
+#else
+  const bool pre_contact_only = node->declare_parameter<bool>("pre_contact_only", false);
+#endif
   // 诊断开关：把车厢三面墙从 MoveIt 规划场景里去掉。用于分辨"失败是不是车厢碰撞体
   // 参与判定造成的"——它不是验收配置，正式运行必须保持 true。
   const bool include_box_walls = node->declare_parameter<bool>("include_box_walls", true);
@@ -2616,6 +2655,7 @@ int main(int argc, char** argv)
   executor.add_node(node);
   std::thread spin([&executor]() { executor.spin(); });
   bool success = false;
+  bool pre_contact_gate_success = false;
   do
   {
     RCLCPP_INFO(node->get_logger(),
@@ -2910,7 +2950,7 @@ int main(int argc, char** argv)
 
     bool all_complete = true;
     for (int batch = first_batch;
-         batch < first_batch + max_batches && all_complete;
+         batch < first_batch + max_batches && all_complete && !pre_contact_gate_success;
          ++batch)
     {
       std::array<std::size_t, kBatchSize> batch_indices{};
@@ -3252,11 +3292,124 @@ int main(int argc, char** argv)
         break;
       }
 
+#ifdef TASK27_PRECONTACT_ONLY
+      // 重新把 Cube 放回规划场景，对两条实际执行的 HIGH_PRE_CONTACT 轨迹做
+      // 同步 FCL 检查。此前完整任务为了 CONTACT 预演而暂时移除了 Cube；
+      // 预接触门必须在 Cube 仍是碰撞体的世界中独立通过，不能把无 Cube 的
+      // 历史采样当作连续安全证明。
+      if (!scene.applyCollisionObject(cubeObject(object_id, source)))
+      {
+        RCLCPP_ERROR(node->get_logger(),
+          "%s PRE_CONTACT_GATE 无法恢复 Cube 碰撞体；停止。", task.id);
+        all_complete = false;
+        break;
+      }
+      std::this_thread::sleep_for(250ms);
+      const auto gate_world = staticWorld(scene);
+      const auto right_hold_initial = holdTrajectory(
+        right_pre, right_pre.points.front().positions, pointTime(left_pre.points.back()));
+      const auto left_hold_high = holdTrajectory(
+        left_pre, finalPositions(left_pre), pointTime(right_pre.points.back()));
+      if (!validateSync(node, left_group.getRobotModel(), gate_world,
+            left_pre, right_hold_initial, std::string(task.id) + " PRE_CONTACT_GATE left") ||
+          !validateSync(node, left_group.getRobotModel(), gate_world,
+            left_hold_high, right_pre, std::string(task.id) + " PRE_CONTACT_GATE right"))
+      {
+        RCLCPP_ERROR(node->get_logger(),
+          "%s PRE_CONTACT_GATE collision validation failed; no motion issued.", task.id);
+        all_complete = false;
+        break;
+      }
+#endif
+
       // planning_only 必须是严格的“零命令”模式：它以最新收到的 source pose
       // 预演后续右侧空载接近和完整共同负载链，绝不能为了取得 live pose 而先
       // 执行左侧接近。真实执行模式才允许左侧先落到 CONTACT，并随后从 Isaac
       // Ground Truth 刷新 Cube 位置，补偿无吸附接近期间可能出现的微小漂移。
       geometry_msgs::msg::Pose cube_after_left_contact = source;
+      if (pre_contact_only)
+      {
+        // This branch is intentionally before OUTER_DESCENT and CONTACT. The
+        // suction publishers remain untouched and the Cube must remain at its
+        // feed pose throughout the gate.
+        RCLCPP_INFO(node->get_logger(),
+          "%s PRE_CONTACT_GATE: executing HIGH_PRE_CONTACT only; suction/contact disabled.",
+          task.id);
+        if (!executeSync(left, left_pre, right, right_pre) ||
+            !left.waitAtTarget(left_pre, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
+            !right.waitAtTarget(right_pre, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s PRE_CONTACT_GATE terminal joint state did not settle; fail closed.", task.id);
+          all_complete = false;
+          break;
+        }
+        std::this_thread::sleep_for(250ms);
+        const auto actual_cube = cubes.get(task.cube_index).first;
+        const auto actual_left_tcp = left_tcp.get();
+        const auto actual_right_tcp = right_tcp.get();
+        const auto left_target = sidePose(
+          source.position.x, initial_left_contact_y - kPreContactOffsetY,
+          pre_contact_z, true);
+        const auto right_target = sidePose(
+          source.position.x, initial_right_contact_y + kRightPreContactOffsetY,
+          pre_contact_z, false);
+        const double left_target_error = distance3d(actual_left_tcp.position, left_target.position);
+        const double right_target_error = distance3d(actual_right_tcp.position, right_target.position);
+        const double cube_drift = distance3d(actual_cube.position, source.position);
+        const double left_clearance =
+          actual_cube.position.y - actual_left_tcp.position.y - kCubeHalf;
+        const double right_clearance =
+          actual_right_tcp.position.y - actual_cube.position.y - kCubeHalf;
+        const bool suction_open = !left.isClosed() && !right.isClosed();
+        const double left_stop_speed = left.maxJointVelocity();
+        const double right_stop_speed = right.maxJointVelocity();
+        constexpr double kMaximumTerminalJointSpeed = 0.10;
+        const bool stop_speed_ok =
+          std::isfinite(left_stop_speed) && std::isfinite(right_stop_speed) &&
+          left_stop_speed <= kMaximumTerminalJointSpeed &&
+          right_stop_speed <= kMaximumTerminalJointSpeed;
+        const double left_effort_peak = left_forces.peak();
+        const double right_effort_peak = right_forces.peak();
+        const bool effort_in_limit = left_forces.ready() && right_forces.ready() &&
+          left_effort_peak <= kPushTorqueLimit && right_effort_peak <= kPushTorqueLimit;
+        // The target offsets are 100 mm (left) and 40 mm (right). A 10 mm
+        // minimum is deliberately stricter than the nominal contact gap and
+        // catches stale or overshooting feedback before any suction event.
+        constexpr double kMinimumPreContactClearance = 0.010;
+        const bool terminal_safe =
+          left_target_error <= 0.010 && right_target_error <= 0.010 &&
+          cube_drift <= kSlotTolerance &&
+          left_clearance >= kMinimumPreContactClearance &&
+          right_clearance >= kMinimumPreContactClearance && suction_open && effort_in_limit;
+        const bool terminal_stop_ok = terminal_safe && stop_speed_ok;
+        RCLCPP_INFO(node->get_logger(),
+          "%s PRE_CONTACT_GATE terminal: left_tcp_error=%.3f mm right_tcp_error=%.3f mm "
+          "cube_drift=%.3f mm left_clearance=%.3f mm right_clearance=%.3f mm "
+          "joint_speed=(%.3f, %.3f) rad/s stop_speed_ok=%s "
+          "effort_peak=(%.2f, %.2f) Nm effort_in_limit=%s suction_open=%s.",
+          task.id, left_target_error * 1000.0, right_target_error * 1000.0,
+          cube_drift * 1000.0, left_clearance * 1000.0, right_clearance * 1000.0,
+          left_stop_speed, right_stop_speed, stop_speed_ok ? "true" : "false",
+          left_effort_peak, right_effort_peak,
+          effort_in_limit ? "true" : "false", suction_open ? "true" : "false");
+        if (!terminal_stop_ok)
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "%s PRE_CONTACT_GATE terminal safety check failed; no CONTACT or suction is allowed.",
+            task.id);
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(),
+          "%s PRE_CONTACT_GATE PASS: HIGH_PRE_CONTACT settled with measured clearance; "
+          "Surface Gripper remains OFF and Cube was not contacted.", task.id);
+        pre_contact_gate_success = true;
+        // This executable is intentionally one-shot. Do not continue into the
+        // original outer descent/contact chain or subsequent Cube batches.
+        all_complete = true;
+        break;
+      }
       if (!planning_only)
       {
         if (!left.executeAt(left_pre, std::chrono::steady_clock::now()) ||
@@ -5431,7 +5584,7 @@ int main(int argc, char** argv)
         "%s batch %d PASS: 当前批 %d 件已落稳入垛，双臂已回到共同 HOME。",
         kTaskLabel, batch, kBatchSize);
     }  // 批次循环结束
-    success = all_complete;
+    success = all_complete || pre_contact_gate_success;
   } while (false);
 
   executor.cancel();
