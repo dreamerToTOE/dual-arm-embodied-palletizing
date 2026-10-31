@@ -63,6 +63,14 @@ def test_hard_common_task_constraint_is_enforced_or_fails_closed():
     assert result.diagnostics["common_acceleration_residual_inf"] < 3e-7
 
 
+def test_tracking_residual_rejection_keeps_failure_status_in_diagnostics():
+    cfg = CooperativeTorqueQPConfig(common_residual_limit=1e-12)
+    result = _solve(config=cfg, common_accel_desired=np.r_[.4, 0, 0, 0, 0, 0])
+    assert result.status == "QP_TRACKING_REJECTED"
+    assert result.diagnostics["status"] == "QP_TRACKING_REJECTED"
+    assert result.qdd14 is None and result.tau14_Nm is None
+
+
 def test_torque_rate_bound_is_hard_and_reported():
     prev = np.zeros(14)
     cfg = CooperativeTorqueQPConfig(

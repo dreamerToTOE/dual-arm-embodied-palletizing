@@ -446,9 +446,13 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
             np.r_[qhi_arm, qhi_arm] - (q + dq * dt + 0.5 * qdd * dt * dt))),
     })
     if cfg.common_residual_limit is not None and diagnostics["common_acceleration_residual_inf"] > cfg.common_residual_limit:
-        return _failure("QP_TRACKING_REJECTED", "COMMON_ACCELERATION_RESIDUAL", **diagnostics)
+        rejected = dict(diagnostics)
+        rejected.pop("status", None)
+        return _failure("QP_TRACKING_REJECTED", "COMMON_ACCELERATION_RESIDUAL", **rejected)
     if cfg.relative_residual_limit is not None and diagnostics["relative_acceleration_residual_inf"] > cfg.relative_residual_limit:
-        return _failure("QP_TRACKING_REJECTED", "RELATIVE_ACCELERATION_RESIDUAL", **diagnostics)
+        rejected = dict(diagnostics)
+        rejected.pop("status", None)
+        return _failure("QP_TRACKING_REJECTED", "RELATIVE_ACCELERATION_RESIDUAL", **rejected)
     diagnostics["status"] = "QP_OPTIMAL"
     # The source/model gate above is necessary but not sufficient for a scene
     # write; the runtime must still pass ownership, collision and readback
