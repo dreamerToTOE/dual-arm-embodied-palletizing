@@ -271,7 +271,9 @@ def _solve_reduced_qdd(Hq, fq, M, h, lower_qdd, upper_qdd,
 
 def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
                                 jacobian_left, jacobian_right,
+                                jacobian_relative=None,
                                 jdotdq_left=None, jdotdq_right=None,
+                                jdotdq_relative=None,
                                 common_accel_desired=None,
                                 relative_accel_desired=None,
                                 previous_tau14=None,
@@ -302,8 +304,12 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         h = _vec(bias14, (14,), "INVALID_BIAS14")
         JL = _mat(jacobian_left, (6, 7), "INVALID_LEFT_JACOBIAN")
         JR = _mat(jacobian_right, (6, 7), "INVALID_RIGHT_JACOBIAN")
+        Jrel = (None if jacobian_relative is None else
+                _mat(jacobian_relative, (6, 14), "INVALID_RELATIVE_JACOBIAN"))
         JdotL = np.zeros(6) if jdotdq_left is None else _vec(jdotdq_left, (6,), "INVALID_LEFT_JDOTDQ")
         JdotR = np.zeros(6) if jdotdq_right is None else _vec(jdotdq_right, (6,), "INVALID_RIGHT_JDOTDQ")
+        JdotRel = (JdotR - JdotL if jdotdq_relative is None else
+                   _vec(jdotdq_relative, (6,), "INVALID_RELATIVE_JDOTDQ"))
         ac = np.zeros(6) if common_accel_desired is None else _vec(common_accel_desired, (6,), "INVALID_COMMON_ACCEL")
         ar = np.zeros(6) if relative_accel_desired is None else _vec(relative_accel_desired, (6,), "INVALID_RELATIVE_ACCEL")
         prev = None if previous_tau14 is None else _vec(previous_tau14, (14,), "INVALID_PREVIOUS_TORQUE")
@@ -327,9 +333,9 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     A_common = 0.5 * np.hstack((JL, JR))
     # Relative acceleration map is a signed bilateral difference in the
     # caller-validated relative frame.  Angular and linear rows remain paired.
-    A_relative = np.hstack((-JL, JR))
+    A_relative = np.hstack((-JL, JR)) if Jrel is None else Jrel
     bias_common = 0.5 * (JdotL + JdotR)
-    bias_relative = JdotR - JdotL
+    bias_relative = JdotRel
 
     lower_qdd = -np.r_[qdd_lim, qdd_lim].astype(float)
     upper_qdd = np.r_[qdd_lim, qdd_lim].astype(float)
@@ -383,6 +389,7 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "solver_reduction": "qdd-eliminated affine dynamics; tau reconstructed and certified",
         "model_validated": bool(model_validated), "feedback_fresh": bool(feedback_fresh),
         "common_jacobian_shape": list(A_common.shape), "relative_jacobian_shape": list(A_relative.shape),
+        "relative_jacobian_source": "caller_verified" if Jrel is not None else "world_difference_fallback",
         "common_accel_desired": ac.tolist(), "relative_accel_desired": ar.tolist(),
         "common_weight": wc, "relative_weight": wr,
         "solve_wall_time_s": time.perf_counter() - started,

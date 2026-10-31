@@ -43,6 +43,17 @@ def test_dynamics_equality_and_bilateral_objective_are_centralized():
     np.testing.assert_allclose(qdd[:6], qdd[7:13], atol=2e-5)
 
 
+def test_caller_verified_relative_jacobian_is_used_when_supplied():
+    # Swapping one relative row changes the requested bilateral correction;
+    # this catches silently falling back to a world-frame subtraction.
+    jrel = np.zeros((6, 14)); jrel[1, 7] = 1.0
+    result = _solve(jacobian_relative=jrel,
+                    relative_accel_desired=np.r_[0., .4, 0., 0., 0., 0.])
+    assert result.status == "QP_OPTIMAL"
+    assert result.diagnostics["relative_jacobian_source"] == "caller_verified"
+    assert result.diagnostics["relative_jacobian_shape"] == [6, 14]
+
+
 def test_torque_rate_bound_is_hard_and_reported():
     prev = np.zeros(14)
     cfg = CooperativeTorqueQPConfig(
