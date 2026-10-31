@@ -18,6 +18,8 @@ import subprocess
 import sys
 import time
 
+import numpy as np
+
 REPO = Path(__file__).resolve().parents[2]
 ISAAC_ROOT = Path("/home/ubuntu2004/isaacsim-4.5.0")
 SCENE = REPO / "isaac/scripts/task27_five_cube_center_insert_scene.py"
@@ -76,6 +78,62 @@ def capture(app, viewport, path):
         app.update()
     if not path.is_file() or path.stat().st_size == 0:
         raise RuntimeError(f"VIEWPORT_CAPTURE_MISSING:{path}")
+
+
+def wait_native_settle(app, feed_bridge, *, max_frames=360,
+                       velocity_tol_rad_s=0.05, consecutive=10):
+    """Let the authored position drives dissipate native startup velocity.
+
+    This is a runtime handoff aid only: it advances the original Task27 scene
+    with its original position sink still active, then returns a measurement
+    receipt.  The torque bridge is constructed only after this function, so
+    it never zeros drive gains while the arm is still carrying startup
+    momentum.  It does not modify USD or scene parameters and does not claim
+    a safety or tracking result.
+    """
+    if feed_bridge is None or not hasattr(feed_bridge, "articulations"):
+        raise RuntimeError("NATIVE_SETTLE_FEED_BRIDGE_MISSING")
+    max_frames = int(max_frames)
+    if max_frames < 1 or int(consecutive) < 1:
+        raise ValueError("NATIVE_SETTLE_ARGUMENT")
+    tol = float(velocity_tol_rad_s)
+    if not np.isfinite(tol) or tol <= 0.0:
+        raise ValueError("NATIVE_SETTLE_TOLERANCE")
+    stable = 0
+    max_dq = float("inf")
+    last_q = None
+    last_dq = None
+    frames = 0
+    for frames in range(1, max_frames + 1):
+        app.update()
+        dq_parts = []
+        q_parts = []
+        for side in ("left", "right"):
+            articulation = feed_bridge.articulations[side]
+            q = np.asarray(articulation.get_joint_positions(), dtype=float).reshape(-1)
+            dq = np.asarray(articulation.get_joint_velocities(), dtype=float).reshape(-1)
+            if q.shape != (9,) or dq.shape != (9,) or not np.isfinite(q).all() or not np.isfinite(dq).all():
+                raise RuntimeError(f"NATIVE_SETTLE_STATE:{side}")
+            q_parts.append(q[:7])
+            dq_parts.append(dq[:7])
+        last_q = np.concatenate(q_parts)
+        last_dq = np.concatenate(dq_parts)
+        max_dq = float(np.max(np.abs(last_dq), initial=0.0))
+        stable = stable + 1 if max_dq <= tol else 0
+        if stable >= int(consecutive):
+            break
+    return {
+        "frames": int(frames),
+        "max_frames": max_frames,
+        "velocity_tol_rad_s": tol,
+        "consecutive_required": int(consecutive),
+        "consecutive_observed": int(stable),
+        "settled": bool(stable >= int(consecutive)),
+        "max_abs_dq_rad_s": max_dq,
+        "q_arm_rad": None if last_q is None else last_q.tolist(),
+        "dq_arm_rad_s": None if last_dq is None else last_dq.tolist(),
+        "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+    }
 
 
 def start_process(command: str, log_path: Path, cwd: Path):
@@ -138,7 +196,11 @@ def main():
     parser.add_argument("--live-qp", action="store_true",
                         help="Enable the live bilateral acceleration/torque QP for no-contact smoke experiments.")
     parser.add_argument("--experiment", choices=("hold", "common", "relative", "combined"), default="hold")
+    parser.add_argument("--pre-torque-settle-frames", type=int, default=360,
+                        help="Let the original scene drive settle before torque takeover.")
     args = parser.parse_args()
+    if args.pre_torque_settle_frames < 0:
+        raise ValueError("pre-torque-settle-frames must be non-negative")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -152,6 +214,7 @@ def main():
         "small_motion": bool(args.small_motion),
         "live_qp": bool(args.live_qp),
         "experiment": args.experiment,
+        "pre_torque_settle_frames": int(args.pre_torque_settle_frames),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -164,6 +227,7 @@ def main():
         "torque_log": str(torque_log),
         "moveit_exit": None,
         "executor_exit": None,
+        "native_settle": None,
         "status": "RUNNING",
     }
     app = None
@@ -193,9 +257,23 @@ def main():
                 pass
         timeline = omni.timeline.get_timeline_interface()
         timeline.play()
+        # Give the original scene a short initialization window before taking
+        # a settle measurement.  The longer, measured settle below runs with
+        # the authored position drives still active.
         for _ in range(120):
             app.update()
         capture(app, viewport, out / "scene_loaded.png")
+        if args.live_qp:
+            # Keep the original authored position drives active until native
+            # startup velocity has dissipated.  Constructing the torque bridge
+            # before this point transfers ownership while the arm is moving,
+            # which was the main source of the large first-frame dq in the
+            # previous live-QP receipt.
+            import builtins
+            feed_bridge = getattr(builtins, "_task26_batched_feed_bridge", None)
+            summary["native_settle"] = wait_native_settle(
+                app, feed_bridge, max_frames=max(1, int(args.pre_torque_settle_frames))
+            )
         spec = importlib.util.spec_from_file_location("task28_task27_torque_bridge", TORQUE_BRIDGE)
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
