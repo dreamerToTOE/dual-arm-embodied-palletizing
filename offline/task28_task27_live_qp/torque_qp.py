@@ -379,8 +379,10 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     upper_tau -= margin_tau
     if prev is not None:
         rate = np.r_[tau_rate, tau_rate] * dt
-        lower_tau = np.maximum(lower_tau, prev - rate)
-        upper_tau = np.minimum(upper_tau, prev + rate)
+        # Keep both sides strictly inside the downstream rate gate by the
+        # same conservative numeric margin used for absolute effort.
+        lower_tau = np.maximum(lower_tau, prev - rate + margin_tau)
+        upper_tau = np.minimum(upper_tau, prev + rate - margin_tau)
     if np.any(lower_qdd > upper_qdd) or np.any(lower_tau > upper_tau):
         return _failure("QP_INFEASIBLE", "EMPTY_ACCELERATION_OR_TORQUE_BOX",
                         qdd_lower=lower_qdd.tolist(), qdd_upper=upper_qdd.tolist(),
@@ -449,9 +451,10 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "torque_saturated_indices": np.flatnonzero(
             np.isclose(np.abs(tau), np.r_[tau_lim, tau_lim], atol=2e-7, rtol=0.)).tolist(),
         "torque_rate_active_indices": (
-            np.flatnonzero(prev is not None and np.isclose(
-                np.abs(tau - prev), np.r_[tau_rate, tau_rate] * dt,
-                atol=2e-7, rtol=0.)).tolist() if prev is not None else []),
+            np.flatnonzero(prev is not None and (
+                np.abs(tau - prev) >= np.r_[tau_rate, tau_rate] * dt
+                - max(2e-6, 2.0 * margin_tau))).tolist()
+            if prev is not None else []),
         "joint_position_predicted_min_margin": float(np.min(
             np.r_[qlo_arm, qlo_arm] - (q + dq * dt + 0.5 * qdd * dt * dt))),
         "joint_position_predicted_max_margin": float(np.min(
