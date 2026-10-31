@@ -76,6 +76,11 @@ class CooperativeTorqueQPConfig:
     acceleration_weight: float = 1.0e-2
     torque_weight: float = 1.0e-4
     torque_slew_weight: float = 1.0e-5
+    # Keep a small interior margin so a floating-point optimizer candidate
+    # cannot be rejected by the exact TorqueInterface boundary after the QP
+    # has certified it.  This is a conservative tightening, never a limit
+    # relaxation.
+    torque_numerical_margin_Nm: float = 1.0e-6
     # A positive value enables an explicit residual gate after optimization.
     # The default leaves tracking residual as a measured diagnostic while the
     # hard physical limits remain authoritative.
@@ -106,6 +111,9 @@ class CooperativeTorqueQPConfig:
                    float(self.torque_slew_weight))
         if any(not np.isfinite(v) or v < 0 for v in weights) or weights[0] == 0 or weights[1] == 0:
             raise ValueError("INVALID_OBJECTIVE_WEIGHT")
+        margin = float(self.torque_numerical_margin_Nm)
+        if not np.isfinite(margin) or margin < 0 or margin >= float(np.min(tau)):
+            raise ValueError("INVALID_TORQUE_NUMERICAL_MARGIN")
         for value, code in ((self.common_residual_limit, "INVALID_COMMON_RESIDUAL_LIMIT"),
                             (self.relative_residual_limit, "INVALID_RELATIVE_RESIDUAL_LIMIT")):
             if value is not None and (not np.isfinite(value) or value < 0):
@@ -365,6 +373,10 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     upper_qdd = np.minimum.reduce((upper_qdd, qdd_pos_hi, qdd_vel_hi))
     lower_tau = -np.r_[tau_lim, tau_lim].astype(float)
     upper_tau = np.r_[tau_lim, tau_lim].astype(float)
+    # Tighten against exact downstream absolute-limit comparisons.
+    margin_tau = float(cfg.torque_numerical_margin_Nm)
+    lower_tau += margin_tau
+    upper_tau -= margin_tau
     if prev is not None:
         rate = np.r_[tau_rate, tau_rate] * dt
         lower_tau = np.maximum(lower_tau, prev - rate)
