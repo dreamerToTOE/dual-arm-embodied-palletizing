@@ -1,0 +1,28 @@
+# Repository Instructions for Codex — Simulation-First Research
+
+**Scope: all tasks, agents, code changes, tests, and planning in this repository.**
+**User decision: 2026-10-31.** This is a standing project-level rule. Unless the user explicitly changes it, apply it when interpreting old task orders, reports, and stage admission plans.
+
+## Project objective
+
+Deliver working dual-FR3 cooperative manipulation, torque/force control, suction grasp, transport, and five-Cube Task27 placement **in Isaac Sim**. The purpose is to implement and experimentally study methods in simulation, not to prove production safety or hardware equivalence.
+
+## Mandatory priorities
+
+1. **Simulation only.** Do not spend time on physical FR3 integration, real joint torque sensor `tau_J` equivalence, hardware certification, Sim2Real, or hardware-specific safety/protection mechanisms. Isaac/PhysX model states, simulated applied efforts, and independent simulated contact forces may be used with honest provenance.
+2. **Working functionality first.** Prefer actual simulation motion, physical Cube displacement, stable live cooperative QP and real in-simulation load/internal-wrench effects over more architecture diagrams, paperwork, redundant test suites, or repeated reviews of previously passed planning-only stages.
+3. **Reset, diagnose, improve, rerun.** On collisions, bad tracking, solver infeasibility, broken grasp, or trajectory errors: record the salient failure and measured parameters, stop that attempt, reset/rebuild the Isaac scene, revise the controller/path/trajectory/configuration, and attempt a new bounded run. Do not leave the whole project blocked indefinitely on a nonessential gate. Avoid infinite retries; report what remains infeasible.
+4. **Keep checks proportional to the experiment.** Use the minimal guards necessary to make the present simulation meaningful (e.g., finite state/solver outputs, basic joint/torque bounds, correct source identity, collision/contact checks appropriate to the commanded test, reliable restart). Do not demand real-robot-grade independent authorization layers, formal continuous-collision certificates for every exploratory run, excessive fail-closed wrappers, repeated provenance audits, or unrelated verification before safe, bounded simulation experiments can proceed. Earlier research status `CONTINUOUS_SAFETY_NOT_ESTABLISHED` remains truthful; it should not prevent independent no-contact QP development or newly planned, collision-monitored simulation experiments.
+5. **Treat simulation limits as research parameters, not sacred hardware ratings.** When the old research torque box, rates, gain choices, safety margins or time scaling make even gravitational hold infeasible, *investigate* and, where necessary, revise the **simulation experiment configuration** with explicit numerical rationale and before/after comparisons. Verify the physical model and task behavior; retain original baseline as comparator. Do not silently disable all constraints or equate a higher bound with a real-FR3 approved rating.
+6. **Preserve scientific honesty.** Never claim a Cube moved if it did not, that QP controlled the plant when `solve_count=0`, that mathematical nullspace targets are measured contact forces, or that an unsafe/rejected/untested run passed. Preserve essential failure receipts, clearly label simulated ground truth and controller estimates, and report numeric tracking, collision and contact outcomes.
+7. **Prefer direct progress in the original Task27 scene.** Retain existing scene geometry, robots and tools unless an explicitly documented simulation experiment requires a change. Do not repeatedly redo G1 five-Cube planning-only as a substitute for G2/G3 development. Qualify short exploratory motions locally, then increase difficulty progressively: steady torque hold → common/relative QP tracking → first Cube grasp/lift/transport/release → G3 loaded force allocation → five-Cube mission.
+8. **Autonomous continuation.** Implement, run, fix, reset and continue across adjacent unblocked steps without asking for approval after every subtest. Provide a brief plain-Chinese progress summary followed by the technical report when a meaningful end-to-end milestone is reached or an irreducible blocker remains. Commit/push reproducible code and evidence to the active development branch; do not merge to main without authorization.
+
+## Practical interpretation for G1/G2/G3
+
+- **G1:** A valid collision-free planned path remains useful. Improve or replan when a real contact/collision/path feasibility problem is observed. Do not mistake an unproven global certificate for a witnessed collision.
+- **G2:** Implement and test live bilateral task-space QP without waiting for Cube approach; correct actual dynamics, start-up transients and dynamically infeasible simulation torque bounds. QP outputs must cause real Isaac motion.
+- **G3:** Work with a documented Isaac/PhysX contact-force oracle and model-derived observer candidates; do not block on nonexistent physical FR3 measurements. Demonstrate a measurable effect on simulated bilateral internal/contact load.
+- **Integration:** If a bounded run fails, stop/reset/change and rerun, counting failed attempts honestly. Success requires actual Cube pose changes and physically executed interactions, not only offline solver status.
+
+**Conflict resolution:** If older task text demands extensive hardware-oriented gates or excessive formal checks before simulation-only functional tests, this newer repository-wide user decision takes precedence for research workflow. It does **not** authorize misreporting unsafe or infeasible outcomes, irreversible operations outside the simulator, or silent removal of constraints.
