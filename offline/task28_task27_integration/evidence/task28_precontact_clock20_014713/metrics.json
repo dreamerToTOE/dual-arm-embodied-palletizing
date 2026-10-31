@@ -1,0 +1,181 @@
+{
+  "frame_count": 2216,
+  "last_frame": {
+    "payload_gravity_compensation": {
+      "active": false,
+      "mass_kg": 0.8,
+      "source": "Task27_Cube_01_scene_metadata"
+    },
+    "physics_step": 2215,
+    "q_error_rad": {
+      "left": [
+        8.144972384427991e-08,
+        -3.4122669674618855e-05,
+        -9.75881668238075e-07,
+        8.046309762921311e-06,
+        2.9027875313469593e-08,
+        -2.7407065543938458e-05,
+        8.676672239027461e-06
+      ],
+      "right": [
+        -1.1401947005651789e-06,
+        -1.4085265366503563e-05,
+        -1.9092178205028167e-06,
+        -9.767506344626753e-06,
+        -7.349972380325321e-07,
+        9.630060198162482e-06,
+        -7.549815460916598e-06
+      ]
+    },
+    "q_rad": {
+      "left": [
+        -7.532195013482124e-05,
+        -0.7854622602462769,
+        -7.842649210942909e-05,
+        -2.356285810470581,
+        -3.0466846510535106e-05,
+        1.5708342790603638,
+        0.7852916717529297
+      ],
+      "right": [
+        8.044335845625028e-05,
+        -0.7853816747665405,
+        -8.901093679014593e-05,
+        -2.3560941219329834,
+        -6.564224895555526e-05,
+        1.5707366466522217,
+        0.7854477763175964
+      ]
+    },
+    "q_ref_rad": {
+      "left": [
+        -7.524050041097696e-05,
+        -0.7854963829159515,
+        -7.940237377766717e-05,
+        -2.356277764160818,
+        -3.0437818635221636e-05,
+        1.5708068719948198,
+        0.7853003484251687
+      ],
+      "right": [
+        7.93031637556851e-05,
+        -0.785395760031907,
+        -9.092015461064875e-05,
+        -2.356103889439328,
+        -6.637724619358779e-05,
+        1.5707462767124198,
+        0.7854402265021355
+      ]
+    },
+    "qp_status": "QP_OPTIMAL",
+    "task_mode": "FREE_APPROACH",
+    "time_s": 36.916666666665854
+  },
+  "max_abs_dq_rad_s": 0.9559915661811829,
+  "max_abs_measured_qdd_rad_s2": null,
+  "max_abs_measured_qdd_rad_s2_offline": 9.396403537878209,
+  "max_abs_q_error_deg": 34.650345376512995,
+  "max_abs_q_error_rad": 0.604762613773346,
+  "max_abs_qdd_command_rad_s2": 9.351826324874766,
+  "max_abs_qdd_command_rad_s2_offline": 9.351826324874766,
+  "max_abs_qdd_tracking_error_rad_s2": null,
+  "max_abs_qdd_tracking_error_rad_s2_offline": 11.027041004961568,
+  "max_abs_requested_tau_Nm": 28.00412515903378,
+  "mode_transitions": [
+    {
+      "mode": "FREE_APPROACH",
+      "physics_step": 1,
+      "time_s": 0.016666666666666666
+    }
+  ],
+  "raw_trace": "task27_torque_bridge.jsonl.gz",
+  "run_id": "task28_precontact_clock20_014713",
+  "schema": "task28.task27.terminal_tracking_receipt.v1",
+  "summary": {
+    "arm_roots": [
+      "/World/left_fr3",
+      "/World/right_fr3"
+    ],
+    "execution_time_scale": 8.0,
+    "executor_exit": 0,
+    "executor_name": "task27_pre_contact_gate",
+    "executor_started": true,
+    "experiment": "hold",
+    "headless": false,
+    "lighting": "(True, ('Default', 'stage'))",
+    "live_qp": true,
+    "local_sweep_limit_m": 2.0,
+    "max_batches": 1,
+    "mode": "integrated",
+    "moveit_exit": 0,
+    "moveit_started": true,
+    "native_settle": {
+      "consecutive_observed": 10,
+      "consecutive_required": 10,
+      "dq_arm_rad_s": [
+        -0.0001908097619889304,
+        -0.010700051672756672,
+        -0.0006957388250157237,
+        0.005673568230122328,
+        -0.001010908163152635,
+        6.82210738887079e-05,
+        2.824567854986526e-05,
+        -0.00017329172987956554,
+        -0.010585004463791847,
+        -0.0005469906609505415,
+        0.005192245822399855,
+        -0.0008945503504946828,
+        5.5343913118122146e-05,
+        1.769957634678576e-05
+      ],
+      "frames": 10,
+      "max_abs_dq_rad_s": 0.010700051672756672,
+      "max_frames": 360,
+      "q_arm_rad": [
+        1.8670012650545686e-05,
+        -0.7843349575996399,
+        6.91339882905595e-05,
+        -2.3567588329315186,
+        0.00010054907033918425,
+        1.5707885026931763,
+        0.7853948473930359,
+        1.71183273778297e-05,
+        -0.7843459844589233,
+        5.4377218475565314e-05,
+        -2.3567121028900146,
+        8.910168253351003e-05,
+        1.5707899332046509,
+        0.785396158695221
+      ],
+      "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+      "settled": true,
+      "velocity_tol_rad_s": 0.05
+    },
+    "original_task26_bridge_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py",
+    "original_task26_bridge_source_sha256": "0f7123657ea8422cf0efd468e7bcd59624e144ae8c9ca315a82af57576b68dc6",
+    "original_task26_scene_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+    "original_task26_scene_source_sha256": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+    "planning_only": false,
+    "position_arm_write_count": 0,
+    "pre_contact_only": true,
+    "pre_torque_settle_frames": 360,
+    "qp_solve_count": 2215,
+    "qp_status_counts": {
+      "QP_OPTIMAL": 2215
+    },
+    "qp_stop_reason": null,
+    "run_id": "task28_precontact_clock20_014713",
+    "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py",
+    "scene_entry_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+    "scene_root": "/World/Task27",
+    "schema": "task28.task27.one_pass.v1",
+    "small_motion": false,
+    "status": "COMPLETED",
+    "task_mode": "FREE_APPROACH",
+    "timeout_reached": false,
+    "torque_latched_error": null,
+    "torque_log": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_task27_integration/evidence/task28_precontact_clock20_014713/task27_torque_bridge.jsonl",
+    "torque_steps": 2216,
+    "torque_writes": 2216
+  }
+}

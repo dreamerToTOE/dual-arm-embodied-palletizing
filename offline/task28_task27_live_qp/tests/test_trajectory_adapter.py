@@ -38,3 +38,33 @@ def test_unilateral_stream_is_independent():
     left.push(0.0, np.zeros(7))
     assert left.sample(0.1) is not None
     assert right.sample(0.1) is None
+
+
+def test_explicit_acceleration_is_retained_during_interpolation_and_terminal_hold_is_zero():
+    """A richer source may provide ddq; the adapter must expose it to the QP.
+
+    The current Task27 publisher supplies positions only, so this is a
+    contract test for the source-adapter extension.  Endpoint acceleration
+    values are blended for the interior diagnostic sample, while the terminal
+    sample always holds zero velocity and acceleration for settling.
+    """
+    adapter = Task27JointTrajectoryAdapter()
+    adapter.push(
+        10.0,
+        np.zeros(7),
+        dq_rad_s=np.full(7, 0.2),
+        ddq_rad_s2=np.full(7, 1.5),
+    )
+    adapter.push(
+        11.0,
+        np.ones(7),
+        dq_rad_s=np.full(7, 0.4),
+        ddq_rad_s2=np.full(7, -0.5),
+    )
+    mid = adapter.sample(10.5)
+    assert mid is not None
+    np.testing.assert_allclose(mid.ddq_rad_s2, np.full(7, 0.5), atol=1e-12)
+    final = adapter.sample(11.0)
+    assert final is not None and final.clamped
+    np.testing.assert_allclose(final.dq_rad_s, np.zeros(7), atol=1e-12)
+    np.testing.assert_allclose(final.ddq_rad_s2, np.zeros(7), atol=1e-12)

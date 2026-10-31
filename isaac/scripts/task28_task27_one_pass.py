@@ -249,6 +249,8 @@ def main():
                         help="Fail-closed TCP displacement envelope for live-QP runs.")
     parser.add_argument("--execution-time-scale", type=float, default=3.0,
                         help="Task27 trajectory retiming scale passed to the executor.")
+    parser.add_argument("--pre-contact-only", action="store_true",
+                        help="Use the existing Task27 pre-contact gate executable and stop before descent/contact.")
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
@@ -273,6 +275,7 @@ def main():
         "pre_torque_settle_frames": int(args.pre_torque_settle_frames),
         "local_sweep_limit_m": float(args.local_sweep_limit_m),
         "execution_time_scale": float(args.execution_time_scale),
+        "pre_contact_only": bool(args.pre_contact_only),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -372,8 +375,10 @@ def main():
             planning_flag = " -p planning_only:=true" if args.planning_only else ""
             if args.max_batches < 1 or args.max_batches > 5:
                 raise ValueError("max-batches must be in 1..5")
-            executor = start_process("ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag, out / "task27_executor.log", ros_ws)
+            executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
+            executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
+            summary["executor_name"] = executor_name
             start = time.monotonic()
             while executor.poll() is None and time.monotonic() - start < args.timeout_s:
                 app.update()

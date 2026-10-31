@@ -1,0 +1,212 @@
+{
+  "frame_count": 5319,
+  "last_frame": {
+    "payload_gravity_compensation": {
+      "active": true,
+      "mass_kg": 0.8,
+      "source": "Task27_Cube_01_scene_metadata_plus_current_frozen_TCP_Jacobian",
+      "split": "equal_left_right",
+      "term_Nm": [
+        0.0,
+        -1.41708479188936,
+        0.04737994273562873,
+        1.95684132948351,
+        0.45342019952375834,
+        0.571457052845142,
+        0.013295703840298675,
+        0.0,
+        0.5894830404794755,
+        0.6262351023776689,
+        1.6700328423671054,
+        0.5005045021420421,
+        0.393125339331095,
+        -0.01350050075641078
+      ],
+      "wrench_world_N_Nm_each_tcp": [
+        0.0,
+        0.0,
+        3.9240000000000004,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "physics_step": 5318,
+    "q_error_rad": {
+      "left": [
+        0.26139450076600745,
+        -0.55199555990904,
+        0.20557596172921966,
+        -0.3348307027703741,
+        0.46671396269618876,
+        -0.12746416067331934,
+        1.227074746834245
+      ],
+      "right": [
+        -1.0505840663125128,
+        -0.19281307514376012,
+        1.2176748206293178,
+        -0.5647914430740606,
+        -0.07055423628450275,
+        0.0904975425648602,
+        1.4133290266056462
+      ]
+    },
+    "q_rad": {
+      "left": [
+        0.7696638107299805,
+        0.02483574114739895,
+        0.685296893119812,
+        -2.228816032409668,
+        0.02202494628727436,
+        2.2831037044525146,
+        0.3373444676399231
+      ],
+      "right": [
+        -0.06802091002464294,
+        -0.29108020663261414,
+        -2.0260331630706787,
+        -2.0024800300598145,
+        -0.35092517733573914,
+        2.086005926132202,
+        -3.0297744274139404
+      ]
+    },
+    "q_ref_rad": {
+      "left": [
+        1.031058311495988,
+        -0.5271598187616411,
+        0.8908728548490317,
+        -2.563646735180042,
+        0.4887389089834631,
+        2.1556395437791953,
+        1.564419214474168
+      ],
+      "right": [
+        -1.1186049763371557,
+        -0.48389328177637425,
+        -0.808358342441361,
+        -2.567271473133875,
+        -0.4214794136202419,
+        2.1765034686970623,
+        -1.6164454008082942
+      ]
+    },
+    "qp_status": "QP_OPTIMAL",
+    "task_mode": "DUAL_ATTACHED",
+    "time_s": 88.63333333332959
+  },
+  "max_abs_dq_rad_s": 2.1822750568389893,
+  "max_abs_measured_qdd_rad_s2": null,
+  "max_abs_measured_qdd_rad_s2_offline": 17.019693308414123,
+  "max_abs_q_error_deg": 80.97778828783636,
+  "max_abs_q_error_rad": 1.4133290266056462,
+  "max_abs_qdd_command_rad_s2": 17.98421500046633,
+  "max_abs_qdd_command_rad_s2_offline": 17.98421500046633,
+  "max_abs_qdd_tracking_error_rad_s2": null,
+  "max_abs_qdd_tracking_error_rad_s2_offline": 13.991858068805938,
+  "max_abs_requested_tau_Nm": 30.069991514789407,
+  "mode_transitions": [
+    {
+      "mode": "FREE_APPROACH",
+      "physics_step": 1,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "mode": "DUAL_ATTACHED",
+      "physics_step": 5085,
+      "time_s": 84.74999999999648
+    }
+  ],
+  "raw_trace": "task27_torque_bridge.jsonl.gz",
+  "run_id": "task28_cube01_payload_posture10_015739",
+  "schema": "task28.task27.terminal_tracking_receipt.v1",
+  "summary": {
+    "arm_roots": [
+      "/World/left_fr3",
+      "/World/right_fr3"
+    ],
+    "execution_time_scale": 16.0,
+    "executor_exit": -15,
+    "executor_name": "task27_five_cube_center_insert",
+    "executor_started": true,
+    "experiment": "hold",
+    "headless": false,
+    "lighting": "(True, ('Default', 'stage'))",
+    "live_qp": true,
+    "local_sweep_limit_m": 2.0,
+    "max_batches": 1,
+    "mode": "integrated",
+    "moveit_exit": 0,
+    "moveit_started": true,
+    "native_settle": {
+      "consecutive_observed": 10,
+      "consecutive_required": 10,
+      "dq_arm_rad_s": [
+        -0.00019085436360910535,
+        -0.010700101032853127,
+        -0.0006957091391086578,
+        0.005689768586307764,
+        -0.0010107556590810418,
+        6.82528770994395e-05,
+        2.8241793188499287e-05,
+        -0.0001733113022055477,
+        -0.010585050098598003,
+        -0.0005469790194183588,
+        0.005202353000640869,
+        -0.0008944892906583846,
+        5.538084587897174e-05,
+        1.7193950043292716e-05
+      ],
+      "frames": 10,
+      "max_abs_dq_rad_s": 0.010700101032853127,
+      "max_frames": 360,
+      "q_arm_rad": [
+        1.8674674720386975e-05,
+        -0.7843349575996399,
+        6.91303939674981e-05,
+        -2.3567605018615723,
+        0.00010053407459054142,
+        1.5707885026931763,
+        0.7853948473930359,
+        1.7120733900810592e-05,
+        -0.7843460440635681,
+        5.437589425127953e-05,
+        -2.356712579727173,
+        8.909473399398848e-05,
+        1.5707899332046509,
+        0.7853962182998657
+      ],
+      "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+      "settled": true,
+      "velocity_tol_rad_s": 0.05
+    },
+    "original_task26_bridge_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py",
+    "original_task26_bridge_source_sha256": "0f7123657ea8422cf0efd468e7bcd59624e144ae8c9ca315a82af57576b68dc6",
+    "original_task26_scene_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+    "original_task26_scene_source_sha256": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+    "planning_only": false,
+    "position_arm_write_count": 0,
+    "pre_contact_only": false,
+    "pre_torque_settle_frames": 360,
+    "qp_solve_count": 5318,
+    "qp_status_counts": {
+      "QP_INFEASIBLE": 1,
+      "QP_OPTIMAL": 5318
+    },
+    "qp_stop_reason": "EMPTY_ACCELERATION_OR_TORQUE_BOX",
+    "run_id": "task28_cube01_payload_posture10_015739",
+    "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py",
+    "scene_entry_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+    "scene_root": "/World/Task27",
+    "schema": "task28.task27.one_pass.v1",
+    "small_motion": false,
+    "status": "TORQUE_BRIDGE_FAIL_CLOSED",
+    "task_mode": "FREE_APPROACH",
+    "timeout_reached": true,
+    "torque_latched_error": "RuntimeError('LIVE_QP_QP_INFEASIBLE:EMPTY_ACCELERATION_OR_TORQUE_BOX')",
+    "torque_log": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_task27_integration/evidence/task28_cube01_payload_posture10_015739/task27_torque_bridge.jsonl",
+    "torque_steps": 5319,
+    "torque_writes": 5319
+  }
+}

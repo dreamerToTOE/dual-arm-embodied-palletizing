@@ -104,6 +104,20 @@ class Task27TorqueBridge:
         }
         self._trajectory_clock_origin_s = None
         self._trajectory_clock_start_s = None
+        self._trajectory_clock_scale = 1.0
+        # Task27 Cube_01 mass is read from the authored scene metadata.  It is
+        # used only after both original Surface Grippers report CLOSED; no
+        # payload or attachment is created by this bridge.
+        self._cube_mass_kg = None
+        try:
+            cube_prim = feed_bridge.stage.GetPrimAtPath("/World/Task27/Supply/Cube_01")
+            raw_metadata = cube_prim.GetCustomDataByKey("task26_metadata")
+            metadata = json.loads(str(raw_metadata)) if raw_metadata is not None else {}
+            mass = float(metadata.get("mass", float("nan")))
+            if np.isfinite(mass) and 0.0 < mass <= 10.0:
+                self._cube_mass_kg = mass
+        except Exception:
+            self._cube_mass_kg = None
         self._trajectory_fk_model = None
         self._trajectory_fk_validated = {side: False for side in SIDES}
         # When only one Task27 arm stream is active, the other TCP must hold
@@ -142,6 +156,7 @@ class Task27TorqueBridge:
         self._qp_stop_reason = None
         self._qp_prev_J = None
         self._qp_prev_dq = None
+        self._previous_measured_dq14 = None
         self._fd_prev_transforms = None
         self._task27_fk_model = None
         self._simulation_torque_config = None
@@ -321,7 +336,8 @@ class Task27TorqueBridge:
         if not isinstance(desired, dict) or not all(side in desired for side in SIDES):
             return
         closed = {side for side in SIDES if bool(desired[side])}
-        if closed == set(SIDES):
+        surface_closed = self._surface_grippers_closed()
+        if closed == set(SIDES) and surface_closed:
             next_mode = "DUAL_ATTACHED"
         elif closed:
             next_mode = "SINGLE_ARM_PUSH"
@@ -338,8 +354,49 @@ class Task27TorqueBridge:
                 "previous_mode": previous,
                 "task_mode": next_mode,
                 "suction_commanded": {side: bool(desired[side]) for side in SIDES},
+                "suction_closed": surface_closed,
                 "source": "Task27_original_feed_bridge_suction_command_state",
             })
+
+    def _surface_grippers_closed(self):
+        grippers = getattr(self.feed, "grippers", None)
+        if not isinstance(grippers, dict) or not all(side in grippers for side in SIDES):
+            return False
+        try:
+            return all(bool(grippers[side].is_closed()) for side in SIDES)
+        except Exception:
+            return False
+
+    def _payload_gravity_term(self, jacobian_left, jacobian_right):
+        """Return a conservative half-load gravity term at each TCP.
+
+        This is a runtime model term for the existing Cube_01 mass.  It does
+        not alter the USD, create a D6, or infer contact from a command alone.
+        """
+        active = (
+            self._task_mode == "DUAL_ATTACHED"
+            and self._cube_mass_kg is not None
+            and self._surface_grippers_closed()
+        )
+        if not active:
+            return np.zeros(14, dtype=float), {
+                "active": False,
+                "mass_kg": self._cube_mass_kg,
+                "source": "Task27_Cube_01_scene_metadata",
+            }
+        # The object gravity load is split equally between the two TCPs.  The
+        # upward wrench is the generalized compensation required by
+        # tau=M*qdd+h, with the original arm model and hard QP bounds intact.
+        wrench = np.array([0.0, 0.0, 0.5 * self._cube_mass_kg * 9.81, 0.0, 0.0, 0.0])
+        term = np.r_[jacobian_left.T @ wrench, jacobian_right.T @ wrench]
+        return term, {
+            "active": True,
+            "mass_kg": self._cube_mass_kg,
+            "split": "equal_left_right",
+            "wrench_world_N_Nm_each_tcp": wrench.tolist(),
+            "term_Nm": term.tolist(),
+            "source": "Task27_Cube_01_scene_metadata_plus_current_frozen_TCP_Jacobian",
+        }
 
     def _apply_joint_command(self, feed, side, command):
         stamp, names, positions = command
@@ -383,6 +440,21 @@ class Task27TorqueBridge:
             if self._trajectory_clock_origin_s is None:
                 self._trajectory_clock_origin_s = stamp_s
                 self._trajectory_clock_start_s = float(self._time_s)
+            else:
+                sim_elapsed = float(self._time_s) - float(self._trajectory_clock_start_s)
+                source_elapsed = stamp_s - float(self._trajectory_clock_origin_s)
+                if sim_elapsed > 1.0e-3 and source_elapsed >= 0.0:
+                    scale = source_elapsed / sim_elapsed
+                    # The Isaac GUI may advance more slowly than wall-clock
+                    # ROS callbacks.  In that case the source stamp can run
+                    # several times faster than the physics clock (the
+                    # baseline measured roughly 6x), so rejecting ratios
+                    # above four silently reintroduces the terminal phase
+                    # lag this adapter is intended to remove.  Keep a broad
+                    # finite bound for stale/malformed stamps while allowing
+                    # the measured runtime ratio to be represented.
+                    if np.isfinite(scale) and 0.25 <= scale <= 20.0:
+                        self._trajectory_clock_scale = float(scale)
             self._dqref_capture_step[side] = self._step
             self._target_count[side] += 1
             # This is a target capture, never a position actuator write.
@@ -539,7 +611,8 @@ class Task27TorqueBridge:
         adapter = self._trajectory_adapters[side]
         if adapter.point_count and self._trajectory_clock_origin_s is not None:
             elapsed = max(0.0, float(self._time_s) - float(self._trajectory_clock_start_s))
-            sample = adapter.sample(float(self._trajectory_clock_origin_s) + elapsed)
+            source_time = float(self._trajectory_clock_origin_s) + elapsed * float(self._trajectory_clock_scale)
+            sample = adapter.sample(source_time)
             return (np.asarray(sample.q_rad, dtype=float),
                     np.asarray(sample.dq_rad_s, dtype=float),
                     np.asarray(sample.ddq_rad_s2, dtype=float),
@@ -668,6 +741,8 @@ class Task27TorqueBridge:
         M14[7:, 7:] = MR
         h14 = np.r_[states["left"][6][:7] + states["left"][2][:7],
                     states["right"][6][:7] + states["right"][2][:7]]
+        payload_term, payload_diag = self._payload_gravity_term(JL, JR)
+        h14 += payload_term
         TL_des, TR_des, v_common, v_relative, a_common_ff, a_relative_ff = self._qp_reference(self._time_s)
         # Real Task27 points supersede the synthetic local diagnostic target as
         # soon as either arm publishes.  The frozen Task27 FK is admitted only
@@ -771,13 +846,14 @@ class Task27TorqueBridge:
         # behavior.  Once ROS/Task27 publishes a point, the joint objective
         # follows that target while common/relative TCP objectives and every
         # hard safety bound remain unchanged.
-        q_ref_parts, dq_ref_parts, ref_age = [], [], {}
+        q_ref_parts, dq_ref_parts, ddq_ref_parts, ref_age = [], [], [], {}
         for side in SIDES:
-            q_ref, dq_ref, _, age_steps, source = self._trajectory_reference(
+            q_ref, dq_ref, ddq_ref, age_steps, source = self._trajectory_reference(
                 side, states[side][0][:7], states[side][1][:7]
             )
             q_ref_parts.append(q_ref)
             dq_ref_parts.append(dq_ref)
+            ddq_ref_parts.append(ddq_ref)
             ref_age[side] = {
                 "age_physics_steps": int(age_steps),
                 "target_count": int(self._target_count[side]),
@@ -785,7 +861,10 @@ class Task27TorqueBridge:
             }
         q_ref14 = np.r_[q_ref_parts[0], q_ref_parts[1]]
         dq_ref14 = np.r_[dq_ref_parts[0], dq_ref_parts[1]]
-        posture_accel = np.clip(12.0 * (q_ref14 - q) + 5.0 * (dq_ref14 - dq), -8.0, 8.0)
+        ddq_ref14 = np.r_[ddq_ref_parts[0], ddq_ref_parts[1]]
+        posture_accel = np.clip(
+            ddq_ref14 + 12.0 * (q_ref14 - q) + 5.0 * (dq_ref14 - dq), -8.0, 8.0
+        )
         # FREE_APPROACH, SINGLE_ARM_PUSH and RELEASE_RETREAT have no attached
         # bilateral object. Once real qref exists, use independent joint
         # tracking rather than an implicit cooperative average task.
@@ -832,6 +911,7 @@ class Task27TorqueBridge:
             "jdotdq_source": "finite_difference_selected_frozen_model_jacobian_and_joint_velocity",
             "relative_objective_enabled": bool(relative_objective_enabled),
             "independent_joint_tracking": independent_joint_tracking,
+            "payload_gravity_compensation": payload_diag,
             "finger_qdd_assumption": "zero; finger sink preserved",
             "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
             "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},
@@ -858,10 +938,18 @@ class Task27TorqueBridge:
                 "target_bound_to_qp": True,
                 "q_ref_rad": {side: q_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
                 "dq_ref_rad_s": {side: dq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+                "ddq_ref_rad_s2": {side: ddq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+                "q_error_rad": {side: (q_ref_parts[index] - states[side][0][:7]).tolist()
+                                  for index, side in enumerate(SIDES)},
+                "dq_error_rad_s": {side: (dq_ref_parts[index] - states[side][1][:7]).tolist()
+                                    for index, side in enumerate(SIDES)},
+                "posture_accel_desired_rad_s2": posture_accel.tolist(),
                 "reference_age": ref_age,
                 "velocity_decay_time_constant_s": 0.05,
                 "position_sink_actuation": False,
                 "task_mode": self._task_mode,
+                "clock_scale_source_per_sim": float(self._trajectory_clock_scale),
+                "latest_captured_q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
                 "tcp_fk_source": "frozen_Task28_G1_FR3_URDF_pose_validated_against_Task27_PhysX_handoff",
                 "tcp_twist_source": "selected_frozen_Task27_model_geometric_jacobian_pose_qualified_against_PhysX_tcp",
                 "tcp_targets_active": bool(trajectory_targets),
@@ -879,6 +967,15 @@ class Task27TorqueBridge:
         return {"left": tau[:7], "right": tau[7:]}, self._qp_last_diag, {
             "q_ref_rad": {side: q_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
             "dq_ref_rad_s": {side: dq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+            "ddq_ref_rad_s2": {side: ddq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+            "q_error_rad": {side: (q_ref_parts[index] - states[side][0][:7]).tolist()
+                            for index, side in enumerate(SIDES)},
+            "dq_error_rad_s": {side: (dq_ref_parts[index] - states[side][1][:7]).tolist()
+                               for index, side in enumerate(SIDES)},
+            "posture_accel_desired_rad_s2": posture_accel.tolist(),
+            "clock_scale_source_per_sim": float(self._trajectory_clock_scale),
+            "latest_captured_q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
+            "payload_gravity_compensation": payload_diag,
         }
 
     def _torque_step(self, dt):
@@ -923,6 +1020,12 @@ class Task27TorqueBridge:
                 )
         states = {side: self._state(side) for side in SIDES}
         transforms = {side: self._tcp_transform(side) for side in SIDES}
+        measured_dq14 = np.r_[states["left"][1][:7], states["right"][1][:7]]
+        if self._previous_measured_dq14 is None:
+            measured_qdd14 = None
+        else:
+            measured_qdd14 = (measured_dq14 - self._previous_measured_dq14) / float(dt)
+        self._previous_measured_dq14 = measured_dq14.copy()
         self._update_task_mode_from_scene_event()
         efforts, components = {}, {}
         clipped = {}
@@ -1015,8 +1118,35 @@ class Task27TorqueBridge:
         self._writes += 1
         self._log({
             "event": "TORQUE_FRAME", "physics_step": self._step, "time_s": self._time_s, "dt_s": float(dt),
-            "q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
-            "dq_ref_rad_s": {side: self._dqref[side].tolist() for side in SIDES},
+            # In live-QP mode these are the timestamped adapter samples used
+            # by the current solve.  The legacy ``_qref``/``_dqref`` capture
+            # remains the fallback source before the first adapter point.
+            "q_ref_rad": (
+                (components.get("q_ref_rad") or
+                 {side: self._qref[side].tolist() for side in SIDES})
+                if self._live_qp else
+                {side: self._qref[side].tolist() for side in SIDES}
+            ),
+            "dq_ref_rad_s": (
+                (components.get("dq_ref_rad_s") or
+                 {side: self._dqref[side].tolist() for side in SIDES})
+                if self._live_qp else
+                {side: self._dqref[side].tolist() for side in SIDES}
+            ),
+            "ddq_ref_rad_s2": (
+                (components.get("ddq_ref_rad_s2") or
+                 {side: np.zeros(7).tolist() for side in SIDES})
+                if self._live_qp else
+                {side: np.zeros(7).tolist() for side in SIDES}
+            ),
+            "q_error_rad": (components.get("q_error_rad") or {} if self._live_qp else {}),
+            "dq_error_rad_s": (components.get("dq_error_rad_s") or {} if self._live_qp else {}),
+            "posture_accel_desired_rad_s2": (
+                components.get("posture_accel_desired_rad_s2") if self._live_qp else None
+            ),
+            "trajectory_clock_scale_source_per_sim": (
+                components.get("clock_scale_source_per_sim", 1.0) if self._live_qp else 1.0
+            ),
             "dq_ref_decay": dqref_decay,
             "q_full_rad": {side: states[side][0].tolist() for side in SIDES},
             "dq_full_rad_s": {side: states[side][1].tolist() for side in SIDES},
@@ -1032,6 +1162,14 @@ class Task27TorqueBridge:
             "tcp_pose_world": {side: transforms[side].tolist() for side in SIDES},
             "qp": (dict(qp_diag, solve_count=self._qp_solve_count,
                         status=qp_diag.get("status", "UNKNOWN")) if self._live_qp else qp_diag),
+            "measured_qdd14_rad_s2": (
+                None if measured_qdd14 is None else measured_qdd14.tolist()
+            ),
+            "qdd_tracking_error14_rad_s2": (
+                None if measured_qdd14 is None or not self._live_qp or
+                qp_diag.get("qp_qdd14") is None else
+                (measured_qdd14 - np.asarray(qp_diag["qp_qdd14"], dtype=float)).tolist()
+            ),
             "observer": {"status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J", "contact_oracle": "NOT_CONNECTED"},
             "position_arm_write_count": 0, "torque_write_count": self._writes,
             "torque_rate_limited": clipped,
