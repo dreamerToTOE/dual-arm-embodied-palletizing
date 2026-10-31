@@ -328,6 +328,10 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         prev = None if previous_tau14 is None else _vec(previous_tau14, (14,), "INVALID_PREVIOUS_TORQUE")
     except ValueError as exc:
         return _failure("INPUT_REJECTED", str(exc))
+    if type(model_validated) is not bool:
+        return _failure("INPUT_REJECTED", "MODEL_GATE_NOT_BOOLEAN")
+    if type(feedback_fresh) is not bool:
+        return _failure("INPUT_REJECTED", "FEEDBACK_GATE_NOT_BOOLEAN")
     if not model_validated:
         return _failure("MODEL_GATE_REJECTED", "TASK27_MODEL_NOT_VALIDATED")
     if not bool(feedback_fresh):
