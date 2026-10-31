@@ -3412,6 +3412,20 @@ int main(int argc, char** argv)
       }
       if (!planning_only)
       {
+#ifdef TASK27_FIVE_CUBE
+        // Task27 HIGH_PRE_CONTACT is a coordinated phase.  Publishing the
+        // complete left stream with blocking executeAt() first can prevent
+        // the right stream from being published at all when the left arm
+        // fails to settle.  Use the existing synchronized scheduler so both
+        // references are available to the torque bridge from the same phase.
+        if (!executeSync(left, left_pre, right, right_pre) ||
+            !left.waitAtTarget(left_pre, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
+            !right.waitAtTarget(right_pre, kJointSettleToleranceRad, kJointSettleTimeoutSec))
+        {
+          all_complete = false;
+          break;
+        }
+#else
         if (!left.executeAt(left_pre, std::chrono::steady_clock::now()) ||
             !right.executeAt(right_pre, std::chrono::steady_clock::now()) ||
             !left.waitAtTarget(left_pre, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
@@ -3420,6 +3434,7 @@ int main(int argc, char** argv)
           all_complete = false;
           break;
         }
+#endif
 
         auto right_hold_pre = holdTrajectory(
           right_pre, finalPositions(right_pre), pointTime(left_outer_descent.points.back()));
@@ -5181,9 +5196,8 @@ int main(int argc, char** argv)
             task.id, handoff_next_index + 1);
           return 0;
         }
-        if (!left.executeAt(next_left, std::chrono::steady_clock::now()) ||
+        if (!executeSync(left, next_left, right, next_right) ||
             !left.waitAtTarget(next_left, kJointSettleToleranceRad, kJointSettleTimeoutSec) ||
-            !right.executeAt(next_right, std::chrono::steady_clock::now()) ||
             !right.waitAtTarget(next_right, kJointSettleToleranceRad, kJointSettleTimeoutSec))
         {
           RCLCPP_ERROR(node->get_logger(),

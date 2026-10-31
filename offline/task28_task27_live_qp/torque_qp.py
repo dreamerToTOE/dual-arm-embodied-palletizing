@@ -87,6 +87,7 @@ class CooperativeTorqueQPConfig:
     # hard physical limits remain authoritative.
     common_residual_limit: float | None = None
     relative_residual_limit: float | None = None
+    independent_joint_tracking: bool = False
     # Optional hard task equalities.  They are disabled by default because a
     # measured Jacobian may be rank deficient near a singularity; enabling one
     # makes infeasibility explicit and returns no torque command.
@@ -110,7 +111,14 @@ class CooperativeTorqueQPConfig:
         weights = (float(self.common_weight), float(self.relative_weight),
                    float(self.acceleration_weight), float(self.torque_weight),
                    float(self.torque_slew_weight))
-        if any(not np.isfinite(v) or v < 0 for v in weights) or weights[0] == 0 or weights[1] == 0:
+        # Cooperative modes require a common objective.  Free/unilateral
+        # phases may explicitly select independent joint tracking instead;
+        # hard dynamics and limit boxes remain unchanged.
+        independent = bool(self.independent_joint_tracking)
+        if any(not np.isfinite(v) or v < 0 for v in weights) or (
+            (weights[0] == 0 and not independent) or
+            (weights[0] == 0 and weights[1] == 0 and float(self.joint_posture_weight) <= 0)
+        ):
             raise ValueError("INVALID_OBJECTIVE_WEIGHT")
         margin = float(self.torque_numerical_margin_Nm)
         if not np.isfinite(margin) or margin < 0 or margin >= float(np.min(tau)):
@@ -440,6 +448,7 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "common_accel_desired": ac.tolist(), "relative_accel_desired": ar.tolist(),
         "joint_accel_desired": aj.tolist(), "joint_posture_weight": posture_weight,
         "common_weight": wc, "relative_weight": wr,
+        "independent_joint_tracking": bool(cfg.independent_joint_tracking),
         "solve_wall_time_s": time.perf_counter() - started,
         "execution_authorized": False,
         **solve_diag,

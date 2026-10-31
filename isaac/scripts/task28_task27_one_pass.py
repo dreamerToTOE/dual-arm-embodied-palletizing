@@ -151,6 +151,25 @@ def start_process(command: str, log_path: Path, cwd: Path):
     # stall Python startup before the executor publishes qref points.
     for _prefix_var in ("AMENT_PREFIX_PATH", "COLCON_PREFIX_PATH", "CMAKE_PREFIX_PATH"):
         env.pop(_prefix_var, None)
+    # This checkout intentionally carries only the project packages.  The
+    # canonical Franka meshes and the matching MoveIt config are provided by
+    # the isolated historical ROS install.  ``source .../setup.bash`` is not
+    # safe for the executor here because its generated setup helper can recurse
+    # through stale prefixes, but the ament index only needs the package
+    # specific install prefixes.  Keep those prefixes in the executor's
+    # environment so ``package://franka_description/...`` resolves to the real
+    # collision meshes instead of silently leaving links collision-free.
+    historical_install = Path(
+        "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install"
+    )
+    historical_prefixes = []
+    for package_name in ("franka_description", "franka_fr3_moveit_config"):
+        package_prefix = historical_install / package_name
+        package_index = package_prefix / "share/ament_index/resource_index/packages" / package_name
+        if package_index.is_file() or package_index.is_symlink():
+            historical_prefixes.append(str(package_prefix))
+    if historical_prefixes:
+        env["AMENT_PREFIX_PATH"] = os.pathsep.join(historical_prefixes)
     env["LD_LIBRARY_PATH"] = "/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib"
     env["PATH"] = "/opt/ros/humble/bin:/usr/bin:/bin"
     stream = log_path.open("w", encoding="utf-8")
@@ -167,8 +186,18 @@ def start_process(command: str, log_path: Path, cwd: Path):
     needs_moveit_overlay = "moveit_dual_side_suction" in command
     if needs_moveit_overlay and overlay.is_file():
         overlay_cmd = f"source {overlay} && "
+    resource_prefix_cmd = ""
+    if "task27_five_cube_center_insert" in command:
+        # The executor must resolve the real FR3 collision meshes, but sourcing
+        # the historical overlay for it can select stale generated packages.
+        # Add only the isolated description prefix after the local workspace.
+        franka_description_prefix = overlay.parent / "franka_description"
+        if franka_description_prefix.is_dir():
+            resource_prefix_cmd = (
+                f"export AMENT_PREFIX_PATH={franka_description_prefix}:$AMENT_PREFIX_PATH && "
+            )
     proc = subprocess.Popen(
-        ["bash", "-lc", f"source /opt/ros/humble/setup.bash && {overlay_cmd}source install/setup.bash && {command}"],
+        ["bash", "-lc", f"source /opt/ros/humble/setup.bash && {overlay_cmd}source install/setup.bash && {resource_prefix_cmd}{command}"],
         cwd=str(cwd), env=env, stdout=stream, stderr=subprocess.STDOUT,
         start_new_session=True,
     )
@@ -218,11 +247,15 @@ def main():
                         help="Let the original scene drive settle before torque takeover.")
     parser.add_argument("--local-sweep-limit-m", type=float, default=0.020,
                         help="Fail-closed TCP displacement envelope for live-QP runs.")
+    parser.add_argument("--execution-time-scale", type=float, default=3.0,
+                        help="Task27 trajectory retiming scale passed to the executor.")
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
     if not np.isfinite(args.local_sweep_limit_m) or args.local_sweep_limit_m <= 0.0:
         raise ValueError("local-sweep-limit-m must be finite and positive")
+    if not np.isfinite(args.execution_time_scale) or args.execution_time_scale < 1.0:
+        raise ValueError("execution-time-scale must be finite and at least 1")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -239,6 +272,7 @@ def main():
         "task_mode": args.task_mode,
         "pre_torque_settle_frames": int(args.pre_torque_settle_frames),
         "local_sweep_limit_m": float(args.local_sweep_limit_m),
+        "execution_time_scale": float(args.execution_time_scale),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -338,7 +372,7 @@ def main():
             planning_flag = " -p planning_only:=true" if args.planning_only else ""
             if args.max_batches < 1 or args.max_batches > 5:
                 raise ValueError("max-batches must be in 1..5")
-            executor = start_process("ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=3.0" + planning_flag, out / "task27_executor.log", ros_ws)
+            executor = start_process("ros2 run fr3_dual_palletize task27_five_cube_center_insert --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             start = time.monotonic()
             while executor.poll() is None and time.monotonic() - start < args.timeout_s:

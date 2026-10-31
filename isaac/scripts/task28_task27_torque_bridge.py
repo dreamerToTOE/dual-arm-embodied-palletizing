@@ -106,6 +106,11 @@ class Task27TorqueBridge:
         self._trajectory_clock_start_s = None
         self._trajectory_fk_model = None
         self._trajectory_fk_validated = {side: False for side in SIDES}
+        # When only one Task27 arm stream is active, the other TCP must hold
+        # the first measured pose captured at the phase handoff.  Re-reading
+        # the current pose on every callback turns feedback drift into the
+        # desired target and silently removes the intended unilateral hold.
+        self._trajectory_unilateral_hold = {side: None for side in SIDES}
         self._q0 = {}
         self._previous_effort = {side: np.zeros(7) for side in SIDES}
         self._step = 0
@@ -681,8 +686,10 @@ class Task27TorqueBridge:
         if trajectory_targets:
             for side, current_T in (("left", TL), ("right", TR)):
                 if side not in trajectory_targets:
+                    if self._trajectory_unilateral_hold[side] is None:
+                        self._trajectory_unilateral_hold[side] = current_T.copy()
                     trajectory_targets[side] = (
-                        current_T.copy(),
+                        self._trajectory_unilateral_hold[side].copy(),
                         np.zeros(6),
                         np.zeros(6),
                         0,
@@ -779,6 +786,28 @@ class Task27TorqueBridge:
         q_ref14 = np.r_[q_ref_parts[0], q_ref_parts[1]]
         dq_ref14 = np.r_[dq_ref_parts[0], dq_ref_parts[1]]
         posture_accel = np.clip(12.0 * (q_ref14 - q) + 5.0 * (dq_ref14 - dq), -8.0, 8.0)
+        # FREE_APPROACH, SINGLE_ARM_PUSH and RELEASE_RETREAT have no attached
+        # bilateral object. Once real qref exists, use independent joint
+        # tracking rather than an implicit cooperative average task.
+        # Keep the relative map in the diagnostics, but remove its soft
+        # optimization objective so the controller does not impose a hidden
+        # zero-relative-acceleration constraint during independent motion.
+        from dataclasses import replace
+        qp_config = self._qp_config
+        relative_objective_enabled = self._task_mode == "DUAL_ATTACHED"
+        independent_joint_tracking = bool(
+            trajectory_targets and not relative_objective_enabled
+        )
+        if independent_joint_tracking:
+            qp_config = replace(
+                qp_config,
+                common_weight=0.0,
+                relative_weight=0.0,
+                joint_posture_weight=10.0,
+                independent_joint_tracking=True,
+            )
+        elif not relative_objective_enabled:
+            qp_config = replace(qp_config, relative_weight=0.0)
         result = solve_cooperative_torque_qp(
             q14=q, dq14=dq, mass14=M14, bias14=h14,
             jacobian_left=JL, jacobian_right=JR,
@@ -789,7 +818,7 @@ class Task27TorqueBridge:
             relative_accel_desired=relative_accel,
             joint_accel_desired=posture_accel,
             previous_tau14=self._qp_previous_tau,
-            config=self._qp_config, model_validated=True,
+            config=qp_config, model_validated=True,
             feedback_fresh=True, dt_s=1.0 / 60.0,
         )
         self._qp_status_counts[result.status] = self._qp_status_counts.get(result.status, 0) + 1
@@ -801,6 +830,8 @@ class Task27TorqueBridge:
             "jacobian_frame": "world_spatial_linear_angular",
             "relative_jacobian_source": "Task28_TCP_origin_geometric_relative_body_map_from_model_Jacobians",
             "jdotdq_source": "finite_difference_selected_frozen_model_jacobian_and_joint_velocity",
+            "relative_objective_enabled": bool(relative_objective_enabled),
+            "independent_joint_tracking": independent_joint_tracking,
             "finger_qdd_assumption": "zero; finger sink preserved",
             "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
             "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},

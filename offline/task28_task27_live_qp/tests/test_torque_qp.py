@@ -54,6 +54,29 @@ def test_caller_verified_relative_jacobian_is_used_when_supplied():
     assert result.diagnostics["relative_jacobian_shape"] == [6, 14]
 
 
+def test_zero_relative_weight_disables_soft_bilateral_objective():
+    # Free/unilateral phases keep the verified relative map for diagnostics,
+    # but must not impose a hidden zero-relative-acceleration objective.
+    cfg = CooperativeTorqueQPConfig(relative_weight=0.0)
+    result = _solve(config=cfg,
+                    jacobian_relative=np.zeros((6, 14)),
+                    relative_accel_desired=np.ones(6))
+    assert result.status == "QP_OPTIMAL"
+    assert result.diagnostics["relative_weight"] == 0.0
+
+
+def test_independent_joint_tracking_allows_zero_task_space_weights():
+    cfg = CooperativeTorqueQPConfig(
+        common_weight=0.0,
+        relative_weight=0.0,
+        joint_posture_weight=10.0,
+        independent_joint_tracking=True,
+    )
+    result = _solve(config=cfg, jacobian_relative=np.zeros((6, 14)))
+    assert result.status == "QP_OPTIMAL"
+    assert result.diagnostics["independent_joint_tracking"] is True
+
+
 def test_hard_common_task_constraint_is_enforced_or_fails_closed():
     cfg = CooperativeTorqueQPConfig(hard_common_acceleration=True)
     desired = np.r_[.01, 0, 0, 0, 0, 0]
