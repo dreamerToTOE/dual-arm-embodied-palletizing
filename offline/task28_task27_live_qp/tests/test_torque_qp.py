@@ -54,6 +54,15 @@ def test_caller_verified_relative_jacobian_is_used_when_supplied():
     assert result.diagnostics["relative_jacobian_shape"] == [6, 14]
 
 
+def test_hard_common_task_constraint_is_enforced_or_fails_closed():
+    cfg = CooperativeTorqueQPConfig(hard_common_acceleration=True)
+    desired = np.r_[.01, 0, 0, 0, 0, 0]
+    result = _solve(config=cfg, common_accel_desired=desired)
+    assert result.status == "QP_OPTIMAL"
+    assert result.diagnostics["hard_common_acceleration"] is True
+    assert result.diagnostics["common_acceleration_residual_inf"] < 3e-7
+
+
 def test_torque_rate_bound_is_hard_and_reported():
     prev = np.zeros(14)
     cfg = CooperativeTorqueQPConfig(

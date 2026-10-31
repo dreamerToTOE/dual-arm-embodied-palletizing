@@ -81,6 +81,11 @@ class CooperativeTorqueQPConfig:
     # hard physical limits remain authoritative.
     common_residual_limit: float | None = None
     relative_residual_limit: float | None = None
+    # Optional hard task equalities.  They are disabled by default because a
+    # measured Jacobian may be rank deficient near a singularity; enabling one
+    # makes infeasibility explicit and returns no torque command.
+    hard_common_acceleration: bool = False
+    hard_relative_acceleration: bool = False
 
     def arrays(self):
         dt = float(self.dt_s)
@@ -173,7 +178,8 @@ def _solve_affine(H, f, C, b, lower, upper):
 
 
 def _solve_reduced_qdd(Hq, fq, M, h, lower_qdd, upper_qdd,
-                       lower_tau, upper_tau, *, Htau=None, ftau=None):
+                       lower_tau, upper_tau, *, Htau=None, ftau=None,
+                       A_eq=None, b_eq=None):
     """Solve after eliminating the affine dynamics equality.
 
     Eliminating ``tau`` avoids the poor conditioning caused by asking a
@@ -206,11 +212,18 @@ def _solve_reduced_qdd(Hq, fq, M, h, lower_qdd, upper_qdd,
     tau_rhs_lo = lower_tau - h
     tau_rhs_hi = upper_tau - h
     constraints = [LinearConstraint(A_tau, tau_rhs_lo, tau_rhs_hi)]
+    if A_eq is not None:
+        constraints.append(LinearConstraint(np.asarray(A_eq, float),
+                                            np.asarray(b_eq, float),
+                                            np.asarray(b_eq, float)))
     # Feasible seed from HiGHS is also used as SLSQP's starting point; this
     # avoids relying on an unconstrained inverse-dynamics torque guess.
     try:
-        seed = linprog(np.zeros(14), A_ub=np.vstack((A_tau, -A_tau)),
-                       b_ub=np.r_[tau_rhs_hi, -tau_rhs_lo],
+        A_ub = np.vstack((A_tau, -A_tau))
+        b_ub = np.r_[tau_rhs_hi, -tau_rhs_lo]
+        seed = linprog(np.zeros(14), A_ub=A_ub, b_ub=b_ub,
+                       A_eq=None if A_eq is None else np.asarray(A_eq, float),
+                       b_eq=None if b_eq is None else np.asarray(b_eq, float),
                        bounds=list(zip(lower_qdd, upper_qdd)), method="highs",
                        options={"time_limit": 10.0})
     except Exception as exc:
@@ -377,11 +390,20 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     if prev is not None and ws:
         Htau += ws * np.eye(14)
         ftau -= ws * prev
+    task_equalities, task_targets = [], []
+    if cfg.hard_common_acceleration:
+        task_equalities.append(A_common)
+        task_targets.append(ac - bias_common)
+    if cfg.hard_relative_acceleration:
+        task_equalities.append(A_relative)
+        task_targets.append(ar - bias_relative)
+    A_eq = np.vstack(task_equalities) if task_equalities else None
+    b_eq = np.concatenate(task_targets) if task_targets else None
     # Eliminate tau using the measured dynamics.  The returned decision still
     # includes both qdd and tau, with a certificate that tau=M*qdd+h.
     x, solve_diag = _solve_reduced_qdd(
         Hq, fq, M, h, lower_qdd, upper_qdd, lower_tau, upper_tau,
-        Htau=Htau, ftau=ftau)
+        Htau=Htau, ftau=ftau, A_eq=A_eq, b_eq=b_eq)
     diagnostics = {
         "status": solve_diag.get("status"), "decision_dimension": 28,
         "decision_layout": "qdd_left7_right7_then_tau_left7_right7",
@@ -390,6 +412,8 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "model_validated": bool(model_validated), "feedback_fresh": bool(feedback_fresh),
         "common_jacobian_shape": list(A_common.shape), "relative_jacobian_shape": list(A_relative.shape),
         "relative_jacobian_source": "caller_verified" if Jrel is not None else "world_difference_fallback",
+        "hard_common_acceleration": bool(cfg.hard_common_acceleration),
+        "hard_relative_acceleration": bool(cfg.hard_relative_acceleration),
         "common_accel_desired": ac.tolist(), "relative_accel_desired": ar.tolist(),
         "common_weight": wc, "relative_weight": wr,
         "solve_wall_time_s": time.perf_counter() - started,
