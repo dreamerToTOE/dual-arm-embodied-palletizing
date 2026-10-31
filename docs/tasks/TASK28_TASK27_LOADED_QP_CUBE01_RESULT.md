@@ -13,7 +13,7 @@ The strongest run is `task28_loaded_posture1e4_full_023503`:
 - controlled descent and side push completed with suction still CLOSED;
 - Cube_01 reached the table, both suction commands reported OPEN, and the original preplanned bilateral retreat passed FCL.
 
-After this completed cycle, the original Task27 executor continued an optional REGRASP/PUSH sequence. PUSH slice 8 later failed a right-arm settle check (3.738° residual); this post-release failure does not invalidate the completed lift, placement, release and retreat.
+After this completed cycle, the original Task27 executor continued an optional REGRASP/PUSH sequence. The 600 s runner timeout stopped that continuation; PUSH slice 8 then reported a right-arm settle failure (3.738° residual) and emergency suction-off confirmation was not obtained. This post-release continuation failure does not invalidate the completed lift, placement, release and retreat.
 
 The Isaac runner summary is `headless=false`, `moveit_exit=0`, bridge `status=COMPLETED`, with 14,851 QP solves and no latched error. The runner reached its 600 s bound while the optional post-release continuation was still running (`executor_exit=-15`, `timeout_reached=true`); therefore this result is a Cube_01 cycle result, not a claim that the full five-Cube continuation completed.
 
