@@ -51,7 +51,8 @@ def _sha256(path: Path) -> str:
 class Task27TorqueBridge:
     """Patch the original feed bridge while retaining its scene semantics."""
 
-    def __init__(self, feed_bridge, output: Path):
+    def __init__(self, feed_bridge, output: Path, *, live_qp: bool = False,
+                 experiment: str = "hold"):
         from isaacsim.core.utils.types import ArticulationAction
         import omni.physx
 
@@ -93,6 +94,36 @@ class Task27TorqueBridge:
         self._last_full_command = None
         self._last_raw_command = None
         self._last_raw_full_command = None
+        self._live_qp = bool(live_qp)
+        self._qp_experiment = str(experiment)
+        self._qp_model = None
+        self._qp_config = None
+        self._qp_frame = None
+        self._qp_anchor_transforms = None
+        self._qp_anchor_q = None
+        self._qp_previous_tau = np.zeros(14)
+        self._qp_solve_count = 0
+        self._qp_status_counts = {}
+        self._qp_last_diag = {}
+        self._qp_model_gate = None
+        self._qp_stop_reason = None
+        self._qp_prev_J = None
+        self._qp_prev_dq = None
+        if self._live_qp:
+            if self._qp_experiment not in ("hold", "common", "relative", "combined"):
+                raise RuntimeError(f"QP_EXPERIMENT:{self._qp_experiment}")
+            from dataclasses import replace
+            from offline.task28_task27_live_qp.torque_qp import CooperativeTorqueQPConfig
+            limits = np.asarray(next(iter(self.articulations.values()))._articulation_view.get_dof_limits(), dtype=float)
+            if limits.ndim == 3:
+                limits = limits[0]
+            if limits.shape != (9, 2) or not np.isfinite(limits[:7]).all():
+                raise RuntimeError("QP_RUNTIME_LIMITS")
+            self._qp_config = replace(
+                CooperativeTorqueQPConfig(),
+                q_lower_rad=tuple(float(x) for x in limits[:7, 0]),
+                q_upper_rad=tuple(float(x) for x in limits[:7, 1]),
+            )
 
         # Snapshot and take over only the seven arm DOFs.  Finger policy is
         # checked before and after and remains untouched.
@@ -161,8 +192,10 @@ class Task27TorqueBridge:
             "arm_kd_zero": True,
             "position_arm_write_count": 0,
             "suction_or_d6_commands_owned_here": False,
-            "qp_status": "NOT_IMPLEMENTED_TASK27_LIVE_QP",
+            "qp_status": "LIVE_TASK27_TORQUE_QP" if self._live_qp else "NOT_IMPLEMENTED_TASK27_LIVE_QP",
             "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
+            "live_qp": self._live_qp,
+            "qp_experiment": self._qp_experiment if self._live_qp else None,
         })
 
     def _log(self, row):
@@ -234,6 +267,232 @@ class Task27TorqueBridge:
         t = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default()).ExtractTranslation()
         return [float(t[i]) for i in range(3)]
 
+    @staticmethod
+    def _matrix4(matrix):
+        try:
+            return np.array([[float(matrix.GetRow(i)[j]) for j in range(4)] for i in range(4)], dtype=float)
+        except Exception:
+            try:
+                return np.array([[float(matrix[i][j]) for j in range(4)] for i in range(4)], dtype=float)
+            except Exception:
+                return np.asarray(matrix, dtype=float).reshape(4, 4)
+
+    @staticmethod
+    def _tcp_transform(stage, side):
+        from pxr import Usd, UsdGeom
+        path = f"/World/{side}_fr3/fr3_link8/side_suction_tool/side_suction_tcp"
+        prim = stage.GetPrimAtPath(path)
+        if not prim.IsValid():
+            raise RuntimeError(f"TCP_MISSING:{side}")
+        matrix = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+        try:
+            from pxr import Gf
+            from scipy.spatial.transform import Rotation
+            transform = Gf.Transform(matrix)
+            quat = transform.GetRotation().GetQuat()
+            rotation = Rotation.from_quat([
+                float(quat.GetImaginary()[0]), float(quat.GetImaginary()[1]),
+                float(quat.GetImaginary()[2]), float(quat.GetReal())
+            ]).as_matrix()
+            translation = matrix.ExtractTranslation()
+            T = np.eye(4, dtype=float)
+            T[:3, :3] = np.array([[float(rotation[i][j]) for j in range(3)] for i in range(3)], dtype=float)
+            T[:3, 3] = np.array([float(translation[i]) for i in range(3)], dtype=float)
+        except Exception:
+            T = Task27TorqueBridge._matrix4(matrix)
+        if not np.isfinite(T).all() or np.linalg.det(T[:3, :3]) <= 0.0:
+            raise RuntimeError(f"TCP_TRANSFORM_INVALID:{side}")
+        return T
+
+    @staticmethod
+    def _skew(v):
+        x, y, z = np.asarray(v, dtype=float).reshape(3)
+        return np.array([[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]])
+
+    def _physx_tcp_jacobian(self, side, T_tcp):
+        """Read the PhysX link8 Jacobian and transport it to the TCP frame."""
+        view = self.articulations[side]._articulation_view
+        raw = np.asarray(view.get_jacobians(), dtype=float)
+        if raw.ndim == 4:
+            raw = raw[0]
+        names = list(view.body_names)
+        if raw.ndim != 3 or raw.shape[1:] != (6, 9) or "fr3_link8" not in names:
+            raise RuntimeError(f"JACOBIAN_SHAPE_OR_BODY:{side}")
+        link_index = names.index("fr3_link8")
+        if raw.shape[0] == len(names) - 1:
+            link_index -= 1
+        if not 0 <= link_index < raw.shape[0]:
+            raise RuntimeError(f"JACOBIAN_BODY_INDEX:{side}")
+        J_link = raw[link_index]
+        link_path = f"/World/{side}_fr3/fr3_link8"
+        from pxr import Usd, UsdGeom
+        link_prim = self.feed.stage.GetPrimAtPath(link_path)
+        if not link_prim.IsValid():
+            raise RuntimeError(f"LINK8_MISSING:{side}")
+        link_matrix = UsdGeom.Xformable(link_prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+        link_translation = link_matrix.ExtractTranslation()
+        T_link = np.eye(4, dtype=float)
+        T_link[:3, 3] = np.array([float(link_translation[i]) for i in range(3)], dtype=float)
+        r_world = T_tcp[:3, 3] - T_link[:3, 3]
+        J_tcp = np.zeros((6, 9), dtype=float)
+        J_tcp[:3] = J_link[:3] - self._skew(r_world) @ J_link[3:]
+        J_tcp[3:] = J_link[3:]
+        if not np.isfinite(J_tcp).all() or np.max(np.abs(J_tcp[:, 7:])) > 1e-5:
+            raise RuntimeError(f"JACOBIAN_FINGER_COUPLING:{side}")
+        return J_tcp[:, :7]
+
+    @staticmethod
+    def _rotation_error(T_actual, T_desired):
+        from scipy.spatial.transform import Rotation
+        return Rotation.from_matrix(T_actual[:3, :3].T @ T_desired[:3, :3]).as_rotvec()
+
+    def _qp_reference(self, time_s):
+        """Build a small local common/relative target around measured home."""
+        from offline.task28_p5_qp_6_r12.qp_math import quintic_profile
+        if self._qp_frame is None:
+            raise RuntimeError("QP_FRAME_NOT_INITIALIZED")
+        duration = 2.0
+        amplitude = 0.003
+        relative_amplitude = 0.001
+        s, ds, d2s = quintic_profile(min(max(float(time_s), 0.0), duration), duration, 1.0)
+        if self._qp_experiment == "hold":
+            s = ds = d2s = 0.0
+        common = self._qp_frame.T_WV.copy()
+        common[0, 3] += amplitude * s if self._qp_experiment in ("common", "combined") else 0.0
+        T_left = common @ self._qp_frame.T_VL
+        T_right = common @ self._qp_frame.T_VR
+        rel_s = relative_amplitude * s if self._qp_experiment in ("relative", "combined") else 0.0
+        rel_ds = relative_amplitude * ds if self._qp_experiment in ("relative", "combined") else 0.0
+        rel_d2s = relative_amplitude * d2s if self._qp_experiment in ("relative", "combined") else 0.0
+        T_right = T_right.copy()
+        T_right[1, 3] += rel_s
+        return T_left, T_right, np.array([amplitude * ds if self._qp_experiment in ("common", "combined") else 0.0, 0., 0., 0., 0., 0.]), np.array([0., rel_ds, 0., 0., 0., 0.]), np.array([amplitude * d2s if self._qp_experiment in ("common", "combined") else 0.0, 0., 0., 0., 0., 0.]), np.array([0., rel_d2s, 0., 0., 0., 0.])
+
+    def _live_qp_control(self, states, transforms):
+        from offline.task28_task27_live_qp.torque_qp import solve_cooperative_torque_qp
+        from offline.task28_p5_qp_6_r12.qp_math import se3_log
+        from offline.task28_p5_qp_6_r12.virtual_frames import make_virtual_frame
+        TL, TR = transforms["left"], transforms["right"]
+        if self._qp_frame is None:
+            self._qp_frame = make_virtual_frame(TL, TR)
+            self._qp_anchor_transforms = {"left": TL.copy(), "right": TR.copy()}
+            self._qp_anchor_q = np.r_[states["left"][0][:7], states["right"][0][:7]].copy()
+        else:
+            local_displacements = [float(np.linalg.norm(T[:3, 3] - self._qp_anchor_transforms[side][:3, 3]))
+                                   for side, T in transforms.items()]
+            relative_displacement = float(np.linalg.norm(
+                (np.linalg.inv(TL) @ TR)[:3, 3] -
+                (np.linalg.inv(self._qp_anchor_transforms["left"]) @ self._qp_anchor_transforms["right"])[:3, 3]
+            ))
+            if max(local_displacements) > 0.010 or relative_displacement > 0.010:
+                self._qp_stop_reason = "LOCAL_SWEEP_LIMIT"
+                raise RuntimeError("LIVE_QP_LOCAL_SWEEP_LIMIT")
+        q = np.r_[states["left"][0][:7], states["right"][0][:7]]
+        dq = np.r_[states["left"][1][:7], states["right"][1][:7]]
+        if np.max(np.abs(dq)) > 2.70:
+            self._qp_stop_reason = "MEASURED_VELOCITY_LIMIT"
+            raise RuntimeError("LIVE_QP_MEASURED_VELOCITY_LIMIT")
+        model_gate = {
+            "source": "Task27 Isaac PhysX articulation runtime",
+            "dof_order": {side: list(self.articulations[side].dof_names) for side in SIDES},
+            "tcp_paths": {side: f"/World/{side}_fr3/fr3_link8/side_suction_tool/side_suction_tcp" for side in SIDES},
+            "jacobian_body": "fr3_link8 transported to measured side_suction_tcp",
+            "fixture_fk_used_as_source": False,
+        }
+        for side, T in transforms.items():
+            if tuple(self.articulations[side].dof_names) != ARM_DOF_NAMES + FINGER_DOF_NAMES:
+                raise RuntimeError(f"QP_MODEL_DOF_ORDER:{side}")
+            if not np.isfinite(T).all() or not np.isfinite(states[side][5]).all():
+                raise RuntimeError(f"QP_MODEL_FEEDBACK:{side}")
+            model_gate[side] = {"mass_symmetry_inf": float(np.max(np.abs(states[side][5] - states[side][5].T))),
+                                "finger_mass_coupling_inf": float(np.max(np.abs(states[side][5][:7, 7:]))),
+                                "tcp_transform_valid": True}
+            if model_gate[side]["mass_symmetry_inf"] > 1e-6:
+                raise RuntimeError(f"QP_MODEL_MASS_SYMMETRY:{side}")
+        JL = self._physx_tcp_jacobian("left", TL)
+        JR = self._physx_tcp_jacobian("right", TR)
+        from offline.task28_p5_qp_6_r12.qp_math import _pair_world_relative_matrix
+        Jrel = _pair_world_relative_matrix(TL, TR) @ np.block([
+            [JL, np.zeros((6, 7))],
+            [np.zeros((6, 7)), JR],
+        ])
+        ML = states["left"][5][:7, :7]
+        MR = states["right"][5][:7, :7]
+        M14 = np.zeros((14, 14), dtype=float)
+        M14[:7, :7] = ML
+        M14[7:, 7:] = MR
+        h14 = np.r_[states["left"][6][:7] + states["left"][2][:7],
+                    states["right"][6][:7] + states["right"][2][:7]]
+        TL_des, TR_des, v_common, v_relative, a_common_ff, a_relative_ff = self._qp_reference(self._time_s)
+        e_left = np.r_[TL_des[:3, 3] - TL[:3, 3], self._rotation_error(TL, TL_des)]
+        e_right = np.r_[TR_des[:3, 3] - TR[:3, 3], self._rotation_error(TR, TR_des)]
+        v_left = JL @ dq[:7]
+        v_right = JR @ dq[7:]
+        common_accel = a_common_ff + np.diag([12., 12., 12., 5., 5., 5.]) @ (0.5 * (e_left + e_right))
+        common_accel += np.diag([4., 4., 4., 1.5, 1.5, 1.5]) @ (v_common - 0.5 * (v_left + v_right))
+        actual_rel = np.linalg.inv(TL) @ TR
+        desired_rel = np.linalg.inv(TL_des) @ TR_des
+        relative_error = se3_log(np.linalg.inv(actual_rel) @ desired_rel)
+        relative_velocity = Jrel @ dq
+        if self._qp_prev_J is None or self._qp_prev_dq is None:
+            jdotdq_left = np.zeros(6)
+            jdotdq_right = np.zeros(6)
+            jdotdq_relative = np.zeros(6)
+        else:
+            prev_JL, prev_JR, prev_Jrel = self._qp_prev_J
+            prev_dq = self._qp_prev_dq
+            jdotdq_left = ((JL @ dq[:7] - prev_JL @ prev_dq[:7]) / (1.0 / 60.0)
+                           - JL @ ((dq[:7] - prev_dq[:7]) / (1.0 / 60.0)))
+            jdotdq_right = ((JR @ dq[7:] - prev_JR @ prev_dq[7:]) / (1.0 / 60.0)
+                            - JR @ ((dq[7:] - prev_dq[7:]) / (1.0 / 60.0)))
+            jdotdq_relative = ((Jrel @ dq - prev_Jrel @ prev_dq) / (1.0 / 60.0)
+                               - Jrel @ ((dq - prev_dq) / (1.0 / 60.0)))
+        self._qp_prev_J = (JL.copy(), JR.copy(), Jrel.copy())
+        self._qp_prev_dq = dq.copy()
+        relative_accel = a_relative_ff + np.diag([10., 10., 10., 4., 4., 4.]) @ relative_error
+        relative_accel += np.diag([3., 3., 3., 1., 1., 1.]) @ (v_relative - relative_velocity)
+        posture_accel = np.clip(12.0 * (self._qp_anchor_q - q) - 5.0 * dq, -8.0, 8.0)
+        result = solve_cooperative_torque_qp(
+            q14=q, dq14=dq, mass14=M14, bias14=h14,
+            jacobian_left=JL, jacobian_right=JR,
+            jacobian_relative=Jrel,
+            jdotdq_left=jdotdq_left, jdotdq_right=jdotdq_right,
+            jdotdq_relative=jdotdq_relative,
+            common_accel_desired=common_accel,
+            relative_accel_desired=relative_accel,
+            joint_accel_desired=posture_accel,
+            previous_tau14=self._qp_previous_tau,
+            config=self._qp_config, model_validated=True,
+            feedback_fresh=True, dt_s=1.0 / 60.0,
+        )
+        self._qp_status_counts[result.status] = self._qp_status_counts.get(result.status, 0) + 1
+        self._qp_last_diag = dict(result.diagnostics)
+        self._qp_last_diag.update({
+            "model_gate": model_gate,
+            "jacobian_source": "Isaac_PhysX_get_jacobians_link8_transported_to_side_suction_tcp",
+            "jacobian_frame": "world_spatial_linear_angular",
+            "relative_jacobian_source": "R12_verified_left_TCP_relative_body_map",
+            "jdotdq_source": "finite_difference_physx_jacobian_and_joint_velocity",
+            "finger_qdd_assumption": "zero; finger sink preserved",
+            "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
+            "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},
+            "full_gravity_Nm": {side: states[side][2].tolist() for side in SIDES},
+            "common_tcp_error": (0.5 * (e_left + e_right)).tolist(),
+            "relative_tcp_error": relative_error.tolist(),
+        })
+        if result.status != "QP_OPTIMAL" or result.tau14_Nm is None:
+            self._qp_stop_reason = result.diagnostics.get("reason", result.status)
+            raise RuntimeError(f"LIVE_QP_{result.status}:{self._qp_stop_reason}")
+        tau = np.asarray(result.tau14_Nm, dtype=float)
+        if tau.shape != (14,) or not np.isfinite(tau).all():
+            raise RuntimeError("LIVE_QP_TORQUE_INVALID")
+        self._qp_previous_tau = tau.copy()
+        self._qp_solve_count += 1
+        return {"left": tau[:7], "right": tau[7:]}, self._qp_last_diag, {
+            "q_ref_rad": {side: states[side][0][:7].tolist() for side in SIDES},
+            "dq_ref_rad_s": {side: np.zeros(7).tolist() for side in SIDES},
+        }
+
     def _torque_step(self, dt):
         from offline.task28_p5_qp_6_r8.controller import gains, torque
         if abs(float(dt) - 1.0 / 60.0) > 1e-6:
@@ -265,10 +524,18 @@ class Task27TorqueBridge:
             })
             self._interface.post_step(physics_step=self._step, time_s=self._time_s)
         states = {side: self._state(side) for side in SIDES}
+        transforms = {side: self._tcp_transform(self.feed.stage, side) for side in SIDES}
         efforts, components = {}, {}
         clipped = {}
         dqref_decay = {}
+        qp_diag = {"status": "NOT_IMPLEMENTED_TASK27_LIVE_QP", "solve_count": 0}
+        if self._live_qp:
+            efforts, qp_diag, components = self._live_qp_control(states, transforms)
+            clipped = {side: False for side in SIDES}
+            dqref_decay = {side: 1.0 for side in SIDES}
         for side in SIDES:
+            if self._live_qp:
+                continue
             q, dq, gravity, _, _, mass, _ = states[side]
             # A ROS trajectory point's finite-difference velocity is valid for
             # its timestamped transition, not indefinitely after the point has
@@ -351,8 +618,10 @@ class Task27TorqueBridge:
             "applied_effort_command_full_Nm": {side: immediate[side].tolist() for side in SIDES},
             "projected_effort_not_sensor_Nm": {side: states[side][4][:7].tolist() for side in SIDES},
             "gravity_Nm": {side: states[side][2][:7].tolist() for side in SIDES},
-            "tcp_world_m": {side: self._tcp(self.feed.stage, side) for side in SIDES},
-            "qp": {"status": "NOT_IMPLEMENTED_TASK27_LIVE_QP", "solve_count": 0},
+            "tcp_world_m": {side: transforms[side][:3, 3].tolist() for side in SIDES},
+            "tcp_pose_world": {side: transforms[side].tolist() for side in SIDES},
+            "qp": (dict(qp_diag, solve_count=self._qp_solve_count,
+                        status=qp_diag.get("status", "UNKNOWN")) if self._live_qp else qp_diag),
             "observer": {"status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J", "contact_oracle": "NOT_CONNECTED"},
             "position_arm_write_count": 0, "torque_write_count": self._writes,
             "torque_rate_limited": clipped,
@@ -401,6 +670,12 @@ class Task27TorqueBridge:
                 self.feed.physics_sub.unsubscribe()
             except Exception:
                 pass
+            try:
+                import omni.timeline
+                omni.timeline.get_timeline_interface().stop()
+                self._log({"event": "FAIL_STOP_REQUESTED", "reason": self._latched_error})
+            except Exception as stop_exc:
+                self._log({"event": "FAIL_STOP_UNAVAILABLE", "error": repr(stop_exc)})
 
     def close(self):
         try:
@@ -422,13 +697,16 @@ class Task27TorqueBridge:
             "position_arm_write_count": self._position_arm_write_count,
             "target_count": self._target_count,
             "latched_error": self._latched_error,
-            "qp_status": "NOT_IMPLEMENTED_TASK27_LIVE_QP",
+            "qp_status": "LIVE_TASK27_TORQUE_QP" if self._live_qp else "NOT_IMPLEMENTED_TASK27_LIVE_QP",
+            "qp_solve_count": self._qp_solve_count,
+            "qp_status_counts": self._qp_status_counts,
+            "qp_stop_reason": self._qp_stop_reason,
             "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
         })
         self.stream.close()
 
 
-def start_task27_torque_bridge(output=None):
+def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold"):
     if getattr(builtins, "_task28_task27_torque_bridge", None) is not None:
         raise RuntimeError("TASK27_TORQUE_BRIDGE_ALREADY_REGISTERED")
     if not BRIDGE_SOURCE.is_file():
@@ -445,7 +723,7 @@ def start_task27_torque_bridge(output=None):
     if feed is None:
         raise RuntimeError("ORIGINAL_FEED_BRIDGE_NOT_STARTED")
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
-    bridge = Task27TorqueBridge(feed, path)
+    bridge = Task27TorqueBridge(feed, path, live_qp=live_qp, experiment=experiment)
     builtins._task28_task27_torque_bridge = bridge
     return bridge
 

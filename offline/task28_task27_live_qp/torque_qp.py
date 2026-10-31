@@ -81,6 +81,7 @@ class CooperativeTorqueQPConfig:
     # has certified it.  This is a conservative tightening, never a limit
     # relaxation.
     torque_numerical_margin_Nm: float = 1.0e-6
+    joint_posture_weight: float = 0.2
     # A positive value enables an explicit residual gate after optimization.
     # The default leaves tracking residual as a measured diagnostic while the
     # hard physical limits remain authoritative.
@@ -297,6 +298,7 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
                                 jdotdq_relative=None,
                                 common_accel_desired=None,
                                 relative_accel_desired=None,
+                                joint_accel_desired=None,
                                 previous_tau14=None,
                                 config: CooperativeTorqueQPConfig | None = None,
                                 model_validated: bool = False,
@@ -333,6 +335,7 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
                    _vec(jdotdq_relative, (6,), "INVALID_RELATIVE_JDOTDQ"))
         ac = np.zeros(6) if common_accel_desired is None else _vec(common_accel_desired, (6,), "INVALID_COMMON_ACCEL")
         ar = np.zeros(6) if relative_accel_desired is None else _vec(relative_accel_desired, (6,), "INVALID_RELATIVE_ACCEL")
+        aj = np.zeros(14) if joint_accel_desired is None else _vec(joint_accel_desired, (14,), "INVALID_JOINT_ACCEL")
         prev = None if previous_tau14 is None else _vec(previous_tau14, (14,), "INVALID_PREVIOUS_TORQUE")
     except ValueError as exc:
         return _failure("INPUT_REJECTED", str(exc))
@@ -396,7 +399,9 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     wc, wr, wa, wt, ws = (float(cfg.common_weight), float(cfg.relative_weight),
                            float(cfg.acceleration_weight), float(cfg.torque_weight),
                            float(cfg.torque_slew_weight))
-    Hq += wa * np.eye(14)
+    posture_weight = float(cfg.joint_posture_weight)
+    Hq += (wa + posture_weight) * np.eye(14)
+    fq -= posture_weight * aj
     if wc:
         Hq += wc * (A_common.T @ A_common)
         fq += wc * A_common.T @ (bias_common - ac)
@@ -433,6 +438,7 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "hard_common_acceleration": bool(cfg.hard_common_acceleration),
         "hard_relative_acceleration": bool(cfg.hard_relative_acceleration),
         "common_accel_desired": ac.tolist(), "relative_accel_desired": ar.tolist(),
+        "joint_accel_desired": aj.tolist(), "joint_posture_weight": posture_weight,
         "common_weight": wc, "relative_weight": wr,
         "solve_wall_time_s": time.perf_counter() - started,
         "execution_authorized": False,

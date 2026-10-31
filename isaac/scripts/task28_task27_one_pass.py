@@ -135,6 +135,9 @@ def main():
     parser.add_argument("--max-batches", type=int, default=5)
     parser.add_argument("--small-motion", action="store_true",
                         help="Run a bounded 5 mrad arm target and return-to-home in the torque bridge without ROS/Cube commands.")
+    parser.add_argument("--live-qp", action="store_true",
+                        help="Enable the live bilateral acceleration/torque QP for no-contact smoke experiments.")
+    parser.add_argument("--experiment", choices=("hold", "common", "relative", "combined"), default="hold")
     args = parser.parse_args()
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
@@ -147,6 +150,8 @@ def main():
         "planning_only": bool(args.planning_only),
         "max_batches": int(args.max_batches),
         "small_motion": bool(args.small_motion),
+        "live_qp": bool(args.live_qp),
+        "experiment": args.experiment,
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -195,7 +200,9 @@ def main():
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        torque = module.start_task27_torque_bridge(output=torque_log)
+        torque = module.start_task27_torque_bridge(
+            output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment
+        )
         for _ in range(60):
             app.update()
         if args.mode == "integrated":
@@ -241,7 +248,12 @@ def main():
                         )
                 app.update()
         capture(app, viewport, out / "final.png")
-        summary["status"] = "COMPLETED" if not getattr(torque, "_latched_error", None) else "TORQUE_BRIDGE_FAIL_CLOSED"
+        if getattr(torque, "_latched_error", None):
+            summary["status"] = "TORQUE_BRIDGE_FAIL_CLOSED"
+        elif args.live_qp and int(getattr(torque, "_qp_solve_count", 0) or 0) <= 0:
+            summary["status"] = "LIVE_QP_NO_SOLVES"
+        else:
+            summary["status"] = "COMPLETED"
     except Exception as exc:
         summary["status"] = "BLOCKED_RUNTIME_EXCEPTION"
         summary["exception"] = repr(exc)
@@ -250,6 +262,9 @@ def main():
         summary["torque_steps"] = getattr(torque, "_step", None)
         summary["torque_writes"] = getattr(torque, "_writes", None)
         summary["position_arm_write_count"] = getattr(torque, "_position_arm_write_count", None)
+        summary["qp_solve_count"] = getattr(torque, "_qp_solve_count", None)
+        summary["qp_status_counts"] = getattr(torque, "_qp_status_counts", None)
+        summary["qp_stop_reason"] = getattr(torque, "_qp_stop_reason", None)
         summary["moveit_exit"] = stop_process(moveit)
         summary["executor_exit"] = stop_process(executor)
         # Persist the endpoint status before closing Kit; Isaac shutdown can
