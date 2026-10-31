@@ -146,11 +146,27 @@ def start_process(command: str, log_path: Path, cwd: Path):
     # subprocesses with Kit's bundled Python/spdlog ABI.
     env["PYTHONPATH"] = "/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages"
     env.pop("PYTHONHOME", None)
+    # Drop stale colcon prefixes inherited from another workspace/Kit process;
+    # otherwise `_local_setup_util_sh.py` can recurse through old prefixes and
+    # stall Python startup before the executor publishes qref points.
+    for _prefix_var in ("AMENT_PREFIX_PATH", "COLCON_PREFIX_PATH", "CMAKE_PREFIX_PATH"):
+        env.pop(_prefix_var, None)
     env["LD_LIBRARY_PATH"] = "/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib"
     env["PATH"] = "/opt/ros/humble/bin:/usr/bin:/bin"
     stream = log_path.open("w", encoding="utf-8")
+    # Prefer the workspace paired with this checkout.  The historical /lmy
+    # overlay is only a recovery path; sourcing it first can execute a stale
+    # generated `_local_setup_util_sh.py` and block the Task27 executor before
+    # it publishes any trajectory points.
+    local_setup = cwd / "install/setup.bash"
     overlay = Path("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash")
-    overlay_cmd = f"source {overlay} && " if overlay.is_file() else ""
+    overlay_cmd = ""
+    # MoveIt's launch needs the historical franka_fr3_moveit_config package;
+    # the local executor install intentionally does not.  Scope that overlay
+    # to MoveIt so the executor itself cannot block in the stale setup helper.
+    needs_moveit_overlay = "moveit_dual_side_suction" in command
+    if needs_moveit_overlay and overlay.is_file():
+        overlay_cmd = f"source {overlay} && "
     proc = subprocess.Popen(
         ["bash", "-lc", f"source /opt/ros/humble/setup.bash && {overlay_cmd}source install/setup.bash && {command}"],
         cwd=str(cwd), env=env, stdout=stream, stderr=subprocess.STDOUT,
@@ -196,11 +212,17 @@ def main():
     parser.add_argument("--live-qp", action="store_true",
                         help="Enable the live bilateral acceleration/torque QP for no-contact smoke experiments.")
     parser.add_argument("--experiment", choices=("hold", "common", "relative", "combined"), default="hold")
+    parser.add_argument("--task-mode", choices=("FREE_APPROACH", "DUAL_ATTACHED", "SINGLE_ARM_PUSH", "RELEASE_RETREAT"), default="FREE_APPROACH",
+                        help="Task27 trajectory objective mode; mode is recorded in the live-QP evidence.")
     parser.add_argument("--pre-torque-settle-frames", type=int, default=360,
                         help="Let the original scene drive settle before torque takeover.")
+    parser.add_argument("--local-sweep-limit-m", type=float, default=0.020,
+                        help="Fail-closed TCP displacement envelope for live-QP runs.")
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
+    if not np.isfinite(args.local_sweep_limit_m) or args.local_sweep_limit_m <= 0.0:
+        raise ValueError("local-sweep-limit-m must be finite and positive")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -214,7 +236,9 @@ def main():
         "small_motion": bool(args.small_motion),
         "live_qp": bool(args.live_qp),
         "experiment": args.experiment,
+        "task_mode": args.task_mode,
         "pre_torque_settle_frames": int(args.pre_torque_settle_frames),
+        "local_sweep_limit_m": float(args.local_sweep_limit_m),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -285,20 +309,32 @@ def main():
             )
         torque = module.start_task27_torque_bridge(
             output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment,
+            task_mode=args.task_mode,
             feed_bridge=feed_bridge,
         )
+        torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
+        torque._log({
+            "event": "LOCAL_SWEEP_LIMIT_CONFIGURED",
+            "limit_m": float(args.local_sweep_limit_m),
+            "source": "runner_argument",
+            "simulation_only": True,
+        })
         for _ in range(60):
             app.update()
         if args.mode == "integrated":
             ros_ws = REPO / "ros_ws"
             moveit = start_process("ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py use_rviz:=false", out / "moveit.log", ros_ws)
             summary["moveit_started"] = True
-            deadline = time.monotonic() + 25.0
-            while time.monotonic() < deadline and moveit.poll() is None:
+            # Start the executor while MoveIt is still bringing up its action
+            # servers.  The executor subscribes to the original feed/rail
+            # state before it constructs its MoveGroup clients; waiting for
+            # MoveIt here can let the bounded torque diagnostic stop the
+            # original feed bridge before the rail handshake is observed.
+            for _ in range(120):
                 app.update()
+                if moveit.poll() is not None:
+                    raise RuntimeError(f"MOVEIT_EXIT_EARLY:{moveit.returncode}")
                 time.sleep(0.02)
-            if moveit.poll() is not None:
-                raise RuntimeError(f"MOVEIT_EXIT_EARLY:{moveit.returncode}")
             planning_flag = " -p planning_only:=true" if args.planning_only else ""
             if args.max_batches < 1 or args.max_batches > 5:
                 raise ValueError("max-batches must be in 1..5")

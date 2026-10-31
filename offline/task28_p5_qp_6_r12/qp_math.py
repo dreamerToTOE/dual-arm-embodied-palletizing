@@ -179,6 +179,29 @@ def _pair_world_relative_matrix(T_WL, T_WR):
     return adjoint(inverse(TLR)) @ D_spatial_L
 
 
+def pair_tcp_geometric_relative_matrix(T_WL, T_WR):
+    """Map TCP-origin geometric twists to the relative body twist.
+
+    PhysX articulation Jacobians provide the linear velocity of each queried
+    body point together with world angular velocity.  After transporting the
+    link8 Jacobian to each TCP, the linear rows are therefore TCP-origin
+    geometric velocities, not world-origin spatial twists.  The world-origin
+    adjoint map above would add the TCP position lever arm a second time.
+    This map is the direct differential of ``inv(T_WL) @ T_WR`` for stacked
+    ``[v_L, w_L, v_R, w_R]`` inputs.
+    """
+    TL = checked_transform(T_WL)
+    TR = checked_transform(T_WR)
+    R_right = TR[:3, :3]
+    d_world = TR[:3, 3] - TL[:3, 3]
+    Rrt = R_right.T
+    zero = np.zeros((3, 3))
+    return np.block([
+        [-Rrt, Rrt @ skew(d_world), Rrt, zero],
+        [zero, -Rrt, zero, Rrt],
+    ])
+
+
 def _solve_affine_box_qp(H, f, C, b, lower, upper):
     """Solve ``min .5*x'Hx+f'x`` with ``C*x=b`` and a box.
 

@@ -52,8 +52,9 @@ class Task27TorqueBridge:
     """Patch the original feed bridge while retaining its scene semantics."""
 
     def __init__(self, feed_bridge, output: Path, *, live_qp: bool = False,
-                 experiment: str = "hold"):
+                 experiment: str = "hold", task_mode: str = "FREE_APPROACH"):
         from isaacsim.core.utils.types import ArticulationAction
+        from isaacsim.core.prims import SingleRigidPrim
         import omni.physx
 
         self.feed = feed_bridge
@@ -61,6 +62,22 @@ class Task27TorqueBridge:
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.stream = self.output_path.open("w", encoding="utf-8")
         self.articulations = feed_bridge.articulations
+        self._old_apply_joint_command = feed_bridge._apply_joint_command
+        self._old_physics_step = feed_bridge._physics_step
+        feed_globals = getattr(getattr(self._old_physics_step, "__func__", None), "__globals__", {})
+        self._feed_task_topic = feed_globals.get("TASK_TOPIC")
+        self._feed_dual_sync_frame_id = feed_globals.get("DUAL_SYNC_FRAME_ID")
+        self._link8_prims = {}
+        self._tcp_local = {}
+        for side in SIDES:
+            link_path = f"/World/{side}_fr3/fr3_link8"
+            tcp_path = f"{link_path}/side_suction_tool/side_suction_tcp"
+            link = SingleRigidPrim(link_path, name=f"task27_{side}_link8")
+            link.initialize()
+            self._link8_prims[side] = link
+            T_link = self._usd_transform(feed_bridge.stage, link_path)
+            T_tcp = self._usd_transform(feed_bridge.stage, tcp_path)
+            self._tcp_local[side] = np.linalg.inv(T_link) @ T_tcp
         self._log({
             "event": "TASK27_TORQUE_BRIDGE_BOOT",
             "scene_profile": "task27",
@@ -74,13 +91,21 @@ class Task27TorqueBridge:
             "finger_dof_names": list(FINGER_DOF_NAMES),
             "all_dof_names": list(ARM_DOF_NAMES + FINGER_DOF_NAMES),
             "real_robot": False,
+            "original_feed_task_topic": self._feed_task_topic,
+            "original_feed_dual_sync_frame_id": self._feed_dual_sync_frame_id,
         })
-        self._old_apply_joint_command = feed_bridge._apply_joint_command
-        self._old_physics_step = feed_bridge._physics_step
         self._qref = {}
         self._dqref = {side: np.zeros(7) for side in SIDES}
         self._dqref_capture_step = {side: -1 for side in SIDES}
         self._qref_stamp = {side: None for side in SIDES}
+        from offline.task28_task27_live_qp.trajectory_adapter import Task27JointTrajectoryAdapter
+        self._trajectory_adapters = {
+            side: Task27JointTrajectoryAdapter(dof=7) for side in SIDES
+        }
+        self._trajectory_clock_origin_s = None
+        self._trajectory_clock_start_s = None
+        self._trajectory_fk_model = None
+        self._trajectory_fk_validated = {side: False for side in SIDES}
         self._q0 = {}
         self._previous_effort = {side: np.zeros(7) for side in SIDES}
         self._step = 0
@@ -96,6 +121,9 @@ class Task27TorqueBridge:
         self._last_raw_full_command = None
         self._live_qp = bool(live_qp)
         self._qp_experiment = str(experiment)
+        self._task_mode = str(task_mode)
+        if self._task_mode not in ("FREE_APPROACH", "DUAL_ATTACHED", "SINGLE_ARM_PUSH", "RELEASE_RETREAT"):
+            raise RuntimeError(f"TASK_MODE:{self._task_mode}")
         self._qp_model = None
         self._qp_config = None
         self._qp_frame = None
@@ -109,6 +137,8 @@ class Task27TorqueBridge:
         self._qp_stop_reason = None
         self._qp_prev_J = None
         self._qp_prev_dq = None
+        self._fd_prev_transforms = None
+        self._task27_fk_model = None
         self._simulation_torque_config = None
         self._bootstrap_gravity = {}
         # One explicit force-mode bootstrap step is kept outside the live QP.
@@ -123,8 +153,8 @@ class Task27TorqueBridge:
         # Keep the R12/R11 relative task gains as the baseline.  A separate
         # higher-gain diagnostic was run and did not reduce the measured
         # relative drift, so it is not promoted into the final controller.
-        self._qp_relative_kp = np.array([10., 10., 10., 4., 4., 4.])
-        self._qp_relative_kd = np.array([3., 3., 3., 1., 1., 1.])
+        self._qp_relative_kp = np.array([20., 20., 20., 8., 8., 8.])
+        self._qp_relative_kd = np.array([6., 6., 6., 2., 2., 2.])
         # Preserve the validated R12/R11 posture objective.  A separate
         # sim-only weight-10 diagnostic was run and did not reduce relative
         # drift, so it is not promoted into the final controller.
@@ -265,6 +295,7 @@ class Task27TorqueBridge:
             "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
             "live_qp": self._live_qp,
             "qp_experiment": self._qp_experiment if self._live_qp else None,
+            "task_mode": self._task_mode if self._live_qp else None,
             "qp_sweep_limit_m": self._qp_sweep_limit_m if self._live_qp else None,
             "relative_feedback_gains": {
                 "kp": self._qp_relative_kp.tolist() if self._live_qp else None,
@@ -278,6 +309,32 @@ class Task27TorqueBridge:
         self.stream.write(json.dumps(row, sort_keys=True, allow_nan=False,
                                      default=lambda x: x.tolist() if isinstance(x, np.ndarray) else x.item() if isinstance(x, np.generic) else str(x)) + "\n")
         self.stream.flush()
+
+    def _update_task_mode_from_scene_event(self):
+        """Reflect real suction state transitions in the trajectory objective."""
+        desired = getattr(self.feed, "_desired", None)
+        if not isinstance(desired, dict) or not all(side in desired for side in SIDES):
+            return
+        closed = {side for side in SIDES if bool(desired[side])}
+        if closed == set(SIDES):
+            next_mode = "DUAL_ATTACHED"
+        elif closed:
+            next_mode = "SINGLE_ARM_PUSH"
+        elif self._task_mode in ("DUAL_ATTACHED", "SINGLE_ARM_PUSH"):
+            next_mode = "RELEASE_RETREAT"
+        else:
+            next_mode = self._task_mode
+        if next_mode != self._task_mode:
+            previous = self._task_mode
+            self._task_mode = next_mode
+            self._log({
+                "event": "TASK_MODE_EVENT_TRANSITION",
+                "physics_step": self._step,
+                "previous_mode": previous,
+                "task_mode": next_mode,
+                "suction_commanded": {side: bool(desired[side]) for side in SIDES},
+                "source": "Task27_original_feed_bridge_suction_command_state",
+            })
 
     def _apply_joint_command(self, feed, side, command):
         stamp, names, positions = command
@@ -313,6 +370,14 @@ class Task27TorqueBridge:
             )
             self._qref[side] = arm
             self._qref_stamp[side] = tuple(stamp)
+            stamp_s = float(stamp[0]) + float(stamp[1]) * 1e-9
+            try:
+                self._trajectory_adapters[side].push(stamp_s, arm)
+            except ValueError as exc:
+                raise RuntimeError(f"TRAJECTORY_ADAPTER:{side}:{exc}") from exc
+            if self._trajectory_clock_origin_s is None:
+                self._trajectory_clock_origin_s = stamp_s
+                self._trajectory_clock_start_s = float(self._time_s)
             self._dqref_capture_step[side] = self._step
             self._target_count[side] += 1
             # This is a target capture, never a position actuator write.
@@ -354,30 +419,45 @@ class Task27TorqueBridge:
                 return np.asarray(matrix, dtype=float).reshape(4, 4)
 
     @staticmethod
-    def _tcp_transform(stage, side):
+    def _usd_transform(stage, path):
         from pxr import Usd, UsdGeom
-        path = f"/World/{side}_fr3/fr3_link8/side_suction_tool/side_suction_tcp"
+        from scipy.spatial.transform import Rotation
         prim = stage.GetPrimAtPath(path)
         if not prim.IsValid():
-            raise RuntimeError(f"TCP_MISSING:{side}")
+            raise RuntimeError(f"USD_TRANSFORM_MISSING:{path}")
         matrix = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
-        try:
-            from pxr import Gf
-            from scipy.spatial.transform import Rotation
-            transform = Gf.Transform(matrix)
-            quat = transform.GetRotation().GetQuat()
-            rotation = Rotation.from_quat([
-                float(quat.GetImaginary()[0]), float(quat.GetImaginary()[1]),
-                float(quat.GetImaginary()[2]), float(quat.GetReal())
-            ]).as_matrix()
-            translation = matrix.ExtractTranslation()
-            T = np.eye(4, dtype=float)
-            T[:3, :3] = np.array([[float(rotation[i][j]) for j in range(3)] for i in range(3)], dtype=float)
-            T[:3, 3] = np.array([float(translation[i]) for i in range(3)], dtype=float)
-        except Exception:
-            T = Task27TorqueBridge._matrix4(matrix)
-        if not np.isfinite(T).all() or np.linalg.det(T[:3, :3]) <= 0.0:
-            raise RuntimeError(f"TCP_TRANSFORM_INVALID:{side}")
+        from pxr import Gf
+        transform = Gf.Transform(matrix)
+        quat = transform.GetRotation().GetQuat()
+        T = np.eye(4, dtype=float)
+        T[:3, :3] = Rotation.from_quat([
+            float(quat.GetImaginary()[0]), float(quat.GetImaginary()[1]),
+            float(quat.GetImaginary()[2]), float(quat.GetReal())
+        ]).as_matrix()
+        translation = matrix.ExtractTranslation()
+        T[:3, 3] = np.array([float(translation[i]) for i in range(3)], dtype=float)
+        return T
+
+    def _link8_world_transform(self, side):
+        from scipy.spatial.transform import Rotation
+        position, quaternion = self._link8_prims[side].get_world_pose()
+        p = np.asarray(position, dtype=float).reshape(-1)
+        q = np.asarray(quaternion, dtype=float).reshape(-1)
+        if p.shape != (3,) or q.shape != (4,) or not np.isfinite(p).all() or not np.isfinite(q).all():
+            raise RuntimeError(f"LINK8_POSE:{side}")
+        T = np.eye(4, dtype=float)
+        T[:3, 3] = p
+        T[:3, :3] = Rotation.from_quat(q[[1, 2, 3, 0]]).as_matrix()
+        return T
+
+    def _tcp_transform(self, side):
+        # Use the current PhysX link8 pose and the fixed link8->TCP transform
+        # captured from the authored scene.  Reading the USD child xform every
+        # step lags the articulation under torque control.
+        T = self._link8_world_transform(side) @ self._tcp_local[side]
+        determinant = float(np.linalg.det(T[:3, :3]))
+        if not np.isfinite(T).all() or determinant <= 0.0:
+            raise RuntimeError(f"TCP_TRANSFORM_INVALID:{side}:det={determinant}")
         return T
 
     @staticmethod
@@ -400,15 +480,10 @@ class Task27TorqueBridge:
         if not 0 <= link_index < raw.shape[0]:
             raise RuntimeError(f"JACOBIAN_BODY_INDEX:{side}")
         J_link = raw[link_index]
-        link_path = f"/World/{side}_fr3/fr3_link8"
-        from pxr import Usd, UsdGeom
-        link_prim = self.feed.stage.GetPrimAtPath(link_path)
-        if not link_prim.IsValid():
-            raise RuntimeError(f"LINK8_MISSING:{side}")
-        link_matrix = UsdGeom.Xformable(link_prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
-        link_translation = link_matrix.ExtractTranslation()
-        T_link = np.eye(4, dtype=float)
-        T_link[:3, 3] = np.array([float(link_translation[i]) for i in range(3)], dtype=float)
+        T_link = self._link8_world_transform(side)
+        # Runtime identity A/B shows the Isaac 4.5 Jacobian row aligns with
+        # the link8 actor-frame origin here; get_com() is a local COM pose for
+        # this API and must not be treated as a world point.
         r_world = T_tcp[:3, 3] - T_link[:3, 3]
         J_tcp = np.zeros((6, 9), dtype=float)
         J_tcp[:3] = J_link[:3] - self._skew(r_world) @ J_link[3:]
@@ -444,6 +519,67 @@ class Task27TorqueBridge:
         T_right[1, 3] += rel_s
         return T_left, T_right, np.array([amplitude * ds if self._qp_experiment in ("common", "combined") else 0.0, 0., 0., 0., 0., 0.]), np.array([0., rel_ds, 0., 0., 0., 0.]), np.array([amplitude * d2s if self._qp_experiment in ("common", "combined") else 0.0, 0., 0., 0., 0., 0.]), np.array([0., rel_d2s, 0., 0., 0., 0.])
 
+    def _trajectory_reference(self, side, q, dq):
+        """Return the latest Task27 joint target with a finite-lifetime velocity.
+
+        The original Task27 bridge receives timestamped joint-position points.
+        The torque bridge captures those points in ``_apply_joint_command``;
+        this adapter makes them an acceleration-level QP objective instead of
+        silently ignoring them.  A point's finite-difference velocity is only
+        valid at its capture instant and is exponentially returned to zero
+        after the next physics callback.  This preserves the historical
+        position sink as a target source while preventing a stale ROS point
+        from creating an indefinite velocity bias.
+        """
+        adapter = self._trajectory_adapters[side]
+        if adapter.point_count and self._trajectory_clock_origin_s is not None:
+            elapsed = max(0.0, float(self._time_s) - float(self._trajectory_clock_start_s))
+            sample = adapter.sample(float(self._trajectory_clock_origin_s) + elapsed)
+            return (np.asarray(sample.q_rad, dtype=float),
+                    np.asarray(sample.dq_rad_s, dtype=float),
+                    np.asarray(sample.ddq_rad_s2, dtype=float),
+                    max(0, int(round(max(0.0, elapsed - (sample.source_time_s - self._trajectory_clock_origin_s)) * 60.0))),
+                    "timestamped_task27_adapter")
+        q_target = _finite(self._qref[side], 7, f"QREF:{side}")
+        dq_target = _finite(self._dqref[side], 7, f"DQREF:{side}")
+        age_steps = max(0, int(self._step - self._dqref_capture_step[side]))
+        if age_steps:
+            dq_target = dq_target * math.exp(-float(age_steps) * (1.0 / 60.0) / 0.05)
+            if np.max(np.abs(dq_target), initial=0.0) < 1.0e-5:
+                dq_target.fill(0.0)
+        return q_target, dq_target, np.zeros(7), age_steps, "latest_capture_fallback"
+
+    def _trajectory_tcp_reference(self, side, q_actual, T_actual, J_actual):
+        """Convert a validated Task27 q target into a TCP pose/twist."""
+        if self._trajectory_fk_model is None:
+            from offline.task28_g1_1.task28_validator.model import RobotModel
+            self._trajectory_fk_model = RobotModel()
+        q_target, dq_target, ddq_target, age_steps, source = self._trajectory_reference(
+            side, q_actual, np.zeros(7)
+        )
+        # Validate the frozen Task27 kinematic contract against the actual
+        # PhysX TCP at handoff before using it as a target FK source.  If the
+        # scene/tool contract drifts, fail closed instead of silently mixing
+        # fixture and runtime frames.
+        if not self._trajectory_fk_validated[side]:
+            T_fk_actual = self._trajectory_fk_model.fk(side, q_actual)
+            translation_error = float(np.linalg.norm(T_fk_actual[:3, 3] - T_actual[:3, 3]))
+            rotation_error = float(np.linalg.norm(self._rotation_error(T_actual, T_fk_actual)))
+            if translation_error > 2.0e-4 or rotation_error > 2.0e-3:
+                raise RuntimeError(
+                    f"TRAJECTORY_FK_CONTRACT_MISMATCH:{side}:"
+                    f"{translation_error:.9g}:{rotation_error:.9g}"
+                )
+            self._trajectory_fk_validated[side] = True
+        T_des = self._trajectory_fk_model.fk(side, q_target)
+        # The frozen FK pose contract matches the live Task27 TCP. The same
+        # pose-qualified frozen geometric Jacobian supplies q/dq twists; the
+        # raw PhysX Jacobian remains an audit signal because its runtime
+        # reference convention does not match the selected model Jacobian.
+        v_des = J_actual @ dq_target
+        a_des = J_actual @ ddq_target
+        return T_des, v_des, a_des, age_steps, source
+
     def _live_qp_control(self, states, transforms):
         from offline.task28_task27_live_qp.torque_qp import solve_cooperative_torque_qp
         from offline.task28_p5_qp_6_r12.qp_math import se3_log
@@ -472,8 +608,9 @@ class Task27TorqueBridge:
             "source": "Task27 Isaac PhysX articulation runtime",
             "dof_order": {side: list(self.articulations[side].dof_names) for side in SIDES},
             "tcp_paths": {side: f"/World/{side}_fr3/fr3_link8/side_suction_tool/side_suction_tcp" for side in SIDES},
-            "jacobian_body": "fr3_link8 transported to measured side_suction_tcp",
-            "fixture_fk_used_as_source": False,
+            "jacobian_body": "fr3_link8 actor-origin Jacobian retained for audit; selected QP Jacobian is frozen Task27 FK",
+            "frozen_model_fk_used_as_source": True,
+            "physx_jacobian_retained_for_audit": True,
         }
         for side, T in transforms.items():
             if tuple(self.articulations[side].dof_names) != ARM_DOF_NAMES + FINGER_DOF_NAMES:
@@ -485,10 +622,37 @@ class Task27TorqueBridge:
                                 "tcp_transform_valid": True}
             if model_gate[side]["mass_symmetry_inf"] > 1e-6:
                 raise RuntimeError(f"QP_MODEL_MASS_SYMMETRY:{side}")
-        JL = self._physx_tcp_jacobian("left", TL)
-        JR = self._physx_tcp_jacobian("right", TR)
-        from offline.task28_p5_qp_6_r12.qp_math import _pair_world_relative_matrix
-        Jrel = _pair_world_relative_matrix(TL, TR) @ np.block([
+        JL_physx = self._physx_tcp_jacobian("left", TL)
+        JR_physx = self._physx_tcp_jacobian("right", TR)
+        if self._task27_fk_model is None:
+            from offline.task28_g1_1.task28_validator.model import RobotModel
+            self._task27_fk_model = RobotModel()
+        from scipy.spatial.transform import Rotation
+        fk_identity = {}
+        model_jacobians = {}
+        for side, T, J_physx in (("left", TL, JL_physx), ("right", TR, JR_physx)):
+            q_side = states[side][0][:7]
+            T_model = self._task27_fk_model.fk(side, q_side)
+            J_model = self._task27_fk_model.jacobian(side, q_side)
+            fk_identity[side] = {
+                "fk_translation_error_m": float(np.linalg.norm(T_model[:3, 3] - T[:3, 3])),
+                "fk_rotation_error_rad": float(np.linalg.norm(
+                    Rotation.from_matrix(T_model[:3, :3].T @ T[:3, :3]).as_rotvec())),
+                "jacobian_physx_model_inf": float(np.max(np.abs(J_model - J_physx))),
+                "jacobian_reference": "frozen_Task27_model_geometric_tcp_origin",
+                "physx_jacobian_reference": "link8_actor_origin_to_tcp_audit_only",
+                "model_source": "offline.task28_g1_1.RobotModel:frozen_Task28_side_suction_URDF",
+            }
+            model_jacobians[side] = J_model
+        # The frozen Task28 model is pose-qualified against the live PhysX
+        # TCP.  Offline finite-difference qualification shows its geometric
+        # Jacobian predicts the measured TCP motion more closely than the raw
+        # PhysX link Jacobian, which is retained above for audit only.
+        JL = model_jacobians["left"]
+        JR = model_jacobians["right"]
+        from offline.task28_p5_qp_6_r12.qp_math import pair_tcp_geometric_relative_matrix
+        D_rel = pair_tcp_geometric_relative_matrix(TL, TR)
+        Jrel = D_rel @ np.block([
             [JL, np.zeros((6, 7))],
             [np.zeros((6, 7)), JR],
         ])
@@ -500,6 +664,37 @@ class Task27TorqueBridge:
         h14 = np.r_[states["left"][6][:7] + states["left"][2][:7],
                     states["right"][6][:7] + states["right"][2][:7]]
         TL_des, TR_des, v_common, v_relative, a_common_ff, a_relative_ff = self._qp_reference(self._time_s)
+        # Real Task27 points supersede the synthetic local diagnostic target as
+        # soon as either arm publishes.  The frozen Task27 FK is admitted only
+        # after a measured PhysX pose check for each participating arm.  A
+        # unilateral stream holds the other TCP at its measured pose and does
+        # not invent a closed-chain grasp target.
+        trajectory_targets = {}
+        for side, q_actual, T_actual, J_actual in (
+                ("left", states["left"][0][:7], TL, JL),
+                ("right", states["right"][0][:7], TR, JR)):
+            if self._trajectory_adapters[side].point_count:
+                trajectory_targets[side] = self._trajectory_tcp_reference(
+                    side, q_actual, T_actual, J_actual
+                )
+        trajectory_active_arms = sorted(trajectory_targets)
+        if trajectory_targets:
+            for side, current_T in (("left", TL), ("right", TR)):
+                if side not in trajectory_targets:
+                    trajectory_targets[side] = (
+                        current_T.copy(),
+                        np.zeros(6),
+                        np.zeros(6),
+                        0,
+                        "unilateral_missing_arm_hold",
+                    )
+            TL_des, TR_des = trajectory_targets["left"][0], trajectory_targets["right"][0]
+            v_left_target, v_right_target = trajectory_targets["left"][1], trajectory_targets["right"][1]
+            a_left_target, a_right_target = trajectory_targets["left"][2], trajectory_targets["right"][2]
+            v_common = 0.5 * (v_left_target + v_right_target)
+            a_common_ff = 0.5 * (a_left_target + a_right_target)
+            v_relative = None
+            a_relative_ff = None
         e_left = np.r_[TL_des[:3, 3] - TL[:3, 3], self._rotation_error(TL, TL_des)]
         e_right = np.r_[TR_des[:3, 3] - TR[:3, 3], self._rotation_error(TR, TR_des)]
         v_left = JL @ dq[:7]
@@ -513,10 +708,39 @@ class Task27TorqueBridge:
         # frame.  `_qp_reference` supplies the small right-TCP correction in
         # world coordinates; map that desired twist/acceleration through the
         # same measured relative-frame transport before forming damping terms.
-        D_rel = _pair_world_relative_matrix(TL, TR)
-        v_relative = D_rel @ np.r_[np.zeros(6), v_relative]
-        a_relative_ff = D_rel @ np.r_[np.zeros(6), a_relative_ff]
+        if trajectory_targets:
+            v_relative = D_rel @ np.r_[
+                trajectory_targets["left"][1], trajectory_targets["right"][1]
+            ]
+            a_relative_ff = D_rel @ np.r_[
+                trajectory_targets["left"][2], trajectory_targets["right"][2]
+            ]
+        else:
+            v_relative = D_rel @ np.r_[np.zeros(6), v_relative]
+            a_relative_ff = D_rel @ np.r_[np.zeros(6), a_relative_ff]
         relative_velocity = Jrel @ dq
+        if self._task_mode in ("FREE_APPROACH", "SINGLE_ARM_PUSH"):
+            # These modes do not assume an attached bilateral object.  Keep
+            # the relative objective at the measured state while independent
+            # arm/task references are followed.
+            relative_error = np.zeros(6)
+            v_relative = relative_velocity
+            a_relative_ff = np.zeros(6)
+        finite_difference = None
+        if self._fd_prev_transforms is not None:
+            fd = {}
+            for side, T in transforms.items():
+                previous = self._fd_prev_transforms[side]
+                linear = (T[:3, 3] - previous[:3, 3]) / (1.0 / 60.0)
+                angular_body = Rotation.from_matrix(previous[:3, :3].T @ T[:3, :3]).as_rotvec() / (1.0 / 60.0)
+                fd[side] = np.r_[linear, previous[:3, :3] @ angular_body]
+            previous_rel = np.linalg.inv(self._fd_prev_transforms["left"]) @ self._fd_prev_transforms["right"]
+            current_rel = np.linalg.inv(TL) @ TR
+            finite_difference = {
+                "left": fd["left"], "right": fd["right"],
+                "relative_body": se3_log(np.linalg.inv(previous_rel) @ current_rel) / (1.0 / 60.0),
+            }
+        self._fd_prev_transforms = {side: T.copy() for side, T in transforms.items()}
         if self._qp_prev_J is None or self._qp_prev_dq is None:
             jdotdq_left = np.zeros(6)
             jdotdq_right = np.zeros(6)
@@ -534,7 +758,27 @@ class Task27TorqueBridge:
         self._qp_prev_dq = dq.copy()
         relative_accel = a_relative_ff + self._qp_relative_kp * relative_error
         relative_accel += self._qp_relative_kd * (v_relative - relative_velocity)
-        posture_accel = np.clip(12.0 * (self._qp_anchor_q - q) - 5.0 * dq, -8.0, 8.0)
+        # Bind Task27's latest trajectory point into the QP.  Before the first
+        # point arrives, ``_qref`` is initialized from the measured handoff
+        # posture, so the smoke experiments retain their previous hold
+        # behavior.  Once ROS/Task27 publishes a point, the joint objective
+        # follows that target while common/relative TCP objectives and every
+        # hard safety bound remain unchanged.
+        q_ref_parts, dq_ref_parts, ref_age = [], [], {}
+        for side in SIDES:
+            q_ref, dq_ref, _, age_steps, source = self._trajectory_reference(
+                side, states[side][0][:7], states[side][1][:7]
+            )
+            q_ref_parts.append(q_ref)
+            dq_ref_parts.append(dq_ref)
+            ref_age[side] = {
+                "age_physics_steps": int(age_steps),
+                "target_count": int(self._target_count[side]),
+                "source": source,
+            }
+        q_ref14 = np.r_[q_ref_parts[0], q_ref_parts[1]]
+        dq_ref14 = np.r_[dq_ref_parts[0], dq_ref_parts[1]]
+        posture_accel = np.clip(12.0 * (q_ref14 - q) + 5.0 * (dq_ref14 - dq), -8.0, 8.0)
         result = solve_cooperative_torque_qp(
             q14=q, dq14=dq, mass14=M14, bias14=h14,
             jacobian_left=JL, jacobian_right=JR,
@@ -552,16 +796,46 @@ class Task27TorqueBridge:
         self._qp_last_diag = dict(result.diagnostics)
         self._qp_last_diag.update({
             "model_gate": model_gate,
-            "jacobian_source": "Isaac_PhysX_get_jacobians_link8_transported_to_side_suction_tcp",
+            "jacobian_source": "Task27_frozen_URDF_FK_Jacobian_pose_qualified_against_PhysX_TCP",
+            "physx_jacobian_audit_source": "Isaac_PhysX_get_jacobians_link8_transported_to_side_suction_tcp",
             "jacobian_frame": "world_spatial_linear_angular",
-            "relative_jacobian_source": "R12_verified_left_TCP_relative_body_map",
-            "jdotdq_source": "finite_difference_physx_jacobian_and_joint_velocity",
+            "relative_jacobian_source": "Task28_TCP_origin_geometric_relative_body_map_from_model_Jacobians",
+            "jdotdq_source": "finite_difference_selected_frozen_model_jacobian_and_joint_velocity",
             "finger_qdd_assumption": "zero; finger sink preserved",
             "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
             "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},
             "full_gravity_Nm": {side: states[side][2].tolist() for side in SIDES},
             "common_tcp_error": (0.5 * (e_left + e_right)).tolist(),
             "relative_tcp_error": relative_error.tolist(),
+            "kinematic_identity": fk_identity,
+            "predicted_tcp_twist_world": {"left": v_left.tolist(), "right": v_right.tolist()},
+            "finite_difference_tcp_twist_world": (
+                None if finite_difference is None else {
+                    "left": finite_difference["left"].tolist(),
+                    "right": finite_difference["right"].tolist(),
+                }),
+            "predicted_relative_twist_body": relative_velocity.tolist(),
+            "finite_difference_relative_twist_body": (
+                None if finite_difference is None else finite_difference["relative_body"].tolist()),
+            "jdotdq_left": jdotdq_left.tolist(),
+            "jdotdq_right": jdotdq_right.tolist(),
+            "jdotdq_relative": jdotdq_relative.tolist(),
+            "qp_qdd14": None if result.qdd14 is None else list(result.qdd14),
+            "qp_tau14": None if result.tau14_Nm is None else list(result.tau14_Nm),
+            "trajectory_adapter": {
+                "source": "Task27_original_feed_bridge_timestamped_joint_position_targets",
+                "target_bound_to_qp": True,
+                "q_ref_rad": {side: q_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+                "dq_ref_rad_s": {side: dq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+                "reference_age": ref_age,
+                "velocity_decay_time_constant_s": 0.05,
+                "position_sink_actuation": False,
+                "task_mode": self._task_mode,
+                "tcp_fk_source": "frozen_Task28_G1_FR3_URDF_pose_validated_against_Task27_PhysX_handoff",
+                "tcp_twist_source": "selected_frozen_Task27_model_geometric_jacobian_pose_qualified_against_PhysX_tcp",
+                "tcp_targets_active": bool(trajectory_targets),
+                "active_arms": trajectory_active_arms,
+            },
         })
         if result.status != "QP_OPTIMAL" or result.tau14_Nm is None:
             self._qp_stop_reason = result.diagnostics.get("reason", result.status)
@@ -572,8 +846,8 @@ class Task27TorqueBridge:
         self._qp_previous_tau = tau.copy()
         self._qp_solve_count += 1
         return {"left": tau[:7], "right": tau[7:]}, self._qp_last_diag, {
-            "q_ref_rad": {side: states[side][0][:7].tolist() for side in SIDES},
-            "dq_ref_rad_s": {side: np.zeros(7).tolist() for side in SIDES},
+            "q_ref_rad": {side: q_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
+            "dq_ref_rad_s": {side: dq_ref_parts[index].tolist() for index, side in enumerate(SIDES)},
         }
 
     def _torque_step(self, dt):
@@ -617,7 +891,8 @@ class Task27TorqueBridge:
                     joint_indices=np.arange(7, dtype=np.int32),
                 )
         states = {side: self._state(side) for side in SIDES}
-        transforms = {side: self._tcp_transform(self.feed.stage, side) for side in SIDES}
+        transforms = {side: self._tcp_transform(side) for side in SIDES}
+        self._update_task_mode_from_scene_event()
         efforts, components = {}, {}
         clipped = {}
         dqref_decay = {}
@@ -831,11 +1106,14 @@ def start_original_task27_feed_bridge():
 
 
 def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
-                               feed_bridge=None):
+                               task_mode="FREE_APPROACH", feed_bridge=None):
     if feed_bridge is None:
         feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
-    bridge = Task27TorqueBridge(feed_bridge, path, live_qp=live_qp, experiment=experiment)
+    bridge = Task27TorqueBridge(
+        feed_bridge, path, live_qp=live_qp, experiment=experiment,
+        task_mode=task_mode,
+    )
     builtins._task28_task27_torque_bridge = bridge
     return bridge
 
