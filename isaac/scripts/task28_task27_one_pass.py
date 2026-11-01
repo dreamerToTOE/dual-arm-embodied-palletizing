@@ -251,6 +251,18 @@ def main():
                         help="Task27 trajectory retiming scale passed to the executor.")
     parser.add_argument("--pre-contact-only", action="store_true",
                         help="Use the existing Task27 pre-contact gate executable and stop before descent/contact.")
+    parser.add_argument("--stage-a-only", action="store_true",
+                        help="Stop Task27 after attach/lift/transport/place/release/retreat; skip REGRASP/PUSH.")
+    parser.add_argument("--internal-force-target-n", type=float, default=0.0,
+                        help="Bounded simulation-only bilateral internal-force target (N); zero keeps G2 behavior.")
+    parser.add_argument("--internal-force-weight", type=float, default=1000.0,
+                        help="Soft QP weight for the optional internal-force torque target.")
+    parser.add_argument("--internal-force-kp", type=float, default=0.5,
+                        help="Bounded proportional feedback gain for the model-only internal-force candidate.")
+    parser.add_argument("--internal-force-change-s", type=float, default=-1.0,
+                        help="Experiment-C simulation time for changing the internal-force target; negative disables.")
+    parser.add_argument("--internal-force-after-n", type=float, default=0.0,
+                        help="Experiment-C target after the change time (N).")
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
@@ -258,6 +270,16 @@ def main():
         raise ValueError("local-sweep-limit-m must be finite and positive")
     if not np.isfinite(args.execution_time_scale) or args.execution_time_scale < 1.0:
         raise ValueError("execution-time-scale must be finite and at least 1")
+    if not np.isfinite(args.internal_force_target_n) or abs(args.internal_force_target_n) > 5.0:
+        raise ValueError("internal-force-target-n must be finite with magnitude <= 5")
+    if not np.isfinite(args.internal_force_weight) or not 0.0 <= args.internal_force_weight <= 1.0e5:
+        raise ValueError("internal-force-weight must be finite in [0, 1e5]")
+    if not np.isfinite(args.internal_force_kp) or not 0.0 <= args.internal_force_kp <= 2.0:
+        raise ValueError("internal-force-kp must be finite in [0, 2]")
+    if not np.isfinite(args.internal_force_change_s) or args.internal_force_change_s < -1.0:
+        raise ValueError("internal-force-change-s must be finite and >= -1")
+    if not np.isfinite(args.internal_force_after_n) or abs(args.internal_force_after_n) > 5.0:
+        raise ValueError("internal-force-after-n must be finite with magnitude <= 5")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -276,6 +298,12 @@ def main():
         "local_sweep_limit_m": float(args.local_sweep_limit_m),
         "execution_time_scale": float(args.execution_time_scale),
         "pre_contact_only": bool(args.pre_contact_only),
+        "stage_a_only": bool(args.stage_a_only),
+        "internal_force_target_N": float(args.internal_force_target_n),
+        "internal_force_weight": float(args.internal_force_weight),
+        "internal_force_kp": float(args.internal_force_kp),
+        "internal_force_change_s": float(args.internal_force_change_s),
+        "internal_force_after_N": float(args.internal_force_after_n),
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -347,6 +375,11 @@ def main():
         torque = module.start_task27_torque_bridge(
             output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment,
             task_mode=args.task_mode,
+            internal_force_target_N=float(args.internal_force_target_n),
+            internal_force_weight=float(args.internal_force_weight),
+            internal_force_kp=float(args.internal_force_kp),
+            internal_force_change_s=float(args.internal_force_change_s),
+            internal_force_after_N=float(args.internal_force_after_n),
             feed_bridge=feed_bridge,
         )
         torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
@@ -376,7 +409,8 @@ def main():
             if args.max_batches < 1 or args.max_batches > 5:
                 raise ValueError("max-batches must be in 1..5")
             executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
-            executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag, out / "task27_executor.log", ros_ws)
+            stage_a_flag = " -p stage_a_only:=true" if args.stage_a_only else ""
+            executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             summary["executor_name"] = executor_name
             start = time.monotonic()

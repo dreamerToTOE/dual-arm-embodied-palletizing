@@ -76,6 +76,9 @@ class CooperativeTorqueQPConfig:
     acceleration_weight: float = 1.0e-2
     torque_weight: float = 1.0e-4
     torque_slew_weight: float = 1.0e-5
+    # Optional simulation-only torque target (for G3 internal-load allocation).
+    # Zero preserves the validated G2 objective exactly.
+    internal_torque_weight: float = 0.0
     # Keep a small interior margin so a floating-point optimizer candidate
     # cannot be rejected by the exact TorqueInterface boundary after the QP
     # has certified it.  This is a conservative tightening, never a limit
@@ -110,7 +113,7 @@ class CooperativeTorqueQPConfig:
             raise ValueError("INVALID_POSITION_INTERVAL")
         weights = (float(self.common_weight), float(self.relative_weight),
                    float(self.acceleration_weight), float(self.torque_weight),
-                   float(self.torque_slew_weight))
+                   float(self.torque_slew_weight), float(self.internal_torque_weight))
         # Cooperative modes require a common objective.  Free/unilateral
         # phases may explicitly select independent joint tracking instead;
         # hard dynamics and limit boxes remain unchanged.
@@ -311,7 +314,8 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
                                 config: CooperativeTorqueQPConfig | None = None,
                                 model_validated: bool = False,
                                 feedback_fresh: bool = True,
-                                dt_s: float | None = None):
+                                dt_s: float | None = None,
+                                torque_target14=None):
     """Solve one synchronized bilateral Task27 acceleration/torque QP.
 
     ``jacobian_left/right`` are world spatial Jacobians with row ordering
@@ -345,6 +349,8 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         ar = np.zeros(6) if relative_accel_desired is None else _vec(relative_accel_desired, (6,), "INVALID_RELATIVE_ACCEL")
         aj = np.zeros(14) if joint_accel_desired is None else _vec(joint_accel_desired, (14,), "INVALID_JOINT_ACCEL")
         prev = None if previous_tau14 is None else _vec(previous_tau14, (14,), "INVALID_PREVIOUS_TORQUE")
+        target_tau = (None if torque_target14 is None else
+                      _vec(torque_target14, (14,), "INVALID_TORQUE_TARGET"))
     except ValueError as exc:
         return _failure("INPUT_REJECTED", str(exc))
     if type(model_validated) is not bool:
@@ -362,6 +368,8 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         return _failure("INPUT_REJECTED", "MASS_NOT_POSITIVE_DEFINITE", mass_eigenvalues=eig.tolist())
     if np.any(q < np.r_[qlo_arm, qlo_arm]) or np.any(q > np.r_[qhi_arm, qhi_arm]):
         return _failure("INPUT_REJECTED", "JOINT_POSITION_LIMIT_VIOLATION")
+    if float(cfg.internal_torque_weight) > 0.0 and target_tau is None:
+        return _failure("INPUT_REJECTED", "MISSING_INTERNAL_TORQUE_TARGET")
     if prev is not None and np.any(np.abs(prev) > np.r_[tau_lim, tau_lim] + 1e-12):
         return _failure("INPUT_REJECTED", "PREVIOUS_TORQUE_LIMIT_VIOLATION")
 
@@ -404,9 +412,9 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     # velocity QP followed by an unrelated PD torque law.
     Hq = np.eye(14) * 1e-10
     fq = np.zeros(14)
-    wc, wr, wa, wt, ws = (float(cfg.common_weight), float(cfg.relative_weight),
-                           float(cfg.acceleration_weight), float(cfg.torque_weight),
-                           float(cfg.torque_slew_weight))
+    wc, wr, wa, wt, ws, wi = (float(cfg.common_weight), float(cfg.relative_weight),
+                               float(cfg.acceleration_weight), float(cfg.torque_weight),
+                               float(cfg.torque_slew_weight), float(cfg.internal_torque_weight))
     posture_weight = float(cfg.joint_posture_weight)
     Hq += (wa + posture_weight) * np.eye(14)
     fq -= posture_weight * aj
@@ -421,6 +429,9 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
     if prev is not None and ws:
         Htau += ws * np.eye(14)
         ftau -= ws * prev
+    if wi:
+        Htau += wi * np.eye(14)
+        ftau -= wi * target_tau
     task_equalities, task_targets = [], []
     if cfg.hard_common_acceleration:
         task_equalities.append(A_common)
@@ -448,6 +459,8 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "common_accel_desired": ac.tolist(), "relative_accel_desired": ar.tolist(),
         "joint_accel_desired": aj.tolist(), "joint_posture_weight": posture_weight,
         "common_weight": wc, "relative_weight": wr,
+        "internal_torque_weight": wi,
+        "internal_torque_target14_Nm": None if target_tau is None else target_tau.tolist(),
         "independent_joint_tracking": bool(cfg.independent_joint_tracking),
         "solve_wall_time_s": time.perf_counter() - started,
         "execution_authorized": False,
@@ -475,6 +488,10 @@ def solve_cooperative_torque_qp(*, q14, dq14, mass14, bias14,
         "joint_position_predicted_max_margin": float(np.min(
             np.r_[qhi_arm, qhi_arm] - (q + dq * dt + 0.5 * qdd * dt * dt))),
     })
+    if target_tau is not None:
+        diagnostics["internal_torque_target_residual14_Nm"] = (tau - target_tau).tolist()
+        diagnostics["internal_torque_target_residual_inf_Nm"] = float(
+            np.max(np.abs(tau - target_tau), initial=0.0))
     if cfg.common_residual_limit is not None and diagnostics["common_acceleration_residual_inf"] > cfg.common_residual_limit:
         rejected = dict(diagnostics)
         rejected.pop("status", None)

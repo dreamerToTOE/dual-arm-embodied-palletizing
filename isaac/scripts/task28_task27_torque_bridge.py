@@ -52,7 +52,12 @@ class Task27TorqueBridge:
     """Patch the original feed bridge while retaining its scene semantics."""
 
     def __init__(self, feed_bridge, output: Path, *, live_qp: bool = False,
-                 experiment: str = "hold", task_mode: str = "FREE_APPROACH"):
+                 experiment: str = "hold", task_mode: str = "FREE_APPROACH",
+                 internal_force_target_N: float = 0.0,
+                 internal_force_weight: float = 1000.0,
+                 internal_force_kp: float = 0.5,
+                 internal_force_change_s: float = -1.0,
+                 internal_force_after_N: float = 0.0):
         from isaacsim.core.utils.types import ArticulationAction
         from isaacsim.core.prims import SingleRigidPrim
         import omni.physx
@@ -154,6 +159,31 @@ class Task27TorqueBridge:
         self._qp_last_diag = {}
         self._qp_model_gate = None
         self._qp_stop_reason = None
+        self._g3_internal_force_target_N = float(internal_force_target_N)
+        self._g3_internal_force_weight = float(internal_force_weight)
+        self._g3_internal_force_kp = float(internal_force_kp)
+        self._g3_internal_force_change_s = float(internal_force_change_s)
+        self._g3_internal_force_after_N = float(internal_force_after_N)
+        self._g3_internal_force_changed = False
+        if (not np.isfinite(self._g3_internal_force_target_N)
+                or abs(self._g3_internal_force_target_N) > 5.0):
+            raise RuntimeError("G3_INTERNAL_FORCE_TARGET_LIMIT")
+        if (not np.isfinite(self._g3_internal_force_weight)
+                or self._g3_internal_force_weight < 0.0
+                or self._g3_internal_force_weight > 1.0e5):
+            raise RuntimeError("G3_INTERNAL_FORCE_WEIGHT_LIMIT")
+        if (not np.isfinite(self._g3_internal_force_kp)
+                or self._g3_internal_force_kp < 0.0
+                or self._g3_internal_force_kp > 2.0):
+            raise RuntimeError("G3_INTERNAL_FORCE_KP_LIMIT")
+        if (not np.isfinite(self._g3_internal_force_change_s)
+                or self._g3_internal_force_change_s < -1.0):
+            raise RuntimeError("G3_INTERNAL_FORCE_CHANGE_TIME_LIMIT")
+        if (not np.isfinite(self._g3_internal_force_after_N)
+                or abs(self._g3_internal_force_after_N) > 5.0):
+            raise RuntimeError("G3_INTERNAL_FORCE_AFTER_TARGET_LIMIT")
+        self._g3_last_internal_force_estimate_N = None
+        self._g3_last_internal_force_diag = {"enabled": False, "status": "DISABLED"}
         self._qp_prev_J = None
         self._qp_prev_dq = None
         self._previous_measured_dq14 = None
@@ -330,6 +360,14 @@ class Task27TorqueBridge:
             "live_qp": self._live_qp,
             "qp_experiment": self._qp_experiment if self._live_qp else None,
             "task_mode": self._task_mode if self._live_qp else None,
+            "g3_internal_force": {
+                "target_N": self._g3_internal_force_target_N if self._live_qp else 0.0,
+                "weight": self._g3_internal_force_weight if self._live_qp else 0.0,
+                "feedback_kp": self._g3_internal_force_kp if self._live_qp else 0.0,
+                "change_s": self._g3_internal_force_change_s if self._live_qp else -1.0,
+                "after_target_N": self._g3_internal_force_after_N if self._live_qp else 0.0,
+                "default_off": abs(self._g3_internal_force_target_N) <= 1.0e-12,
+            },
             "qp_sweep_limit_m": self._qp_sweep_limit_m if self._live_qp else None,
             "relative_feedback_gains": {
                 "kp": self._qp_relative_kp.tolist() if self._live_qp else None,
@@ -450,6 +488,154 @@ class Task27TorqueBridge:
             "source": "Task27_Cube_01_scene_metadata_plus_current_frozen_TCP_Jacobian",
         }
 
+    def _g3_internal_force_terms(self, jacobian_left, jacobian_right,
+                                 transforms, mass14, h14, measured_qdd14):
+        """Build a bounded anti-parallel Cube-contact target in joint torque space.
+
+        The target is a simulation experiment hook, disabled by default.  TCP
+        positions and the Cube COM come from the current PhysX state; the
+        resulting object wrench is mapped to robot torque with ``-J.T`` because
+        the contact wrench is defined on the Cube.  The residual-based force
+        estimate is explicitly a model candidate, never a contact sensor.
+        """
+        target = float(self._g3_internal_force_target_N)
+        if self._task_mode != "DUAL_ATTACHED":
+            return None, {"enabled": False, "status": "DISABLED", "target_N": target,
+                          "measurement_status": "ATTACHMENT_MODE_REQUIRED"}
+        try:
+            cube_position, cube_orientation = self.feed.rigids[0].get_world_pose()
+            cube_position = np.asarray(cube_position, dtype=float).reshape(3)
+            cube_orientation = np.asarray(cube_orientation, dtype=float).reshape(4)
+            left_position = np.asarray(transforms["left"][:3, 3], dtype=float)
+            right_position = np.asarray(transforms["right"][:3, 3], dtype=float)
+            axis_raw = right_position - left_position
+            axis_norm = float(np.linalg.norm(axis_raw))
+            if (cube_position.shape != (3,) or not np.isfinite(cube_position).all()
+                    or cube_orientation.shape != (4,) or not np.isfinite(cube_orientation).all()
+                    or axis_norm < 1.0e-6 or not np.isfinite(axis_norm)):
+                raise RuntimeError("G3_GRASP_AXIS_INVALID")
+            axis = axis_raw / axis_norm
+        except Exception as exc:
+            return None, {"enabled": False, "status": "UNAVAILABLE", "target_N": target,
+                          "reason": repr(exc)}
+        JL = np.asarray(jacobian_left, dtype=float)
+        JR = np.asarray(jacobian_right, dtype=float)
+        Jt = np.block([[JL.T, np.zeros((7, 6))],
+                       [np.zeros((7, 6)), JR.T]])
+        estimate = None
+        estimate_source = "unavailable_before_second_physics_sample"
+        if measured_qdd14 is not None and self._last_full_command is not None:
+            try:
+                previous_tau = np.r_[self._last_full_command["left"][:7],
+                                     self._last_full_command["right"][:7]]
+                residual_robot = np.asarray(mass14) @ np.asarray(measured_qdd14) + np.asarray(h14) - previous_tau
+                # Contact wrench is defined ON Cube, so the robot residual is
+                # ``-J.T @ w_cube`` under the declared sign convention.
+                contact_wrench = np.linalg.lstsq(Jt, -residual_robot, rcond=1.0e-8)[0]
+                if contact_wrench.shape == (12,) and np.isfinite(contact_wrench).all():
+                    estimate = float(0.5 * (axis @ contact_wrench[:3]
+                                             - axis @ contact_wrench[6:9]))
+                    estimate_source = "model_residual_JT_lstsq_candidate"
+            except (np.linalg.LinAlgError, ValueError, TypeError):
+                estimate = None
+                estimate_source = "model_residual_projection_failed"
+        if estimate is not None and np.isfinite(estimate):
+            self._g3_last_internal_force_estimate_N = estimate
+            effective_target = float(np.clip(
+                target + self._g3_internal_force_kp * (target - estimate), -5.0, 5.0))
+        else:
+            effective_target = target
+        # Build the existing P2-1 grasp map from the measured Cube/TCP poses.
+        # The resulting target is a one-dimensional null-space component; the
+        # historical nominal +/-61 mm fixture never enters this runtime path.
+        decomposition_diag = {"status": "UNAVAILABLE"}
+        try:
+            from scipy.spatial.transform import Rotation
+            from offline.task28_g3_stage_a.bilateral_load import (
+                BilateralLoadObserver, RuntimeGeometry,
+            )
+            cube_T = np.eye(4, dtype=float)
+            cube_T[:3, :3] = Rotation.from_quat(cube_orientation[[1, 2, 3, 0]]).as_matrix()
+            cube_T[:3, 3] = cube_position
+            geometry = RuntimeGeometry(cube_T, transforms,
+                                       "RUNTIME_MEASURED_SIMULATION",
+                                       f"g3-runtime-{self._step}")
+            model = geometry.model
+            axis_object = BilateralLoadObserver._grasp_axis_object(geometry)
+            axis_basis_local = BilateralLoadObserver._internal_axis_basis(model, axis_object)
+            object_contacts_local = effective_target * axis_basis_local
+            object_contacts_world = np.r_[
+                model.contact_to_world("left", object_contacts_local[:6]),
+                model.contact_to_world("right", object_contacts_local[6:]),
+            ]
+            decomposition_diag["status"] = "RUNTIME_MEASURED_CANDIDATE"
+            decomposition_diag["geometry_provenance"] = geometry.provenance
+            decomposition_diag["geometry_evidence_id"] = geometry.evidence_id
+            decomposition_diag["axis_object"] = axis_object.tolist()
+            decomposition_diag["axis_basis_local"] = axis_basis_local.tolist()
+            if contact_wrench is not None:
+                candidate_local = np.r_[
+                    model.world_to_contact("left", contact_wrench[:6]),
+                    model.world_to_contact("right", contact_wrench[6:]),
+                ]
+                candidate_decomp = model.decompose(candidate_local)
+                decomposition_diag["candidate_net_wrench_world_N_Nm"] = model.net(
+                    candidate_local, "world").tolist()
+                decomposition_diag["candidate_external_local_N_Nm"] = (
+                    candidate_decomp.external.tolist())
+                decomposition_diag["candidate_internal_local_N_Nm"] = (
+                    candidate_decomp.internal.tolist())
+                decomposition_diag["candidate_rank"] = int(candidate_decomp.rank)
+                decomposition_diag["candidate_null_residual_N_Nm"] = float(
+                    candidate_decomp.null_residual)
+        except Exception as exc:
+            object_contacts_local = np.zeros(12, dtype=float)
+            object_contacts_local[:3] = effective_target * axis
+            object_contacts_local[6:9] = -effective_target * axis
+            object_contacts_world = object_contacts_local.copy()
+            decomposition_diag["reason"] = repr(exc)
+        tau_internal_robot = -Jt @ object_contacts_world
+        r_left = left_position - cube_position
+        r_right = right_position - cube_position
+        net_wrench = np.r_[object_contacts_world[:3] + object_contacts_world[6:9],
+                           np.cross(r_left, object_contacts_world[:3])
+                           + np.cross(r_right, object_contacts_world[6:9])]
+        diag = {
+            "enabled": abs(target) > 1.0e-12,
+            "status": "ACTIVE_CANDIDATE" if abs(target) > 1.0e-12 else "BASELINE_CANDIDATE",
+            "target_N": target,
+            "effective_target_N": effective_target,
+            "feedback_kp": self._g3_internal_force_kp,
+            "estimated_internal_force_N": estimate,
+            "estimate_source": estimate_source,
+            "contact_wrench_on_cube_world_N_Nm": object_contacts_world.tolist(),
+            "contact_wrench_on_cube_local_N_Nm": object_contacts_local.tolist(),
+            "grasp_decomposition": decomposition_diag,
+            "internal_robot_torque_target_Nm": tau_internal_robot.tolist(),
+            "net_object_wrench_from_target_N_Nm": net_wrench.tolist(),
+            "net_object_wrench_norm": float(np.linalg.norm(net_wrench)),
+            "grasp_axis_world": axis.tolist(),
+            "contact_points_world_m": {"left": left_position.tolist(), "right": right_position.tolist()},
+            "cube_com_world_m": cube_position.tolist(),
+            "mapping": "tau_robot_internal = -stack(J_left.T,J_right.T) @ w_contacts_on_cube",
+            "measurement_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_CONTACT_WRENCH",
+        }
+        return (None if abs(target) <= 1.0e-12 else np.asarray(h14, dtype=float) + tau_internal_robot), diag
+
+    def set_internal_force_target(self, target_N):
+        """Update the bounded simulation target for Experiment C."""
+        target = float(target_N)
+        if not np.isfinite(target) or abs(target) > 5.0:
+            raise ValueError("G3_INTERNAL_FORCE_TARGET_LIMIT")
+        previous = self._g3_internal_force_target_N
+        self._g3_internal_force_target_N = target
+        self._log({
+            "event": "G3_INTERNAL_FORCE_TARGET_UPDATED",
+            "previous_target_N": previous,
+            "target_N": target,
+            "source": "simulation_experiment_control",
+        })
+
     def _cube_runtime_state(self, dt):
         """Read Cube_01 state and runtime inertial data for load diagnostics."""
         try:
@@ -465,6 +651,19 @@ class Task27TorqueBridge:
             previous_angular = self._cube_previous_angular_velocity
             self._cube_previous_linear_velocity = linear.copy()
             self._cube_previous_angular_velocity = angular.copy()
+            linear_accel = None if previous_linear is None else (linear - previous_linear) / float(dt)
+            angular_accel = None if previous_angular is None else (angular - previous_angular) / float(dt)
+            kinematic_wrench = None
+            if linear_accel is not None and angular_accel is not None:
+                from scipy.spatial.transform import Rotation
+                rotation = Rotation.from_quat(np.asarray(orientation, dtype=float)[[1, 2, 3, 0]]).as_matrix()
+                inertia_local = np.asarray(inertias, dtype=float).reshape(3, 3)
+                inertia_world = rotation @ inertia_local @ rotation.T
+                gravity = np.array([0.0, 0.0, -9.81], dtype=float)
+                force = mass * (linear_accel - gravity)
+                moment = inertia_world @ angular_accel + np.cross(
+                    angular, inertia_world @ angular)
+                kinematic_wrench = np.r_[force, moment].tolist()
             return {
                 "source": "Isaac_PhysX_SingleRigidPrim_Cube_01",
                 "path": "/World/Task27/Supply/Cube_01",
@@ -474,12 +673,10 @@ class Task27TorqueBridge:
                 },
                 "linear_velocity_m_s": linear.tolist(),
                 "angular_velocity_rad_s": angular.tolist(),
-                "linear_acceleration_m_s2": (
-                    None if previous_linear is None else ((linear - previous_linear) / float(dt)).tolist()
-                ),
-                "angular_acceleration_rad_s2": (
-                    None if previous_angular is None else ((angular - previous_angular) / float(dt)).tolist()
-                ),
+                "linear_acceleration_m_s2": None if linear_accel is None else linear_accel.tolist(),
+                "angular_acceleration_rad_s2": None if angular_accel is None else angular_accel.tolist(),
+                "kinematic_net_wrench_world_N_Nm": kinematic_wrench,
+                "kinematic_net_wrench_source": "Cube_01_GroundTruth_pose_velocity_runtime_mass_inertia",
                 "mass_kg": mass,
                 "inertia_runtime_9": inertias.tolist(),
                 "gravity_state_source": "Task27 feed bridge runtime policy; boolean not queried here",
@@ -771,7 +968,7 @@ class Task27TorqueBridge:
         a_des = J_actual @ ddq_target
         return T_des, v_des, a_des, age_steps, source
 
-    def _live_qp_control(self, states, transforms):
+    def _live_qp_control(self, states, transforms, measured_qdd14=None):
         from offline.task28_task27_live_qp.torque_qp import solve_cooperative_torque_qp
         from offline.task28_p5_qp_6_r12.qp_math import se3_log
         from offline.task28_p5_qp_6_r12.virtual_frames import make_virtual_frame
@@ -856,6 +1053,9 @@ class Task27TorqueBridge:
                     states["right"][6][:7] + states["right"][2][:7]]
         payload_term, payload_diag = self._payload_gravity_term(JL, JR)
         h14 += payload_term
+        internal_torque_target14, internal_force_diag = self._g3_internal_force_terms(
+            JL, JR, transforms, M14, h14, measured_qdd14)
+        self._g3_last_internal_force_diag = internal_force_diag
         TL_des, TR_des, v_common, v_relative, a_common_ff, a_relative_ff = self._qp_reference(self._time_s)
         # Real Task27 points supersede the synthetic local diagnostic target as
         # soon as either arm publishes.  The frozen Task27 FK is admitted only
@@ -1006,6 +1206,12 @@ class Task27TorqueBridge:
         # zero-relative-acceleration constraint during independent motion.
         from dataclasses import replace
         qp_config = self._qp_config
+        internal_force_active = bool(internal_torque_target14 is not None)
+        if internal_force_active:
+            qp_config = replace(
+                qp_config,
+                internal_torque_weight=self._g3_internal_force_weight,
+            )
         relative_objective_enabled = self._task_mode == "DUAL_ATTACHED"
         independent_joint_tracking = bool(
             trajectory_targets and not relative_objective_enabled
@@ -1043,6 +1249,7 @@ class Task27TorqueBridge:
             previous_tau14=self._qp_previous_tau,
             config=qp_config, model_validated=True,
             feedback_fresh=True, dt_s=1.0 / 60.0,
+            torque_target14=internal_torque_target14,
         )
         self._qp_status_counts[result.status] = self._qp_status_counts.get(result.status, 0) + 1
         self._qp_last_diag = dict(result.diagnostics)
@@ -1056,6 +1263,7 @@ class Task27TorqueBridge:
             "relative_objective_enabled": bool(relative_objective_enabled),
             "independent_joint_tracking": independent_joint_tracking,
             "payload_gravity_compensation": payload_diag,
+            "g3_internal_force": internal_force_diag,
             "finger_qdd_assumption": "zero; finger sink preserved",
             "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
             "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},
@@ -1131,6 +1339,7 @@ class Task27TorqueBridge:
             "clock_scale_source_per_sim": float(self._trajectory_clock_scale),
             "latest_captured_q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
             "payload_gravity_compensation": payload_diag,
+            "g3_internal_force": internal_force_diag,
         }
 
     def _torque_step(self, dt):
@@ -1185,6 +1394,12 @@ class Task27TorqueBridge:
         self._previous_measured_dq14 = measured_dq14.copy()
         self._update_task_mode_from_scene_event()
         self._initialize_attached_hold(states, transforms)
+        if (self._task_mode == "DUAL_ATTACHED"
+                and not self._g3_internal_force_changed
+                and self._g3_internal_force_change_s >= 0.0
+                and self._time_s >= self._g3_internal_force_change_s):
+            self.set_internal_force_target(self._g3_internal_force_after_N)
+            self._g3_internal_force_changed = True
         efforts, components = {}, {}
         clipped = {}
         dqref_decay = {}
@@ -1201,7 +1416,8 @@ class Task27TorqueBridge:
             qp_diag = {"status": "HANDOFF_GRAVITY_BOOTSTRAP", "solve_count": 0}
             self._handoff_bootstrap_pending = False
         elif self._live_qp:
-            efforts, qp_diag, components = self._live_qp_control(states, transforms)
+            efforts, qp_diag, components = self._live_qp_control(
+                states, transforms, measured_qdd14=measured_qdd14)
             clipped = {side: False for side in SIDES}
             dqref_decay = {side: 1.0 for side in SIDES}
         for side in SIDES:
@@ -1410,6 +1626,16 @@ class Task27TorqueBridge:
             "qp_status_counts": self._qp_status_counts,
             "qp_stop_reason": self._qp_stop_reason,
             "observer_status": "MODEL_ONLY_CANDIDATE_NO_PHYSICAL_TAU_J",
+            "g3_internal_force": {
+                "target_N": self._g3_internal_force_target_N,
+                "weight": self._g3_internal_force_weight,
+                "feedback_kp": self._g3_internal_force_kp,
+                "change_s": self._g3_internal_force_change_s,
+                "after_target_N": self._g3_internal_force_after_N,
+                "changed": self._g3_internal_force_changed,
+                "last_estimate_N": self._g3_last_internal_force_estimate_N,
+                "last_diag": self._g3_last_internal_force_diag,
+            },
         })
         self.stream.close()
 
@@ -1435,13 +1661,23 @@ def start_original_task27_feed_bridge():
 
 
 def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
-                               task_mode="FREE_APPROACH", feed_bridge=None):
+                               task_mode="FREE_APPROACH", feed_bridge=None,
+                               internal_force_target_N=0.0,
+                               internal_force_weight=1000.0,
+                               internal_force_kp=0.5,
+                               internal_force_change_s=-1.0,
+                               internal_force_after_N=0.0):
     if feed_bridge is None:
         feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
     bridge = Task27TorqueBridge(
         feed_bridge, path, live_qp=live_qp, experiment=experiment,
         task_mode=task_mode,
+        internal_force_target_N=internal_force_target_N,
+        internal_force_weight=internal_force_weight,
+        internal_force_kp=internal_force_kp,
+        internal_force_change_s=internal_force_change_s,
+        internal_force_after_N=internal_force_after_N,
     )
     builtins._task28_task27_torque_bridge = bridge
     return bridge

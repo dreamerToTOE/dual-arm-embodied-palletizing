@@ -109,6 +109,31 @@ def test_torque_rate_bound_is_hard_and_reported():
     assert result.diagnostics["torque_rate_active_indices"]
 
 
+def test_internal_torque_target_is_optional_and_default_off():
+    base = _solve()
+    assert base.status == "QP_OPTIMAL"
+    assert "internal_torque_weight" not in base.diagnostics or base.diagnostics["internal_torque_weight"] == 0.0
+    cfg = CooperativeTorqueQPConfig(
+        common_weight=100.0, relative_weight=100.0,
+        internal_torque_weight=1000.0,
+    )
+    q, dq, mass, bias, *_ = _state()
+    target = bias + np.r_[np.full(7, 0.2), np.full(7, -0.2)]
+    result = _solve(config=cfg, torque_target14=target,
+                    common_accel_desired=np.zeros(6), relative_accel_desired=np.zeros(6))
+    assert result.status == "QP_OPTIMAL"
+    assert result.diagnostics["internal_torque_weight"] == 1000.0
+    assert result.diagnostics["internal_torque_target14_Nm"] == target.tolist()
+    assert result.diagnostics["internal_torque_target_residual_inf_Nm"] < np.max(np.abs(target - np.asarray(base.tau14_Nm)))
+
+
+def test_internal_torque_weight_requires_a_target():
+    cfg = CooperativeTorqueQPConfig(internal_torque_weight=1.0)
+    result = _solve(config=cfg)
+    assert result.status == "INPUT_REJECTED"
+    assert result.diagnostics["reason"] == "MISSING_INTERNAL_TORQUE_TARGET"
+
+
 def test_model_source_gate_is_fail_closed():
     q, dq, m, h, jl, jr = _state()
     result = solve_cooperative_torque_qp(

@@ -2617,6 +2617,10 @@ int main(int argc, char** argv)
     rclcpp::shutdown();
     return 1;
   }
+  // Stage A is the already validated attach -> lift -> transport -> place ->
+  // release -> retreat cycle.  Keep the optional Task27 insertion path
+  // available, but make the Stage-A boundary explicit for G3 experiments.
+  const bool stage_a_only = node->declare_parameter<bool>("stage_a_only", false);
 #endif
   // 零命令预检：只做 MoveIt/IK/FCL 链路筛选，不发布 joint、suction，也绝不请求
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
@@ -2949,8 +2953,15 @@ int main(int argc, char** argv)
     }
 
     bool all_complete = true;
+#ifdef TASK27_FIVE_CUBE
+    bool stage_a_complete = false;
+#endif
     for (int batch = first_batch;
-         batch < first_batch + max_batches && all_complete && !pre_contact_gate_success;
+         batch < first_batch + max_batches && all_complete && !pre_contact_gate_success
+#ifdef TASK27_FIVE_CUBE
+         && !stage_a_complete
+#endif
+         ;
          ++batch)
     {
       std::array<std::size_t, kBatchSize> batch_indices{};
@@ -4769,6 +4780,14 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+      if (stage_a_only)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "%s STAGE_A_ONLY PASS: attach -> lift -> transport -> place -> release -> retreat complete; "
+          "optional REGRASP/PUSH skipped.", task.id);
+        stage_a_complete = true;
+        break;
+      }
 #else
       const auto& helper_retreat_traj = push_left ? right_retreat : left_retreat;
       if (!helper.executeAt(helper_retreat_traj, std::chrono::steady_clock::now()) ||
@@ -5503,6 +5522,12 @@ int main(int argc, char** argv)
       {
         break;
       }
+#ifdef TASK27_FIVE_CUBE
+      if (stage_a_complete)
+      {
+        break;
+      }
+#endif
 
 #ifdef TASK27_FIVE_CUBE
       if (early_handoff_done)

@@ -1,0 +1,142 @@
+[INFO] [launch]: All log files can be found below /home/ubuntu2004/.ros/log/2026-11-01-23-10-16-336461-ubuntu2004-19673
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [dual_joint_state_bridge.py-1]: process started with pid [20065]
+[INFO] [robot_state_publisher-2]: process started with pid [20067]
+[INFO] [move_group-3]: process started with pid [20069]
+[INFO] [task06_environment_publisher.py-4]: process started with pid [20071]
+[move_group-3] [WARN] [1793542220.127802706] [move_group.move_group]: Falling back to using the the move_group node namespace (deprecated behavior).
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [task06_environment_publisher.py-4]: sending signal 'SIGINT' to process[task06_environment_publisher.py-4]
+[INFO] [move_group-3]: sending signal 'SIGINT' to process[move_group-3]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [dual_joint_state_bridge.py-1]: sending signal 'SIGINT' to process[dual_joint_state_bridge.py-1]
+[move_group-3] [INFO] [1793542220.734560414] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[robot_state_publisher-2] [INFO] [1793542220.803653286] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[move_group-3] [INFO] [1793542220.811665962] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.683719 seconds
+[move_group-3] [INFO] [1793542220.811697139] [moveit_robot_model.robot_model]: Loading robot model 'dual_fr3_side_suction'...
+[move_group-3] [INFO] [1793542220.811707003] [moveit_robot_model.robot_model]: No root/virtual joint specified in SRDF. Assuming fixed joint
+[dual_joint_state_bridge.py-1] Traceback (most recent call last):
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/__init__.py", line 23, in <module>
+[task06_environment_publisher.py-4] Traceback (most recent call last):
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/__init__.py", line 23, in <module>
+[dual_joint_state_bridge.py-1]     from . import multiarray
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/multiarray.py", line 10, in <module>
+[task06_environment_publisher.py-4]     from . import multiarray
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/multiarray.py", line 10, in <module>
+[dual_joint_state_bridge.py-1]     from . import overrides
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/overrides.py", line 6, in <module>
+[task06_environment_publisher.py-4]     from . import overrides
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/overrides.py", line 6, in <module>
+[dual_joint_state_bridge.py-1]     from numpy.core._multiarray_umath import (
+[dual_joint_state_bridge.py-1] ImportError: PyCapsule_Import could not import module "datetime"
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] During handling of the above exception, another exception occurred:
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] Traceback (most recent call last):
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/ros_ws/install/fr3_dual_compact_suction_description/lib/fr3_dual_compact_suction_description/dual_joint_state_bridge.py", line 4, in <module>
+[task06_environment_publisher.py-4]     from numpy.core._multiarray_umath import (
+[task06_environment_publisher.py-4] ImportError: PyCapsule_Import could not import module "datetime"
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] During handling of the above exception, another exception occurred:
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] Traceback (most recent call last):
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/ros_ws/install/fr3_dual_compact_suction_description/lib/fr3_dual_compact_suction_description/task06_environment_publisher.py", line 4, in <module>
+[task06_environment_publisher.py-4]     from geometry_msgs.msg import Pose
+[task06_environment_publisher.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/geometry_msgs/msg/__init__.py", line 3, in <module>
+[task06_environment_publisher.py-4]     from geometry_msgs.msg._accel_with_covariance import AccelWithCovariance  # noqa: F401
+[task06_environment_publisher.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/geometry_msgs/msg/_accel_with_covariance.py", line 13, in <module>
+[task06_environment_publisher.py-4]     import numpy  # noqa: E402, I100
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/__init__.py", line 141, in <module>
+[dual_joint_state_bridge.py-1]     from rclpy.node import Node
+[dual_joint_state_bridge.py-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/node.py", line 75, in <module>
+[dual_joint_state_bridge.py-1]     from rclpy.time_source import TimeSource
+[dual_joint_state_bridge.py-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/time_source.py", line 24, in <module>
+[dual_joint_state_bridge.py-1]     import rosgraph_msgs.msg
+[dual_joint_state_bridge.py-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rosgraph_msgs/msg/__init__.py", line 9, in <module>
+[dual_joint_state_bridge.py-1]     from rosgraph_msgs.msg._type_hash import TypeHash  # noqa: F401
+[dual_joint_state_bridge.py-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rosgraph_msgs/msg/_type_hash.py", line 11, in <module>
+[dual_joint_state_bridge.py-1]     import numpy  # noqa: E402, I100
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/__init__.py", line 141, in <module>
+[robot_state_publisher-2] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[robot_state_publisher-2]   what():  could not create publisher: rcl node's context is invalid, at ./src/rcl/node.c:428
+[dual_joint_state_bridge.py-1]     from . import core
+[dual_joint_state_bridge.py-1]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/__init__.py", line 49, in <module>
+[task06_environment_publisher.py-4]     from . import core
+[task06_environment_publisher.py-4]   File "/home/ubuntu2004/.local/lib/python3.10/site-packages/numpy/core/__init__.py", line 49, in <module>
+[task06_environment_publisher.py-4]     raise ImportError(msg)
+[task06_environment_publisher.py-4] ImportError: 
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] Importing the numpy C-extensions failed. This error can happen for
+[task06_environment_publisher.py-4] many reasons, often due to issues with your setup or how NumPy was
+[task06_environment_publisher.py-4] installed.
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] We have compiled some common reasons and troubleshooting tips at:
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4]     https://numpy.org/devdocs/user/troubleshooting-importerror.html
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] Please note and check the following:
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4]   * The Python version is: Python3.10 from "/usr/bin/python3"
+[task06_environment_publisher.py-4]   * The NumPy version is: "1.24.4"
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] and make sure that they are the versions you expect.
+[task06_environment_publisher.py-4] Please carefully study the documentation linked above for further help.
+[task06_environment_publisher.py-4] 
+[task06_environment_publisher.py-4] Original error was: PyCapsule_Import could not import module "datetime"
+[task06_environment_publisher.py-4] 
+[dual_joint_state_bridge.py-1]     raise ImportError(msg)
+[dual_joint_state_bridge.py-1] ImportError: 
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] Importing the numpy C-extensions failed. This error can happen for
+[dual_joint_state_bridge.py-1] many reasons, often due to issues with your setup or how NumPy was
+[dual_joint_state_bridge.py-1] installed.
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] We have compiled some common reasons and troubleshooting tips at:
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1]     https://numpy.org/devdocs/user/troubleshooting-importerror.html
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] Please note and check the following:
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1]   * The Python version is: Python3.10 from "/usr/bin/python3"
+[dual_joint_state_bridge.py-1]   * The NumPy version is: "1.24.4"
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] and make sure that they are the versions you expect.
+[dual_joint_state_bridge.py-1] Please carefully study the documentation linked above for further help.
+[dual_joint_state_bridge.py-1] 
+[dual_joint_state_bridge.py-1] Original error was: PyCapsule_Import could not import module "datetime"
+[dual_joint_state_bridge.py-1] 
+[ERROR] [task06_environment_publisher.py-4]: process has died [pid 20071, exit code 1, cmd '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/ros_ws/install/fr3_dual_compact_suction_description/lib/fr3_dual_compact_suction_description/task06_environment_publisher.py --ros-args -r __node:=task24_environment_publisher --params-file /tmp/launch_params_lo2lwj7v'].
+[ERROR] [dual_joint_state_bridge.py-1]: process has died [pid 20065, exit code 1, cmd '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/ros_ws/install/fr3_dual_compact_suction_description/lib/fr3_dual_compact_suction_description/dual_joint_state_bridge.py --ros-args -r __node:=dual_joint_state_bridge'].
+[move_group-3] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[move_group-3]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[move_group-3] Stack trace (most recent call last):
+[move_group-3] #20   Object "", at 0xffffffffffffffff, in 
+[move_group-3] #19   Object "/opt/ros/humble/lib/moveit_ros_move_group/move_group", at 0x6453c9bab724, in 
+[move_group-3] #18   Source "../csu/libc-start.c", line 392, in __libc_start_main_impl [0x7ca68b229e3f]
+[move_group-3] #17   Source "../sysdeps/nptl/libc_start_call_main.h", line 58, in __libc_start_call_main [0x7ca68b229d8f]
+[move_group-3] #16   Object "/opt/ros/humble/lib/moveit_ros_move_group/move_group", at 0x6453c9baa2c2, in 
+[move_group-3] #15   Object "/opt/ros/humble/lib/libmoveit_cpp.so.2.5.9", at 0x7ca68c1f0204, in moveit_cpp::MoveItCpp::MoveItCpp(std::shared_ptr<rclcpp::Node> const&, moveit_cpp::MoveItCpp::Options const&)
+[move_group-3] #14   Object "/opt/ros/humble/lib/libmoveit_cpp.so.2.5.9", at 0x7ca68c1efcfa, in moveit_cpp::MoveItCpp::loadPlanningSceneMonitor(moveit_cpp::MoveItCpp::PlanningSceneMonitorOptions const&)
+[move_group-3] #13   Object "/opt/ros/humble/lib/libmoveit_planning_scene_monitor.so.2.5.9", at 0x7ca68bd3e47a, in planning_scene_monitor::PlanningSceneMonitor::PlanningSceneMonitor(std::shared_ptr<rclcpp::Node> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+[move_group-3] #12   Object "/opt/ros/humble/lib/libmoveit_planning_scene_monitor.so.2.5.9", at 0x7ca68bd3e3ea, in planning_scene_monitor::PlanningSceneMonitor::PlanningSceneMonitor(std::shared_ptr<rclcpp::Node> const&, std::shared_ptr<planning_scene::PlanningScene> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+[move_group-3] #11   Object "/opt/ros/humble/lib/libmoveit_planning_scene_monitor.so.2.5.9", at 0x7ca68bd3d674, in planning_scene_monitor::PlanningSceneMonitor::PlanningSceneMonitor(std::shared_ptr<rclcpp::Node> const&, std::shared_ptr<planning_scene::PlanningScene> const&, std::shared_ptr<robot_model_loader::RobotModelLoader> const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+[move_group-3] #10   Object "/opt/ros/humble/lib/librclcpp.so", at 0x7ca68bb08e8c, in rclcpp::executors::SingleThreadedExecutor::SingleThreadedExecutor(rclcpp::ExecutorOptions const&)
+[move_group-3] #9    Object "/opt/ros/humble/lib/librclcpp.so", at 0x7ca68bb05167, in rclcpp::Executor::Executor(rclcpp::ExecutorOptions const&)
+[move_group-3] #8    Object "/opt/ros/humble/lib/librclcpp.so", at 0x7ca68bb140fd, in rclcpp::GuardCondition::GuardCondition(std::shared_ptr<rclcpp::Context>, rcl_guard_condition_options_s)
+[move_group-3] #7    Object "/opt/ros/humble/lib/librclcpp.so", at 0x7ca68bafe278, in rclcpp::exceptions::throw_from_rcl_error(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, rcutils_error_state_s const*, void (*)())
+[move_group-3] #6    Object "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30", at 0x7ca68b6ae1fd, in std::rethrow_exception(std::__exception_ptr::exception_ptr)
+[move_group-3] #5    Object "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30", at 0x7ca68b6ae276, in std::terminate()
+[move_group-3] #4    Object "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30", at 0x7ca68b6ae20b, in 
+[move_group-3] #3    Object "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30", at 0x7ca68b6a2b9d, in 
+[move_group-3] #2    Source "./stdlib/abort.c", line 79, in abort [0x7ca68b2287f2]
+[move_group-3] #1    Source "../sysdeps/posix/raise.c", line 26, in raise [0x7ca68b242475]
+[move_group-3] #0  | Source "./nptl/pthread_kill.c", line 89, in __pthread_kill_internal
+[move_group-3]     | Source "./nptl/pthread_kill.c", line 78, in __pthread_kill_implementation
+[move_group-3]       Source "./nptl/pthread_kill.c", line 44, in __pthread_kill [0x7ca68b2969bc]
+[move_group-3] Aborted (Signal sent by tkill() 20069 1000)
+[ERROR] [robot_state_publisher-2]: process has died [pid 20067, exit code -6, cmd '/opt/ros/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=dual_robot_state_publisher --params-file /tmp/launch_params_pnhldyk1'].
+[ERROR] [move_group-3]: process has died [pid 20069, exit code -6, cmd '/opt/ros/humble/lib/moveit_ros_move_group/move_group --ros-args -r __node:=move_group --params-file /tmp/launch_params_51dn7msr --params-file /tmp/launch_params_c3fgcuuf --params-file /tmp/launch_params_m5xzvj7z --params-file /tmp/launch_params_i7epofgz --params-file /tmp/launch_params_7kvqld01'].
