@@ -134,4 +134,4 @@ ROS workspace `fr3_dual_palletize` 已用 `colcon build --packages-select fr3_du
 
 所有成功运行目录均含 `summary.json`、`metrics.json`、`task27_executor.log`、`moveit.log`、`scene_loaded.png`、`final.png` 和压缩的 `task27_torque_bridge.jsonl.gz`。原始 Cube 接近路径的连续安全状态未被改变；本任务没有执行 Stage B、REGRASP/PUSH、五 Cube continuation、真实机器人或 ROS 控制命令。
 
-交付提交：`a87afae`（后续若仅更新本报告，HEAD 以该分支最新提交为准）；分支为 `side-suction-palletizing`，工作树在交付检查时保持干净。
+交付基础提交：`a87afae`；报告元数据更新提交：`5bde2fc`。分支为 `side-suction-palletizing`，工作树在交付检查时保持干净。
