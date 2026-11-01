@@ -2621,6 +2621,10 @@ int main(int argc, char** argv)
   // release -> retreat cycle.  Keep the optional Task27 insertion path
   // available, but make the Stage-A boundary explicit for G3 experiments.
   const bool stage_a_only = node->declare_parameter<bool>("stage_a_only", false);
+  // G3 Stage-A fixed-pose probe: stop immediately after the validated common
+  // lift while both original Surface Grippers remain closed.  The Isaac-side
+  // runner then owns only the bounded internal-force target sequence.
+  const bool stage_a_g3_hold = node->declare_parameter<bool>("stage_a_g3_hold", false);
 #endif
   // 零命令预检：只做 MoveIt/IK/FCL 链路筛选，不发布 joint、suction，也绝不请求
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
@@ -4647,6 +4651,17 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+
+#ifdef TASK27_FIVE_CUBE
+      if (stage_a_g3_hold)
+      {
+        RCLCPP_INFO(node->get_logger(),
+          "%s STAGE_A_G3_FIXED_SUSPENDED_HOLD READY: Cube remains suspended after COMMON_LIFT; "
+          "the Isaac runner will execute the bounded 0N->1N->2N->0N probe.", task.id);
+        stage_a_complete = true;
+        break;
+      }
+#endif
 
       const double transport_z =
         grasp_pose.position.z + kSideContactCommandZOffset + kLiftHeight;

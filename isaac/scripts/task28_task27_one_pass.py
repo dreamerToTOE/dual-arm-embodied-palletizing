@@ -227,6 +227,70 @@ def stop_process(proc):
     return proc.returncode
 
 
+def run_fixed_force_sequence(app, torque, *, transition_s=2.0, hold_s=5.0,
+                             targets=(0.0, 1.0, 2.0, 0.0), dt_s=1.0 / 60.0):
+    """Run a bounded smooth internal-force probe while the Cube stays lifted.
+
+    The executor has already stopped at COMMON_LIFT with both original
+    Surface Grippers closed.  Only the existing G3 target setter is used here;
+    all QP limits and fail-closed handling remain in the torque bridge.
+    """
+    transition_frames = max(1, int(round(float(transition_s) / float(dt_s))))
+    hold_frames = max(1, int(round(float(hold_s) / float(dt_s))))
+    if not np.isfinite(transition_s) or transition_s <= 0.0:
+        raise ValueError("fixed-force-transition-s must be finite and positive")
+    if not np.isfinite(hold_s) or hold_s <= 0.0:
+        raise ValueError("fixed-force-hold-s must be finite and positive")
+    if not np.isfinite(dt_s) or dt_s <= 0.0:
+        raise ValueError("fixed-force-dt-s must be finite and positive")
+    if not targets or any(not np.isfinite(float(value)) or abs(float(value)) > 5.0 for value in targets):
+        raise ValueError("fixed-force-targets must be finite and bounded by 5 N")
+
+    current = float(getattr(torque, "_g3_internal_force_target_N", 0.0))
+    segments = []
+    for index, raw_target in enumerate(targets):
+        target = float(raw_target)
+        if hasattr(torque, "_log"):
+            torque._log({
+                "event": "G3_FIXED_FORCE_SEGMENT_START",
+                "segment_index": int(index),
+                "from_target_N": current,
+                "target_N": target,
+                "transition_s": float(transition_s),
+                "hold_s": float(hold_s),
+                "source": "stage_a_fixed_suspended_cube_runner",
+            })
+        for frame in range(1, transition_frames + 1):
+            value = current + (target - current) * frame / transition_frames
+            torque.set_internal_force_target(value)
+            app.update()
+        for _ in range(hold_frames):
+            torque.set_internal_force_target(target)
+            app.update()
+        segments.append({
+            "segment_index": int(index),
+            "target_N": target,
+            "transition_frames": int(transition_frames),
+            "hold_frames": int(hold_frames),
+        })
+        current = target
+        if hasattr(torque, "_log"):
+            torque._log({
+                "event": "G3_FIXED_FORCE_SEGMENT_COMPLETE",
+                "segment_index": int(index),
+                "target_N": target,
+                "source": "stage_a_fixed_suspended_cube_runner",
+            })
+    return {
+        "targets_N": [float(value) for value in targets],
+        "transition_s": float(transition_s),
+        "hold_s": float(hold_s),
+        "transition_frames": int(transition_frames),
+        "hold_frames": int(hold_frames),
+        "segments": segments,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=("smoke", "integrated"), default="smoke")
@@ -263,6 +327,12 @@ def main():
                         help="Experiment-C simulation time for changing the internal-force target; negative disables.")
     parser.add_argument("--internal-force-after-n", type=float, default=0.0,
                         help="Experiment-C target after the change time (N).")
+    parser.add_argument("--fixed-suspended-force-sequence", action="store_true",
+                        help="Stop after the original COMMON_LIFT and run the Stage-A G3 0->1->2->0 N probe while suspended.")
+    parser.add_argument("--fixed-force-transition-s", type=float, default=2.0,
+                        help="Smooth transition duration for each fixed-pose force segment.")
+    parser.add_argument("--fixed-force-hold-s", type=float, default=5.0,
+                        help="Steady hold duration for each fixed-pose force segment.")
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
@@ -280,6 +350,14 @@ def main():
         raise ValueError("internal-force-change-s must be finite and >= -1")
     if not np.isfinite(args.internal_force_after_n) or abs(args.internal_force_after_n) > 5.0:
         raise ValueError("internal-force-after-n must be finite with magnitude <= 5")
+    if args.fixed_suspended_force_sequence and args.mode != "integrated":
+        raise ValueError("fixed-suspended-force-sequence requires --mode integrated")
+    if args.fixed_suspended_force_sequence and not args.live_qp:
+        raise ValueError("fixed-suspended-force-sequence requires --live-qp")
+    if not np.isfinite(args.fixed_force_transition_s) or args.fixed_force_transition_s <= 0.0:
+        raise ValueError("fixed-force-transition-s must be finite and positive")
+    if not np.isfinite(args.fixed_force_hold_s) or args.fixed_force_hold_s <= 0.0:
+        raise ValueError("fixed-force-hold-s must be finite and positive")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -304,6 +382,10 @@ def main():
         "internal_force_kp": float(args.internal_force_kp),
         "internal_force_change_s": float(args.internal_force_change_s),
         "internal_force_after_N": float(args.internal_force_after_n),
+        "fixed_suspended_force_sequence": bool(args.fixed_suspended_force_sequence),
+        "fixed_force_transition_s": float(args.fixed_force_transition_s),
+        "fixed_force_hold_s": float(args.fixed_force_hold_s),
+        "fixed_force_sequence": None,
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -410,7 +492,8 @@ def main():
                 raise ValueError("max-batches must be in 1..5")
             executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
             stage_a_flag = " -p stage_a_only:=true" if args.stage_a_only else ""
-            executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag, out / "task27_executor.log", ros_ws)
+            g3_hold_flag = " -p stage_a_g3_hold:=true" if args.fixed_suspended_force_sequence else ""
+            executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag + g3_hold_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             summary["executor_name"] = executor_name
             start = time.monotonic()
@@ -420,6 +503,14 @@ def main():
                     break
                 time.sleep(0.01)
             summary["timeout_reached"] = executor.poll() is None
+            if args.fixed_suspended_force_sequence:
+                if executor.poll() != 0:
+                    raise RuntimeError(f"STAGE_A_G3_HOLD_EXECUTOR_FAILED:{executor.returncode}")
+                summary["fixed_force_sequence"] = run_fixed_force_sequence(
+                    app, torque,
+                    transition_s=float(args.fixed_force_transition_s),
+                    hold_s=float(args.fixed_force_hold_s),
+                )
         else:
             if args.small_motion:
                 # This is a no-contact controller diagnostic.  It injects two
