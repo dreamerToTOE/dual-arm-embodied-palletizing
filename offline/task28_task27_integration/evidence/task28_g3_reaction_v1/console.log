@@ -1,0 +1,68 @@
+[Info] [carb] Logging to file: /home/ubuntu2004/isaacsim-4.5.0/kit/logs/Kit/Isaac-Sim Python/4.5/kit_20261102_115844.log
+2026-11-02 02:58:44 [0ms] [Warning] [omni.kit.app.plugin] No crash reporter present, dumps uploading isn't available.
+[4.970s] [ext: omni.kit.async_engine-0.0.1] startup
+[5.838s] [ext: omni.metrics.core-0.0.1] startup
+[5.857s] [ext: omni.client.lib-1.0.0] startup
+[6.338s] [ext: omni.blobkey-1.1.2] startup
+[6.354s] [ext: omni.stats-1.0.1] startup
+[6.375s] [ext: omni.datastore-0.0.0] startup
+[6.579s] [ext: omni.client-1.2.2] startup
+[6.827s] [ext: omni.ujitso.default-1.0.0] startup
+[6.878s] [ext: omni.hsscclient-1.1.1] startup
+2026-11-02 02:58:51 [6,774ms] [Warning] [omni.datastore] OmniHub is inaccessible
+2026-11-02 02:58:51 [6,775ms] [Error] [omni.datastore] Failed to acquire exclusive lock to data store (64>=64)
+2026-11-02 02:58:51 [6,775ms] [Error] [omni.datastore] Failed to create local file data store at '/home/ubuntu2004/isaacsim-4.5.0/kit/cache/DerivedDataCache'
+[6.969s] [ext: omni.gpu_foundation.shadercache.vulkan-1.0.0] startup
+[6.993s] [ext: omni.assets.plugins-0.0.0] startup
+[7.087s] [ext: omni.gpu_foundation-0.0.0] startup
+[7.715s] [ext: carb.windowing.plugins-1.0.0] startup
+[7.781s] [ext: omni.kit.renderer.init-0.0.0] startup
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 0             | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-138-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101004 (1.21.1.4)
+| Processor: Intel(R) Core(TM) i7-10700F CPU @ 2.90GHz
+| Cores: 8 | Logical Cores: 16
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 48107 | Free Memory: 38211
+| Total Page/Swap (MB): 2047 | Free Page/Swap: 2047
+|---------------------------------------------------------------------------------------------|
+2026-11-02 02:58:52 [7,959ms] [Error] [gpu.foundation.plugin] No device could be created. Some known system issues:
+- The driver is not installed properly and requires a clean re-install.
+- Your GPUs do not support RayTracing: DXR or Vulkan ray_tracing, or hardware is excluded due to performance.
+- The driver cannot enumerate any GPU: driver, display, TCC mode or a docker issue. For Vulkan, test it with Vulkaninfo tool from Vulkan SDK, instead of nvidia-smi.
+- For Ubuntu, it requires server-xorg-core 1.20.7+ and a display to work without --no-window.
+- For Linux dockers, the setup is not complete. Install the latest driver, xServer and NVIDIA container runtime.
+
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 0             | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-138-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101004 (1.21.1.4)
+| Processor: Intel(R) Core(TM) i7-10700F CPU @ 2.90GHz
+| Cores: 8 | Logical Cores: 16
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 48107 | Free Memory: 38200
+| Total Page/Swap (MB): 2047 | Free Page/Swap: 2047
+|---------------------------------------------------------------------------------------------|
+2026-11-02 02:58:52 [8,093ms] [Error] [gpu.foundation.plugin] No device could be created. Some known system issues:
+- The driver is not installed properly and requires a clean re-install.
+- Your GPUs do not support RayTracing: DXR or Vulkan ray_tracing, or hardware is excluded due to performance.
+- The driver cannot enumerate any GPU: driver, display, TCC mode or a docker issue. For Vulkan, test it with Vulkaninfo tool from Vulkan SDK, instead of nvidia-smi.
+- For Ubuntu, it requires server-xorg-core 1.20.7+ and a display to work without --no-window.
+- For Linux dockers, the setup is not complete. Install the latest driver, xServer and NVIDIA container runtime.
+
+2026-11-02 02:58:52 [8,095ms] [Error] [omni.gpu_foundation_factory.plugin] Failed to create any GPU devices, including an attempt with compatibility mode.
+已终止
+There was an error running python

@@ -1,0 +1,134 @@
+{
+  "arm_roots": [
+    "/World/left_fr3",
+    "/World/right_fr3"
+  ],
+  "execution_time_scale": 16.0,
+  "executor_exit": 0,
+  "executor_name": "task27_five_cube_center_insert",
+  "executor_started": true,
+  "experiment": "hold",
+  "fixed_force_hold_s": 5.0,
+  "fixed_force_sequence": {
+    "clock": "Isaac_physics",
+    "hold_s": 5.0,
+    "segments": [
+      {
+        "end_time_s": 100.69999999999557,
+        "segment_index": 0,
+        "start_time_s": 93.69999999999597,
+        "target_N": 0.0
+      },
+      {
+        "end_time_s": 107.69999999999517,
+        "segment_index": 1,
+        "start_time_s": 100.69999999999557,
+        "target_N": 1.0
+      },
+      {
+        "end_time_s": 114.69999999999477,
+        "segment_index": 2,
+        "start_time_s": 107.69999999999517,
+        "target_N": 2.0
+      },
+      {
+        "end_time_s": 121.69999999999438,
+        "segment_index": 3,
+        "start_time_s": 114.69999999999477,
+        "target_N": 0.0
+      }
+    ],
+    "targets_N": [
+      0.0,
+      1.0,
+      2.0,
+      0.0
+    ],
+    "transition_s": 2.0
+  },
+  "fixed_force_transition_s": 2.0,
+  "fixed_suspended_force_sequence": true,
+  "headless": false,
+  "internal_force_after_N": 0.0,
+  "internal_force_change_s": -1.0,
+  "internal_force_kp": 0.5,
+  "internal_force_target_N": 0.0,
+  "internal_force_weight": 1000.0,
+  "lighting": "(True, ('Default', 'stage'))",
+  "live_qp": true,
+  "local_sweep_limit_m": 2.0,
+  "max_batches": 1,
+  "mode": "integrated",
+  "moveit_exit": 0,
+  "moveit_started": true,
+  "native_settle": {
+    "consecutive_observed": 10,
+    "consecutive_required": 10,
+    "dq_arm_rad_s": [
+      -0.00019092424190603197,
+      -0.010700204409658909,
+      -0.0006956575089134276,
+      0.005716053768992424,
+      -0.0010105343535542488,
+      6.822844443377107e-05,
+      2.8243875931366347e-05,
+      -0.00017335799930151552,
+      -0.010584009811282158,
+      -0.0005469558527693152,
+      0.00520844804123044,
+      -0.0008943571010604501,
+      5.540324855246581e-05,
+      1.6185729691642337e-05
+    ],
+    "frames": 10,
+    "max_abs_dq_rad_s": 0.010700204409658909,
+    "max_frames": 360,
+    "q_arm_rad": [
+      1.8682123481994495e-05,
+      -0.7843349575996399,
+      6.912459502927959e-05,
+      -2.3567631244659424,
+      0.000100510056654457,
+      1.5707885026931763,
+      0.7853948473930359,
+      1.712482662696857e-05,
+      -0.7843460440635681,
+      5.437353684101254e-05,
+      -2.356713056564331,
+      8.908313611755148e-05,
+      1.5707899332046509,
+      0.7853963375091553
+    ],
+    "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+    "settled": true,
+    "velocity_tol_rad_s": 0.05
+  },
+  "original_task26_bridge_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py",
+  "original_task26_bridge_source_sha256": "0f7123657ea8422cf0efd468e7bcd59624e144ae8c9ca315a82af57576b68dc6",
+  "original_task26_scene_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+  "original_task26_scene_source_sha256": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+  "planning_only": false,
+  "position_arm_write_count": 0,
+  "pre_contact_only": false,
+  "pre_torque_settle_frames": 360,
+  "qp_solve_count": 7331,
+  "qp_status_counts": {
+    "QP_OPTIMAL": 7331
+  },
+  "qp_stop_reason": null,
+  "record_joint_reactions": true,
+  "run_id": "task28_g3_reaction_v4_corrected",
+  "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py",
+  "scene_entry_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+  "scene_root": "/World/Task27",
+  "schema": "task28.task27.one_pass.v1",
+  "small_motion": false,
+  "stage_a_only": false,
+  "status": "COMPLETED",
+  "task_mode": "FREE_APPROACH",
+  "timeout_reached": false,
+  "torque_latched_error": null,
+  "torque_log": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_task27_integration/evidence/task28_g3_reaction_v4_corrected/task27_torque_bridge.jsonl",
+  "torque_steps": 7332,
+  "torque_writes": 7332
+}

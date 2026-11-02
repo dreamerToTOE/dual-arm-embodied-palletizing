@@ -1,0 +1,61 @@
+{
+  "source_files": [
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/single_articulation.py",
+      "sha256": "e7e3fc2909dfa9c9ff82ecf67983b2ead0594a99e201492c7201dac40bf4091e"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "52a44a360c3d869d0b748119cf8027b7f244475632817713a26ae9b99ebf8b5a"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/extsPhysics/omni.physics.tensors/omni/physics/tensors/impl/api.py",
+      "sha256": "bb5e684dce25e0ad7f3e03ec395ec4729d55203f3b3a58bfa824b8d106c0e54b"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/extsDeprecated/omni.isaac.dynamic_control/include/DynamicControl.h",
+      "sha256": "dbed79f14b4bead7ae7da855d7f930293d42ac3c9cb5510268e5f7c99720f2b0"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/extsDeprecated/omni.isaac.dynamic_control/include/DynamicControlTypes.h",
+      "sha256": "22285e69a7db5d84d34bf9e2bb8a7a4297a0bda933d1050a0461b8f6b0aa806c"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.robot.surface_gripper/include/SurfaceGripper.h",
+      "sha256": "179c646b332dbe34e54e1740c564f799dce79f87915a87aa48a4e58ad40ee183"
+    },
+    {
+      "path": "/home/ubuntu2004/isaacsim-4.5.0/extsPhysics/omni.physics.tensors.tests/omni/physicstensorstests/scripts/tests.py",
+      "sha256": "d3ecea912082147f8c13d4aa64c91277ccea1f3bce7712198a3e0181d8b02d74"
+    }
+  ],
+  "incoming": {
+    "source": "get_measured_joint_forces -> get_link_incoming_joint_force",
+    "row": "metadata.joint_indices[name]+1; row0 base",
+    "component_order": [
+      "Fx_N",
+      "Fy_N",
+      "Fz_N",
+      "Mx_Nm",
+      "My_Nm",
+      "Mz_Nm"
+    ],
+    "frame": "child joint anchor frame",
+    "sign": "parent transmission ON child; not suction contact",
+    "timing": "completed physics interval"
+  },
+  "d6": {
+    "SurfaceGripper_handle": "private mJointHandle",
+    "DynamicControl_available": [
+      "getD6Joint",
+      "getD6JointProperties",
+      "getD6JointConstraintIsBroken"
+    ],
+    "measured_reaction_getter_found": false,
+    "scope": "installed public DynamicControl/SurfaceGripper/tensor interfaces only; no global impossibility claim"
+  },
+  "docs": [
+    "https://nvidia-omniverse.github.io/PhysX/physx/5.3.0/docs/Articulations.html",
+    "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/108.0/extensions/runtime/source/omni.physics.tensors/docs/api/python.html"
+  ]
+}

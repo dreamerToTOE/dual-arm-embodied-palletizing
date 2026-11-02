@@ -228,67 +228,41 @@ def stop_process(proc):
 
 
 def run_fixed_force_sequence(app, torque, *, transition_s=2.0, hold_s=5.0,
-                             targets=(0.0, 1.0, 2.0, 0.0), dt_s=1.0 / 60.0):
-    """Run a bounded smooth internal-force probe while the Cube stays lifted.
-
-    The executor has already stopped at COMMON_LIFT with both original
-    Surface Grippers closed.  Only the existing G3 target setter is used here;
-    all QP limits and fail-closed handling remain in the torque bridge.
-    """
-    transition_frames = max(1, int(round(float(transition_s) / float(dt_s))))
-    hold_frames = max(1, int(round(float(hold_s) / float(dt_s))))
-    if not np.isfinite(transition_s) or transition_s <= 0.0:
-        raise ValueError("fixed-force-transition-s must be finite and positive")
-    if not np.isfinite(hold_s) or hold_s <= 0.0:
-        raise ValueError("fixed-force-hold-s must be finite and positive")
-    if not np.isfinite(dt_s) or dt_s <= 0.0:
-        raise ValueError("fixed-force-dt-s must be finite and positive")
-    if not targets or any(not np.isfinite(float(value)) or abs(float(value)) > 5.0 for value in targets):
+                             targets=(0.0, 1.0, 2.0, 0.0)):
+    """Use physics time: one GUI update can contain multiple physics steps."""
+    if not np.isfinite(transition_s) or not 0.0 < transition_s <= 30.0:
+        raise ValueError("fixed-force-transition-s must be in (0, 30]")
+    if not np.isfinite(hold_s) or not 0.0 < hold_s <= 30.0:
+        raise ValueError("fixed-force-hold-s must be in (0, 30]")
+    if not targets or any(not np.isfinite(float(v)) or abs(float(v)) > 5.0 for v in targets):
         raise ValueError("fixed-force-targets must be finite and bounded by 5 N")
-
-    current = float(getattr(torque, "_g3_internal_force_target_N", 0.0))
     segments = []
-    for index, raw_target in enumerate(targets):
-        target = float(raw_target)
-        if hasattr(torque, "_log"):
-            torque._log({
-                "event": "G3_FIXED_FORCE_SEGMENT_START",
-                "segment_index": int(index),
-                "from_target_N": current,
-                "target_N": target,
-                "transition_s": float(transition_s),
-                "hold_s": float(hold_s),
-                "source": "stage_a_fixed_suspended_cube_runner",
-            })
-        for frame in range(1, transition_frames + 1):
-            value = current + (target - current) * frame / transition_frames
-            torque.set_internal_force_target(value)
+    current = float(torque._g3_internal_force_target_N)
+    for index, target in enumerate(targets):
+        target = float(target)
+        start = float(torque._time_s)
+        wall_start = time.monotonic()
+        torque._log({"event": "G3_FIXED_FORCE_SEGMENT_START", "segment_index": index,
+                     "time_s": start, "physics_step": torque._step,
+                     "from_target_N": current, "target_N": target,
+                     "transition_s": transition_s, "hold_s": hold_s,
+                     "source": "physics_clock_fixed_suspended_cube_runner"})
+        while torque._time_s - start < transition_s + hold_s - 1e-8:
+            if torque._latched_error:
+                raise RuntimeError("FIXED_FORCE_BRIDGE_STOPPED:" + str(torque._latched_error))
+            if time.monotonic() - wall_start > 120.0:
+                raise RuntimeError("FIXED_FORCE_PHYSICS_CLOCK_TIMEOUT")
+            fraction = min(1.0, (torque._time_s - start) / transition_s)
+            torque.set_internal_force_target(current + (target - current) * fraction)
             app.update()
-        for _ in range(hold_frames):
-            torque.set_internal_force_target(target)
-            app.update()
-        segments.append({
-            "segment_index": int(index),
-            "target_N": target,
-            "transition_frames": int(transition_frames),
-            "hold_frames": int(hold_frames),
-        })
+        torque.set_internal_force_target(target)
+        segments.append({"segment_index": index, "target_N": target,
+                         "start_time_s": start, "end_time_s": torque._time_s})
+        torque._log({"event": "G3_FIXED_FORCE_SEGMENT_COMPLETE", "segment_index": index,
+                     "time_s": torque._time_s, "physics_step": torque._step, "target_N": target})
         current = target
-        if hasattr(torque, "_log"):
-            torque._log({
-                "event": "G3_FIXED_FORCE_SEGMENT_COMPLETE",
-                "segment_index": int(index),
-                "target_N": target,
-                "source": "stage_a_fixed_suspended_cube_runner",
-            })
-    return {
-        "targets_N": [float(value) for value in targets],
-        "transition_s": float(transition_s),
-        "hold_s": float(hold_s),
-        "transition_frames": int(transition_frames),
-        "hold_frames": int(hold_frames),
-        "segments": segments,
-    }
+    return {"targets_N": list(targets), "transition_s": transition_s, "hold_s": hold_s,
+            "clock": "Isaac_physics", "segments": segments}
 
 
 def main():
@@ -327,6 +301,8 @@ def main():
                         help="Experiment-C simulation time for changing the internal-force target; negative disables.")
     parser.add_argument("--internal-force-after-n", type=float, default=0.0,
                         help="Experiment-C target after the change time (N).")
+    parser.add_argument("--record-joint-reactions", action="store_true",
+                        help="Record read-only incoming joint reactions, metadata and link kinematics.")
     parser.add_argument("--fixed-suspended-force-sequence", action="store_true",
                         help="Stop after the original COMMON_LIFT and run the Stage-A G3 0->1->2->0 N probe while suspended.")
     parser.add_argument("--fixed-force-transition-s", type=float, default=2.0,
@@ -386,6 +362,7 @@ def main():
         "fixed_force_transition_s": float(args.fixed_force_transition_s),
         "fixed_force_hold_s": float(args.fixed_force_hold_s),
         "fixed_force_sequence": None,
+        "record_joint_reactions": args.record_joint_reactions,
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -462,7 +439,7 @@ def main():
             internal_force_kp=float(args.internal_force_kp),
             internal_force_change_s=float(args.internal_force_change_s),
             internal_force_after_N=float(args.internal_force_after_n),
-            feed_bridge=feed_bridge,
+            feed_bridge=feed_bridge, record_joint_reactions=args.record_joint_reactions,
         )
         torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
         torque._log({

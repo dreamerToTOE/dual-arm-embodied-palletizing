@@ -1,0 +1,30 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_actuator_target_compensates_opposite_cube_contact_reaction ________
+
+    def test_actuator_target_compensates_opposite_cube_contact_reaction():
+        J,target,diag=controller_terms()
+        f=np.asarray(diag['contact_wrench_on_cube_world_N_Nm'])
+        # Static: 0 = tau_act + tau_external_on_robot = tau_act - J.T*f_cube.
+>       assert np.allclose(target, np.r_[J.T@f[:6],J.T@f[6:]])
+E       assert False
+E        +  where False = <function allclose at 0x772dcbbb9630>(array([ 0.        , -1.41421356,  0.        ,  0.        ,  0.        ,\n        0.        ,  0.        ,  0.        ,  1.41421356,  0.        ,\n        0.        ,  0.        ,  0.        ,  0.        ]), array([ 0.        ,  1.41421356,  0.        ,  0.        ,  0.        ,\n        0.        ,  0.        ,  0.        , -1.41421356,  0.        ,\n        0.        ,  0.        ,  0.        ,  0.        ]))
+E        +    where <function allclose at 0x772dcbbb9630> = np.allclose
+
+offline/task28_g3_stage_a/tests/test_runtime_force_mapping.py:27: AssertionError
+__ test_force_target_uses_same_per_contact_units_as_half_difference_estimate ___
+
+    def test_force_target_uses_same_per_contact_units_as_half_difference_estimate():
+        _,_,diag=controller_terms()
+        f=np.asarray(diag['contact_wrench_on_cube_world_N_Nm'])
+        axis=np.asarray(diag['grasp_axis_world'])
+>       assert np.isclose(.5*(axis@f[:3]-axis@f[6:9]),2.0)
+E       assert False
+E        +  where False = <function isclose at 0x772dcbbb97e0>((0.5 * ((array([0., 1., 0.]) @ array([0.        , 1.41421356, 0.        ])) - (array([0., 1., 0.]) @ array([ 0.        , -1.41421356,  0.        ])))), 2.0)
+E        +    where <function isclose at 0x772dcbbb97e0> = np.isclose
+
+offline/task28_g3_stage_a/tests/test_runtime_force_mapping.py:34: AssertionError
+=========================== short test summary info ============================
+FAILED offline/task28_g3_stage_a/tests/test_runtime_force_mapping.py::test_actuator_target_compensates_opposite_cube_contact_reaction
+FAILED offline/task28_g3_stage_a/tests/test_runtime_force_mapping.py::test_force_target_uses_same_per_contact_units_as_half_difference_estimate
+2 failed in 0.18s
