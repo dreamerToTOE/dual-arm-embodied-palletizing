@@ -307,6 +307,9 @@ def main():
                         help="Experimental QP feedforward assuming the commanded closed-chain contact load.")
     parser.add_argument("--known-load-calibration", action="store_true",
                         help="Probe original open-gripper distal links with known small world forces.")
+    parser.add_argument("--suspended-short-probe", action="store_true",
+                        help="Stage-A attached Cube disturbance and short out/back translation.")
+    parser.add_argument("--short-probe-amplitude-m", type=float, default=0.005)
     parser.add_argument("--fixed-suspended-force-sequence", action="store_true",
                         help="Stop after the original COMMON_LIFT and run the Stage-A G3 0->1->2->0 N probe while suspended.")
     parser.add_argument("--fixed-force-transition-s", type=float, default=2.0,
@@ -330,7 +333,13 @@ def main():
         raise ValueError("internal-force-change-s must be finite and >= -1")
     if not np.isfinite(args.internal_force_after_n) or abs(args.internal_force_after_n) > 5.0:
         raise ValueError("internal-force-after-n must be finite with magnitude <= 5")
-    if args.assume_internal_contact_load and not args.fixed_suspended_force_sequence:
+    if args.suspended_short_probe and (args.mode != "integrated" or not args.live_qp
+                                        or not args.record_joint_reactions or args.fixed_suspended_force_sequence):
+        raise ValueError("suspended-short-probe requires integrated live-QP and reaction recording")
+    if args.suspended_short_probe and not (np.isfinite(args.short_probe_amplitude_m)
+                                           and 0.0 < args.short_probe_amplitude_m <= 0.01):
+        raise ValueError("short-probe-amplitude-m must be in (0, 0.01]")
+    if args.assume_internal_contact_load and not (args.fixed_suspended_force_sequence or args.suspended_short_probe):
         raise ValueError("assumed internal contact load is limited to the suspended force experiment")
     if args.known_load_calibration and (args.mode != "smoke" or not args.live_qp
                                         or not args.record_joint_reactions or args.small_motion):
@@ -374,6 +383,8 @@ def main():
         "record_joint_reactions": args.record_joint_reactions,
         "known_load_calibration": args.known_load_calibration,
         "assumed_internal_contact_load": args.assume_internal_contact_load,
+        "suspended_short_probe": args.suspended_short_probe,
+        "short_probe_amplitude_m": args.short_probe_amplitude_m,
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -481,7 +492,7 @@ def main():
                 raise ValueError("max-batches must be in 1..5")
             executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
             stage_a_flag = " -p stage_a_only:=true" if args.stage_a_only else ""
-            g3_hold_flag = " -p stage_a_g3_hold:=true" if args.fixed_suspended_force_sequence else ""
+            g3_hold_flag = " -p stage_a_g3_hold:=true" if (args.fixed_suspended_force_sequence or args.suspended_short_probe) else ""
             executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag + g3_hold_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             summary["executor_name"] = executor_name
@@ -492,6 +503,12 @@ def main():
                     break
                 time.sleep(0.01)
             summary["timeout_reached"] = executor.poll() is None
+            if args.suspended_short_probe:
+                if executor.poll() != 0:
+                    raise RuntimeError(f"SUSPENDED_PROBE_EXECUTOR_FAILED:{executor.returncode}")
+                from offline.task28_g3_stage_a.suspended_probe import run_suspended_probe
+                summary["suspended_probe"] = run_suspended_probe(
+                    app, torque, stage, amplitude_m=args.short_probe_amplitude_m, timeout_s=args.timeout_s)
             if args.fixed_suspended_force_sequence:
                 if executor.poll() != 0:
                     raise RuntimeError(f"STAGE_A_G3_HOLD_EXECUTOR_FAILED:{executor.returncode}")

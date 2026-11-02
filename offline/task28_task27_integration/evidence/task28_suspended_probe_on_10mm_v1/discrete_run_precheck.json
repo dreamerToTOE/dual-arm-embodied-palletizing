@@ -1,0 +1,268 @@
+{
+  "scope": "actual recorded reference start; 11 frozen-model discrete FCL samples, not continuous CCD or actual execution safety",
+  "source_trace": "offline/task28_task27_integration/evidence/task28_suspended_probe_on_10mm_v1/task27_torque_bridge.jsonl.xz",
+  "source_trace_sha256": "52ae792fb08fcac41271ac0e8e984cbeae4f50d17c9fd29eea55ec1804756d9e",
+  "source_physics_step": 6711,
+  "source_time_s": 111.84999999999494,
+  "method": "actual recorded q_start/q_end interpolate simultaneously; translate same-step Cube pose by +X target amplitude times fraction",
+  "amplitude_m": 0.01,
+  "fixture": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/fixtures/task28_g1_0_new_single_cube_v0",
+  "solutions": {
+    "left": {
+      "q_start_rad": [
+        0.26113101840019226,
+        -1.1629706621170044,
+        0.8191736936569214,
+        -1.9475454092025757,
+        0.8413199782371521,
+        1.118897795677185,
+        1.116973876953125
+      ],
+      "q_end_rad": [
+        0.25486821025799755,
+        -1.1576583468835262,
+        0.8144369203627833,
+        -1.957841734444131,
+        0.8300398113384698,
+        1.1260530858689868,
+        1.0970467675095532
+      ],
+      "max_joint_delta_rad": 0.01992710944357179,
+      "model_vs_live_tcp_translation_m": 2.8713366382527913e-07,
+      "ik_translation_error_m": 1.3927145140213905e-11,
+      "ik_rotation_error_rad": 1.2365033294569956e-10
+    },
+    "right": {
+      "q_start_rad": [
+        -0.8626924157142639,
+        -0.6876910328865051,
+        -0.7309520840644836,
+        -2.013894557952881,
+        -0.4398899972438812,
+        1.4754302501678467,
+        -1.5134466886520386
+      ],
+      "q_end_rad": [
+        -0.8596437139613361,
+        -0.6897937316271688,
+        -0.7158419737097208,
+        -2.0233957534132023,
+        -0.43305886974494645,
+        1.4765991077166314,
+        -1.4940853933718514
+      ],
+      "max_joint_delta_rad": 0.019361295280187152,
+      "model_vs_live_tcp_translation_m": 5.422568847727463e-07,
+      "ik_translation_error_m": 2.9784682731259154e-11,
+      "ik_rotation_error_rad": 2.047598518849027e-10
+    }
+  },
+  "rows": [
+    {
+      "fraction": 0.0,
+      "cube_world_position_m": [
+        0.49994760751724243,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 0.0,
+        "right": 0.0
+      },
+      "relative_tcp_translation_change_m": 0.0,
+      "relative_tcp_rotation_change_rad": 0.0
+    },
+    {
+      "fraction": 0.1,
+      "cube_world_position_m": [
+        0.5009476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 1.1239926964596075e-05,
+        "right": 1.0989237273626681e-05
+      },
+      "relative_tcp_translation_change_m": 1.9586423180621725e-05,
+      "relative_tcp_rotation_change_rad": 1.8727274752555673e-05
+    },
+    {
+      "fraction": 0.2,
+      "cube_world_position_m": [
+        0.5019476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 1.998168741830039e-05,
+        "right": 1.953443530947104e-05
+      },
+      "relative_tcp_translation_change_m": 3.480952515494766e-05,
+      "relative_tcp_rotation_change_rad": 3.3282200594606414e-05
+    },
+    {
+      "fraction": 0.30000000000000004,
+      "cube_world_position_m": [
+        0.5029476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 2.6225422654479595e-05,
+        "right": 2.563632929413569e-05
+      },
+      "relative_tcp_translation_change_m": 4.5673307148525995e-05,
+      "relative_tcp_rotation_change_rad": 4.366873871293684e-05
+    },
+    {
+      "fraction": 0.4,
+      "cube_world_position_m": [
+        0.5039476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 2.9971279950560524e-05,
+        "right": 2.9295660114195287e-05
+      },
+      "relative_tcp_translation_change_m": 5.21817946754112e-05,
+      "relative_tcp_rotation_change_rad": 4.989088639622989e-05
+    },
+    {
+      "fraction": 0.5,
+      "cube_world_position_m": [
+        0.5049476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 3.121941256345459e-05,
+        "right": 3.0513174357758033e-05
+      },
+      "relative_tcp_translation_change_m": 5.433903748517903e-05,
+      "relative_tcp_rotation_change_rad": 5.195267690186435e-05
+    },
+    {
+      "fraction": 0.6000000000000001,
+      "cube_world_position_m": [
+        0.5059476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 2.9969979723934762e-05,
+        "right": 2.9289624313864597e-05
+      },
+      "relative_tcp_translation_change_m": 5.2149109504777355e-05,
+      "relative_tcp_rotation_change_rad": 4.985817932356257e-05
+    },
+    {
+      "fraction": 0.7000000000000001,
+      "cube_world_position_m": [
+        0.5069476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 2.622314663125066e-05,
+        "right": 2.562576797218443e-05
+      },
+      "relative_tcp_translation_change_m": 4.561610878329527e-05,
+      "relative_tcp_rotation_change_rad": 4.36114984567115e-05
+    },
+    {
+      "fraction": 0.8,
+      "cube_world_position_m": [
+        0.5079476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 1.997908444890106e-05,
+        "right": 1.952236902298214e-05
+      },
+      "relative_tcp_translation_change_m": 3.47441574372663e-05,
+      "relative_tcp_rotation_change_rad": 3.321677466135661e-05
+    },
+    {
+      "fraction": 0.9,
+      "cube_world_position_m": [
+        0.5089476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 1.123797029777313e-05,
+        "right": 1.0980196857155883e-05
+      },
+      "relative_tcp_translation_change_m": 1.9537401592163782e-05,
+      "relative_tcp_rotation_change_rad": 1.8678183727925926e-05
+    },
+    {
+      "fraction": 1.0,
+      "cube_world_position_m": [
+        0.5099476075172424,
+        6.769929314032197e-05,
+        0.540363609790802
+      ],
+      "joint_limits_valid": true,
+      "collision_valid": true,
+      "collision_reasons": [],
+      "accepted_collision_pairs": 0,
+      "tcp_vs_ideal_translation_error_m": {
+        "left": 1.392712008223387e-11,
+        "right": 2.9784665124227107e-11
+      },
+      "relative_tcp_translation_change_m": 2.0890894530521735e-11,
+      "relative_tcp_rotation_change_rad": 8.118179401899298e-11
+    }
+  ],
+  "all_joint_limits_valid": true,
+  "all_discrete_collision_valid": true,
+  "limitations": [
+    "frozen Task28 single Cube and table; excludes other Task27 objects, truck and live contacts",
+    "bilateral cup contact uses strict frozen geometry and may not match PhysX offset",
+    "only 11 static samples, not continuous collision detection, nor measured dynamics",
+    "Cube motion here is an assumed target, not a measured trajectory"
+  ]
+}

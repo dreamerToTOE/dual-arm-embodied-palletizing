@@ -1,0 +1,507 @@
+{
+  "run_id": "task28_suspended_probe_on_10mm_v1",
+  "probe_started": true,
+  "motion_started": true,
+  "paired_frames": 2040,
+  "unmatched_commands": 0,
+  "trailing_command_unpaired": false,
+  "stop_events": [],
+  "alignment": "force command physics_step k matched completed TORQUE_FRAME k+1; ideal target evaluated at frame.time_s",
+  "reaction_semantics": "joint8 incoming transmission wrench, not independent suction contact force",
+  "model_candidate_semantics": "model residual estimate, not measured suction force",
+  "force_semantics": "known force injected on Cube during interval k to k+1",
+  "cube_orientation_used": false,
+  "motion": {
+    "samples": 840,
+    "target_semantics": "ideal quintic straight line evaluated at each TORQUE_FRAME time_s",
+    "target_error_peak_mm": 0.23661893232031575,
+    "target_error_rms_mm": 0.20724487664950006,
+    "last_target_error_mm": 0.1990271922436582,
+    "last_cube_world_m": [
+      0.49990716576576233,
+      9.863581362878904e-05,
+      0.540556013584137
+    ],
+    "last_target_world_m": [
+      0.49994760751724243,
+      6.769929314032197e-05,
+      0.540363609790802
+    ],
+    "last_error_world_mm": [
+      -0.04044175148010254,
+      0.030936520488467067,
+      0.19240379333496094
+    ],
+    "return_error_mm": 0.1990271922436582,
+    "max_displacement_from_motion_start_mm": 10.028492450715634,
+    "last_phase": "return_hold",
+    "fk_qref_reference": {
+      "semantics": "average Cube position implied by each FK q_ref and initial rigid attachment; q_ref in state k+1 is the command for the following interval, not the command applied in interval k; not a direct Cube command or contact measurement",
+      "source_filter": "both trajectory_adapter.reference_age sources must equal suspended_probe_quintic_joint_ik",
+      "samples": 839,
+      "excluded_samples": 1,
+      "excluded_reference_sources": {
+        "{'left': 'timestamped_task27_adapter', 'right': 'timestamped_task27_adapter'}": 1
+      },
+      "bilateral_tcp_targets_active_samples": 839,
+      "active_flag_limitation": "adapter flag does not by itself prove no later hold override",
+      "tracking_error_peak_mm": 0.23214891094382928,
+      "tracking_error_rms_mm": 0.20319397907093326,
+      "fk_vs_ideal_peak_mm": 0.016615545338919575,
+      "last_implied_cube_world_m": [
+        0.49994760751724243,
+        6.769929314032194e-05,
+        0.540363609790802
+      ],
+      "active_tracking_error_peak_mm": 0.23214891094382928
+    }
+  },
+  "disturbance_windows": [
+    {
+      "index": 0,
+      "force_world_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        5,
+        6
+      ],
+      "actual_elapsed_range_s": [
+        5.0166666666663815,
+        5.999999999999659
+      ],
+      "cube_position_mean_world_m": [
+        0.499948695798715,
+        6.714792107231915e-05,
+        0.5403641134500503
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        -0.03997931877769423,
+        0.030758295906707644,
+        0.19308626651759475
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.0149644755693492,
+        "min": 1.0067927502683736,
+        "max": 1.0245287961328096
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.0004384493016525696,
+          1.014974045332963,
+          23.01664591025941,
+          0.7728113770433641,
+          0.050344539693296,
+          -8.058998865285064e-05
+        ],
+        "right": [
+          -0.00043365735371885976,
+          -1.0149730532546206,
+          23.017333909548043,
+          -0.8745787222092825,
+          0.050851225638982804,
+          -3.5313042977934687e-05
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "force_world_N": [
+        0.0,
+        0.1,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        7,
+        8
+      ],
+      "actual_elapsed_range_s": [
+        7.016666666666268,
+        7.999999999999545
+      ],
+      "cube_position_mean_world_m": [
+        0.4998319978515307,
+        0.000815317124943249,
+        0.540364749232928
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        -0.15667726596196863,
+        0.7789274997776374,
+        0.19372204939527293
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.0214661758685597,
+        "min": 1.013348016719809,
+        "max": 1.0276537113124338
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.000365521737776575,
+          0.9709107371288163,
+          23.044096480134943,
+          0.7758427782907317,
+          0.052153505576900606,
+          -0.00015306610813169152
+        ],
+        "right": [
+          -0.00015165504666490325,
+          -1.0719568238732933,
+          22.98986626100626,
+          -0.8692068455255114,
+          0.052290162020527366,
+          6.603043087956388e-05
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "force_world_N": [
+        0.0,
+        0.2,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        9,
+        10
+      ],
+      "actual_elapsed_range_s": [
+        9.016666666666154,
+        9.999999999999432
+      ],
+      "cube_position_mean_world_m": [
+        0.49972263524929683,
+        0.0015393593620198467,
+        0.5403679698705673
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        -0.26603986819584424,
+        1.5029697368542352,
+        0.19694268703462914
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.0279241629067914,
+        "min": 1.0183735928666269,
+        "max": 1.0372084656232783
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.00032929126029775454,
+          0.9272326659374232,
+          23.07125994498289,
+          0.7788277400797489,
+          0.053880221768404686,
+          -0.0002225134469011251
+        ],
+        "right": [
+          -8.108915672697331e-05,
+          -1.1283113326774727,
+          22.962737893534904,
+          -0.8638991089870588,
+          0.05369642600341133,
+          0.0001568139007424737
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "force_world_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        11,
+        12
+      ],
+      "actual_elapsed_range_s": [
+        11.01666666666604,
+        11.999999999999318
+      ],
+      "cube_position_mean_world_m": [
+        0.49996644953886665,
+        1.7639621538971066e-05,
+        0.5403665006160736
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        -0.022225578626022813,
+        -0.01875000362664044,
+        0.19547343254089355
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.0147971469638868,
+        "min": 1.006430736121753,
+        "max": 1.0215520316343905
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.0003591250692839511,
+          1.0158691180902102,
+          23.015961501809844,
+          0.7727416528419725,
+          0.0502460887277976,
+          -7.537194883549588e-05
+        ],
+        "right": [
+          -0.0007767966407602796,
+          -1.013763592017851,
+          23.018043282572354,
+          -0.8747332038388466,
+          0.05082377246576013,
+          -4.3282139470976695e-05
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "force_world_N": [
+        0.0,
+        -0.1,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        13,
+        14
+      ],
+      "actual_elapsed_range_s": [
+        13.016666666665927,
+        13.999999999999204
+      ],
+      "cube_position_mean_world_m": [
+        0.5000689089298248,
+        -0.0006800943277388191,
+        0.5403650095065434
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        0.08023381233213112,
+        -0.7164839529044306,
+        0.19398232301071072
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.008504011845361,
+        "min": 0.9988162076351437,
+        "max": 1.0171183108978625
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.0005076815690841441,
+          1.0590243576654153,
+          22.98919039961704,
+          0.7697856433707643,
+          0.04857107085192884,
+          -8.478946277208913e-06
+        ],
+        "right": [
+          -0.0007990950344675276,
+          -0.9579141836645755,
+          23.04477087946164,
+          -0.8799345400961196,
+          0.04943123806192008,
+          -0.00014092893055290425
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "force_world_N": [
+        0.0,
+        -0.2,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        15,
+        16
+      ],
+      "actual_elapsed_range_s": [
+        15.016666666665813,
+        15.99999999999909
+      ],
+      "cube_position_mean_world_m": [
+        0.5001790354649226,
+        -0.001401752883490796,
+        0.540364482998848
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        0.1903603474299187,
+        -1.4381425086564075,
+        0.1934558153152688
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.002089447302472,
+        "min": 0.9887674720754381,
+        "max": 1.0119613702179207
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.0007102196473720112,
+          1.1024685380823636,
+          22.962128161832876,
+          0.7668069489929833,
+          0.04681353202882647,
+          6.183474082636808e-05
+        ],
+        "right": [
+          -0.0009766243393915313,
+          -0.9013883820578918,
+          23.07183189396185,
+          -0.8852287056985159,
+          0.04799487066425582,
+          -0.0002484790541481828
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "force_world_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sample_count": 60,
+      "window_s": [
+        17,
+        18
+      ],
+      "actual_elapsed_range_s": [
+        17.0166666666657,
+        17.999999999998977
+      ],
+      "cube_position_mean_world_m": [
+        0.4999318410952886,
+        0.00011800041890334494,
+        0.5403627663850784
+      ],
+      "cube_displacement_from_probe_start_mean_mm": [
+        -0.05683402220407752,
+        0.08161079373773343,
+        0.19173920154569313
+      ],
+      "model_candidate_N": {
+        "count": 60,
+        "mean": 1.0152338323300572,
+        "min": 1.0076666290064038,
+        "max": 1.0234732714819532
+      },
+      "joint8_world_wrench_mean_N_Nm": {
+        "left": [
+          0.0005079254063670445,
+          1.0141834046212197,
+          23.01733394616133,
+          0.7728942654872211,
+          0.05047046036297135,
+          -8.578625401489337e-05
+        ],
+        "right": [
+          -7.01185009627953e-05,
+          -1.0162821875120722,
+          23.016614619267635,
+          -0.8744140215369023,
+          0.05088328680387612,
+          -2.589927120365137e-05
+        ]
+      }
+    }
+  ],
+  "last_elapsed_s": 33.9833333333314,
+  "paired_step_gaps": 0,
+  "complete_by_trace": true,
+  "qp_status": {
+    "QP_OPTIMAL": 2040
+  },
+  "torque_saturation_frames": 0,
+  "torque_saturation_observed_frames": 2040,
+  "torque_rate_active_frames": 0,
+  "torque_rate_active_observed_frames": 2040,
+  "gripper_closed_samples": 2040,
+  "gripper_not_closed_or_unknown_samples": 0,
+  "relative_tcp_translation_change_max_mm": 0.0015017008237006037,
+  "relative_tcp_tracking_translation_max_mm": 0.06910807747976416,
+  "relative_tcp_tracking_rotation_max_rad": 0.0005003253313247089,
+  "model_candidate_by_phase_N": {
+    "disturbance_or_settle": {
+      "count": 1201,
+      "mean": 0.9648813332018309,
+      "min": 0.01903603315459438,
+      "max": 1.0379040429475856
+    },
+    "outbound": {
+      "count": 300,
+      "mean": 1.0157602271307262,
+      "min": 1.0007254289011187,
+      "max": 1.027845076106678
+    },
+    "outbound_hold": {
+      "count": 120,
+      "mean": 1.0151616501573508,
+      "min": 1.0068562127003697,
+      "max": 1.022719608796537
+    },
+    "return": {
+      "count": 300,
+      "mean": 1.0159647395877358,
+      "min": 1.0032121433810632,
+      "max": 1.0264608711194279
+    },
+    "return_hold": {
+      "count": 119,
+      "mean": 1.0150601050175505,
+      "min": 1.0077093885233608,
+      "max": 1.0274508860649556
+    }
+  },
+  "target_torque_residual_by_phase_Nm": {
+    "disturbance_or_settle": {
+      "count": 1201,
+      "mean": 0.01922713234346878,
+      "min": 0.004080209250011624,
+      "max": 0.05063670573858747
+    },
+    "outbound": {
+      "count": 300,
+      "mean": 0.00925048806169447,
+      "min": 0.0044432212253546766,
+      "max": 0.010545958638289221
+    },
+    "outbound_hold": {
+      "count": 120,
+      "mean": 0.006952044667531669,
+      "min": 0.006835314679175752,
+      "max": 0.0071218382921607315
+    },
+    "return": {
+      "count": 300,
+      "mean": 0.009208200794439065,
+      "min": 0.006984851400138492,
+      "max": 0.011033438223520875
+    },
+    "return_hold": {
+      "count": 119,
+      "mean": 0.00698942782221793,
+      "min": 0.0067408386913676566,
+      "max": 0.014262581670976715
+    }
+  },
+  "trajectory_adapter_states": [
+    {
+      "tcp_targets_active": true,
+      "active_arms": [
+        "left",
+        "right"
+      ],
+      "sample_count": 2040
+    }
+  ]
+}
