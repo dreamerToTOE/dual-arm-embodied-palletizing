@@ -1,0 +1,296 @@
+{
+  "arm_roots": [
+    "/World/left_fr3",
+    "/World/right_fr3"
+  ],
+  "assumed_internal_contact_load": false,
+  "execution_time_scale": 16.0,
+  "executor_exit": 0,
+  "executor_name": "task27_five_cube_center_insert",
+  "executor_started": true,
+  "experiment": "hold",
+  "fixed_force_hold_s": 5.0,
+  "fixed_force_sequence": null,
+  "fixed_force_transition_s": 2.0,
+  "fixed_suspended_force_sequence": false,
+  "headless": false,
+  "internal_force_after_N": 0.0,
+  "internal_force_change_s": -1.0,
+  "internal_force_kp": 0.5,
+  "internal_force_target_N": 0.0,
+  "internal_force_weight": 1000.0,
+  "known_load_calibration": false,
+  "lighting": "(True, ('Default', 'stage'))",
+  "live_qp": true,
+  "local_sweep_limit_m": 2.0,
+  "matched_comparison": {
+    "probes": {
+      "off": {
+        "amplitude_m": 0.005,
+        "cube_start_world_m": [
+          0.4999193251132965,
+          6.948018562979996e-05,
+          0.5404644012451172
+        ],
+        "end_s": 133.69999999999854,
+        "motion_started": true,
+        "start_s": 99.69999999999563
+      },
+      "on": {
+        "amplitude_m": 0.005,
+        "cube_start_world_m": [
+          0.49991950392723083,
+          6.968438538024202e-05,
+          0.5404643416404724
+        ],
+        "end_s": 173.70000000003037,
+        "motion_started": true,
+        "start_s": 139.7000000000033
+      }
+    },
+    "reset_states": {
+      "off": {
+        "case": "off",
+        "cube_world_m": [
+          0.4999193251132965,
+          6.948018562979996e-05,
+          0.5404644012451172
+        ],
+        "dq_rad_s": {
+          "left": [
+            0.0021444507874548435,
+            -0.0018932940438389778,
+            -0.0012375417863950133,
+            -0.0018766417633742094,
+            -0.001552804373204708,
+            0.003266342217102647,
+            0.00037870247615501285
+          ],
+          "right": [
+            -0.002410449320450425,
+            -0.0020116420928388834,
+            0.0010028865654021502,
+            -0.0022435556165874004,
+            0.002188800135627389,
+            0.003757784143090248,
+            -0.0014511988265439868
+          ]
+        },
+        "event": "MATCHED_PROBE_RESET",
+        "q_rad": {
+          "left": [
+            1.3013761043548584,
+            -0.5176882743835449,
+            0.4728277027606964,
+            -2.031938076019287,
+            0.22761395573616028,
+            1.5632636547088623,
+            1.7212767601013184
+          ],
+          "right": [
+            -1.542321801185608,
+            -0.47181910276412964,
+            -0.3016858398914337,
+            -2.0362322330474854,
+            -0.13553819060325623,
+            1.582767128944397,
+            -1.8106204271316528
+          ]
+        },
+        "reference_q_rad": {
+          "left": [
+            1.3017634153366089,
+            -0.5177385807037354,
+            0.472618967294693,
+            -2.0325098037719727,
+            0.22751255333423615,
+            1.5636570453643799,
+            1.7212905883789062
+          ],
+          "right": [
+            -1.542745590209961,
+            -0.47187352180480957,
+            -0.30146318674087524,
+            -2.0368916988372803,
+            -0.13540279865264893,
+            1.5834009647369385,
+            -1.8108199834823608
+          ]
+        },
+        "time_s": 99.69999999999563
+      },
+      "on": {
+        "case": "on",
+        "cube_world_m": [
+          0.49991950392723083,
+          6.968438538024202e-05,
+          0.5404643416404724
+        ],
+        "dq_rad_s": {
+          "left": [
+            0.0021535088308155537,
+            -0.0019028456881642342,
+            -0.001242695259861648,
+            -0.0018847526516765356,
+            -0.0015588770620524883,
+            0.0032803171779960394,
+            0.0003806220192927867
+          ],
+          "right": [
+            -0.002420447999611497,
+            -0.0020207983907312155,
+            0.001007351907901466,
+            -0.0022539664059877396,
+            0.0021969927474856377,
+            0.003776240861043334,
+            -0.0014565333258360624
+          ]
+        },
+        "event": "MATCHED_PROBE_RESET",
+        "q_rad": {
+          "left": [
+            1.3013761043548584,
+            -0.5176881551742554,
+            0.4728272557258606,
+            -2.031938314437866,
+            0.2276131808757782,
+            1.5632646083831787,
+            1.721276879310608
+          ],
+          "right": [
+            -1.5423216819763184,
+            -0.4718199670314789,
+            -0.3016856908798218,
+            -2.0362324714660645,
+            -0.13553781807422638,
+            1.5827664136886597,
+            -1.8106197118759155
+          ]
+        },
+        "reference_q_rad": {
+          "left": [
+            1.3017634153366089,
+            -0.5177385807037354,
+            0.472618967294693,
+            -2.0325098037719727,
+            0.22751255333423615,
+            1.5636570453643799,
+            1.7212905883789062
+          ],
+          "right": [
+            -1.542745590209961,
+            -0.47187352180480957,
+            -0.30146318674087524,
+            -2.0368916988372803,
+            -0.13540279865264893,
+            1.5834009647369385,
+            -1.8108199834823608
+          ]
+        },
+        "time_s": 139.7000000000033
+      }
+    },
+    "shared_cube_reference_m": [
+      0.4999193251132965,
+      6.948018562979996e-05,
+      0.5404644012451172
+    ],
+    "shared_reference_q_rad": {
+      "left": [
+        1.3017634153366089,
+        -0.5177385807037354,
+        0.472618967294693,
+        -2.0325098037719727,
+        0.22751255333423615,
+        1.5636570453643799,
+        1.7212905883789062
+      ],
+      "right": [
+        -1.542745590209961,
+        -0.47187352180480957,
+        -0.30146318674087524,
+        -2.0368916988372803,
+        -0.13540279865264893,
+        1.5834009647369385,
+        -1.8108199834823608
+      ]
+    }
+  },
+  "matched_suspended_comparison": true,
+  "max_batches": 1,
+  "mode": "integrated",
+  "moveit_exit": 0,
+  "moveit_started": true,
+  "native_settle": {
+    "consecutive_observed": 10,
+    "consecutive_required": 10,
+    "dq_arm_rad_s": [
+      -0.00019085436360910535,
+      -0.010700101032853127,
+      -0.0006957091391086578,
+      0.005689768586307764,
+      -0.0010107556590810418,
+      6.82528770994395e-05,
+      2.8241793188499287e-05,
+      -0.0001733113022055477,
+      -0.010585050098598003,
+      -0.0005469790194183588,
+      0.005202353000640869,
+      -0.0008944892906583846,
+      5.538084587897174e-05,
+      1.7193950043292716e-05
+    ],
+    "frames": 10,
+    "max_abs_dq_rad_s": 0.010700101032853127,
+    "max_frames": 360,
+    "q_arm_rad": [
+      1.8674674720386975e-05,
+      -0.7843349575996399,
+      6.91303939674981e-05,
+      -2.3567605018615723,
+      0.00010053407459054142,
+      1.5707885026931763,
+      0.7853948473930359,
+      1.7120733900810592e-05,
+      -0.7843460440635681,
+      5.437589425127953e-05,
+      -2.356712579727173,
+      8.909473399398848e-05,
+      1.5707899332046509,
+      0.7853962182998657
+    ],
+    "semantics": "original_position_drive_runtime_settle_before_torque_takeover",
+    "settled": true,
+    "velocity_tol_rad_s": 0.05
+  },
+  "original_task26_bridge_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py",
+  "original_task26_bridge_source_sha256": "0f7123657ea8422cf0efd468e7bcd59624e144ae8c9ca315a82af57576b68dc6",
+  "original_task26_scene_source": "/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_scene.py",
+  "original_task26_scene_source_sha256": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+  "planning_only": false,
+  "position_arm_write_count": 0,
+  "pre_contact_only": false,
+  "pre_torque_settle_frames": 360,
+  "qp_solve_count": 10451,
+  "qp_status_counts": {
+    "QP_OPTIMAL": 10451
+  },
+  "qp_stop_reason": null,
+  "record_joint_reactions": true,
+  "run_id": "task28_g3_matched5mm_v1",
+  "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/isaac/scripts/task27_five_cube_center_insert_scene.py",
+  "scene_entry_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+  "scene_root": "/World/Task27",
+  "schema": "task28.task27.one_pass.v1",
+  "short_probe_amplitude_m": 0.005,
+  "small_motion": false,
+  "stage_a_only": false,
+  "status": "COMPLETED",
+  "suspended_short_probe": false,
+  "task_mode": "FREE_APPROACH",
+  "timeout_reached": false,
+  "torque_latched_error": null,
+  "torque_log": "/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_task27_integration/evidence/task28_g3_matched5mm_v1/task27_torque_bridge.jsonl",
+  "torque_steps": 10452,
+  "torque_writes": 10452
+}

@@ -159,9 +159,13 @@ def analyze(run_dir):
                   'relative_tracking_rotation_rad': (float(np.linalg.norm(qp['relative_tcp_error'][3:]))
                                                      if qp.get('relative_tcp_error') is not None else None),
                   'estimate': g3.get('estimated_internal_force_N'),
+                  'effort14': (list(diag['applied_effort_completed_interval_Nm']['left'])
+                               + list(diag['applied_effort_completed_interval_Nm']['right'])
+                               if diag.get('applied_effort_completed_interval_Nm') else None),
                   'target_force': g3.get('target_N'),
                   'target_residual_Nm': qp.get('internal_torque_target_residual_inf_Nm'),
                   'qp_status': qp.get('status'),
+                  'load_model': qp.get('g3_qp_contact_load_model'),
                   'torque_saturation': bool(qp['torque_saturated_indices']) if 'torque_saturated_indices' in qp else None,
                   'rate_active': bool(qp['torque_rate_active_indices']) if 'torque_rate_active_indices' in qp else None, 'reactions': {}}
         qps[str(sample['qp_status'])] += 1
@@ -179,6 +183,7 @@ def analyze(run_dir):
             index = int((elapsed - 4) / 2)
             forces[index].append((command, sample))
     result['qp_status'] = dict(qps)
+    result['qp_contact_load_models'] = dict(Counter(str(s['load_model']) for s in samples))
     for name, key in (('torque_saturation', 'torque_saturation'), ('torque_rate_active', 'rate_active')):
         observed = [s[key] for s in samples if s[key] is not None]
         result[name + '_frames'] = sum(observed) if observed else None
@@ -193,6 +198,13 @@ def analyze(run_dir):
     result['relative_tcp_tracking_rotation_max_rad'] = max(rotations) if rotations else None
     result['model_candidate_by_phase_N'] = {key: stats([s['estimate'] for s in group if s['estimate'] is not None]) for key, group in phases.items()}
     result['target_torque_residual_by_phase_Nm'] = {key: stats([s['target_residual_Nm'] for s in group if s['target_residual_Nm'] is not None]) for key, group in phases.items()}
+    result['applied_effort14_by_phase_Nm'] = {}
+    for key, group in phases.items():
+        efforts = [s['effort14'] for s in group if s['effort14'] is not None]
+        if efforts:
+            a = np.asarray(efforts, float)
+            result['applied_effort14_by_phase_Nm'][key] = {'count': len(a), 'mean': a.mean(axis=0).tolist(),
+                                                          'min': a.min(axis=0).tolist(), 'max': a.max(axis=0).tolist()}
     adapters = Counter((str(s['tcp_targets_active']), ','.join(s['active_arms']) if isinstance(s['active_arms'], list) else 'unknown') for s in samples)
     result['trajectory_adapter_states'] = [{'tcp_targets_active': None if active == 'None' else active == 'True',
                                              'active_arms': None if arms == 'unknown' else arms.split(',') if arms else [],

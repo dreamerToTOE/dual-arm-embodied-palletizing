@@ -30,16 +30,12 @@ def read(run_dir):
     return result
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('off', type=Path); parser.add_argument('on', type=Path)
-    parser.add_argument('--output', type=Path, required=True)
-    args = parser.parse_args()
+def plot(off, on, output):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     fig, axes = plt.subplots(4, 1, figsize=(11, 9), sharex=True, layout='constrained')
-    for path, name in ((args.off, 'feedforward off'), (args.on, 'feedforward on')):
+    for path, name in ((off, 'feedforward off'), (on, 'feedforward on')):
         rows = read(path)
         time = [r[0] for r in rows]
         for axis, index in ((axes[1], 4), (axes[3], 5)):
@@ -59,7 +55,16 @@ def main():
     for ax in axes:
         ax.grid(alpha=.3); ax.legend(loc='best')
     fig.suptitle('Task27 attached probe: joint reaction/model candidate are not D6 force measurements')
-    fig.savefig(args.output, dpi=150)
+    fig.savefig(output, dpi=150)
+    plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('off', type=Path); parser.add_argument('on', type=Path)
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    plot(args.off, args.on, args.output)
 
 
 if __name__ == '__main__': main()

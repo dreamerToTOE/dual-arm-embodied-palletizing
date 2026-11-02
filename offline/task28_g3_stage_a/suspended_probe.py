@@ -26,7 +26,7 @@ def motion_progress(elapsed):
     return 0.0, 0.0, 0.0
 
 
-def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300):
+def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300, matched_reference=None):
     import time
     import omni.physx
     from pxr import Gf, PhysicsSchemaTools, UsdUtils
@@ -52,6 +52,8 @@ def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300)
     old_step, old_ref = torque._torque_step, torque._trajectory_reference
     hold_q = {s: np.asarray(torque.articulations[s].get_joint_positions(), float)[:7].copy()
               for s in ('left', 'right')}
+    if matched_reference is not None:
+        hold_q = matched_reference['q']
     tcp_offsets = {s: (np.linalg.inv(torque._tcp_transform(s)) @ np.r_[cube_start, 1.0])[:3]
                    for s in ('left', 'right')}
     motion = {}
@@ -80,12 +82,16 @@ def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300)
             motion['q_start'] = {s: np.asarray(torque.articulations[s].get_joint_positions(), float)[:7].copy()
                                  for s in ('left', 'right')}
             motion['cube_start'] = pos.copy()
+            if matched_reference is not None:
+                motion['q_start'] = {s: hold_q[s].copy() for s in ('left', 'right')}
+                motion['cube_start'] = matched_reference['cube'].copy()
             motion['q_end'] = {}
             ik_diag = {}
             for side in ('left', 'right'):
                 actual = torque._tcp_transform(side)
                 desired = model.fk(side, motion['q_start'][side]); desired[0, 3] += amplitude_m
-                if np.linalg.norm(model.fk(side, motion['q_start'][side])[:3, 3] - actual[:3, 3]) > 0.0002:
+                measured_q = np.asarray(torque.articulations[side].get_joint_positions(), float)[:7]
+                if np.linalg.norm(model.fk(side, measured_q)[:3, 3] - actual[:3, 3]) > 0.0002:
                     raise RuntimeError('SUSPENDED_PROBE_FK_MISMATCH:' + side)
                 ik = model.ik(side, desired, seeds=[motion['q_start'][side]], max_attempts=1, max_nfev=300)
                 if not ik.success:
@@ -97,7 +103,8 @@ def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300)
                                  'q_end': list(ik.q), 'translation_error_m': ik.translation_error_m,
                                  'rotation_error_rad': ik.rotation_error_rad}
             torque._log({'event': 'SUSPENDED_PROBE_MOTION_START', 'physics_step': torque._step,
-                         'time_s': torque._time_s, 'cube_start_world_m': pos.tolist(),
+                         'time_s': torque._time_s, 'cube_start_world_m': motion['cube_start'].tolist(),
+                         'actual_cube_start_world_m': pos.tolist(),
                          'amplitude_world_x_m': amplitude_m, 'ik': ik_diag})
         torque.set_internal_force_target(min(1.0, max(0.0, elapsed / 2.0))) if elapsed <= 2.0 else None
         old_step(dt)
@@ -130,3 +137,49 @@ def run_suspended_probe(app, torque, stage, *, amplitude_m=0.005, timeout_s=300)
         torque._torque_step, torque._trajectory_reference = old_step, old_ref
     return {'start_s': start, 'end_s': torque._time_s, 'amplitude_m': amplitude_m,
             'cube_start_world_m': cube_start.tolist(), 'motion_started': bool(motion)}
+
+
+def run_matched_comparison(app, torque, stage):
+    """Two bounded probes share the same desired grasp; reset by torque motion, never teleport."""
+    old_ref = torque._trajectory_reference
+    old_ff = torque._assumed_internal_contact_load
+    q = {s: np.asarray(torque.articulations[s].get_joint_positions(), float)[:7].copy()
+         for s in ('left', 'right')}
+    shared = {'q': q}
+    resets, probes = {}, {}
+    torque._trajectory_reference = lambda side, *_: (q[side].copy(), np.zeros(7), np.zeros(7),
+                                                      0, 'matched_reset_hold')
+    try:
+        for case, enabled in (('off', False), ('on', True)):
+            torque.set_internal_force_target(0.0)
+            torque._assumed_internal_contact_load = False
+            end = torque._time_s + 6.0
+            while torque._time_s < end and not torque._latched_error:
+                app.update()
+            if torque._latched_error or not torque._surface_grippers_closed():
+                raise RuntimeError('MATCHED_RESET_FAILED:' + str(torque._latched_error))
+            pos = np.asarray(torque.feed.rigids[0].get_world_pose()[0], float)
+            if 'cube' not in shared:
+                shared['cube'] = pos.copy()
+            receipt = {'event': 'MATCHED_PROBE_RESET', 'case': case, 'time_s': torque._time_s,
+                       'q_rad': {s: np.asarray(torque.articulations[s].get_joint_positions(), float)[:7].tolist()
+                                 for s in ('left', 'right')},
+                       'dq_rad_s': {s: np.asarray(torque.articulations[s].get_joint_velocities(), float)[:7].tolist()
+                                    for s in ('left', 'right')},
+                       'cube_world_m': pos.tolist(), 'reference_q_rad': {s: q[s].tolist() for s in q}}
+            resets[case] = receipt
+            torque._log(receipt)
+            if case == 'on':
+                dq = max(np.max(np.abs(np.asarray(receipt['q_rad'][s]) - resets['off']['q_rad'][s])) for s in q)
+                dp = float(np.linalg.norm(pos - shared['cube']))
+                if dq > 0.001 or dp > 0.0003:
+                    raise RuntimeError(f'MATCHED_RESET_MISMATCH:q={dq},cube={dp}')
+            torque._assumed_internal_contact_load = enabled
+            probes[case] = run_suspended_probe(app, torque, stage, matched_reference=shared)
+    finally:
+        torque.set_internal_force_target(0.0)
+        torque._trajectory_reference = old_ref
+        torque._assumed_internal_contact_load = old_ff
+    return {'reset_states': resets, 'probes': probes,
+            'shared_reference_q_rad': {s: q[s].tolist() for s in q},
+            'shared_cube_reference_m': shared['cube'].tolist()}

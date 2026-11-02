@@ -309,6 +309,8 @@ def main():
                         help="Probe original open-gripper distal links with known small world forces.")
     parser.add_argument("--suspended-short-probe", action="store_true",
                         help="Stage-A attached Cube disturbance and short out/back translation.")
+    parser.add_argument("--matched-suspended-comparison", action="store_true",
+                        help="One grasp, shared 5 mm references, physically reset between feedforward OFF/ON.")
     parser.add_argument("--short-probe-amplitude-m", type=float, default=0.005)
     parser.add_argument("--fixed-suspended-force-sequence", action="store_true",
                         help="Stop after the original COMMON_LIFT and run the Stage-A G3 0->1->2->0 N probe while suspended.")
@@ -339,8 +341,16 @@ def main():
     if args.suspended_short_probe and not (np.isfinite(args.short_probe_amplitude_m)
                                            and 0.0 < args.short_probe_amplitude_m <= 0.01):
         raise ValueError("short-probe-amplitude-m must be in (0, 0.01]")
-    if args.assume_internal_contact_load and not (args.fixed_suspended_force_sequence or args.suspended_short_probe):
-        raise ValueError("assumed internal contact load is limited to the suspended force experiment")
+    if args.matched_suspended_comparison and (args.mode != "integrated" or not args.live_qp
+            or not args.record_joint_reactions or args.suspended_short_probe
+            or args.fixed_suspended_force_sequence or args.planning_only or args.pre_contact_only
+            or args.assume_internal_contact_load or args.internal_force_target_n != 0):
+        raise ValueError("matched comparison requires integrated live QP, reactions and initial zero target; toggles feedforward itself")
+    stage_a_feedforward = (args.stage_a_only and args.mode == "integrated" and args.live_qp
+                          and not args.planning_only and not args.pre_contact_only)
+    if args.assume_internal_contact_load and not (args.fixed_suspended_force_sequence
+            or args.suspended_short_probe or stage_a_feedforward):
+        raise ValueError("assumed internal contact load requires a suspended probe or Stage-A-only live execution")
     if args.known_load_calibration and (args.mode != "smoke" or not args.live_qp
                                         or not args.record_joint_reactions or args.small_motion):
         raise ValueError("known-load-calibration requires smoke, live-qp, reaction recording and no small motion")
@@ -384,6 +394,7 @@ def main():
         "known_load_calibration": args.known_load_calibration,
         "assumed_internal_contact_load": args.assume_internal_contact_load,
         "suspended_short_probe": args.suspended_short_probe,
+        "matched_suspended_comparison": args.matched_suspended_comparison,
         "short_probe_amplitude_m": args.short_probe_amplitude_m,
         "headless": False,
         "scene_entry": str(SCENE),
@@ -492,7 +503,7 @@ def main():
                 raise ValueError("max-batches must be in 1..5")
             executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
             stage_a_flag = " -p stage_a_only:=true" if args.stage_a_only else ""
-            g3_hold_flag = " -p stage_a_g3_hold:=true" if (args.fixed_suspended_force_sequence or args.suspended_short_probe) else ""
+            g3_hold_flag = " -p stage_a_g3_hold:=true" if (args.fixed_suspended_force_sequence or args.suspended_short_probe or args.matched_suspended_comparison) else ""
             executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag + g3_hold_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True
             summary["executor_name"] = executor_name
@@ -503,6 +514,13 @@ def main():
                     break
                 time.sleep(0.01)
             summary["timeout_reached"] = executor.poll() is None
+            if args.stage_a_only and executor.poll() != 0:
+                raise RuntimeError(f"STAGE_A_EXECUTOR_FAILED:{executor.poll()}")
+            if args.matched_suspended_comparison:
+                if executor.poll() != 0:
+                    raise RuntimeError(f"MATCHED_PROBE_EXECUTOR_FAILED:{executor.poll()}")
+                from offline.task28_g3_stage_a.suspended_probe import run_matched_comparison
+                summary["matched_comparison"] = run_matched_comparison(app, torque, stage)
             if args.suspended_short_probe:
                 if executor.poll() != 0:
                     raise RuntimeError(f"SUSPENDED_PROBE_EXECUTOR_FAILED:{executor.returncode}")
