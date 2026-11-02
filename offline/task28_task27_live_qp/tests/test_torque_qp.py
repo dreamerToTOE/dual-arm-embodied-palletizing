@@ -186,3 +186,16 @@ def test_joint_velocity_and_position_lookahead_are_hard_bounds():
     assert q[0] + dq[0] / 60. + .5 * qdd[0] / 60.**2 <= 2.8973 + 1e-8
     assert dq[0] + qdd[0] / 60. <= cfg.qdot_abs_rad_s[0] + 1e-8
 
+
+
+def test_assumed_contact_bias_allows_internal_torque_without_inventing_acceleration():
+    # This checks the QP model under an assumed load, not real contact force.
+    _, _, _, bias, *_ = _state()
+    target = bias + np.r_[np.full(7, 0.2), np.full(7, -0.2)]
+    cfg = CooperativeTorqueQPConfig(common_weight=1e4, relative_weight=1e4,
+                                     joint_posture_weight=1e4, internal_torque_weight=1e3)
+    baseline = _solve(config=cfg, torque_target14=target)
+    assumed = _solve(config=cfg, torque_target14=target, bias14=target)
+    assert baseline.status == assumed.status == 'QP_OPTIMAL'
+    assert np.linalg.norm(np.asarray(assumed.tau14_Nm) - target) < 1e-6
+    assert np.linalg.norm(np.asarray(assumed.qdd14)) < np.linalg.norm(np.asarray(baseline.qdd14))

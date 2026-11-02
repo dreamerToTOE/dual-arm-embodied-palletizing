@@ -1,0 +1,66 @@
+{
+  "source_run": "offline/task28_task27_integration/evidence/task28_g3_reaction_v4_corrected",
+  "windows": {
+    "1": {
+      "samples": 224,
+      "target_N_mean": 1.0,
+      "target_N_max": 1.0,
+      "effective_N_mean": 1.429592042448194,
+      "effective_N_max": 1.4336229205740698,
+      "target_internal_l2_Nm_mean": 0.6184724513181609,
+      "target_internal_l2_Nm_max": 0.6202121186840422,
+      "torque_residual_l2_Nm_mean": 0.5729683985341183,
+      "torque_residual_l2_Nm_max": 0.5748782134466255,
+      "torque_residual_inf_Nm_mean": 0.2634763834954332,
+      "torque_residual_inf_Nm_max": 0.2642176402815837,
+      "tau_applied_diff_inf_Nm_mean": 7.243517044429128e-07,
+      "tau_applied_diff_inf_Nm_max": 9.527117406094021e-07,
+      "target_direction_projection_mean": 0.07733731137051046,
+      "target_direction_projection_max": 0.07786687504645759,
+      "torque_saturated_mean": 0.0,
+      "torque_saturated_max": 0.0,
+      "torque_rate_active_mean": 0.0,
+      "torque_rate_active_max": 0.0
+    },
+    "2": {
+      "samples": 224,
+      "target_N_mean": 2.0,
+      "target_N_max": 2.0,
+      "effective_N_mean": 2.869270668924853,
+      "effective_N_max": 2.8741416197596474,
+      "target_internal_l2_Nm_mean": 1.2390388368526994,
+      "target_internal_l2_Nm_max": 1.2411487777563124,
+      "torque_residual_l2_Nm_mean": 1.1539620606446752,
+      "torque_residual_l2_Nm_max": 1.1559736761508075,
+      "torque_residual_inf_Nm_mean": 0.5286059174243503,
+      "torque_residual_inf_Nm_max": 0.5295103380370145,
+      "tau_applied_diff_inf_Nm_mean": 7.428998164336699e-07,
+      "tau_applied_diff_inf_Nm_max": 9.534439051606114e-07,
+      "target_direction_projection_mean": 0.07177430355434088,
+      "target_direction_projection_max": 0.07202536077625657,
+      "torque_saturated_mean": 0.0,
+      "torque_saturated_max": 0.0,
+      "torque_rate_active_mean": 0.0,
+      "torque_rate_active_max": 0.0
+    }
+  },
+  "counterfactual_step": 6601,
+  "counterfactual_time_s": 110.0166666666617,
+  "counterfactual": {
+    "baseline": {
+      "status": "QP_OPTIMAL",
+      "target_direction_projection": 0.06945004211096248,
+      "torque_target_residual_inf_Nm": 0.5288921189992601,
+      "relative_acceleration_residual_inf": 0.041612633203710475,
+      "recorded_tau_difference_inf_Nm": 1.1941756368205603e-06
+    },
+    "assumed_commanded_contact_load": {
+      "status": "QP_OPTIMAL",
+      "target_direction_projection": 0.9520297435188635,
+      "torque_target_residual_inf_Nm": 0.09126537718814198,
+      "relative_acceleration_residual_inf": 0.00938258522157306,
+      "recorded_tau_difference_inf_Nm": 0.5275071139505334
+    }
+  },
+  "limitation": "assumed contact wrench is not a measured force and offline replay is not plant validation"
+}

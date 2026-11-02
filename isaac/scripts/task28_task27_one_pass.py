@@ -303,6 +303,10 @@ def main():
                         help="Experiment-C target after the change time (N).")
     parser.add_argument("--record-joint-reactions", action="store_true",
                         help="Record read-only incoming joint reactions, metadata and link kinematics.")
+    parser.add_argument("--assume-internal-contact-load", action="store_true",
+                        help="Experimental QP feedforward assuming the commanded closed-chain contact load.")
+    parser.add_argument("--known-load-calibration", action="store_true",
+                        help="Probe original open-gripper distal links with known small world forces.")
     parser.add_argument("--fixed-suspended-force-sequence", action="store_true",
                         help="Stop after the original COMMON_LIFT and run the Stage-A G3 0->1->2->0 N probe while suspended.")
     parser.add_argument("--fixed-force-transition-s", type=float, default=2.0,
@@ -326,6 +330,11 @@ def main():
         raise ValueError("internal-force-change-s must be finite and >= -1")
     if not np.isfinite(args.internal_force_after_n) or abs(args.internal_force_after_n) > 5.0:
         raise ValueError("internal-force-after-n must be finite with magnitude <= 5")
+    if args.assume_internal_contact_load and not args.fixed_suspended_force_sequence:
+        raise ValueError("assumed internal contact load is limited to the suspended force experiment")
+    if args.known_load_calibration and (args.mode != "smoke" or not args.live_qp
+                                        or not args.record_joint_reactions or args.small_motion):
+        raise ValueError("known-load-calibration requires smoke, live-qp, reaction recording and no small motion")
     if args.fixed_suspended_force_sequence and args.mode != "integrated":
         raise ValueError("fixed-suspended-force-sequence requires --mode integrated")
     if args.fixed_suspended_force_sequence and not args.live_qp:
@@ -363,6 +372,8 @@ def main():
         "fixed_force_hold_s": float(args.fixed_force_hold_s),
         "fixed_force_sequence": None,
         "record_joint_reactions": args.record_joint_reactions,
+        "known_load_calibration": args.known_load_calibration,
+        "assumed_internal_contact_load": args.assume_internal_contact_load,
         "headless": False,
         "scene_entry": str(SCENE),
         "scene_entry_sha256": sha256(SCENE),
@@ -440,6 +451,7 @@ def main():
             internal_force_change_s=float(args.internal_force_change_s),
             internal_force_after_N=float(args.internal_force_after_n),
             feed_bridge=feed_bridge, record_joint_reactions=args.record_joint_reactions,
+            assumed_internal_contact_load=args.assume_internal_contact_load,
         )
         torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
         torque._log({
@@ -489,6 +501,28 @@ def main():
                     hold_s=float(args.fixed_force_hold_s),
                 )
         else:
+            if args.known_load_calibration:
+                # Use the existing independent trajectory objective to hold both
+                # measured arms; a common-only hold permits differential drift.
+                names = tuple(module.ARM_DOF_NAMES)
+                for side in ("left", "right"):
+                    q_hold = np.asarray(torque.articulations[side].get_joint_positions(), dtype=float)[:7]
+                    torque.feed._apply_joint_command(side, ((0, 0), names, q_hold))
+                settle_until = torque._time_s + 2.0
+                while torque._time_s < settle_until and not torque._latched_error:
+                    app.update()
+                if torque._latched_error:
+                    raise RuntimeError("KNOWN_LOAD_HOLD_STOPPED:" + str(torque._latched_error))
+                from offline.task28_g3_stage_a.known_load import attach_known_load_probe
+                end_time = attach_known_load_probe(torque, stage)
+                deadline = time.monotonic() + args.timeout_s
+                while torque._time_s < end_time and not torque._latched_error:
+                    if time.monotonic() > deadline:
+                        raise RuntimeError("KNOWN_LOAD_TIMEOUT")
+                    app.update()
+                if torque._latched_error:
+                    raise RuntimeError("KNOWN_LOAD_BRIDGE_STOPPED:" + str(torque._latched_error))
+                summary["known_load_complete"] = True
             if args.small_motion:
                 # This is a no-contact controller diagnostic.  It injects two
                 # timestamped target captures through the same patched sink
@@ -500,7 +534,7 @@ def main():
                     target = torque._q0[side].copy()
                     target[0] += sign * 0.005
                     torque.feed._apply_joint_command(side, (stamp0, names, target))
-            for index in range(max(1, args.frames)):
+            for index in range(0 if args.known_load_calibration else max(1, args.frames)):
                 if args.small_motion and index == max(1, args.frames) // 2:
                     names = tuple(module.ARM_DOF_NAMES)
                     for side in ("left", "right"):

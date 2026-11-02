@@ -57,7 +57,8 @@ class Task27TorqueBridge:
                  internal_force_weight: float = 1000.0,
                  internal_force_kp: float = 0.5,
                  internal_force_change_s: float = -1.0,
-                 internal_force_after_N: float = 0.0, record_joint_reactions: bool = False):
+                 internal_force_after_N: float = 0.0, record_joint_reactions: bool = False,
+                 assumed_internal_contact_load: bool = False):
         from isaacsim.core.utils.types import ArticulationAction
         from isaacsim.core.prims import SingleRigidPrim
         import omni.physx
@@ -154,6 +155,7 @@ class Task27TorqueBridge:
         self._last_raw_command = None
         self._last_raw_full_command = None
         self._live_qp = bool(live_qp)
+        self._assumed_internal_contact_load = bool(assumed_internal_contact_load)
         self._qp_experiment = str(experiment)
         self._task_mode = str(task_mode)
         if self._task_mode not in ("FREE_APPROACH", "DUAL_ATTACHED", "SINGLE_ARM_PUSH", "RELEASE_RETREAT"):
@@ -1261,8 +1263,12 @@ class Task27TorqueBridge:
             )
         elif not relative_objective_enabled:
             qp_config = replace(qp_config, relative_weight=0.0)
+        # Experimental feedforward assumes the commanded contact wrench exists;
+        # it is not a measured reaction and is disabled outside this experiment.
+        assumed_load_active = self._assumed_internal_contact_load and internal_force_active
+        qp_bias14 = internal_torque_target14 if assumed_load_active else h14
         result = solve_cooperative_torque_qp(
-            q14=q, dq14=dq, mass14=M14, bias14=h14,
+            q14=q, dq14=dq, mass14=M14, bias14=qp_bias14,
             jacobian_left=JL, jacobian_right=JR,
             jacobian_relative=Jrel,
             jdotdq_left=jdotdq_left, jdotdq_right=jdotdq_right,
@@ -1288,6 +1294,8 @@ class Task27TorqueBridge:
             "independent_joint_tracking": independent_joint_tracking,
             "payload_gravity_compensation": payload_diag,
             "g3_internal_force": internal_force_diag,
+            "g3_qp_contact_load_model": ("assumed_commanded_wrench_not_measured" if assumed_load_active
+                                         else "no_internal_contact_load_in_dynamics"),
             "finger_qdd_assumption": "zero; finger sink preserved",
             "full_mass_matrix_used": {side: states[side][5].tolist() for side in SIDES},
             "full_coriolis_Nm": {side: states[side][6].tolist() for side in SIDES},
@@ -1364,6 +1372,8 @@ class Task27TorqueBridge:
             "latest_captured_q_ref_rad": {side: self._qref[side].tolist() for side in SIDES},
             "payload_gravity_compensation": payload_diag,
             "g3_internal_force": internal_force_diag,
+            "g3_qp_contact_load_model": ("assumed_commanded_wrench_not_measured" if assumed_load_active
+                                         else "no_internal_contact_load_in_dynamics"),
         }
 
     def _torque_step(self, dt):
@@ -1703,7 +1713,8 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
                                internal_force_weight=1000.0,
                                internal_force_kp=0.5,
                                internal_force_change_s=-1.0,
-                               internal_force_after_N=0.0, record_joint_reactions=False):
+                               internal_force_after_N=0.0, record_joint_reactions=False,
+                               assumed_internal_contact_load=False):
     if feed_bridge is None:
         feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
@@ -1716,6 +1727,7 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
         internal_force_change_s=internal_force_change_s,
         internal_force_after_N=internal_force_after_N,
         record_joint_reactions=record_joint_reactions,
+        assumed_internal_contact_load=assumed_internal_contact_load,
     )
     builtins._task28_task27_torque_bridge = bridge
     return bridge
