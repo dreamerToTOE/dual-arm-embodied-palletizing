@@ -289,6 +289,7 @@ def main():
                         help="Task27 trajectory retiming scale passed to the executor.")
     parser.add_argument("--pre-contact-only", action="store_true",
                         help="Use the existing Task27 pre-contact gate executable and stop before descent/contact.")
+    parser.add_argument("--consistent-object-reference", action="store_true")
     parser.add_argument("--stage-a-only", action="store_true",
                         help="Stop Task27 after attach/lift/transport/place/release/retreat; skip REGRASP/PUSH.")
     parser.add_argument("--internal-force-target-n", type=float, default=0.0,
@@ -362,6 +363,8 @@ def main():
         raise ValueError("fixed-force-transition-s must be finite and positive")
     if not np.isfinite(args.fixed_force_hold_s) or args.fixed_force_hold_s <= 0.0:
         raise ValueError("fixed-force-hold-s must be finite and positive")
+    if args.consistent_object_reference and not (args.stage_a_only and args.live_qp and args.mode == "integrated"):
+        raise ValueError("consistent-object-reference requires Stage-A-only integrated live QP")
     run_id = args.run_id or time.strftime("issue1_%Y%m%d_%H%M%S")
     out = OUT_ROOT / run_id
     out.mkdir(parents=True, exist_ok=False)
@@ -381,6 +384,7 @@ def main():
         "execution_time_scale": float(args.execution_time_scale),
         "pre_contact_only": bool(args.pre_contact_only),
         "stage_a_only": bool(args.stage_a_only),
+        "consistent_object_reference": args.consistent_object_reference,
         "internal_force_target_N": float(args.internal_force_target_n),
         "internal_force_weight": float(args.internal_force_weight),
         "internal_force_kp": float(args.internal_force_kp),
@@ -474,6 +478,7 @@ def main():
             internal_force_after_N=float(args.internal_force_after_n),
             feed_bridge=feed_bridge, record_joint_reactions=args.record_joint_reactions,
             assumed_internal_contact_load=args.assume_internal_contact_load,
+            object_reference=args.consistent_object_reference,
         )
         torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
         torque._log({
@@ -503,6 +508,7 @@ def main():
                 raise ValueError("max-batches must be in 1..5")
             executor_name = "task27_pre_contact_gate" if args.pre_contact_only else "task27_five_cube_center_insert"
             stage_a_flag = " -p stage_a_only:=true" if args.stage_a_only else ""
+            if args.consistent_object_reference: stage_a_flag += " -p task28_object_reference:=true"
             g3_hold_flag = " -p stage_a_g3_hold:=true" if (args.fixed_suspended_force_sequence or args.suspended_short_probe or args.matched_suspended_comparison) else ""
             executor = start_process("ros2 run fr3_dual_palletize " + executor_name + " --ros-args -p first_batch:=1 -p max_batches:=" + str(args.max_batches) + " -p execution_time_scale:=" + str(args.execution_time_scale) + planning_flag + stage_a_flag + g3_hold_flag, out / "task27_executor.log", ros_ws)
             summary["executor_started"] = True

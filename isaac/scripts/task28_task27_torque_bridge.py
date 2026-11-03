@@ -58,11 +58,18 @@ class Task27TorqueBridge:
                  internal_force_kp: float = 0.5,
                  internal_force_change_s: float = -1.0,
                  internal_force_after_N: float = 0.0, record_joint_reactions: bool = False,
-                 assumed_internal_contact_load: bool = False):
+                 assumed_internal_contact_load: bool = False, object_reference: bool = False):
         from isaacsim.core.utils.types import ArticulationAction
         from isaacsim.core.prims import SingleRigidPrim
         import omni.physx
 
+        self._object_reference_enabled = bool(object_reference)
+        self._object_reference = None
+        self._placement_integral_accel = np.zeros(3)
+        self._object_reference_rates = None
+        self._object_reference_diag = {"active": False}
+        self._support_view = None
+        self._support_stable_frames = 0
         self.feed = feed_bridge
         self.output_path = Path(output)
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -110,6 +117,17 @@ class Task27TorqueBridge:
             "original_feed_task_topic": self._feed_task_topic,
             "original_feed_dual_sync_frame_id": self._feed_dual_sync_frame_id,
         })
+        if self._object_reference_enabled:
+            from isaacsim.core.api.sensors.rigid_contact_view import RigidContactView
+            from std_msgs.msg import Bool
+            self._support_bool_type = Bool
+            self._support_pub = feed_bridge.node.create_publisher(Bool, str(self._feed_task_topic) + "/cube_support", 10)
+            self._support_view = RigidContactView(
+                "/World/Task27/Supply/Cube_01", ["/World/Table"],
+                name="task28_cube_table_support", disable_stablization=False)
+            self._support_view.initialize()
+            from offline.task28_g3_stage_a.contact_diagnostic import ContactDiagnostic
+            self._contact_diagnostic = ContactDiagnostic(self)
         self._qref = {}
         self._dqref = {side: np.zeros(7) for side in SIDES}
         self._dqref_capture_step = {side: -1 for side in SIDES}
@@ -428,6 +446,13 @@ class Task27TorqueBridge:
     def _initialize_attached_hold(self, states, transforms):
         if not self._attached_transition_pending or self._task_mode != "DUAL_ATTACHED":
             return
+        if self._object_reference_enabled:
+            from scipy.spatial.transform import Rotation
+            from offline.task28_task27_live_qp.object_reference import RigidObjectReference
+            pos, quat = self.feed.rigids[0].get_world_pose()
+            obj = np.eye(4); obj[:3,3] = pos
+            obj[:3,:3] = Rotation.from_quat(np.asarray(quat)[[1,2,3,0]]).as_matrix()
+            self._object_reference = RigidObjectReference(obj, transforms)
         self._attached_hold_q14 = np.r_[states["left"][0][:7], states["right"][0][:7]].copy()
         self._attached_hold_transforms = {side: transforms[side].copy() for side in SIDES}
         self._attached_hold_frames = 0
@@ -994,6 +1019,16 @@ class Task27TorqueBridge:
         a_des = J_actual @ ddq_target
         return T_des, v_des, a_des, age_steps, source
 
+    def _placement_correction(self, desired, measured, reference_velocity, dt):
+        terminal = (self._task_mode == "DUAL_ATTACHED" and desired[2,3] <= .26025
+                    and np.linalg.norm(reference_velocity) < 1e-4)
+        if terminal:
+            self._placement_integral_accel = np.clip(self._placement_integral_accel
+                + 4.0 * (desired[:3,3]-measured[:3,3]) * dt, -.25, .25)
+        else:
+            self._placement_integral_accel.fill(0.0)
+        return self._placement_integral_accel.copy(), terminal
+
     def _live_qp_control(self, states, transforms, measured_qdd14=None):
         from offline.task28_task27_live_qp.torque_qp import solve_cooperative_torque_qp
         from offline.task28_p5_qp_6_r12.qp_math import se3_log
@@ -1130,12 +1165,51 @@ class Task27TorqueBridge:
             a_common_ff = np.zeros(6, dtype=float)
             v_relative = np.zeros(6, dtype=float)
             a_relative_ff = np.zeros(6, dtype=float)
+        self._object_reference_rates = None
+        self._object_reference_diag = {"active": False}
+        if self._object_reference_enabled and self._task_mode == "DUAL_ATTACHED":
+            planned = {"left": TL_des, "right": TR_des}
+            refs = {side: self._trajectory_reference(side, states[side][0][:7], states[side][1][:7])[0]
+                    for side in SIDES}
+            obj, targets, twists, accels, dqr, ddqr, qprojected = self._object_reference.sample(
+                planned, refs, 1.0/60.0, model=self._trajectory_fk_model)
+            TL_des, TR_des = targets["left"], targets["right"]
+            v_common = .5*(twists["left"]+twists["right"])
+            a_common_ff = .5*(accels["left"]+accels["right"])
+            for side in SIDES:
+                trajectory_targets[side] = (targets[side], twists[side], accels[side], 0, "frozen_object_reference")
+            self._object_reference_rates = (dqr, ddqr, qprojected)
+            pos, quat = self.feed.rigids[0].get_world_pose()
+            measured_obj = np.eye(4); measured_obj[:3,3] = pos
+            measured_obj[:3,:3] = Rotation.from_quat(np.asarray(quat)[[1,2,3,0]]).as_matrix()
+            frozen_rel = np.linalg.inv(self._object_reference.offsets["left"]) @ self._object_reference.offsets["right"]
+            self._object_reference_diag = {"active": True, "source": "planned_source_FK_with_frozen_measured_grasp",
+                "T_WO_des": obj.tolist(), "T_WO_actual": measured_obj.tolist(),
+                "tcp_desired_world": {side:targets[side].tolist() for side in SIDES},
+                "T_O_tcp_frozen": {side:T.tolist() for side,T in self._object_reference.offsets.items()},
+                "desired_closure_error": se3_log(np.linalg.inv(frozen_rel) @ np.linalg.inv(TL_des) @ TR_des).tolist(),
+                "actual_closure_error": se3_log(np.linalg.inv(frozen_rel) @ np.linalg.inv(TL) @ TR).tolist(),
+                "cube_tracking_error": se3_log(np.linalg.inv(measured_obj) @ obj).tolist(),
+                "tcp_twist_desired_world": {side:twists[side].tolist() for side in SIDES},
+                "tcp_acceleration_desired_world": {side:accels[side].tolist() for side in SIDES},
+                "derivatives": "finite_difference_planned_object_in_Isaac_physics_time_not_measured_Cube"}
         e_left = np.r_[TL_des[:3, 3] - TL[:3, 3], self._rotation_error(TL, TL_des)]
         e_right = np.r_[TR_des[:3, 3] - TR[:3, 3], self._rotation_error(TR, TR_des)]
         v_left = JL @ dq[:7]
         v_right = JR @ dq[7:]
         common_accel = a_common_ff + np.diag([12., 12., 12., 5., 5., 5.]) @ (0.5 * (e_left + e_right))
         common_accel += np.diag([4., 4., 4., 1.5, 1.5, 1.5]) @ (v_common - 0.5 * (v_left + v_right))
+        if self._object_reference_diag.get("active"):
+            correction, terminal = self._placement_correction(
+                np.asarray(self._object_reference_diag["T_WO_des"]),
+                np.asarray(self._object_reference_diag["T_WO_actual"]),v_common,1.0/60.0)
+            common_accel[:3] += correction
+            self._object_reference_diag["terminal_placement_correction"] = {
+                "active": terminal,"acceleration_world_m_s2": correction.tolist(),
+                "integral_gain_s_minus3":4.0,"acceleration_cap_m_s2":.25,
+                "source":"bounded_integral_of_actual_Cube_error_not_reference_motion"}
+        else:
+            self._placement_integral_accel.fill(0.0)
         actual_rel = np.linalg.inv(TL) @ TR
         desired_rel = np.linalg.inv(TL_des) @ TR_des
         relative_error = se3_log(np.linalg.inv(actual_rel) @ desired_rel)
@@ -1210,6 +1284,9 @@ class Task27TorqueBridge:
             q_ref, dq_ref, ddq_ref, age_steps, source = self._trajectory_reference(
                 side, states[side][0][:7], states[side][1][:7]
             )
+            if self._object_reference_rates is not None:
+                q_ref = self._object_reference_rates[2][side]
+                dq_ref, ddq_ref = self._object_reference_rates[0][side], self._object_reference_rates[1][side]
             q_ref_parts.append(q_ref)
             dq_ref_parts.append(dq_ref)
             ddq_ref_parts.append(ddq_ref)
@@ -1261,6 +1338,14 @@ class Task27TorqueBridge:
                 qp_config,
                 joint_posture_weight=self._qp_loaded_posture_weight,
             )
+            if (self._object_reference_diag.get("active")
+                    and self._object_reference_diag.get("T_WO_des") is not None
+                    and self._object_reference_diag["T_WO_des"][2][3] <= .26025):
+                # Terminal placement is a task-space convergence phase. Keep the
+                # same hard boxes, but give the shared object target a bounded
+                # boost over the loaded posture tie-breaker. The earlier 1e6
+                # override made the loaded plant diverge before support contact.
+                qp_config = replace(qp_config, common_weight=3.0e4)
         elif not relative_objective_enabled:
             qp_config = replace(qp_config, relative_weight=0.0)
         # Experimental feedforward assumes the commanded contact wrench exists;
@@ -1293,6 +1378,7 @@ class Task27TorqueBridge:
             "relative_objective_enabled": bool(relative_objective_enabled),
             "independent_joint_tracking": independent_joint_tracking,
             "payload_gravity_compensation": payload_diag,
+            "object_reference": self._object_reference_diag,
             "g3_internal_force": internal_force_diag,
             "g3_qp_contact_load_model": ("assumed_commanded_wrench_not_measured" if assumed_load_active
                                          else "no_internal_contact_load_in_dynamics"),
@@ -1419,6 +1505,16 @@ class Task27TorqueBridge:
         states = {side: self._state(side) for side in SIDES}
         transforms = {side: self._tcp_transform(side) for side in SIDES}
         cube_runtime = self._cube_runtime_state(dt)
+        if self._support_view is not None:
+            force = np.asarray(self._support_view.get_contact_force_matrix(dt=float(dt)), float).reshape(-1,3).sum(axis=0)
+            if not np.isfinite(force).all(): raise RuntimeError("TABLE_CONTACT_NONFINITE")
+            steady_contact = force[2] > 0.2 and np.linalg.norm(cube_runtime['linear_velocity_m_s']) < 0.001
+            self._support_stable_frames = self._support_stable_frames + 1 if steady_contact else 0
+            msg = self._support_bool_type(); msg.data = self._support_stable_frames >= 3
+            self._support_pub.publish(msg)
+            cube_runtime["table_contact_force_world_N"] = force.tolist()
+            cube_runtime["table_support_contact"] = msg.data
+
         d6_runtime = self._d6_runtime_state()
         reaction_runtime = self._reaction_recorder.read() if self._reaction_recorder else None
         prior_applied = {side: states[side][3][:7].tolist() for side in SIDES}
@@ -1649,6 +1745,8 @@ class Task27TorqueBridge:
                 self._log({"event": "FAIL_STOP_UNAVAILABLE", "error": repr(stop_exc)})
 
     def close(self):
+        if getattr(self, "_contact_diagnostic", None) is not None:
+            self._contact_diagnostic.close()
         try:
             self.feed.physics_sub.unsubscribe()
         except Exception:
@@ -1714,7 +1812,7 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
                                internal_force_kp=0.5,
                                internal_force_change_s=-1.0,
                                internal_force_after_N=0.0, record_joint_reactions=False,
-                               assumed_internal_contact_load=False):
+                               assumed_internal_contact_load=False, object_reference=False):
     if feed_bridge is None:
         feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
@@ -1727,7 +1825,7 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
         internal_force_change_s=internal_force_change_s,
         internal_force_after_N=internal_force_after_N,
         record_joint_reactions=record_joint_reactions,
-        assumed_internal_contact_load=assumed_internal_contact_load,
+        assumed_internal_contact_load=assumed_internal_contact_load, object_reference=object_reference,
     )
     builtins._task28_task27_torque_bridge = bridge
     return bridge

@@ -1655,6 +1655,32 @@ std::vector<moveit_msgs::msg::CollisionObject> staticWorld(
   return objects;
 }
 
+// Align Cartesian progress, not only independently time-parameterized durations.
+// shortcut: Stage A translates at fixed orientation; extend the metric before rotational transport.
+bool alignCartesianProgress(const moveit::core::RobotModelConstPtr& model,
+  const std::string& eef, trajectory_msgs::msg::JointTrajectory* trajectory)
+{
+  if (trajectory->points.size() < 2) return false;
+  moveit::core::RobotState state(model);
+  const auto position = [&](const auto& q) {
+    state.setToDefaultValues(); state.setVariablePositions(trajectory->joint_names, q); state.update();
+    return Eigen::Vector3d(state.getGlobalLinkTransform(eef).translation());
+  };
+  const Eigen::Vector3d begin = position(trajectory->points.front().positions);
+  const Eigen::Vector3d delta = position(trajectory->points.back().positions) - begin;
+  const double duration = pointTime(trajectory->points.back());
+  if (delta.squaredNorm() < 1e-12) return true;
+  double previous = 0.0;
+  for (auto& point : trajectory->points)
+  {
+    const double fraction = std::clamp((position(point.positions)-begin).dot(delta)/delta.squaredNorm(),0.0,1.0);
+    if (fraction + 1e-6 < previous) return false;
+    setPointTime(point, fraction * duration);
+    previous = fraction;
+  }
+  return true;
+}
+
 bool planAndCheckCommon(
   const rclcpp::Node::SharedPtr& node, moveit::planning_interface::MoveGroupInterface& left_group,
   moveit::planning_interface::MoveGroupInterface& right_group, const Arm& left, const Arm& right,
@@ -1678,6 +1704,9 @@ bool planAndCheckCommon(
                            left_target, stage + " left", left_output, left.eefLink(), false) ||
       !planCommonCartesian(node, right_group, right.groupName(), left.groupName(), right_start, left_start,
                            right_target, stage + " right", right_output, right.eefLink(), false) ||
+      (node->get_parameter("task28_object_reference").as_bool() &&
+       (!alignCartesianProgress(left_group.getRobotModel(), left.eefLink(), left_output) ||
+        !alignCartesianProgress(right_group.getRobotModel(), right.eefLink(), right_output))) ||
       !synchronize(left_output, right_output) ||
       !validateSync(node, left_group.getRobotModel(), world, *left_output, *right_output, stage))
   {
@@ -2629,6 +2658,12 @@ int main(int argc, char** argv)
   // 零命令预检：只做 MoveIt/IK/FCL 链路筛选，不发布 joint、suction，也绝不请求
   // 到料（feed_command 会改变物理世界，同样属于命令）。它用于在改动槽位或目标
   // 坐标前先验证 FR3 的可达工作区，避免把几何试错带入 Isaac 物理执行。
+  const bool task28_object_reference = node->declare_parameter<bool>("task28_object_reference", false);
+  std::atomic_bool task28_cube_supported{false};
+  auto task28_support_sub = node->create_subscription<std_msgs::msg::Bool>(
+    taskTopic("/cube_support"), 10, [&](const std_msgs::msg::Bool::SharedPtr msg) {
+      task28_cube_supported.store(msg->data);
+    });
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
   // 独立的 Task27 预接触门：只执行到两臂 HIGH_PRE_CONTACT，并在任何
   // OUTER_DESCENT / CONTACT / Surface Gripper 命令前停止。它不是完整任务的
@@ -4751,6 +4786,30 @@ int main(int argc, char** argv)
         break;
       }
       // 两侧吸盘同时松开。Cube 此时已完全由桌面承托，不存在单臂承重阶段。
+      if (task28_object_reference)
+      {
+        const auto deadline = std::chrono::steady_clock::now() + 30s;
+        bool placed = false;
+        while (std::chrono::steady_clock::now() < deadline)
+        {
+          const auto [pose, revision] = cubes.get(task.cube_index);
+          (void)revision;
+          const double xy = std::hypot(pose.position.x-entry_x, pose.position.y-task.pre_push.position.y);
+          const double z = std::abs(pose.position.z-task.pre_push.position.z);
+          if (task28_cube_supported.load() && xy <= 0.00025 && z <= 0.00025)
+          {
+            RCLCPP_INFO(node->get_logger(), "TASK28_SUPPORTED_PLACEMENT: xyz=(%.7f,%.7f,%.7f), xy=%.3f mm z=%.3f mm; Cube/Table contact confirmed before release.",
+              pose.position.x, pose.position.y, pose.position.z, xy*1000, z*1000);
+            placed = true; break;
+          }
+          std::this_thread::sleep_for(20ms);
+        }
+        if (!placed)
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_PLACEMENT_NOT_CONVERGED: keep suction closed; no release.");
+          all_complete = false; break;
+        }
+      }
       openBothAndConfirm("after COMMON_DROP_TO_TABLE: cube is on the table");
 
       trajectory_msgs::msg::JointTrajectory left_retreat, right_retreat;
