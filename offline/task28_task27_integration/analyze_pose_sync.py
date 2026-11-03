@@ -19,6 +19,10 @@ def join_evidence(executor, publications):
     if len(matches) != 1:
         raise ValueError(f'acceptance message publication matches: {len(matches)}')
     row = matches[0]
+    if match.group(5) != row['frame_id']:
+        raise ValueError('acceptance frame does not match publication')
+    if not (row['wall_time_ns'] <= received <= accepted):
+        raise ValueError('publication, reception, and acceptance timestamps are out of order')
     xyz = list(map(float, match.group(6, 7, 8)))
     if max(abs(a-b) for a, b in zip(xyz, row['ros_usd_xyz_m'])) > 1e-8:
         raise ValueError('acceptance pose does not match published pose')

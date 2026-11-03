@@ -1,5 +1,40 @@
 # TASK28 Stage B0：单臂重抓与 +X 推送
 
+## 2026-11-03 状态一致性与侧压起点离线复核：B0_PARTIAL
+
+**决定：不启动本工单的一次完整 GUI 运行。** 本工单要求先验证可用于在线验收的物理状态源、消息新鲜度及双臂同步；现有记录不足以验证这些前提。此前所有失败结果保持原判，3 mm 验收阈值与 Stage A 基线未变。本次没有改变在线位姿源、执行器的门限或 FCL 碰撞规则。
+
+### USD / 候选 PhysX 状态与时间
+
+- 桥在 `subscribe_physics_step_events` 回调中先运行 torque step，随后运行原 feed callback；后者每约 0.05 仿真秒用 USD `ComputeLocalToWorldTransform(Default)` 生成 `world` frame 的 `/task27/cube_poses`，接着 audit wrapper 在同一 callback 读取同一 Cube 的 `SingleRigidPrim.get_world_pose()`。本机 Isaac Sim 4.5 的实现：当 physics handle 有效时，后者经 rigid view 的 PhysX tensor `get_transforms()` 取得世界位置和 wxyz 姿态；无有效 handle 时会退回 USD。旧 trace 没记录 handle 是否有效，也未独立记录物理引擎对该张量刷新时刻的确认。
+- 旧修正验证的同一发布消息，USD x=1.096200466 m、rigid API x=1.097104073 m，相差 0.903606 mm；以原中心几何计算 gap 分别为 3.799534 mm 与 2.895927 mm。这里证实两个读数不同，**尚不能确定哪一个是该时刻已完成物理步的真实位置，也不能把旧失败改判为通过**。
+- 验收附近 physics step 15312–15342（记录的仿真时间 255.20–255.70 s），两个位置分别保持上述精确值，rigid API 的 X 速度却持续约 +1.69 mm/s。这是**可能的采样或缓存不同步**的证据，并非仅凭速度就证明某一位置错误；需要在原场景用已确认的步后时刻、物理句柄状态及另一独立物理查询交叉核对。所用记录见[修正验证同步窗口](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/pose_sync/acceptance_pose_window.jsonl)。
+- `CubeBuffer::waitNew` 只检查 revision 大于推送前的 `source/release_revision`，所以不能保证消息在推送和等待完成后才发布，也没有对消息时间、frame、延迟和乱序进行在线检查。左右 `Arm::measuredPositions` 分别读取最新缓存，未检查来源时间、左右同步或缓存年龄。旧两源时间关联是离线证据，不是运行时 freshness 契约。新增的离线关联回归拒绝 frame 不匹配、发布/接收/验收墙钟顺序错误及不匹配的消息 header，但**不等于完成在线 stale 消息防护**。
+
+### 侧压 FCL 离线重放
+
+使用诊断运行 physics step 13845 捕获的左右实测关节、右臂参考关节和同一帧 Cube 位姿；模型沿用仓库 xacro/SRDF，Cube 尺寸 0.12 m，按当时导轨的 0.100 m 世界偏移转换到规划坐标。只装入 Cube，未加入所有其他世界障碍。执行 [C++ FCL 重放回归](../../offline/task28_task27_integration/tests/fcl_replay/replay.cpp) 的结果：
+
+| 起点 | Cube / 右吸盘 FCL | 右 TCP x（规划坐标） |
+|---|---:|---:|
+| 记录的右臂参考终点 | collision，首接触深度 **1.43391 mm** | 0.939000 m |
+| 同帧双臂实测关节 | 此静态场景无碰撞 | 0.936610 m |
+
+这复现了原日志的 1.434 mm 接触，也支持规划终点与实测状态不一致是该次预检失败的原因；它不证明当前 C++ `measuredPositions` 调用满足时间同步，不覆盖完整世界或整条侧压轨迹，也不证明后续侧压安全。该候选代码仍未执行到，也尚无针对其在线缓存与规划初始化调用的 C++ 回归。没有扩大 ACM 或禁用吸盘/Cube 碰撞。
+
+复现（先确保外部工作区提供 `franka_description`）：
+
+```bash
+source /opt/ros/humble/setup.bash
+source /home/ubuntu2004/lmy/dual-arm-embodied-palletizing/ros_ws/install/setup.bash
+source ros_ws/install/local_setup.bash
+offline/task28_task27_integration/tests/fcl_replay/run.sh
+```
+
+### 当前结果与下一步
+
+本轮 FCL 重放通过；Python 聚焦回归 **54 passed**。本轮没有新的物理推送、侧压、最终释放或退避；最近一次完整物理尝试仍在原 USD 验收读数 3.800 mm 处失败，最终无释放/退避。下一步需要在原仿真场景独立验证 post-step 刚体 pose 与步号、双臂关节及时间戳之间的对应关系，建立可拒绝旧/乱序消息的在线快照，并对真实 side-planning 初始化做覆盖和完整 FCL；只有这些前提通过后才能执行新的单次完整循环。
+
 ## 状态：PARTIAL
 
 ## 2026-11-03 同步诊断与一次修正验证：B0_PARTIAL
