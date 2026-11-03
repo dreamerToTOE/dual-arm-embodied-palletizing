@@ -58,12 +58,14 @@ class Task27TorqueBridge:
                  internal_force_kp: float = 0.5,
                  internal_force_change_s: float = -1.0,
                  internal_force_after_N: float = 0.0, record_joint_reactions: bool = False,
-                 assumed_internal_contact_load: bool = False, object_reference: bool = False):
+                 assumed_internal_contact_load: bool = False, object_reference: bool = False,
+                 stage_b0_only: bool = False):
         from isaacsim.core.utils.types import ArticulationAction
         from isaacsim.core.prims import SingleRigidPrim
         import omni.physx
 
         self._object_reference_enabled = bool(object_reference)
+        self._stage_b0_only = bool(stage_b0_only)
         self._object_reference = None
         self._placement_integral_accel = np.zeros(3)
         self._object_reference_rates = None
@@ -248,6 +250,8 @@ class Task27TorqueBridge:
         self._qp_prev_dq = None
         self._previous_measured_dq14 = None
         self._attached_transition_pending = False
+        self._b0_dual_seen = False
+        self._b0_release_observed = False
         self._attached_hold_active = False
         self._attached_hold_frames = 0
         self._attached_hold_duration_frames = 60
@@ -461,8 +465,22 @@ class Task27TorqueBridge:
         if next_mode != self._task_mode:
             previous = self._task_mode
             self._task_mode = next_mode
+            if previous == "DUAL_ATTACHED" and next_mode != "DUAL_ATTACHED":
+                self._object_reference = None
+                self._object_reference_rates = None
+                self._object_reference_diag = {"active": False}
+                self._attached_hold_active = False
+                self._attached_hold_q14 = None
+                self._attached_hold_transforms = None
+                self._attached_transition_pending = False
+                self._placement_integral_accel.fill(0.0)
+            if next_mode == "RELEASE_RETREAT" and self._b0_dual_seen:
+                self._b0_release_observed = True
             if next_mode == "DUAL_ATTACHED":
+                self._b0_dual_seen = True
                 self._attached_transition_pending = True
+            grippers = getattr(self.feed, "grippers", {})
+            closed_per_arm = {side: bool(grippers[side].is_closed()) if side in grippers else None for side in SIDES}
             self._log({
                 "event": "TASK_MODE_EVENT_TRANSITION",
                 "physics_step": self._step,
@@ -470,6 +488,7 @@ class Task27TorqueBridge:
                 "task_mode": next_mode,
                 "suction_commanded": {side: bool(desired[side]) for side in SIDES},
                 "suction_closed": surface_closed,
+                "suction_closed_per_arm": closed_per_arm,
                 "source": "Task27_original_feed_bridge_suction_command_state",
             })
 
@@ -1349,6 +1368,15 @@ class Task27TorqueBridge:
         posture_accel = np.clip(
             ddq_ref14 + 12.0 * (q_ref14 - q) + 5.0 * (dq_ref14 - dq), -8.0, 8.0
         )
+        b0_pusher = None
+        if self._stage_b0_only and self._b0_release_observed and self._task_mode == "SINGLE_ARM_PUSH":
+            for index, side in enumerate(SIDES):
+                if bool(self.feed._desired[side]) and self.feed.grippers[side].is_closed():
+                    arm = slice(index * 7, (index + 1) * 7)
+                    # Counter measured single-arm push stiction without changing Stage A gains or hard bounds.
+                    posture_accel[arm] = np.clip(ddq_ref14[arm] + 48.0 * (q_ref14[arm] - q[arm])
+                        + 10.0 * (dq_ref14[arm] - dq[arm]), -8.0, 8.0)
+                    b0_pusher = side
         # FREE_APPROACH, SINGLE_ARM_PUSH and RELEASE_RETREAT have no attached
         # bilateral object. Once real qref exists, use independent joint
         # tracking rather than an implicit cooperative average task.
@@ -1425,6 +1453,7 @@ class Task27TorqueBridge:
             "jdotdq_source": "finite_difference_selected_frozen_model_jacobian_and_joint_velocity",
             "relative_objective_enabled": bool(relative_objective_enabled),
             "independent_joint_tracking": independent_joint_tracking,
+            "b0_pusher_tracking": {"arm": b0_pusher, "kp": 48.0, "kd": 10.0} if b0_pusher else None,
             "payload_gravity_compensation": payload_diag,
             "object_reference": self._object_reference_diag,
             "g3_internal_force": internal_force_diag,
@@ -1869,7 +1898,8 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
                                internal_force_kp=0.5,
                                internal_force_change_s=-1.0,
                                internal_force_after_N=0.0, record_joint_reactions=False,
-                               assumed_internal_contact_load=False, object_reference=False):
+                               assumed_internal_contact_load=False, object_reference=False,
+                               stage_b0_only=False):
     if feed_bridge is None:
         feed_bridge = start_original_task27_feed_bridge()
     path = Path(output) if output else REPO_ROOT / "offline/task28_task27_integration/evidence/task27_torque_bridge.jsonl"
@@ -1883,6 +1913,7 @@ def start_task27_torque_bridge(output=None, *, live_qp=False, experiment="hold",
         internal_force_after_N=internal_force_after_N,
         record_joint_reactions=record_joint_reactions,
         assumed_internal_contact_load=assumed_internal_contact_load, object_reference=object_reference,
+        stage_b0_only=stage_b0_only,
     )
     builtins._task28_task27_torque_bridge = bridge
     return bridge

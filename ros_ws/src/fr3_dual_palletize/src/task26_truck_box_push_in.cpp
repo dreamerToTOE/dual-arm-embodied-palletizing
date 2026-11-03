@@ -2650,6 +2650,7 @@ int main(int argc, char** argv)
   // release -> retreat cycle.  Keep the optional Task27 insertion path
   // available, but make the Stage-A boundary explicit for G3 experiments.
   const bool stage_a_only = node->declare_parameter<bool>("stage_a_only", false);
+  const bool stage_b0_only = node->declare_parameter<bool>("stage_b0_only", false);
   // G3 Stage-A fixed-pose probe: stop immediately after the validated common
   // lift while both original Surface Grippers remain closed.  The Isaac-side
   // runner then owns only the bounded internal-force target sequence.
@@ -2665,6 +2666,15 @@ int main(int argc, char** argv)
       task28_cube_supported.store(msg->data);
     });
   const bool planning_only = node->declare_parameter<bool>("planning_only", false);
+#ifdef TASK27_FIVE_CUBE
+  if (stage_b0_only && (stage_a_only || first_batch != 1 || max_batches != 1 ||
+      planning_only || !task28_object_reference))
+  {
+    RCLCPP_ERROR(node->get_logger(), "B0 requires Cube_01 only and the frozen physical Stage A reference.");
+    rclcpp::shutdown();
+    return 1;
+  }
+#endif
   // 独立的 Task27 预接触门：只执行到两臂 HIGH_PRE_CONTACT，并在任何
   // OUTER_DESCENT / CONTACT / Surface Gripper 命令前停止。它不是完整任务的
   // 缩写，也不复用历史规划-only 结果；该可执行文件仅用于验证新鲜的 Task27
@@ -4859,6 +4869,20 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+      if (stage_b0_only)
+      {
+        const auto [placed, revision] = cubes.get(task.cube_index);
+        (void)revision;
+        if (!task28_cube_supported.load() || left.isClosed() || right.isClosed())
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_TRANSITION rejected: Cube support or bilateral release missing.");
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(),
+          "TASK28_B0_TRANSITION RELEASE_RETREAT: cube=(%.7f,%.7f,%.7f), supported=true, suction=(OPEN,OPEN).",
+          placed.position.x, placed.position.y, placed.position.z);
+      }
       if (stage_a_only)
       {
         const auto [settled, revision] = cubes.get(task.cube_index);
@@ -5072,6 +5096,27 @@ int main(int argc, char** argv)
           break;
         }
       }
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only)
+      {
+        const auto [actual_cube, revision] = cubes.get(task.cube_index);
+        (void)revision;
+        const auto tcp = push_left ? left_tcp.get() : right_tcp.get();
+        const double gap = actual_cube.position.x - tcp.position.x - kCubeHalf;
+        RCLCPP_INFO(node->get_logger(),
+          "TASK28_B0_REGRASP_GEOMETRY pusher=%s cube=(%.7f,%.7f,%.7f) tcp=(%.7f,%.7f,%.7f) gap_x=%.3f mm dy=%.3f mm dz=%.3f mm helper_closed=%d.",
+          push_left ? "left" : "right", actual_cube.position.x, actual_cube.position.y, actual_cube.position.z,
+          tcp.position.x, tcp.position.y, tcp.position.z, 1000.0 * gap,
+          1000.0 * (tcp.position.y - actual_cube.position.y),
+          1000.0 * (tcp.position.z - actual_cube.position.z), helper.isClosed());
+        if (helper.isClosed())
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_REGRASP rejected: helper suction is closed.");
+          all_complete = false;
+          break;
+        }
+      }
+#endif
       std::thread pusher_on([&]() { pusher.suction(true); });
       pusher_on.join();
       if (!pusher.waitSuction(true, 3.0))
@@ -5081,6 +5126,15 @@ int main(int argc, char** argv)
         all_complete = false;
         break;
       }
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only && helper.isClosed())
+      {
+        RCLCPP_ERROR(node->get_logger(), "TASK28_B0_REGRASP rejected: helper closed during pusher attachment.");
+        openBothAndConfirm("safe abort after unexpected helper suction");
+        all_complete = false;
+        break;
+      }
+#endif
 
       // 推入臂分段 +X 推进，逐段检查 Cube 是否跟随、力矩是否越限。
       // executePushWithSupervision 的形参名是 left/right，语义是「推入臂在前」，
@@ -5605,6 +5659,19 @@ int main(int argc, char** argv)
         "深端与侧墙均无可见缝隙。",
         task.id, push_left ? "左臂" : "右臂",
         push_left ? "右臂" : "左臂", push_left ? "-Y" : "+Y");
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only)
+      {
+        if (left.isClosed() || right.isClosed() || !task28_cube_supported.load())
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_FINAL rejected: final suction or table support.");
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(), "TASK28_B0_ONLY PASS: Cube_01 push, placement, release and retreat complete.");
+        stage_a_complete = true;
+      }
+#endif
       }  // 批内逐件结束
       if (!all_complete)
       {

@@ -1,0 +1,628 @@
+{
+  "run_id": "task28_stage_b0_torque_v3",
+  "summary_status": "BLOCKED_RUNTIME_EXCEPTION",
+  "executor_exit": 1,
+  "torque_latched_error": null,
+  "position_arm_write_count": 0,
+  "qp_status_counts_summary": {
+    "QP_OPTIMAL": 13873
+  },
+  "sampled_status_counts": {
+    "HANDOFF_GRAVITY_BOOTSTRAP": 1,
+    "QP_OPTIMAL": 13873
+  },
+  "torque_frames_by_mode": {
+    "null": 1,
+    "FREE_APPROACH": 5088,
+    "DUAL_ATTACHED": 2245,
+    "RELEASE_RETREAT": 4363,
+    "SINGLE_ARM_PUSH": 2177
+  },
+  "transitions": [
+    {
+      "event": "TASK_MODE_EVENT_TRANSITION",
+      "physics_step": 5089,
+      "previous_mode": "FREE_APPROACH",
+      "source": "Task27_original_feed_bridge_suction_command_state",
+      "suction_closed": true,
+      "suction_closed_per_arm": {
+        "left": true,
+        "right": true
+      },
+      "suction_commanded": {
+        "left": true,
+        "right": true
+      },
+      "task_mode": "DUAL_ATTACHED"
+    },
+    {
+      "event": "TASK_MODE_EVENT_TRANSITION",
+      "physics_step": 7334,
+      "previous_mode": "DUAL_ATTACHED",
+      "source": "Task27_original_feed_bridge_suction_command_state",
+      "suction_closed": false,
+      "suction_closed_per_arm": {
+        "left": false,
+        "right": false
+      },
+      "suction_commanded": {
+        "left": false,
+        "right": false
+      },
+      "task_mode": "RELEASE_RETREAT"
+    },
+    {
+      "event": "TASK_MODE_EVENT_TRANSITION",
+      "physics_step": 11697,
+      "previous_mode": "RELEASE_RETREAT",
+      "source": "Task27_original_feed_bridge_suction_command_state",
+      "suction_closed": false,
+      "suction_closed_per_arm": {
+        "left": false,
+        "right": true
+      },
+      "suction_commanded": {
+        "left": false,
+        "right": true
+      },
+      "task_mode": "SINGLE_ARM_PUSH"
+    }
+  ],
+  "first_dual_attachment": {
+    "time_s": 84.81666666666314,
+    "mode": "DUAL_ATTACHED",
+    "qp_status": "QP_OPTIMAL",
+    "cube_xyz_m": [
+      0.4999997317790985,
+      8.117504535221087e-07,
+      0.2600000500679016
+    ],
+    "cube_quaternion_wxyz": [
+      1.0,
+      -1.028312112794083e-06,
+      -2.6662510208552703e-06,
+      2.4280609522975283e-07
+    ],
+    "cube_velocity_m_s": [
+      0.00019997388881165534,
+      0.000370800873497501,
+      -0.00013498758198693395
+    ],
+    "table_force_world_N": [
+      0.0,
+      0.0,
+      8.6478271484375
+    ],
+    "table_bottom_gap_m": -3.934277439110456e-07,
+    "tcp_xyz_m": {
+      "left": [
+        0.5000036923042507,
+        -0.06098846912417208,
+        0.2599949845167786
+      ],
+      "right": [
+        0.4999937294123014,
+        0.06098207366398256,
+        0.2599830616561517
+      ]
+    },
+    "grippers_closed": {
+      "left": true,
+      "right": true
+    },
+    "relative_objective_enabled": true,
+    "independent_joint_tracking": false,
+    "b0_pusher_tracking": null,
+    "common_weight": 10000.0,
+    "relative_weight": 10000.0,
+    "object_reference_active": true,
+    "g3_load_model": "assumed_commanded_wrench_not_measured",
+    "payload_active": true,
+    "q_error_rad": {
+      "left": [
+        1.076322300175292e-07,
+        1.0155256345845132e-06,
+        1.1684319811688937e-07,
+        -3.127332570684871e-08,
+        5.381667996795514e-07,
+        5.529327693487573e-07,
+        -3.7743866654338376e-07
+      ],
+      "right": [
+        -9.623838348460367e-07,
+        -2.751188288296902e-07,
+        3.904590197834068e-07,
+        -4.2897458119028897e-07,
+        -3.7263925944941434e-08,
+        -2.7448827055742697e-07,
+        -3.172421814134907e-07
+      ]
+    },
+    "applied_torque_Nm": {
+      "left": [
+        -0.1706160604953766,
+        -9.452624320983887,
+        -9.900967597961426,
+        24.819746017456055,
+        0.6553161144256592,
+        3.5242598056793213,
+        -5.7309305702801794e-05
+      ],
+      "right": [
+        0.17245584726333618,
+        11.61024284362793,
+        25.253204345703125,
+        14.803726196289062,
+        0.6401642560958862,
+        3.684598445892334,
+        -2.495956152870349e-07
+      ]
+    }
+  },
+  "stage_a_first_both_open": {
+    "time_s": 122.23333333332768,
+    "mode": "RELEASE_RETREAT",
+    "qp_status": "QP_OPTIMAL",
+    "cube_xyz_m": [
+      0.7696579694747925,
+      0.06005202606320381,
+      0.2600000202655792
+    ],
+    "cube_quaternion_wxyz": [
+      0.9999999403953552,
+      4.7499329980382754e-07,
+      -7.008193847468647e-07,
+      -0.00026654309476725757
+    ],
+    "cube_velocity_m_s": [
+      0.0006847571348771453,
+      0.0007232485804706812,
+      -9.544038766762242e-05
+    ],
+    "table_force_world_N": [
+      0.0,
+      0.0,
+      7.81599760055542
+    ],
+    "table_bottom_gap_m": -1.2098808685467866e-07,
+    "tcp_xyz_m": {
+      "left": [
+        0.769614690681669,
+        -0.00086289782166446,
+        0.260071753932251
+      ],
+      "right": [
+        0.7696663296059524,
+        0.120963342189084,
+        0.2600588374239416
+      ]
+    },
+    "grippers_closed": {
+      "left": false,
+      "right": false
+    },
+    "relative_objective_enabled": false,
+    "independent_joint_tracking": true,
+    "b0_pusher_tracking": null,
+    "common_weight": 0.0,
+    "relative_weight": 0.0,
+    "object_reference_active": false,
+    "g3_load_model": "no_internal_contact_load_in_dynamics",
+    "payload_active": false,
+    "q_error_rad": {
+      "left": [
+        -0.012147164133790245,
+        -0.0003044067404360251,
+        0.010940518147415146,
+        0.0010240200705258218,
+        0.0023166306665265424,
+        -0.0021437606332534997,
+        -0.0035661836316926987
+      ],
+      "right": [
+        0.005550454056805654,
+        -0.0024117675270047823,
+        -0.0038718949966781713,
+        0.0017389475380822361,
+        -0.002153730952516808,
+        -0.00421045171465817,
+        0.002608196630598081
+      ]
+    },
+    "applied_torque_Nm": {
+      "left": [
+        -0.022843046113848686,
+        -26.586891174316406,
+        -1.747971534729004,
+        25.63043975830078,
+        0.6300432682037354,
+        3.306445598602295,
+        4.1304978367406875e-05
+      ],
+      "right": [
+        0.022468071430921555,
+        -3.794557809829712,
+        12.13331127166748,
+        22.447561264038086,
+        0.5487536787986755,
+        3.424260377883911,
+        -0.0002603274770081043
+      ]
+    }
+  },
+  "first_single_attachment": {
+    "time_s": 194.95000000004728,
+    "mode": "SINGLE_ARM_PUSH",
+    "qp_status": "QP_OPTIMAL",
+    "cube_xyz_m": [
+      0.7696545720100403,
+      0.06005169078707695,
+      0.2599998712539673
+    ],
+    "cube_quaternion_wxyz": [
+      0.9999999403953552,
+      2.887001755880192e-06,
+      -9.733561455504969e-06,
+      -0.0002658141020219773
+    ],
+    "cube_velocity_m_s": [
+      0.0010052390862256289,
+      0.0007094365428201854,
+      -0.000688983709551394
+    ],
+    "table_force_world_N": [
+      0.0,
+      0.0,
+      7.629726409912109
+    ],
+    "table_bottom_gap_m": -1.6435685991633697e-06,
+    "tcp_xyz_m": {
+      "left": [
+        0.790005590729291,
+        -0.32000999108195377,
+        0.5600004896281162
+      ],
+      "right": [
+        0.7086656512270156,
+        0.060183383704781525,
+        0.25984063398865676
+      ]
+    },
+    "grippers_closed": {
+      "left": false,
+      "right": true
+    },
+    "relative_objective_enabled": false,
+    "independent_joint_tracking": true,
+    "b0_pusher_tracking": {
+      "arm": "right",
+      "kd": 10.0,
+      "kp": 48.0
+    },
+    "common_weight": 0.0,
+    "relative_weight": 0.0,
+    "object_reference_active": false,
+    "g3_load_model": "no_internal_contact_load_in_dynamics",
+    "payload_active": false,
+    "q_error_rad": {
+      "left": [
+        3.715891505118307e-05,
+        5.123434320575271e-06,
+        -3.2112780749479763e-06,
+        -1.852583720252099e-05,
+        9.99682115809808e-07,
+        4.4355191490819124e-05,
+        -1.0392125297409294e-05
+      ],
+      "right": [
+        -0.00024019203864026478,
+        0.00011116219163220808,
+        0.00036703816362249064,
+        0.00015609387899218063,
+        9.832688668875988e-05,
+        -4.116937973774881e-05,
+        0.00021014560508314517
+      ]
+    },
+    "applied_torque_Nm": {
+      "left": [
+        -7.8221376043075e-07,
+        9.90250301361084,
+        -2.8758087158203125,
+        22.86908531188965,
+        0.8045030832290649,
+        3.307443618774414,
+        1.3048128494119737e-05
+      ],
+      "right": [
+        -0.00017720856703817844,
+        24.38531494140625,
+        26.15774154663086,
+        18.877992630004883,
+        0.9989410638809204,
+        3.3642492294311523,
+        0.00039154497790150344
+      ]
+    }
+  },
+  "last_single_attachment": {
+    "time_s": 231.2166666667428,
+    "mode": "SINGLE_ARM_PUSH",
+    "qp_status": "QP_OPTIMAL",
+    "cube_xyz_m": [
+      1.0971773862838745,
+      0.060012608766555786,
+      0.2600775361061096
+    ],
+    "cube_quaternion_wxyz": [
+      0.9999988675117493,
+      -1.1475332257759874e-06,
+      0.000645830761641264,
+      0.0013433168642222881
+    ],
+    "cube_velocity_m_s": [
+      0.0015325873391702771,
+      -7.319756150536705e-06,
+      -0.00011927217565244064
+    ],
+    "table_force_world_N": [
+      0.0,
+      0.0,
+      1.3111482858657837
+    ],
+    "table_bottom_gap_m": 5.262151339668897e-08,
+    "tcp_xyz_m": {
+      "left": [
+        0.790005590729291,
+        -0.32000999108195377,
+        0.5600004896281162
+      ],
+      "right": [
+        1.0363701013185862,
+        0.05994127733687071,
+        0.2600171398879124
+      ]
+    },
+    "grippers_closed": {
+      "left": false,
+      "right": true
+    },
+    "relative_objective_enabled": false,
+    "independent_joint_tracking": true,
+    "b0_pusher_tracking": {
+      "arm": "right",
+      "kd": 10.0,
+      "kp": 48.0
+    },
+    "common_weight": 0.0,
+    "relative_weight": 0.0,
+    "object_reference_active": false,
+    "g3_load_model": "no_internal_contact_load_in_dynamics",
+    "payload_active": false,
+    "q_error_rad": {
+      "left": [
+        3.715891505118307e-05,
+        5.123434320575271e-06,
+        -3.2112780749479763e-06,
+        -1.852583720252099e-05,
+        9.99682115809808e-07,
+        4.4355191490819124e-05,
+        -1.0392125297409294e-05
+      ],
+      "right": [
+        0.003608768656974126,
+        -0.002097867807590248,
+        0.0008279977129610483,
+        -0.001102875200900133,
+        -0.002020486037059843,
+        0.0015135901658327455,
+        0.009429526164050017
+      ]
+    },
+    "applied_torque_Nm": {
+      "left": [
+        -7.975783660185698e-07,
+        9.902503967285156,
+        -2.8758084774017334,
+        22.86908531188965,
+        0.8045030832290649,
+        3.307443618774414,
+        1.3048118489678018e-05
+      ],
+      "right": [
+        0.3533586859703064,
+        20.683448791503906,
+        23.148235321044922,
+        20.465890884399414,
+        0.9175276756286621,
+        3.485548734664917,
+        0.00034136383328586817
+      ]
+    }
+  },
+  "first_final_both_open": null,
+  "final": {
+    "time_s": 231.2166666667428,
+    "mode": "SINGLE_ARM_PUSH",
+    "qp_status": "QP_OPTIMAL",
+    "cube_xyz_m": [
+      1.0971773862838745,
+      0.060012608766555786,
+      0.2600775361061096
+    ],
+    "cube_quaternion_wxyz": [
+      0.9999988675117493,
+      -1.1475332257759874e-06,
+      0.000645830761641264,
+      0.0013433168642222881
+    ],
+    "cube_velocity_m_s": [
+      0.0015325873391702771,
+      -7.319756150536705e-06,
+      -0.00011927217565244064
+    ],
+    "table_force_world_N": [
+      0.0,
+      0.0,
+      1.3111482858657837
+    ],
+    "table_bottom_gap_m": 5.262151339668897e-08,
+    "tcp_xyz_m": {
+      "left": [
+        0.790005590729291,
+        -0.32000999108195377,
+        0.5600004896281162
+      ],
+      "right": [
+        1.0363701013185862,
+        0.05994127733687071,
+        0.2600171398879124
+      ]
+    },
+    "grippers_closed": {
+      "left": false,
+      "right": true
+    },
+    "relative_objective_enabled": false,
+    "independent_joint_tracking": true,
+    "b0_pusher_tracking": {
+      "arm": "right",
+      "kd": 10.0,
+      "kp": 48.0
+    },
+    "common_weight": 0.0,
+    "relative_weight": 0.0,
+    "object_reference_active": false,
+    "g3_load_model": "no_internal_contact_load_in_dynamics",
+    "payload_active": false,
+    "q_error_rad": {
+      "left": [
+        3.715891505118307e-05,
+        5.123434320575271e-06,
+        -3.2112780749479763e-06,
+        -1.852583720252099e-05,
+        9.99682115809808e-07,
+        4.4355191490819124e-05,
+        -1.0392125297409294e-05
+      ],
+      "right": [
+        0.003608768656974126,
+        -0.002097867807590248,
+        0.0008279977129610483,
+        -0.001102875200900133,
+        -0.002020486037059843,
+        0.0015135901658327455,
+        0.009429526164050017
+      ]
+    },
+    "applied_torque_Nm": {
+      "left": [
+        -7.975783660185698e-07,
+        9.902503967285156,
+        -2.8758084774017334,
+        22.86908531188965,
+        0.8045030832290649,
+        3.307443618774414,
+        1.3048118489678018e-05
+      ],
+      "right": [
+        0.3533586859703064,
+        20.683448791503906,
+        23.148235321044922,
+        20.465890884399414,
+        0.9175276756286621,
+        3.485548734664917,
+        0.00034136383328586817
+      ]
+    }
+  },
+  "single_attachment_cube_displacement_xyz_m": [
+    0.32752281427383423,
+    -3.908202052116394e-05,
+    7.766485214233398e-05
+  ],
+  "deep_wall_gap_m": 0.002822613716125577,
+  "side_wall_gap_m": 0.1829873912334442,
+  "single_attachment_qp_frames": 2177,
+  "single_attachment_independent_no_bilateral_model": true,
+  "single_attachment_joint_tracking_peak_rad": 0.018488619084240376,
+  "single_attachment_joint_tracking_rms_rad": 0.004003882726748897,
+  "applied_torque_peak_per_joint_Nm": [
+    3.204167604446411,
+    30.120708465576172,
+    16.714693069458008,
+    36.31456756591797,
+    1.4843820333480835,
+    5.493209362030029,
+    0.03589414060115814,
+    13.476642608642578,
+    24.403844833374023,
+    29.709714889526367,
+    31.66872787475586,
+    1.5953434705734253,
+    5.123228073120117,
+    0.10777419060468674
+  ],
+  "torque_limit_per_joint_Nm": [
+    87.0,
+    87.0,
+    87.0,
+    87.0,
+    12.0,
+    12.0,
+    12.0,
+    87.0,
+    87.0,
+    87.0,
+    87.0,
+    12.0,
+    12.0,
+    12.0
+  ],
+  "torque_rate_peak_per_joint_Nm_s": [
+    234.53495264053345,
+    600.0,
+    239.9999713897705,
+    877.2423934936523,
+    52.8529018163681,
+    129.4201898574829,
+    3.5240304842591286,
+    1462.52534866333,
+    490.81944465637207,
+    240.0,
+    1408.0586385726929,
+    100.3099599480629,
+    65.77577590942383,
+    11.72873631119728
+  ],
+  "torque_rate_limit_per_joint_Nm_s": [
+    2400.0,
+    600.0,
+    240.0,
+    2400.0,
+    240.0,
+    240.0,
+    240.0,
+    2400.0,
+    600.0,
+    240.0,
+    2400.0,
+    240.0,
+    240.0,
+    240.0
+  ],
+  "torque_bounds_observed": true,
+  "max_measured_joint_velocity_rad_s": 0.2945720851421356,
+  "max_qp_acceleration_rad_s2": 10.43599580898178,
+  "contact_diagnostic_event_counts": {
+    "/World/left_fr3/fr3_link8/side_suction_tool/cup_r1_c1 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/left_fr3/fr3_link8/side_suction_tool/cup_r1_c2 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/left_fr3/fr3_link8/side_suction_tool/cup_r2_c1 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/left_fr3/fr3_link8/side_suction_tool/cup_r2_c2 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/right_fr3/fr3_link8/side_suction_tool/cup_r1_c1 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/right_fr3/fr3_link8/side_suction_tool/cup_r1_c2 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/right_fr3/fr3_link8/side_suction_tool/cup_r2_c1 <-> /World/Task27/Supply/Cube_01": 2245,
+    "/World/right_fr3/fr3_link8/side_suction_tool/cup_r2_c2 <-> /World/Task27/Supply/Cube_01": 2245
+  },
+  "executor_b0_pass_marker": false
+}
