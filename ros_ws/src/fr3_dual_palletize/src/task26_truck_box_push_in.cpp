@@ -54,6 +54,11 @@
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
+#include <std_msgs/msg/string.hpp>
+
+#ifdef TASK27_FIVE_CUBE
+#include "task28_b0_snapshot.hpp"
+#endif
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -680,6 +685,60 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
 };
 
+#ifdef TASK27_FIVE_CUBE
+std::int64_t wallNowNs()
+{
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(
+    std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+class B0SnapshotBuffer
+{
+public:
+  explicit B0SnapshotBuffer(const rclcpp::Node::SharedPtr& node)
+  {
+    sub_ = node->create_subscription<std_msgs::msg::String>(taskTopic("/b0_poststep_snapshot"), 10,
+      [this](const std_msgs::msg::String::SharedPtr message)
+      {
+        task28_b0::Snapshot sample;
+        if (!task28_b0::decode(message->data, &sample)) return;
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (!task28_b0::fresh(sample, wallNowNs(), 0, ready_ ? &latest_ : nullptr)) return;
+        latest_ = sample;
+        ready_ = true;
+        condition_.notify_all();
+      });
+  }
+
+  bool waitAfter(std::int64_t after_ns, double timeout_s, task28_b0::Snapshot* output) const
+  {
+    if (!output) return false;
+    std::unique_lock<std::mutex> lock(mutex_);
+    if (!condition_.wait_for(lock, std::chrono::duration<double>(timeout_s), [&]() {
+          return ready_ && task28_b0::fresh(latest_, wallNowNs(), after_ns);
+        })) return false;
+    *output = latest_;
+    return true;
+  }
+
+private:
+  mutable std::mutex mutex_;
+  mutable std::condition_variable condition_;
+  bool ready_{false};
+  task28_b0::Snapshot latest_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
+};
+
+geometry_msgs::msg::Pose b0CubePose(const task28_b0::Snapshot& s)
+{
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = s.cube[0]; pose.position.y = s.cube[1]; pose.position.z = s.cube[2];
+  pose.orientation.w = s.quat_wxyz[0]; pose.orientation.x = s.quat_wxyz[1];
+  pose.orientation.y = s.quat_wxyz[2]; pose.orientation.z = s.quat_wxyz[3];
+  return pose;
+}
+#endif
+
 // Isaac Bridge 每帧发布长度 8 的就位掩码：0 = 未到货（桌下休眠），1 = 已瞬移到槽位
 // 正在落稳，2 = 已到位且静止。执行器只在本标志非 0 时才允许读取该件 Ground Truth 并
 // 规划；未到货的 Cube 停在桌下休眠位，既不是障碍物也不是抓取对象。
@@ -890,22 +949,6 @@ public:
   const std::string& eefLink() const { return eef_; }
   bool isLeft() const { return left_; }
   bool isClosed() const { return closed_.load(); }
-
-  bool measuredPositions(const std::vector<std::string>& names, std::vector<double>* output) const
-  {
-    if (!output || names.empty()) return false;
-    std::lock_guard<std::mutex> lock(joint_mutex_);
-    output->clear();
-    for (const auto& full_name : names)
-    {
-      const std::string name = full_name.rfind(prefix_, 0) == 0
-        ? full_name.substr(prefix_.size()) : full_name;
-      const auto found = joint_positions_.find(name);
-      if (found == joint_positions_.end() || !std::isfinite(found->second)) return false;
-      output->push_back(found->second);
-    }
-    return true;
-  }
 
   // The pre-contact gate uses this read-only value to distinguish a settled
   // terminal state from a position residual that is still moving.  It is
@@ -2589,7 +2632,11 @@ bool executePushWithSupervision(
   const trajectory_msgs::msg::JointTrajectory& right_hold,
   const CubeBuffer& cubes, const OfflineTask& task,
   const moveit::core::RobotModelConstPtr& model, const std::string& eef_link,
-  const ForceBuffer& left_forces, const ForceBuffer& right_forces)
+  const ForceBuffer& left_forces, const ForceBuffer& right_forces
+#ifdef TASK27_FIVE_CUBE
+  , const B0SnapshotBuffer* b0_snapshots
+#endif
+  )
 {
   const double duration = pointTime(left_push.points.back());
   double peak_torque = 0.0;
@@ -2614,8 +2661,23 @@ bool executePushWithSupervision(
     // 而下面的 pose 是 Isaac Ground Truth，属**仿真系**。不把偏移加回去，lag 会凭空
     // 多出 Δ —— 实测 Δ=0.100 时第一片就报 "lag=100.65 mm" 并误判卡死。
     const double commanded_cube_x = tcp.x() + kPushCupOffsetX + g_world_shift_x;
-    const auto [pose, revision] = cubes.get(task.cube_index);
-    (void)revision;
+    geometry_msgs::msg::Pose pose;
+#ifdef TASK27_FIVE_CUBE
+    if (b0_snapshots)
+    {
+      task28_b0::Snapshot sample;
+      if (!b0_snapshots->waitAfter(wallNowNs(), 2.0, &sample))
+      {
+        RCLCPP_ERROR(node->get_logger(), "TASK28_B0_PUSH_SNAPSHOT unavailable after slice.");
+        return false;
+      }
+      pose = b0CubePose(sample);
+    }
+    else
+#endif
+    {
+      pose = cubes.get(task.cube_index).first;
+    }
     const double lag = std::abs(commanded_cube_x - pose.position.x);
     const double torque = std::max(left_forces.peak(), right_forces.peak());
     peak_torque = std::max(peak_torque, torque);
@@ -2728,6 +2790,10 @@ int main(int argc, char** argv)
 
   const std::size_t cube_count = kTasks.size();
   CubeBuffer cubes(node, cube_count);
+#ifdef TASK27_FIVE_CUBE
+  std::unique_ptr<B0SnapshotBuffer> b0_snapshots;
+  if (stage_b0_only) b0_snapshots = std::make_unique<B0SnapshotBuffer>(node);
+#endif
   FeedStateBuffer feed_state(node, cube_count);
   ForceBuffer left_forces(node, taskTopic("/left/measured_joint_forces"));
   ForceBuffer right_forces(node, taskTopic("/right/measured_joint_forces"));
@@ -4158,6 +4224,14 @@ int main(int argc, char** argv)
         {
           return false;
         }
+#ifdef TASK27_FIVE_CUBE
+        if (stage_b0_only)
+        {
+          RCLCPP_ERROR(node->get_logger(),
+            "TASK28_B0_SIDE_PATH_UNVERIFIED: press planning removes Cube from the FCL world.");
+          return false;
+        }
+#endif
         // 逐字段默认构造，避免 ROS 消息的 explicit 默认构造器在聚合赋值时产生
         // 无意义的编译告警。
         SideCompactionPlan reset_plan;
@@ -5173,7 +5247,11 @@ int main(int argc, char** argv)
       const auto& helper_hold_traj = push_left ? right_during_push : left_push_in;
       if (!executePushWithSupervision(node, pusher, helper, pusher_push_traj, helper_hold_traj,
             cubes, task, left_group.getRobotModel(), pusher.eefLink(),
-            left_forces, right_forces))
+            left_forces, right_forces
+#ifdef TASK27_FIVE_CUBE
+            , b0_snapshots.get()
+#endif
+            ))
       {
         openBothAndConfirm("safe abort during push supervision");
         all_complete = false;
@@ -5185,23 +5263,34 @@ int main(int argc, char** argv)
       std::this_thread::sleep_for(1500ms);
       geometry_msgs::msg::Pose deep_seated;
       CubeBuffer::Receipt seat_receipt;
-      const bool seat_received = cubes.waitNew(task.cube_index, std::max(source_revision, release_revision),
-        2.0, &deep_seated, &seat_receipt);
+      bool seat_received = false;
 #ifdef TASK27_FIVE_CUBE
-      if (stage_b0_only && seat_received)
+      if (stage_b0_only)
       {
-        const auto now_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-        RCLCPP_INFO(node->get_logger(),
-          "TASK28_B0_SEAT_SAMPLE header_ns=%ld received_wall_ns=%ld acceptance_wall_ns=%ld revision=%lu frame=%s xyz=(%.9f,%.9f,%.9f) gap_mm=%.6f",
-          static_cast<long>(seat_receipt.header_ns), static_cast<long>(seat_receipt.received_wall_ns),
-          static_cast<long>(now_ns), static_cast<unsigned long>(seat_receipt.revision), seat_receipt.frame_id.c_str(),
-          deep_seated.position.x, deep_seated.position.y, deep_seated.position.z, 1000.0 * xSupportGap(task, deep_seated));
+        task28_b0::Snapshot snapshot;
+        seat_received = b0_snapshots->waitAfter(wallNowNs(), 2.0, &snapshot);
+        if (seat_received)
+        {
+          deep_seated = b0CubePose(snapshot);
+          RCLCPP_INFO(node->get_logger(),
+            "TASK28_B0_PHYSX_SEAT step=%lu sim_s=%.6f started_ns=%ld finished_ns=%ld xyz=(%.9f,%.9f,%.9f) gap_mm=%.6f",
+            static_cast<unsigned long>(snapshot.step), snapshot.sim_s, static_cast<long>(snapshot.started_ns),
+            static_cast<long>(snapshot.finished_ns), deep_seated.position.x, deep_seated.position.y,
+            deep_seated.position.z, 1000.0 * xSupportGap(task, deep_seated));
+        }
       }
+      else
 #endif
+      {
+        seat_received = cubes.waitNew(task.cube_index, std::max(source_revision, release_revision),
+          2.0, &deep_seated, &seat_receipt);
+      }
       if (!seat_received ||
           !validDeepWallSeat(node, task, deep_seated))
       {
+#ifdef TASK27_FIVE_CUBE
+        if (stage_b0_only) openBothAndConfirm("safe abort after B0 deep-wall gate failure");
+#endif
         all_complete = false;
         break;
       }
@@ -5329,23 +5418,6 @@ int main(int argc, char** argv)
       // 侧压结束后先松开推入吸盘，再按已验证的 -X 轨迹撤离。
       auto left_after_x = left_push_in;
       auto right_after_x = right_during_push;
-#ifdef TASK27_FIVE_CUBE
-      if (stage_b0_only)
-      {
-        // Plan the FCL-checked side approach from the measured push endpoint.
-        if (!left.measuredPositions(left_after_x.joint_names, &left_after_x.points.back().positions) ||
-            !right.measuredPositions(right_after_x.joint_names, &right_after_x.points.back().positions))
-        {
-          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_SIDE_START missing measured joint positions.");
-          openBothAndConfirm("safe abort after missing B0 side start");
-          all_complete = false;
-          break;
-        }
-        RCLCPP_INFO(node->get_logger(), "TASK28_B0_SIDE_START measured left=%s right=%s.",
-          formatJointPositions(finalPositions(left_after_x)).c_str(),
-          formatJointPositions(finalPositions(right_after_x)).c_str());
-      }
-#endif
       const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
 
 #ifdef TASK27_FIVE_CUBE
@@ -5583,6 +5655,33 @@ int main(int argc, char** argv)
         break;
       }
       SideCompactionPlan side_plan;
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only)
+      {
+        task28_b0::Snapshot snapshot;
+        if (!b0_snapshots->waitAfter(wallNowNs(), 2.0, &snapshot) ||
+            left_after_x.points.empty() || right_after_x.points.empty() ||
+            !task28_b0::initialPositions(snapshot, left_after_x.joint_names, right_after_x.joint_names,
+              &left_after_x.points.back().positions, &right_after_x.points.back().positions))
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_SIDE_START coherent snapshot unavailable.");
+          openBothAndConfirm("safe abort after missing B0 side start");
+          all_complete = false;
+          break;
+        }
+        deep_seated = b0CubePose(snapshot);
+        if (!validDeepWallSeat(node, task, deep_seated))
+        {
+          openBothAndConfirm("safe abort after B0 side-start wall check");
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(), "TASK28_B0_SIDE_START step=%lu sim_s=%.6f left=%s right=%s.",
+          static_cast<unsigned long>(snapshot.step), snapshot.sim_s,
+          formatJointPositions(finalPositions(left_after_x)).c_str(),
+          formatJointPositions(finalPositions(right_after_x)).c_str());
+      }
+#endif
       if (!planSideCompaction(left_after_x, right_after_x, deep_seated,
             std::string(task.id) + " EXECUTION", &side_plan))
       {
@@ -5702,8 +5801,20 @@ int main(int argc, char** argv)
       }
       std::this_thread::sleep_for(1500ms);
       geometry_msgs::msg::Pose settled;
-      if (!cubes.waitNew(task.cube_index, before_press_revision, 2.0, &settled) ||
-          !validCellPlacement(node, task, settled, cubes))
+      bool settled_received = false;
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only)
+      {
+        task28_b0::Snapshot snapshot;
+        settled_received = b0_snapshots->waitAfter(wallNowNs(), 2.0, &snapshot);
+        if (settled_received) settled = b0CubePose(snapshot);
+      }
+      else
+#endif
+      {
+        settled_received = cubes.waitNew(task.cube_index, before_press_revision, 2.0, &settled);
+      }
+      if (!settled_received || !validCellPlacement(node, task, settled, cubes))
       {
         all_complete = false;
         break;

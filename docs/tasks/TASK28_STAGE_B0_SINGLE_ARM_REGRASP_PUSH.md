@@ -1,5 +1,42 @@
 # TASK28 Stage B0：单臂重抓与 +X 推送
 
+
+## 2026-11-03 步后物理快照与侧压接触冲突：B0_PARTIAL
+
+**结论：原场景的步后物理源通过有界自由运动交叉检查；完整侧压路径未通过前置验证，未运行完整 GUI 循环。** B0 新增了明确的 `TASK28_B0_SIDE_PATH_UNVERIFIED` 中止：侧压候选预检和执行规划均在现有代码移除 Cube 前拒绝继续，而本工单要求完整场景路径检查。该中止是暂时的失败状态，不代表侧压或整循环成功。
+
+### 物理步状态源
+
+在原 Task27 场景的休眠供料区，对 Cube_01 施加一次 0.020 m/s 初速度，采样 100 个 `subscribe_physics_on_step_events(..., False, 0)` 步后回调，未执行抓取、码垛或完整物理循环。Cube 通过物理状态演化移动 32.998 mm；该诊断没有写 Cube 位姿。两个受检句柄/API 为 `SingleRigidPrim` 的 rigid-view PhysX tensor `get_transforms`，以及 `omni.isaac.dynamic_control.get_rigid_body_pose`。两个 API 途径共享 PhysX 仿真后端，不是两个独立仿真器。
+
+| 诊断 | 物理句柄 | tensor 与 dynamic-control 最大 XYZ 差 | USD 与 dynamic-control 最大 XYZ 差 | 同步快照采集最长墙钟时间 |
+|---|---|---:|---:|---:|
+| [v1 自由运动](../../offline/task28_task27_integration/evidence/task28_b0_poststep_probe_v1/summary.json) | 100/100 有效 | 0 mm | 0.333 mm | 未采集双臂快照 |
+| [v2 双臂同帧采集](../../offline/task28_task27_integration/evidence/task28_b0_poststep_probe_v2/summary.json) | 100/100 有效 | 0 mm | 0.667 mm | 0.560 ms |
+
+[v2 逐步原始样本](../../offline/task28_task27_integration/evidence/task28_b0_poststep_probe_v2/poststep.jsonl)包含步号、按回调 dt 累计的仿真时间、墙钟、有效句柄、tensor 位姿、另一 API 位姿和速度、USD 位置，以及两个 PhysX articulation 的七关节值。USD 在此条件下存在可测落后；旧负载/接触运行的 0.904 mm 差异和更大瞬态的具体机制仍未独立复现，不能据此追认旧验收通过。候选物理源在读取前检查 rigid 和两臂 articulation 的 physics handle，拒绝 `get_world_pose()` 的 USD fallback、无效/非有限数据及不匹配关节顺序。本诊断不证明抓持接触和高负载下的完整闭环。
+
+### 候选在线快照与新鲜度
+
+仅 `stage_b0_only` 在双侧吸附后进入 release-retreat 模式（依据吸盘命令，物理打开另由反馈确认）之后，每三个物理步（名义 0.05 s 仿真时间）发布 `/task27/b0_poststep_snapshot`：同一步的 Cube 世界位姿、左右实测关节、步号、累计仿真时间、来源及采样起止墙钟，同时保留 USD 值供审计。Stage A 原有 `/cube_poses` 和控制器未改。B0 的推送片后监督、深墙验收、侧压规划起点和最终落位读取此候选快照；深墙验收等待在推送及原等待结束后才开始采样的消息。左右关节在同一同步步后回调内依次读取，按原 FR3 七关节顺序验证。
+
+接收器拒绝错误 frame/source、句柄无效、缺失或非有限数据、四元数无效、采样跨度超过 **50 ms**、来源时间在未来、样本年龄超过 **50 ms**、步号/仿真时间/来源时间倒序，以及早于相关动作完成标记的样本。50 ms 大于原场景探针最长 0.560 ms，单回调内仿真步不会前进；旧 QP 运行的两次同步记录中，发布到接收约 0.24–0.30 ms，50 ms 为其约 166 倍；慢速仿真中相邻发布最多约 170.1 ms，因此使用 2 s 等待新帧，而不把发布间隔当作可接受的消息年龄。50 ms 在本诊断的 20 mm/s 速度下对应 1 mm 位移；这不是对其他速度的误差保证，也可能在机器负载高时保守拒绝。该期限是仿真快照的新鲜度界限，不改变原 3 mm 几何门限。
+
+C++ 合约测试覆盖实测 v2 快照解码、旧样本/动作前样本、乱序、错误 frame、缺失或非有限关节及关节顺序；隔离 ROS domain 的实际 C++ 订阅缓存测试覆盖发布/接收、动作前、乱序和错误 frame。Python 测试覆盖句柄回退拒绝和非有限关节。**Isaac 发布器到执行器的完整 ROS 链尚未通过完整 GUI 验证；重抓等旧代码仍有 USD 读取路径，因此尚不能把整个 B0 在线状态一致性标为完成。** 侧压规划快照已准备，但由于下述阻塞，保护门在实际 `planSideCompaction` 前停止；实际规划器起点与模拟状态的运行时对应尚未验证。
+
+### FCL 与侧压终点
+
+C++ 离线重放已加载原双臂模型、Cube、桌面和三面墙，保持原碰撞几何和 ACM。旧名义起点重新复现右吸盘/Cube 的 **1.434 mm** 接触，而记录的双臂实测起点无碰撞；对实测起点到名义起点的人工插值，101 个 FCL 样本中第 **34** 个首次碰撞。该插值不是侧压候选路径。
+
+原侧压的 1 mm 命令间隙及 4 mm 超程意味着：对按名义位姿贴住 +Y 墙的 Cube，辅助杯面终点比 Cube 的 −Y 面深入 **3 mm**。使用原 120 mm Cube 和原 10 mm 半径、10 mm 长的吸杯圆柱，单独 FCL 几何测试得到接近点无碰撞、该名义终点相交 **3.000 mm**。这说明现有命令的预期接触在当前禁止工具/Cube 相交的模型下会被拒绝；不能用从场景删除 Cube 或放宽 ACM 来声称通过。它不是对所有替代路径不存在的证明，也不是对完整侧压候选路径的验证。下一步需先确定与不放宽碰撞规则相容的接触表达和完整路径验证，再运行一次 GUI 物理循环。
+
+### 本轮验证与结果
+
+- 原场景中的有界 headless 状态诊断：v1/v2 共各 100 个物理步样本；没有新的 Stage A 或 B0 完整 GUI 尝试。
+- 聚焦 Python 回归：**55 passed**；C++ 快照合约、ROS 订阅缓存及 FCL 重放/终点接触测试通过。ROS 缓存测试使用合成快照，实际 Isaac→ROS→执行器整链未测试。
+- 原 Stage A 证据、3 mm 深墙验收、力矩/QP 与碰撞几何没有放宽。旧修正运行仍按原 USD 验收值 3.800 mm 失败；本轮无新的物理推送、最终释放或双臂退避结果。
+- 复现物理诊断：`DISPLAY=:1 ROS_DOMAIN_ID=109 /home/ubuntu2004/isaacsim-4.5.0/python.sh isaac/scripts/task28_b0_poststep_probe.py --run-id NEW_UNIQUE_ID`。快照 C++ 合约测试用 `g++ -std=c++17 -I ros_ws/src/fr3_dual_palletize/src offline/task28_task27_integration/tests/b0_snapshot/test_snapshot.cpp -lyaml-cpp -o /tmp/task28_snapshot_test && /tmp/task28_snapshot_test`；完整快照 C++/ROS 测试脚本见 [run.sh](../../offline/task28_task27_integration/tests/b0_snapshot/run.sh)，需先按下节加载 ROS 工作区并使用隔离的 `ROS_DOMAIN_ID`；FCL 复现命令见下节。
+
 ## 2026-11-03 状态一致性与侧压起点离线复核：B0_PARTIAL
 
 **决定：不启动本工单的一次完整 GUI 运行。** 本工单要求先验证可用于在线验收的物理状态源、消息新鲜度及双臂同步；现有记录不足以验证这些前提。此前所有失败结果保持原判，3 mm 验收阈值与 Stage A 基线未变。本次没有改变在线位姿源、执行器的门限或 FCL 碰撞规则。
@@ -9,18 +46,18 @@
 - 桥在 `subscribe_physics_step_events` 回调中先运行 torque step，随后运行原 feed callback；后者每约 0.05 仿真秒用 USD `ComputeLocalToWorldTransform(Default)` 生成 `world` frame 的 `/task27/cube_poses`，接着 audit wrapper 在同一 callback 读取同一 Cube 的 `SingleRigidPrim.get_world_pose()`。本机 Isaac Sim 4.5 的实现：当 physics handle 有效时，后者经 rigid view 的 PhysX tensor `get_transforms()` 取得世界位置和 wxyz 姿态；无有效 handle 时会退回 USD。旧 trace 没记录 handle 是否有效，也未独立记录物理引擎对该张量刷新时刻的确认。
 - 旧修正验证的同一发布消息，USD x=1.096200466 m、rigid API x=1.097104073 m，相差 0.903606 mm；以原中心几何计算 gap 分别为 3.799534 mm 与 2.895927 mm。这里证实两个读数不同，**尚不能确定哪一个是该时刻已完成物理步的真实位置，也不能把旧失败改判为通过**。
 - 验收附近 physics step 15312–15342（记录的仿真时间 255.20–255.70 s），两个位置分别保持上述精确值，rigid API 的 X 速度却持续约 +1.69 mm/s。这是**可能的采样或缓存不同步**的证据，并非仅凭速度就证明某一位置错误；需要在原场景用已确认的步后时刻、物理句柄状态及另一独立物理查询交叉核对。所用记录见[修正验证同步窗口](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/pose_sync/acceptance_pose_window.jsonl)。
-- `CubeBuffer::waitNew` 只检查 revision 大于推送前的 `source/release_revision`，所以不能保证消息在推送和等待完成后才发布，也没有对消息时间、frame、延迟和乱序进行在线检查。左右 `Arm::measuredPositions` 分别读取最新缓存，未检查来源时间、左右同步或缓存年龄。旧两源时间关联是离线证据，不是运行时 freshness 契约。新增的离线关联回归拒绝 frame 不匹配、发布/接收/验收墙钟顺序错误及不匹配的消息 header，但**不等于完成在线 stale 消息防护**。
+- `CubeBuffer::waitNew` 只检查 revision 大于推送前的 `source/release_revision`，所以不能保证消息在推送和等待完成后才发布，也没有对消息时间、frame、延迟和乱序进行在线检查。`06386a8` 的候选 `Arm::measuredPositions` 分别读取左右最新缓存，未检查来源时间、左右同步或缓存年龄；该旧候选已由本轮同帧快照赋值替代。旧两源时间关联是离线证据，不是运行时 freshness 契约。新增的离线关联回归拒绝 frame 不匹配、发布/接收/验收墙钟顺序错误及不匹配的消息 header，但**不等于完成在线 stale 消息防护**。
 
 ### 侧压 FCL 离线重放
 
-使用诊断运行 physics step 13845 捕获的左右实测关节、右臂参考关节和同一帧 Cube 位姿；模型沿用仓库 xacro/SRDF，Cube 尺寸 0.12 m，按当时导轨的 0.100 m 世界偏移转换到规划坐标。只装入 Cube，未加入所有其他世界障碍。执行 [C++ FCL 重放回归](../../offline/task28_task27_integration/tests/fcl_replay/replay.cpp) 的结果：
+使用诊断运行 physics step 13845 捕获的左右实测关节、右臂参考关节和同一帧 Cube 位姿；模型沿用仓库 xacro/SRDF，Cube 尺寸 0.12 m，按当时导轨的 0.100 m 世界偏移转换到规划坐标。该轮只装入 Cube；后续重放已增加桌面和墙体，见上节。执行 [C++ FCL 重放回归](../../offline/task28_task27_integration/tests/fcl_replay/replay.cpp) 的结果：
 
 | 起点 | Cube / 右吸盘 FCL | 右 TCP x（规划坐标） |
 |---|---:|---:|
 | 记录的右臂参考终点 | collision，首接触深度 **1.43391 mm** | 0.939000 m |
 | 同帧双臂实测关节 | 此静态场景无碰撞 | 0.936610 m |
 
-这复现了原日志的 1.434 mm 接触，也支持规划终点与实测状态不一致是该次预检失败的原因；它不证明当前 C++ `measuredPositions` 调用满足时间同步，不覆盖完整世界或整条侧压轨迹，也不证明后续侧压安全。该候选代码仍未执行到，也尚无针对其在线缓存与规划初始化调用的 C++ 回归。没有扩大 ACM 或禁用吸盘/Cube 碰撞。
+这复现了原日志的 1.434 mm 接触，也支持规划终点与实测状态不一致是该次预检失败的原因；它不能证明旧 C++ `measuredPositions` 调用满足时间同步，不覆盖完整世界或整条侧压轨迹，也不证明后续侧压安全。该候选代码仍未执行到，也尚无针对其在线缓存与规划初始化调用的 C++ 回归。没有扩大 ACM 或禁用吸盘/Cube 碰撞。
 
 复现（先确保外部工作区提供 `franka_description`）：
 

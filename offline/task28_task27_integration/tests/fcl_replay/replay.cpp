@@ -41,6 +41,30 @@ int main(int argc, char **argv) {
   cube.primitive_poses.push_back(pose);
   if (!scene.processCollisionObjectMsg(cube))
     return 2;
+  // Task27 table and three walls, shifted by the measured 0.100 m rail advance.
+  const auto add_box = [&](const char *id, double x, double y, double z,
+                           double sx, double sy, double sz) {
+    moveit_msgs::msg::CollisionObject object;
+    object.header.frame_id = model->getModelFrame();
+    object.id = id;
+    object.operation = object.ADD;
+    shape_msgs::msg::SolidPrimitive primitive;
+    primitive.type = primitive.BOX;
+    primitive.dimensions = {sx, sy, sz};
+    object.primitives.push_back(primitive);
+    geometry_msgs::msg::Pose p;
+    p.position.x = x;
+    p.position.y = y;
+    p.position.z = z;
+    p.orientation.w = 1;
+    object.primitive_poses.push_back(p);
+    return scene.processCollisionObjectMsg(object);
+  };
+  if (!add_box("task26_table", .45, 0, .1, 1.5, .8, .2) ||
+      !add_box("task26_box_wall_deep", 1.07, 0, .275, .02, .646, .15) ||
+      !add_box("task26_box_wall_minus_y", .935, -.313, .275, .29, .02, .15) ||
+      !add_box("task26_box_wall_plus_y", .935, .313, .275, .29, .02, .15))
+    return 2;
   // Diagnostic run physics step 13845, synchronized Cube and joint readings.
   std::array<double, 7> l = {.9971434474,  -1.250707388, .0724271536,
                              -2.384800673, .0759442002,  1.136402845,
@@ -91,6 +115,28 @@ int main(int argc, char **argv) {
                        .x() -
                    .9366104543) < .00001;
   }
+  // A synthetic transition, not the missing lateral-assistance candidate.
+  int first_collision = -1;
+  for (int sample = 0; sample <= 100; ++sample) {
+    moveit::core::RobotState state(model);
+    state.setToDefaultValues();
+    for (int i = 0; i < 7; ++i) {
+      state.setVariablePosition("left_fr3_joint" + std::to_string(i + 1), l[i]);
+      state.setVariablePosition("right_fr3_joint" + std::to_string(i + 1),
+                                actual[i] +
+                                    (nominal[i] - actual[i]) * sample / 100.0);
+    }
+    state.update();
+    collision_detection::CollisionRequest request;
+    collision_detection::CollisionResult result;
+    scene.checkCollision(request, result, state);
+    if (result.collision && first_collision < 0)
+      first_collision = sample;
+  }
+  std::cout << "full_scene synthetic_transition_first_collision_sample="
+            << first_collision << "/100\n";
+  if (first_collision <= 0)
+    return 4;
   if (!nominal_reproduced || !actual_clear) {
     std::cerr << "FCL replay FAILED\n";
     return 3;

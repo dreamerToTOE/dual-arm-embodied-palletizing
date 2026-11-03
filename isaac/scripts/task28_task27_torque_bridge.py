@@ -54,6 +54,41 @@ class CubePoseAuditPublisher:
         self.publisher.publish(message)
 
 
+def make_b0_snapshot(rigid, articulations, stage, step, simulation_time_s):
+    """Read one post-step state; never allow the rigid API's USD fallback."""
+    from pxr import Usd, UsdGeom
+    if not rigid._prim_view.is_physics_handle_valid():
+        raise RuntimeError("B0_RIGID_PHYSICS_HANDLE_INVALID")
+    started_ns = time.time_ns()
+    position, orientation = rigid.get_world_pose()
+    if not rigid._prim_view.is_physics_handle_valid():
+        raise RuntimeError("B0_RIGID_PHYSICS_HANDLE_INVALID")
+    position = _finite(position, 3, "B0_CUBE_POSITION")
+    orientation = _finite(orientation, 4, "B0_CUBE_ORIENTATION")
+    joints = {}
+    for side in SIDES:
+        arm = articulations[side]
+        if not arm._articulation_view.is_physics_handle_valid():
+            raise RuntimeError(f"B0_ARM_PHYSICS_HANDLE_INVALID:{side}")
+        if tuple(arm.dof_names) != ARM_DOF_NAMES + FINGER_DOF_NAMES:
+            raise RuntimeError(f"B0_ARM_DOF_ORDER:{side}")
+        joints[side] = _finite(arm.get_joint_positions(), 9, f"B0_ARM_POSITION:{side}")[:7].tolist()
+        if not arm._articulation_view.is_physics_handle_valid():
+            raise RuntimeError(f"B0_ARM_PHYSICS_HANDLE_INVALID:{side}")
+    if not 0.999 <= np.linalg.norm(orientation) <= 1.001:
+        raise RuntimeError("B0_CUBE_QUATERNION")
+    cube = stage.GetPrimAtPath("/World/Task27/Supply/Cube_01")
+    if not cube.IsValid():
+        raise RuntimeError("B0_CUBE_PRIM_INVALID")
+    transform = UsdGeom.Xformable(cube).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+    usd_xyz = list(map(float, transform.ExtractTranslation()))
+    return {"version": 1, "step": int(step), "simulation_time_s": float(simulation_time_s),
+            "frame": "world", "source": "post_step_physx_tensor", "handle_valid": True,
+            "sample_started_ns": started_ns, "sample_finished_ns": time.time_ns(),
+            "cube_xyz_m": position.tolist(), "cube_quaternion_wxyz": orientation.tolist(),
+            "cube_usd_xyz_m": usd_xyz, "left_q_rad": joints["left"], "right_q_rad": joints["right"]}
+
+
 def _finite(value, size, code):
     arr = np.asarray(value, dtype=float).reshape(-1)
     if arr.shape != (size,) or not np.isfinite(arr).all():
@@ -436,6 +471,16 @@ class Task27TorqueBridge:
         feed_bridge.physics_sub = omni.physx.get_physx_interface().subscribe_physics_step_events(
             self._physics_step
         )
+        self._b0_snapshot_sub = None
+        if self._stage_b0_only:
+            from std_msgs.msg import String
+            self._b0_snapshot_message_type = String
+            self._b0_snapshot_pub = feed_bridge.node.create_publisher(
+                String, str(self._feed_task_topic) + "/b0_poststep_snapshot", 10)
+            self._b0_snapshot_step = 0
+            self._b0_snapshot_time_s = 0.0
+            self._b0_snapshot_sub = omni.physx.get_physx_interface().subscribe_physics_on_step_events(
+                self._b0_post_step, False, 0)
         feed_bridge._task28_torque_owner = self
         self._log({
             "event": "TASK27_TORQUE_BRIDGE_ACTIVE",
@@ -466,6 +511,22 @@ class Task27TorqueBridge:
             "loaded_joint_posture_weight": self._qp_loaded_posture_weight if self._live_qp else None,
             "simulation_torque_config": self._simulation_torque_config,
         })
+
+    def _b0_post_step(self, dt):
+        self._b0_snapshot_step += 1
+        self._b0_snapshot_time_s += float(dt)
+        if not self._b0_release_observed or self._b0_snapshot_step % 3:
+            return
+        try:
+            snapshot = make_b0_snapshot(self.feed.rigids[0], self.articulations, self.feed.stage,
+                                        self._b0_snapshot_step, self._b0_snapshot_time_s)
+            message = self._b0_snapshot_message_type()
+            message.data = json.dumps(snapshot, allow_nan=False)
+            self._b0_snapshot_pub.publish(message)
+            self._log({"event": "TASK28_B0_POSTSTEP_SNAPSHOT", **snapshot})
+        except Exception as exc:
+            self._log({"event": "TASK28_B0_POSTSTEP_SNAPSHOT_REJECTED",
+                       "step": self._b0_snapshot_step, "error": repr(exc)})
 
     def _log(self, row):
         self.stream.write(json.dumps(row, sort_keys=True, allow_nan=False,
@@ -1856,6 +1917,8 @@ class Task27TorqueBridge:
                 self._log({"event": "FAIL_STOP_UNAVAILABLE", "error": repr(stop_exc)})
 
     def close(self):
+        if self._b0_snapshot_sub is not None:
+            self._b0_snapshot_sub.unsubscribe()
         if self._original_cube_pub is not None:
             self.feed.cube_pub = self._original_cube_pub
         if getattr(self, "_contact_diagnostic", None) is not None:

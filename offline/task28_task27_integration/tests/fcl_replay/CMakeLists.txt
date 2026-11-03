@@ -7,3 +7,7 @@ find_package(urdf REQUIRED)
 find_package(srdfdom REQUIRED)
 add_executable(replay replay.cpp)
 ament_target_dependencies(replay moveit_core moveit_msgs urdf srdfdom)
+
+find_package(fcl REQUIRED)
+add_executable(side_contact side_contact.cpp)
+target_link_libraries(side_contact fcl)
