@@ -2,6 +2,37 @@ import numpy as np
 from offline.task28_task27_live_qp.object_reference import RigidObjectReference
 
 
+def test_common_rotation_feedback_uses_the_world_jacobian_frame():
+    import importlib.util
+    from pathlib import Path
+    from scipy.spatial.transform import Rotation
+    path = Path(__file__).resolve().parents[3] / 'isaac/scripts/task28_task27_torque_bridge.py'
+    spec = importlib.util.spec_from_file_location('rotation_test', path)
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    target = np.eye(4); target[:3, :3] = Rotation.from_euler('x', np.pi).as_matrix()
+    actual = target.copy()
+    actual[:3, :3] = Rotation.from_euler('z', .1).as_matrix() @ target[:3, :3]
+    correction = mod.Task27TorqueBridge._rotation_error(actual, target)
+    assert np.allclose(correction, [0., 0., -.1], atol=1e-9)
+
+
+def test_bottom_gap_accounts_for_scaled_cube_and_measured_tilt():
+    import importlib.util
+    from pathlib import Path
+    from scipy.spatial.transform import Rotation
+    path = Path(__file__).resolve().parents[3] / 'isaac/scripts/task28_task27_torque_bridge.py'
+    spec = importlib.util.spec_from_file_location('gap_test', path)
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    bridge = mod.Task27TorqueBridge.__new__(mod.Task27TorqueBridge)
+    bridge._support_cube_half_extent = np.array([.06, .06, .06])
+    bridge._support_table_top_z = .2
+    runtime = {'pose_world': {'position_m': [.77, .06, .273], 'orientation_xyzw': [1., 0., 0., 0.]}}
+    assert np.isclose(bridge._cube_bottom_gap(runtime), .013)
+    quat = Rotation.from_euler('y', .02).as_quat()
+    runtime['pose_world']['orientation_xyzw'] = quat[[3, 0, 1, 2]]
+    assert np.isclose(bridge._cube_bottom_gap(runtime), .073 - .06 * (np.cos(.02) + np.sin(.02)))
+
+
 def test_inconsistent_sources_produce_one_fixed_grasp_without_following_feedback():
     obj=np.eye(4); obj[2,3]=.26
     a={s:obj.copy() for s in ('left','right')};a['left'][1,3]=-.061;a['right'][1,3]=.061

@@ -120,12 +120,42 @@ class Task27TorqueBridge:
         if self._object_reference_enabled:
             from isaacsim.core.api.sensors.rigid_contact_view import RigidContactView
             from std_msgs.msg import Bool
+            from pxr import Usd, UsdGeom
             self._support_bool_type = Bool
             self._support_pub = feed_bridge.node.create_publisher(Bool, str(self._feed_task_topic) + "/cube_support", 10)
+            cube_prim = feed_bridge.stage.GetPrimAtPath("/World/Task27/Supply/Cube_01")
+            table_prim = feed_bridge.stage.GetPrimAtPath("/World/Table")
+            if not cube_prim.IsValid() or not table_prim.IsValid():
+                raise RuntimeError("TASK28_SUPPORT_GEOMETRY_BINDING")
+            cube_size_attr = cube_prim.GetAttribute("size")
+            cube_size = float(cube_size_attr.Get())
+            cube_matrix = np.asarray(UsdGeom.Xformable(cube_prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default()))
+            cube_extents = cube_size * np.linalg.norm(cube_matrix[:3, :3], axis=1)
+            bounds = UsdGeom.BBoxCache(
+                Usd.TimeCode.Default(), [UsdGeom.Tokens.default_]
+            ).ComputeWorldBound(table_prim)
+            table_top_z = float(bounds.ComputeAlignedRange().GetMax()[2])
+            if not np.isfinite(cube_extents).all() or np.any(cube_extents <= 0.0) or not np.isfinite(table_top_z):
+                raise RuntimeError("TASK28_SUPPORT_GEOMETRY_NONFINITE")
+            self._support_cube_half_extent = 0.5 * cube_extents
+            self._support_table_top_z = table_top_z
+            self._support_binding = {
+                "cube_path": "/World/Task27/Supply/Cube_01",
+                "table_path": "/World/Table",
+                "cube_prim_valid": True,
+                "table_prim_valid": True,
+                "cube_size_m": cube_extents.tolist(),
+                "table_top_z_m": table_top_z,
+                "force_source": "RigidContactView(cube_root, table_root_filter)",
+                "geometry_fallback": "cube_world_bottom_gap_and_low_velocity",
+            }
+            self._log({"event": "TASK28_SUPPORT_BINDING", **self._support_binding})
             self._support_view = RigidContactView(
                 "/World/Task27/Supply/Cube_01", ["/World/Table"],
                 name="task28_cube_table_support", disable_stablization=False)
             self._support_view.initialize()
+            self._log({"event": "TASK28_SUPPORT_VIEW", "num_shapes": self._support_view.num_shapes,
+                       "num_filters": self._support_view.num_filters})
             from offline.task28_g3_stage_a.contact_diagnostic import ContactDiagnostic
             self._contact_diagnostic = ContactDiagnostic(self)
         self._qref = {}
@@ -924,7 +954,7 @@ class Task27TorqueBridge:
     @staticmethod
     def _rotation_error(T_actual, T_desired):
         from scipy.spatial.transform import Rotation
-        return Rotation.from_matrix(T_actual[:3, :3].T @ T_desired[:3, :3]).as_rotvec()
+        return Rotation.from_matrix(T_desired[:3, :3] @ T_actual[:3, :3].T).as_rotvec()
 
     def _qp_reference(self, time_s):
         """Build a small local common/relative target around measured home."""
@@ -1021,6 +1051,7 @@ class Task27TorqueBridge:
 
     def _placement_correction(self, desired, measured, reference_velocity, dt):
         terminal = (self._task_mode == "DUAL_ATTACHED" and desired[2,3] <= .26025
+                    and desired[0,3] > .70
                     and np.linalg.norm(reference_velocity) < 1e-4)
         if terminal:
             self._placement_integral_accel = np.clip(self._placement_integral_accel
@@ -1028,6 +1059,14 @@ class Task27TorqueBridge:
         else:
             self._placement_integral_accel.fill(0.0)
         return self._placement_integral_accel.copy(), terminal
+
+    def _cube_bottom_gap(self, cube_runtime):
+        from scipy.spatial.transform import Rotation
+        pose = cube_runtime["pose_world"]
+        # The legacy key contains SingleRigidPrim's wxyz quaternion.
+        rotation = Rotation.from_quat(np.asarray(pose["orientation_xyzw"])[[1, 2, 3, 0]]).as_matrix()
+        vertical_half_extent = float(np.abs(rotation[2, :]) @ self._support_cube_half_extent)
+        return float(pose["position_m"][2] - vertical_half_extent - self._support_table_top_z)
 
     def _live_qp_control(self, states, transforms, measured_qdd14=None):
         from offline.task28_task27_live_qp.torque_qp import solve_cooperative_torque_qp
@@ -1192,6 +1231,8 @@ class Task27TorqueBridge:
                 "cube_tracking_error": se3_log(np.linalg.inv(measured_obj) @ obj).tolist(),
                 "tcp_twist_desired_world": {side:twists[side].tolist() for side in SIDES},
                 "tcp_acceleration_desired_world": {side:accels[side].tolist() for side in SIDES},
+                "object_reference_velocity_world": self._object_reference.previous_velocity.tolist(),
+                "object_reference_acceleration_world": self._object_reference.previous_acceleration.tolist(),
                 "derivatives": "finite_difference_planned_object_in_Isaac_physics_time_not_measured_Cube"}
         e_left = np.r_[TL_des[:3, 3] - TL[:3, 3], self._rotation_error(TL, TL_des)]
         e_right = np.r_[TR_des[:3, 3] - TR[:3, 3], self._rotation_error(TR, TR_des)]
@@ -1199,11 +1240,18 @@ class Task27TorqueBridge:
         v_right = JR @ dq[7:]
         common_accel = a_common_ff + np.diag([12., 12., 12., 5., 5., 5.]) @ (0.5 * (e_left + e_right))
         common_accel += np.diag([4., 4., 4., 1.5, 1.5, 1.5]) @ (v_common - 0.5 * (v_left + v_right))
+        terminal = False
         if self._object_reference_diag.get("active"):
             correction, terminal = self._placement_correction(
                 np.asarray(self._object_reference_diag["T_WO_des"]),
                 np.asarray(self._object_reference_diag["T_WO_actual"]),v_common,1.0/60.0)
-            common_accel[:3] += correction
+            if terminal:
+                cube_velocity = np.asarray(self.feed.rigids[0].get_linear_velocity(), dtype=float)
+                cube_angular = np.asarray(self.feed.rigids[0].get_angular_velocity(), dtype=float)
+                common_accel[:3] = np.clip(12.0 * (obj[:3,3] - measured_obj[:3,3])
+                    - 8.0 * cube_velocity + correction, -.15, .15)
+                common_accel[3:] = np.clip(20.0 * self._rotation_error(measured_obj, obj)
+                    - 8.0 * cube_angular, -.3, .3)
             self._object_reference_diag["terminal_placement_correction"] = {
                 "active": terminal,"acceleration_world_m_s2": correction.tolist(),
                 "integral_gain_s_minus3":4.0,"acceleration_cap_m_s2":.25,
@@ -1338,14 +1386,14 @@ class Task27TorqueBridge:
                 qp_config,
                 joint_posture_weight=self._qp_loaded_posture_weight,
             )
-            if (self._object_reference_diag.get("active")
-                    and self._object_reference_diag.get("T_WO_des") is not None
-                    and self._object_reference_diag["T_WO_des"][2][3] <= .26025):
-                # Terminal placement is a task-space convergence phase. Keep the
-                # same hard boxes, but give the shared object target a bounded
-                # boost over the loaded posture tie-breaker. The earlier 1e6
-                # override made the loaded plant diverge before support contact.
-                qp_config = replace(qp_config, common_weight=3.0e4)
+            if terminal:
+                # Terminal object feedback must not fight the loaded posture/torque targets.
+                qp_config = replace(
+                    qp_config,
+                    common_weight=3.0e4,
+                    joint_posture_weight=min(self._qp_loaded_posture_weight, 100.0),
+                    internal_torque_weight=min(qp_config.internal_torque_weight, 100.0),
+                )
         elif not relative_objective_enabled:
             qp_config = replace(qp_config, relative_weight=0.0)
         # Experimental feedforward assumes the commanded contact wrench exists;
@@ -1509,11 +1557,20 @@ class Task27TorqueBridge:
             force = np.asarray(self._support_view.get_contact_force_matrix(dt=float(dt)), float).reshape(-1,3).sum(axis=0)
             if not np.isfinite(force).all(): raise RuntimeError("TABLE_CONTACT_NONFINITE")
             steady_contact = force[2] > 0.2 and np.linalg.norm(cube_runtime['linear_velocity_m_s']) < 0.001
-            self._support_stable_frames = self._support_stable_frames + 1 if steady_contact else 0
+            bottom_gap = self._cube_bottom_gap(cube_runtime)
+            geometry_supported = abs(bottom_gap) <= 0.0015 and np.linalg.norm(cube_runtime["linear_velocity_m_s"]) < 0.001
+            support_now = steady_contact or geometry_supported
+            self._support_stable_frames = self._support_stable_frames + 1 if support_now else 0
             msg = self._support_bool_type(); msg.data = self._support_stable_frames >= 3
             self._support_pub.publish(msg)
             cube_runtime["table_contact_force_world_N"] = force.tolist()
-            cube_runtime["table_support_contact"] = msg.data
+            cube_runtime["table_support_contact"] = bool(steady_contact)
+            cube_runtime["table_release_ready"] = msg.data
+            cube_runtime["table_bottom_gap_m"] = bottom_gap
+            cube_runtime["table_support_evidence"] = (
+                "contact_force" if steady_contact else
+                "geometry_settled_no_force" if geometry_supported else "none"
+            )
 
         d6_runtime = self._d6_runtime_state()
         reaction_runtime = self._reaction_recorder.read() if self._reaction_recorder else None

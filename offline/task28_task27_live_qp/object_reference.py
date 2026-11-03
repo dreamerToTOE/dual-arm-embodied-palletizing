@@ -8,6 +8,7 @@ class RigidObjectReference:
         self.offsets = {s: np.linalg.inv(object_pose) @ np.asarray(T) for s,T in tcps.items()}
         self.previous_pose = None
         self.previous_velocity = np.zeros(6)
+        self.previous_acceleration = np.zeros(6)
         self.previous_q = None
         self.previous_dq = {s: np.zeros(7) for s in tcps}
 
@@ -50,5 +51,6 @@ class RigidObjectReference:
             dq[side] = np.zeros(7) if self.previous_q is None else (qref[side]-self.previous_q[side])/dt
             ddq[side] = (dq[side]-self.previous_dq[side])/dt
         self.previous_pose = pose.copy(); self.previous_velocity = velocity.copy()
+        self.previous_acceleration = acceleration.copy()
         self.previous_q = {s:q.copy() for s,q in qref.items()}; self.previous_dq = dq
         return pose, tcps, twists, accels, dq, ddq, qref

@@ -432,6 +432,10 @@ def main():
         UsdGeom.SetStageMetersPerUnit(stage, 1.0)
         UsdGeom.Xform.Define(stage, "/World")
         load_scene()
+        if args.consistent_object_reference:
+            from pxr import PhysxSchema
+            for path in ("/World/Task27/Supply/Cube_01", "/World/Table"):
+                PhysxSchema.PhysxContactReportAPI.Apply(stage.GetPrimAtPath(path)).CreateThresholdAttr().Set(0.0)
         summary["lighting"] = repr(enable_lighting())
         set_camera_view(eye=[2.8, -3.2, 2.3], target=[0.92, 0.0, 0.38], camera_prim_path="/OmniverseKit_Persp")
         viewport = get_active_viewport()
