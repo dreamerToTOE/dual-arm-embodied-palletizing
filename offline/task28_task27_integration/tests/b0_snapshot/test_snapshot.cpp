@@ -11,6 +11,8 @@ int main(int argc, char** argv)
     sample_started_ns: 1000000000, sample_finished_ns: 1001000000,
     cube_xyz_m: [1.097104073, 0.06, 0.26], cube_quaternion_wxyz: [1, 0, 0, 0],
     left_q_rad: [0, 0, 0, 0, 0, 0, 0], right_q_rad: [0, 0, 0, 0, 0, 0, 0]})";
+  assert(!task28_b0::legacySidePressAllowed(true));
+  assert(task28_b0::legacySidePressAllowed(false));
   task28_b0::Snapshot s;
   assert(task28_b0::decode(good, &s));
   assert(task28_b0::fresh(s, 1002000000, 999000000));

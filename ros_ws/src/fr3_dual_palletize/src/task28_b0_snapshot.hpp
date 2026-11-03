@@ -13,6 +13,9 @@ namespace task28_b0
 constexpr std::int64_t kMaxAgeNs = 50000000;
 constexpr std::int64_t kMaxCaptureNs = 50000000;
 
+// The legacy contact phase removes Cube collision geometry and is unavailable to B0.
+constexpr bool legacySidePressAllowed(bool stage_b0) { return !stage_b0; }
+
 struct Snapshot
 {
   std::uint64_t step{0};

@@ -4225,7 +4225,7 @@ int main(int argc, char** argv)
           return false;
         }
 #ifdef TASK27_FIVE_CUBE
-        if (stage_b0_only)
+        if (!task28_b0::legacySidePressAllowed(stage_b0_only))
         {
           RCLCPP_ERROR(node->get_logger(),
             "TASK28_B0_SIDE_PATH_UNVERIFIED: press planning removes Cube from the FCL world.");
