@@ -92,6 +92,25 @@ def test_b0_receipt_distinguishes_single_attachment_from_objective():
     assert not result['relative_objective_enabled'] and not result['object_reference_active']
 
 
+def test_cube_publication_audit_preserves_exact_message_and_compares_sources():
+    path = Path(__file__).resolve().parents[3] / 'isaac/scripts/task28_task27_torque_bridge.py'
+    spec = importlib.util.spec_from_file_location('cube_publication_test', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    pose = SimpleNamespace(position=SimpleNamespace(x=1.096, y=.06, z=.26),
+                           orientation=SimpleNamespace(x=0., y=0., z=0., w=1.))
+    message = SimpleNamespace(poses=[pose], header=SimpleNamespace(frame_id='world',
+                              stamp=SimpleNamespace(sec=2, nanosec=42)))
+    cube = SimpleNamespace(get_world_pose=lambda: ([1.097, .06, .26], [1., 0., 0., 0.]),
+                           get_linear_velocity=lambda: [0., 0., 0.])
+    records, published = [], []
+    bridge = SimpleNamespace(feed=SimpleNamespace(rigids=[cube]), _step=7, _time_s=1.5, _log=records.append)
+    module.CubePoseAuditPublisher(SimpleNamespace(publish=published.append), bridge).publish(message)
+    assert published == [message]
+    assert records[0]['header_ns'] == 2000000042
+    assert np.isclose(records[0]['rigid_prim_xyz_m'][0] - records[0]['ros_usd_xyz_m'][0], .001)
+
+
 def test_matched_comparison_rejects_failed_physical_reset(monkeypatch):
     torque = SimpleNamespace(_time_s=0., _latched_error=None,
         _trajectory_reference=None, _assumed_internal_contact_load=False,

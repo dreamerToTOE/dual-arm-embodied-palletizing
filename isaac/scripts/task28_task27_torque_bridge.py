@@ -33,6 +33,27 @@ TORQUE_FRAME = "task28_t0_dual_sync"
 BRIDGE_SOURCE = Path("/home/ubuntu2004/lmy/dual-arm-embodied-palletizing/isaac/scripts/task26_truck_box_bridge.py")
 
 
+class CubePoseAuditPublisher:
+    """Record the exact ROS pose and the simultaneous rigid-prim reading."""
+    def __init__(self, publisher, bridge):
+        self.publisher, self.bridge = publisher, bridge
+
+    def publish(self, message):
+        position, orientation = self.bridge.feed.rigids[0].get_world_pose()
+        pose = message.poses[0]
+        stamp = message.header.stamp
+        self.bridge._log({"event": "B0_CUBE_POSE_PUBLICATION", "physics_step": self.bridge._step,
+            "simulation_time_s": self.bridge._time_s, "wall_time_ns": time.time_ns(),
+            "header_ns": int(stamp.sec) * 1000000000 + int(stamp.nanosec),
+            "frame_id": message.header.frame_id,
+            "ros_usd_xyz_m": [pose.position.x, pose.position.y, pose.position.z],
+            "ros_usd_quat_xyzw": [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w],
+            "rigid_prim_xyz_m": np.asarray(position, dtype=float).tolist(),
+            "rigid_prim_quat_wxyz": np.asarray(orientation, dtype=float).tolist(),
+            "rigid_linear_velocity_m_s": np.asarray(self.bridge.feed.rigids[0].get_linear_velocity(), dtype=float).tolist()})
+        self.publisher.publish(message)
+
+
 def _finite(value, size, code):
     arr = np.asarray(value, dtype=float).reshape(-1)
     if arr.shape != (size,) or not np.isfinite(arr).all():
@@ -76,6 +97,10 @@ class Task27TorqueBridge:
         self.output_path = Path(output)
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.stream = self.output_path.open("w", encoding="utf-8")
+        self._original_cube_pub = None
+        if self._stage_b0_only:
+            self._original_cube_pub = feed_bridge.cube_pub
+            feed_bridge.cube_pub = CubePoseAuditPublisher(self._original_cube_pub, self)
         self.articulations = feed_bridge.articulations
         self._reaction_recorder = None
         if record_joint_reactions:
@@ -1831,6 +1856,8 @@ class Task27TorqueBridge:
                 self._log({"event": "FAIL_STOP_UNAVAILABLE", "error": repr(stop_exc)})
 
     def close(self):
+        if self._original_cube_pub is not None:
+            self.feed.cube_pub = self._original_cube_pub
         if getattr(self, "_contact_diagnostic", None) is not None:
             self._contact_diagnostic.close()
         try:

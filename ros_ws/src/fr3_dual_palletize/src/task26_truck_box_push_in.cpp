@@ -612,6 +612,13 @@ bool copyRobotDescriptions(const rclcpp::Node::SharedPtr& node)
 class CubeBuffer
 {
 public:
+  struct Receipt
+  {
+    std::int64_t header_ns{0};
+    std::int64_t received_wall_ns{0};
+    std::uint64_t revision{0};
+    std::string frame_id;
+  };
   CubeBuffer(const rclcpp::Node::SharedPtr& node, std::size_t expected_count)
     : expected_count_(expected_count)
   {
@@ -626,6 +633,11 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         poses_ = message->poses;
         ++revision_;
+        receipt_.header_ns = static_cast<std::int64_t>(message->header.stamp.sec) * 1000000000LL + message->header.stamp.nanosec;
+        receipt_.received_wall_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+          std::chrono::system_clock::now().time_since_epoch()).count();
+        receipt_.revision = revision_;
+        receipt_.frame_id = message->header.frame_id;
         ready_ = true;
         condition_.notify_all();
       });
@@ -644,7 +656,7 @@ public:
   }
 
   bool waitNew(std::size_t index, std::uint64_t previous, double timeout_sec,
-               geometry_msgs::msg::Pose* output) const
+               geometry_msgs::msg::Pose* output, Receipt* receipt = nullptr) const
   {
     std::unique_lock<std::mutex> lock(mutex_);
     if (!condition_.wait_for(lock, std::chrono::duration<double>(timeout_sec),
@@ -653,6 +665,7 @@ public:
       return false;
     }
     *output = poses_.at(index);
+    if (receipt) *receipt = receipt_;
     return true;
   }
 
@@ -663,6 +676,7 @@ private:
   std::uint64_t revision_{0};
   std::size_t expected_count_{0};
   std::vector<geometry_msgs::msg::Pose> poses_;
+  Receipt receipt_;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr subscription_;
 };
 
@@ -876,6 +890,22 @@ public:
   const std::string& eefLink() const { return eef_; }
   bool isLeft() const { return left_; }
   bool isClosed() const { return closed_.load(); }
+
+  bool measuredPositions(const std::vector<std::string>& names, std::vector<double>* output) const
+  {
+    if (!output || names.empty()) return false;
+    std::lock_guard<std::mutex> lock(joint_mutex_);
+    output->clear();
+    for (const auto& full_name : names)
+    {
+      const std::string name = full_name.rfind(prefix_, 0) == 0
+        ? full_name.substr(prefix_.size()) : full_name;
+      const auto found = joint_positions_.find(name);
+      if (found == joint_positions_.end() || !std::isfinite(found->second)) return false;
+      output->push_back(found->second);
+    }
+    return true;
+  }
 
   // The pre-contact gate uses this read-only value to distinguish a settled
   // terminal state from a position residual that is still moving.  It is
@@ -5154,7 +5184,22 @@ int main(int argc, char** argv)
       // 不能把它误当成最终无侧缝格位。
       std::this_thread::sleep_for(1500ms);
       geometry_msgs::msg::Pose deep_seated;
-      if (!cubes.waitNew(task.cube_index, std::max(source_revision, release_revision), 2.0, &deep_seated) ||
+      CubeBuffer::Receipt seat_receipt;
+      const bool seat_received = cubes.waitNew(task.cube_index, std::max(source_revision, release_revision),
+        2.0, &deep_seated, &seat_receipt);
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only && seat_received)
+      {
+        const auto now_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+          std::chrono::system_clock::now().time_since_epoch()).count();
+        RCLCPP_INFO(node->get_logger(),
+          "TASK28_B0_SEAT_SAMPLE header_ns=%ld received_wall_ns=%ld acceptance_wall_ns=%ld revision=%lu frame=%s xyz=(%.9f,%.9f,%.9f) gap_mm=%.6f",
+          static_cast<long>(seat_receipt.header_ns), static_cast<long>(seat_receipt.received_wall_ns),
+          static_cast<long>(now_ns), static_cast<unsigned long>(seat_receipt.revision), seat_receipt.frame_id.c_str(),
+          deep_seated.position.x, deep_seated.position.y, deep_seated.position.z, 1000.0 * xSupportGap(task, deep_seated));
+      }
+#endif
+      if (!seat_received ||
           !validDeepWallSeat(node, task, deep_seated))
       {
         all_complete = false;
@@ -5282,8 +5327,25 @@ int main(int argc, char** argv)
       //
       // 因此此刻由 *另一臂* 完成侧向压紧，原推入臂同步携件横移以保持深端贴合；
       // 侧压结束后先松开推入吸盘，再按已验证的 -X 轨迹撤离。
-      const auto& left_after_x = left_push_in;
-      const auto& right_after_x = right_during_push;
+      auto left_after_x = left_push_in;
+      auto right_after_x = right_during_push;
+#ifdef TASK27_FIVE_CUBE
+      if (stage_b0_only)
+      {
+        // Plan the FCL-checked side approach from the measured push endpoint.
+        if (!left.measuredPositions(left_after_x.joint_names, &left_after_x.points.back().positions) ||
+            !right.measuredPositions(right_after_x.joint_names, &right_after_x.points.back().positions))
+        {
+          RCLCPP_ERROR(node->get_logger(), "TASK28_B0_SIDE_START missing measured joint positions.");
+          openBothAndConfirm("safe abort after missing B0 side start");
+          all_complete = false;
+          break;
+        }
+        RCLCPP_INFO(node->get_logger(), "TASK28_B0_SIDE_START measured left=%s right=%s.",
+          formatJointPositions(finalPositions(left_after_x)).c_str(),
+          formatJointPositions(finalPositions(right_after_x)).c_str());
+      }
+#endif
       const auto& pusher_cell_retreat = push_left ? left_cell_retreat : right_during_cell_retreat;
 
 #ifdef TASK27_FIVE_CUBE

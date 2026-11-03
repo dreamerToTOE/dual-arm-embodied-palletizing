@@ -2,6 +2,46 @@
 
 ## 状态：PARTIAL
 
+## 2026-11-03 同步诊断与一次修正验证：B0_PARTIAL
+
+本轮基线 `01f18e700fae3fb5787e03ec8a900a615a29da8a`。按工单仅执行一次同步诊断和一次修正后的完整 GUI 运行；修正运行在原深墙门限失败后停止，**没有达到 B0_COMPLETE**。先前 v1–v5 和 Stage A 原始证据均保留。
+
+| 项目 | 同步诊断 | 唯一修正验证 |
+|---|---:|---:|
+| Stage A、双侧释放、共同退避、右臂 −X 面重抓 | 完成 | 完成 |
+| 实际 +X 位移，首个至最后单侧 CLOSED 帧 | 327.876 mm | 326.691 mm |
+| 原执行器验收时 USD / ROS 深墙 gap | **2.530 mm，通过 3 mm** | **3.800 mm，失败** |
+| 同一发布回调 PhysX 刚体 gap | 2.530 mm | 2.896 mm |
+| 侧压、最终释放与退避 | 侧压 FCL 起点碰撞，中止；安全中止打开两吸盘，未退避 | 未进入侧压；验收失败时右吸盘仍 CLOSED，未完成最终释放或退避 |
+| QP optimal / infeasible，力矩锁存 | 13889 / 0，无 | 15343 / 0，无 |
+| 峰值施加力矩左 / 右，最大变化率 | 36.001 / 36.053 N·m，1023.676 N·m/s | 36.159 / 35.152 N·m，1193.317 N·m/s |
+| 最大实测关节速度 / QP 加速度 | 0.287 rad/s / 10.529 rad/s² | 0.259 rad/s / 10.647 rad/s² |
+| 单侧吸附期关节误差峰值 / RMS | 0.02008 / 0.00422 rad | 0.01851 / 0.00407 rad |
+
+两次实际推送单侧 QP 帧分别为 1844 / 2073；该阶段共同和相对目标均关闭，旧双臂对象参考、G3 内力和双臂 payload 前馈未激活。两次逐关节施加力矩与力矩变化率未超各自原上限，实测速度与 QP 加速度的最大值低于原配置上限；位置预测约束仍在 QP 中。机械臂 position-arm 写入计数均为 0。原 Task27 场景抓取前的供料唤醒仍有直接 Cube 位姿写入；物理推送阶段未新增这类写入。
+
+### 同步位姿根因证据与限制
+
+- 执行器路径：原 Task27 feed 桥以约每 0.05 s **仿真时间**发布 `/task27/cube_poses`，`_pose` 对同一 `/World/Task27/Supply/Cube_01` prim 使用 `UsdGeom.Xformable.ComputeLocalToWorldTransform(Default)`。消息 `frame_id=world`，`header.stamp` 来自 ROS node 时钟；本轮数值与系统墙钟在同一 epoch。执行器 `CubeBuffer` 保存最新消息；本轮新增记录其原消息时间戳、收到消息的系统墙钟和验收系统墙钟。旧 v2/v3 不包含这些关联字段。原 `waitNew` 所依据的 release/source revision 在推送前取得，因此不能保证其返回的是验收调用后才发布的新消息。
+- 轨迹路径：同一 Cube prim 的 `SingleRigidPrim.get_world_pose()` 在本 Isaac 版本有有效物理句柄时通过 PhysX tensor `get_transforms()` 读取刚体 actor 的世界位姿；四元数为 wxyz，ROS 为 xyzw。两个路径都是世界坐标下同一 prim／刚体原点，两个报告使用的原深墙准则均为 `1.160 − (x + 0.060) = 1.100 − x`，没有另一种立方体尺寸或额外 rail 偏移。该原准则采用名义半边长，不是按倾角修正的包络面间距；本轮没有改变它，也没有把几何间距冒称深墙接触力。
+- 同步诊断验收消息 `header_ns=1793693320865796193`，仿真时间 230.750 s，ROS 接收比发布记录晚 0.300 ms，验收比接收晚 69.356 ms。发布回调先记录实际 ROS 消息内 USD 位姿，再紧邻读取刚体位姿；二者 X 均为 `1.097469687 m`，所以同刻 gap 均为 2.530313 mm。之后 FCL 中止与该门限通过是两个独立事实。
+- 修正验证的验收消息 `header_ns=1793694324924568181`，仿真时间 255.650 s；发布到接收 0.243 ms，接收到验收 66.547 ms。**同一消息的发布回调中** USD X=`1.096200466 m`、刚体 X=`1.097104073 m`，差 `0.903606 mm`；原执行器验收分别对应 3.799534 mm 和刚体几何 2.895927 mm。这次差异不依赖事后末帧、ROS 传输延迟或 gap 算式，在验收前 0.75 s 仿真时间内两读数各自维持该差值。速度接口同期报告约 +1.69 mm/s，而两位姿读数近似不变，故不能仅由速度推断真实位移。
+- 诊断运行的运动窗口中，USD X 在 228.750–228.950 s 连续 0.20 s 仿真时间保持 `1.077546358 m`，同回调刚体 X 从 `1.077546358` 前移至 `1.080938578 m`，最大差 **3.392 mm**。这证实运行时两条状态更新路径可产生毫米级不一致；验收消息直接携带的数值与执行器记录逐位相符。USD／PhysX 写回或缓存的具体内部机制、以及旧 v2/v3 每次各 0.915 / 0.856 mm 差异的确切来源，仍无法由当时缺少同步时间戳的日志证明。不得用刚体读数替代原 ROS 验收或把本轮结果追认成功。
+
+### 侧压 FCL 修正及本次验证范围
+
+诊断运行在深墙通过后，全部 8 个执行期侧压高位入场候选均在 `t=0` 检测到 `right_fr3_side_suction <-> task26_cube_1`，模型穿入 1.434 mm，执行器按原条件中止并确认双吸盘 OPEN。原重抓链预检使用名义 Cube `x=1.100 m` 和名义推送末端关节；执行期重规划使用实测 Cube `x=1.097470 m`，却仍把名义关节终点作为另一臂起点。同期实测右 TCP X 约 1.036610 m，名义推送 TCP X 为 1.039 m，差约 2.39 mm。该起点／物体状态不一致能解释模型穿入，但 FCL 读数本身不证明物理穿透，也不能因此放宽碰撞规则。
+
+最小候选修正为：仅在 Stage B0 侧压执行规划前，从现有各臂 JointState 读取完整有限的实测关节位置作为两个规划起点；缺失时安全中止；保留 Cube、墙体、工具和双臂的原有 FCL 检查。修正后的唯一完整运行在 **3.800 mm** 深墙门限处提前停止，**没有执行到该修正分支**，故不能声称 FCL 问题已修复或路径安全；现有 Python 聚焦测试也未覆盖该 C++ 侧压起点分支。继续工作需先解决两个位姿源更新一致性及原验收下的剩余间隙，再单独验证该候选。
+
+### 本轮证据和构建
+
+- [同步诊断消息关联](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_diagnostic_v1/pose_sync/acceptance_pose_sync.json)、[验收前后双源时序](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_diagnostic_v1/pose_sync/acceptance_pose_window.jsonl)、[诊断执行日志](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_diagnostic_v1/task27_executor.log)、[QP/位姿指标](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_diagnostic_v1/compact/b0_metrics.json)。
+- [修正验证消息关联](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/pose_sync/acceptance_pose_sync.json)、[验收前后双源时序](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/pose_sync/acceptance_pose_window.jsonl)、[修正验证执行日志](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/task27_executor.log)、[QP/位姿指标](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/compact/b0_metrics.json)、[GUI 场景初始化截图](../../offline/task28_task27_integration/evidence/task28_b0_pose_sync_corrected_v1/scene_loaded.png)。初始化图不是最终状态图；本轮失败后没有最终退避截图，原始 60 Hz 轨迹保留本地。诊断运行有 8 条侧压起点 FCL 碰撞记录，修正运行未进入该预检且未记录 FCL collision。
+- runner 使用原始任务配置、唯一 batch、GUI、隔离 ROS domain 104 / 105 和新运行 ID；参数与文末 B0 命令相同。诊断执行器 build/install SHA-256 为 `99837ec2833f5a040d43fe5257d4123ea411b392b76af7fd5e41f556536d23a0`；修正验证版本为 `276685c499b46c7edc0b8ec45d052d2c0da389ca77df01153a7d941c7cdd88fe`，均校验 build 和 install 一致。两次均只运行 Cube_01。
+- 聚焦回归 `PYTHONPATH=offline/task28_g1_1:. python3 -m pytest -q offline/task28_task27_live_qp/tests offline/task28_g3_stage_a/tests`：**53 passed**。同步工具的测试验证精确匹配消息、而非取较晚样本；没有扩大碰撞允许、改变 3 mm、力矩或其他硬约束。
+
+
 在原 Task27 Isaac Sim GUI 场景中，三次完整尝试均完成冻结 Stage A、右臂在 Cube_01 的 −X 面单侧重新吸附，并用 live torque QP 物理执行原有 16 段 +X 推送。**三次均未通过执行器的深墙 3 mm 支撑间隙门限，因此 B0 未完成**：没有执行后续侧压、最终单侧释放和最终退避，也没有证据证明释放后稳定。不能把 QP 求解成功或实际推动误报为完整 B0 PASS。
 
 冻结基线为 `966fda6195723b45c63c04a182d4c800085d9a89`。它记录三次 Stage A GUI 物理周期复现，0.25 mm XY 精度指标仍未满足；本任务不重新优化它。原 Task27 场景几何和夹爪保留。原场景抓取前仍通过直接设置位姿将休眠 Cube_01 唤醒到供料槽；该供料行为与其后的物理抓取、推送应分开理解，本轮没有在物理推送期间直接写 Cube 位姿。机械臂力矩接管后的 position-arm 写入计数为 0。
