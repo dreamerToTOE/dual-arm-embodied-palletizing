@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from isaac.scripts.task28_task27_one_pass import load_scene
 from offline.task28_stage_b_contact.c2_control import Controller, json_record
+from offline.task28_stage_b_contact.c2_evidence import EvidenceWriter
+from offline.task28_stage_b_contact.c2_preflight import SupportPreflight
 
 CUBE = '/World/Task27/Supply/Cube_01'
 TABLE = '/World/Table'
@@ -42,8 +44,8 @@ def main():
     app = SimulationApp({'headless': True, 'create_new_stage': True, 'renderer': 'RaytracedLighting',
                          'multi_gpu': False, 'sync_loads': True})
     rows, events, warmup_events, subs = [], [], [], []
-    streams = {name: (out / name).open('x') for name in ('timeseries.jsonl', 'contact_events.jsonl')}
-    summary = {'status': 'FAILED', 'reason': 'not_started', 'cube': CUBE, 'tool': TOOL,
+    writer = EvidenceWriter(out)
+    summary = {'status': 'FAILED', 'reason': 'not_started', 'preflight': 'NOT_STARTED', 'cube': CUBE, 'tool': TOOL,
                'table': TABLE, 'full_fr3_execution': False, 'cube_pose_writes_during_contact': 0}
     try:
         import omni.kit.app
@@ -124,10 +126,9 @@ def main():
                 row = {'step_at_callback': state['step'], 'wall_ns': time.time_ns(), 'colliders': paths, 'points': points}
                 if state['started']:
                     pending.append(row)
-                    events.append(row)
                     try:
-                        streams['contact_events.jsonl'].write(json_record(row) + '\n')
-                        streams['contact_events.jsonl'].flush()
+                        writer.write('event', row)
+                        events.append(row)
                     except Exception as exc:
                         state['error'] = f'CONTACT_EVIDENCE_WRITE:{exc!r}'
                 else:
@@ -152,17 +153,27 @@ def main():
         if any(h == _dynamic_control.INVALID_HANDLE for h in (cube_h, tool_h, diag_h)):
             raise RuntimeError('INVALID_PHYSX_HANDLE')
         cube_mass = float(dc.get_rigid_body_properties(cube_h).mass)
-        physics_scene = UsdPhysics.Scene(stage.GetPrimAtPath('/physicsScene'))
-        gravity = float(physics_scene.GetGravityMagnitudeAttr().Get())
-        gravity_dir = physics_scene.GetGravityDirectionAttr().Get()
-        if (not np.isfinite(cube_mass) or abs(cube_mass - .8) > .001 or not np.isfinite(gravity) or gravity <= 0 or
-                gravity_dir is None or not np.allclose(np.asarray(gravity_dir, dtype=float), [0, 0, -1], atol=1e-6)):
-            raise RuntimeError('CUBE_MASS_OR_GRAVITY_NOT_VERIFIED')
+        summary['cube_runtime_mass_kg'] = cube_mass
         view.initialize()
         support_view.initialize()
         if (not view.is_physics_handle_valid() or not support_view.is_physics_handle_valid() or
                 view.num_shapes != 1 or view.num_filters != 1 or support_view.num_shapes != 1 or support_view.num_filters != 1):
             raise RuntimeError(f'INVALID_PAIR_VIEW:{view.num_shapes}:{view.num_filters}')
+        gravity_value = view._physics_sim_view.get_gravity()
+        gravity_vector = xyz(gravity_value) if gravity_value is not None else None
+        summary['gravity_vector_m_s2'] = gravity_vector
+        gravity = float(np.linalg.norm(gravity_vector)) if gravity_vector is not None else 0.0
+        summary['gravity_m_s2'] = gravity
+        if (not np.isfinite(cube_mass) or abs(cube_mass - .8) > .001 or not np.isfinite(gravity) or gravity <= 0 or
+                not np.allclose(np.asarray(gravity_vector, dtype=float) / gravity, [0, 0, -1], atol=1e-6)):
+            raise RuntimeError('CUBE_MASS_OR_GRAVITY_NOT_VERIFIED')
+        if not cube.HasAPI(UsdPhysics.CollisionAPI) or not table.HasAPI(UsdPhysics.CollisionAPI):
+            raise RuntimeError('CUBE_OR_TABLE_COLLISION_DISABLED')
+        cube_scale = cube.GetAttribute('xformOp:scale:task26_size').Get()
+        table_scale = table.GetAttribute('xformOp:scale:task26_size').Get()
+        if (not np.allclose(np.asarray(cube_scale), [.12, .12, .12], atol=1e-6) or
+                not np.allclose(np.asarray(table_scale), [1.5, .8, .2], atol=1e-6)):
+            raise RuntimeError('CUBE_OR_TABLE_GEOMETRY_MISMATCH')
         dc.wake_up_rigid_body(diag_h)
         dc.set_rigid_body_linear_velocity(diag_h, (0.0, .0182887595, 0.0))
         dc.wake_up_rigid_body(cube_h)
@@ -172,6 +183,8 @@ def main():
         if abs(cube_initial.y) > .002 or abs(cube_initial.z - .26) > .002:
             raise RuntimeError('CUBE_NOT_STABLY_SUPPORTED')
         controller = Controller()
+        preflight = SupportPreflight(cube_mass, gravity_vector)
+        summary['preflight'] = 'PENDING'
         state['started'] = True
         summary.update(scene='original Task27; proxy is a copied original left tool',
                        warmup_events=len(warmup_events), initial_cube_xyz_m=xyz(cube_initial),
@@ -184,6 +197,7 @@ def main():
                        diag_sleep_threshold=diag_phys.GetSleepThresholdAttr().Get(),
                        solver_type=attr(stage.GetPrimAtPath('/physicsScene'), 'physxScene:solverType'),
                        enable_stabilization=attr(stage.GetPrimAtPath('/physicsScene'), 'physxScene:enableStabilization'),
+                       cube_scale_m=list(cube_scale), table_scale_m=list(table_scale),
                        cube_contact_offset=attr(cube, 'physxCollision:contactOffset'),
                        cube_rest_offset=attr(cube, 'physxCollision:restOffset'),
                        table_contact_offset=attr(table, 'physxCollision:contactOffset'),
@@ -228,8 +242,17 @@ def main():
                             unexpected.append(paths)
                     elif any(is_tool(p) for p in paths) and active:
                         unexpected.append(paths)
-                force = np.asarray(view.get_contact_force_matrix(dt=float(dt)), dtype=float).reshape(-1, 3)[0]
-                support_force = np.asarray(support_view.get_contact_force_matrix(dt=float(dt)), dtype=float).reshape(-1, 3)[0]
+                pair_matrix = np.asarray(view.get_contact_force_matrix(dt=float(dt)), dtype=float)
+                support_matrix = np.asarray(support_view.get_contact_force_matrix(dt=float(dt)), dtype=float)
+                net_matrix = np.asarray(view.get_net_contact_forces(dt=float(dt)), dtype=float)
+                if pair_matrix.shape != (1, 1, 3) or support_matrix.shape != (1, 1, 3) or net_matrix.shape != (1, 3):
+                    raise RuntimeError('CONTACT_MATRIX_SHAPE_MISMATCH')
+                force, support_force, net_force = pair_matrix[0, 0], support_matrix[0, 0], net_matrix[0]
+                friction, _, counts, starts = support_view.get_friction_data(dt=float(dt))
+                count, start_index = int(np.asarray(counts)[0, 0]), int(np.asarray(starts)[0, 0])
+                friction_force = np.asarray(friction, dtype=float)[start_index:start_index + count].sum(axis=0)
+                if not all(np.isfinite(x).all() for x in (force, support_force, net_force, friction_force)):
+                    raise RuntimeError('NONFINITE_CONTACT_READING')
                 cp, tp, dp = (dc.get_rigid_body_pose(h).p for h in (cube_h, tool_h, diag_h))
                 cv, tv, dv = (dc.get_rigid_body_linear_velocity(h) for h in (cube_h, tool_h, diag_h))
                 cube_angular, diag_angular = (dc.get_rigid_body_angular_velocity(h) for h in (cube_h, diag_h))
@@ -247,19 +270,34 @@ def main():
                        'tool_speed': float(np.linalg.norm(xyz(tv))), 'cube_speed': float(np.linalg.norm(xyz(cv))),
                        'support_force_z': float(support_force[2]), 'support_event_z': float(support_impulse[2] / dt),
                        'expected_weight_N': cube_mass * gravity}
-                action = controller.update(obs)
+                if summary['preflight'] != 'PASS':
+                    result = preflight.update(obs, xyz(cv), cube_impulse)
+                    summary['preflight_diagnostics'] = result
+                    if result['status'] == 'FAILED':
+                        summary['preflight'] = 'FAILED'
+                        action = controller.fail(result['reason'])
+                    else:
+                        if result['status'] == 'PASS':
+                            summary['preflight'] = 'PASS'
+                            controller.previous_step, controller.previous_time = state['step'], state['time_s']
+                        action = {'state': 'PREFLIGHT', 'reference_N': 0.0, 'command_N': 0.0, 'reason': None}
+                else:
+                    action = controller.update(obs)
                 row = {**obs, **action, 'wall_ns': time.time_ns(),
                              'cube_xyz_m': xyz(cp), 'tool_xyz_m': xyz(tp),
                              'cube_velocity_xyz_m_s': xyz(cv), 'tool_velocity_xyz_m_s': xyz(tv),
                              'tool_cube_force_world_N': force.tolist(), 'cube_contact_impulse_world_Ns': cube_impulse.tolist(),
                              'cube_tool_impulse_world_Ns': pair_impulse.tolist(), 'cube_table_impulse_world_Ns': support_impulse.tolist(),
                              'cube_table_force_world_N': support_force.tolist(),
+                             'cube_net_contact_force_world_N': net_force.tolist(),
+                             'cube_table_friction_force_world_N': friction_force.tolist(),
+                             'cube_other_contact_impulse_world_Ns': (cube_impulse - pair_impulse - support_impulse).tolist(),
+                             'contact_matrix_shape': list(pair_matrix.shape),
                              'diag_xyz_m': xyz(dp), 'diag_velocity_xyz_m_s': xyz(dv),
                              'cube_angular_velocity_rad_s': xyz(cube_angular), 'diag_angular_velocity_rad_s': xyz(diag_angular),
                              'cube_sleeping': bool(sim.is_sleeping(stage_id, cube_path)),
                              'diag_sleeping': bool(sim.is_sleeping(stage_id, diag_path))}
-                streams['timeseries.jsonl'].write(json_record(row) + '\n')
-                streams['timeseries.jsonl'].flush()
+                writer.write('sample', row)
                 rows.append(row)
                 dc.apply_body_force(tool_h, (0., action['command_N'], 0.), (float(tp.x), float(tp.y), float(tp.z)), True)
             except Exception as exc:
@@ -283,15 +321,14 @@ def main():
     finally:
         for sub in subs:
             sub.unsubscribe()
-        for stream in streams.values():
-            stream.close()
-        with (out / 'summary.json').open('x') as stream:
-            json.dump(summary, stream, indent=2, allow_nan=False)
-            stream.write('\n')
+        summary = writer.finish(summary)
         print('TASK28_C2', json.dumps(summary), flush=True)
-        app.close()
     return 0 if summary['status'] == 'RECORDED' else 1
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    import os
+    status = main()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(status)

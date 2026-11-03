@@ -1,0 +1,51 @@
+{
+  "execution_status": "FAILED",
+  "reason": "RuntimeError('PREFLIGHT_SUPPORT_OR_MOMENTUM_MISMATCH')",
+  "samples": 13,
+  "contact_event_file_available": true,
+  "momentum_assumptions": "mass=0.800000011920929 kg, gravity=(0,0,-9.8100004196167) m/s\u00b2; runtime values recorded",
+  "first_state": "PREFLIGHT",
+  "last_state": "FAILED",
+  "states": [
+    "PREFLIGHT",
+    "FAILED"
+  ],
+  "max_force_N": 0.0,
+  "min_force_N": 0.0,
+  "ramp_samples": 0,
+  "ramp_force_min_N": null,
+  "ramp_force_max_N": null,
+  "ramp_rmse_N": null,
+  "ramp_reference_range_N": null,
+  "max_abs_tool_displacement_m": 0.0,
+  "max_abs_cube_displacement_m": 2.1423732832204223e-07,
+  "max_penetration_m": 1.5273690223693848e-07,
+  "support_force_min_N": 1.3843761682510376,
+  "unexpected_pairs": 0,
+  "final_force_N": 0.0,
+  "momentum_residual_world_Ns": [
+    -2.5905619645016182e-05,
+    8.019519710971334e-05,
+    1.0175194479787169
+  ],
+  "sleep_diagnostic_ever_sleeping": false,
+  "diag_first_sleep_step": null,
+  "diag_first_sleep_time_s": null,
+  "pair_events": 65,
+  "acceptance_checks": {
+    "complete_state_sequence": false,
+    "preflight_pass": false,
+    "contact_events_available": true,
+    "no_safety_failure_or_unexpected_contact": false,
+    "fresh_world_frame_observations": true,
+    "force_tracking": false,
+    "separated_and_stopped": true,
+    "gravity_and_all_contact_momentum_balance": false,
+    "runtime_mass_and_gravity_recorded": true,
+    "complete_evidence_and_process_exit": false
+  },
+  "momentum_residual_limit_Ns": 0.07848000861942797,
+  "force_tracking_criterion": "at least 30 ramp samples; RMSE < 0.03 N and force span > 0.05 N",
+  "force_tracking_pass": false,
+  "status": "B_C2R_BLOCKED"
+}

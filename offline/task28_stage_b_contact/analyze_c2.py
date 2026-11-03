@@ -9,6 +9,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from offline.task28_stage_b_contact.c2_evidence import verify_evidence
+
 
 def main():
     root = Path(sys.argv[1])
@@ -16,6 +19,7 @@ def main():
     event_path = root / 'contact_events.jsonl'
     events = [json.loads(line) for line in event_path.read_text().splitlines()] if event_path.exists() else []
     summary = json.loads((root / 'summary.json').read_text())
+    label = 'B_C2R' if 'preflight' in summary else 'B_C2'
     mass = summary.get('cube_runtime_mass_kg', .8)
     gravity_magnitude = summary.get('gravity_m_s2', 9.81)
     result = {'execution_status': summary['status'], 'reason': summary.get('reason'), 'samples': len(rows),
@@ -27,7 +31,7 @@ def main():
     if not rows:
         for ax in axes:
             ax.text(.5, .5, 'No physics samples recorded', ha='center', va='center', transform=ax.transAxes)
-        result['status'] = 'B_C2_BLOCKED'
+        result['status'] = f'{label}_BLOCKED'
     else:
         t = np.array([r['time_s'] for r in rows])
         force = np.array([r['force_y'] for r in rows])
@@ -41,7 +45,7 @@ def main():
         gravity = np.array([0., 0., -gravity_magnitude])
         # The first row is the initial measured state; subsequent impulses act between samples.
         residual = mass * (v[-1] - v[0]) - impulses[1:].sum(axis=0) - mass * gravity * dts[1:].sum()
-        levels = ['APPROACH', 'CONTACT', 'FORCE_RAMP', 'EXIT', 'DONE', 'FAILED']
+        levels = ['PREFLIGHT', 'APPROACH', 'CONTACT', 'FORCE_RAMP', 'EXIT', 'DONE', 'FAILED']
         codes = np.array([levels.index(s) for s in state])
         axes[0].plot(t, force, label='tool on Cube +Y'); axes[0].axhline(1.0, color='r', ls='--', label='limit'); axes[0].set_ylabel('Force N'); axes[0].legend()
         axes[1].plot(t, ref, label='reference'); axes[1].plot(t, force, label='measured'); axes[1].set_ylabel('Force N'); axes[1].legend()
@@ -74,11 +78,12 @@ def main():
                       pair_events=len(events) if event_path.exists() else None)
         force_tracking = bool(len(error) >= 30 and np.sqrt(np.mean(error ** 2)) < .03 and
                               np.max(force[ramp]) - np.min(force[ramp]) > .05)
-        required = ['APPROACH', 'CONTACT', 'FORCE_RAMP', 'EXIT', 'DONE']
+        required = (['PREFLIGHT'] if label == 'B_C2R' else []) + ['APPROACH', 'CONTACT', 'FORCE_RAMP', 'EXIT', 'DONE']
         observed = list(dict.fromkeys(state))
         balance_limit = max(.02, .05 * mass * gravity_magnitude * float(dts[1:].sum()))
         checks = {
             'complete_state_sequence': observed == required,
+            'preflight_pass': summary.get('preflight') == 'PASS' if label == 'B_C2R' else True,
             'contact_events_available': event_path.exists(),
             'no_safety_failure_or_unexpected_contact': not result['unexpected_pairs'] and all(not r['reason'] for r in rows),
             'fresh_world_frame_observations': all(r['valid'] and r['frame'] == 'world' and
@@ -90,13 +95,19 @@ def main():
             'runtime_mass_and_gravity_recorded': abs(summary.get('cube_runtime_mass_kg', 0) - .8) < .001 and
                                                  summary.get('gravity_m_s2') is not None,
         }
+        exit_path = root / 'process_exit.json'
+        process = json.loads(exit_path.read_text()) if exit_path.exists() else {}
+        checks['complete_evidence_and_process_exit'] = (verify_evidence(root, process.get('child_exit_code', -1))[0]
+                                                         and process.get('wrapper_exit_code') == 0)
         checks = {name: bool(value) for name, value in checks.items()}
         complete = bool(summary['status'] == 'RECORDED' and all(checks.values()))
         result['acceptance_checks'] = checks
         result['momentum_residual_limit_Ns'] = balance_limit
         result['force_tracking_criterion'] = 'at least 30 ramp samples; RMSE < 0.03 N and force span > 0.05 N'
         result['force_tracking_pass'] = force_tracking
-        result['status'] = 'B_C2_PASS' if complete else 'B_C2_PARTIAL'
+        blocked = (label == 'B_C2R' and summary.get('preflight') == 'FAILED' and
+                   'SUPPORT_OR_MOMENTUM_MISMATCH' in str(summary.get('reason')))
+        result['status'] = f'{label}_PASS' if complete else f'{label}_BLOCKED' if blocked else f'{label}_PARTIAL'
     axes[-1].set_xlabel('Simulation time since control start (s)')
     fig.suptitle(f'TASK28 C2 isolated proxy, not FR3 — {summary["status"]}')
     fig.savefig(root / 'c2_timeseries.png', dpi=150)
