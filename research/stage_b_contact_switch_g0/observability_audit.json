@@ -1,0 +1,11 @@
+{
+  "study": "Stage B G0",
+  "channels": [
+    {"signal":"Cube pose","source":"PhysX dynamic-control rigid-body pose","synchronization":"pre/post callbacks on the same physics-step stream; C1 patched runs include both","validation_status":"PARTIAL: verified in minimal/isolated scenes; fuller-scene transfer gate failed","intended_use":"position/orientation feedback"},
+    {"signal":"Cube velocity","source":"PhysX dynamic-control linear/angular velocity","synchronization":"pre-step and post-step callbacks with contiguous step IDs","validation_status":"PARTIAL: momentum-consistent in C1 awake and C3 isolated tool runs","intended_use":"motion feedback and consistency check"},
+    {"signal":"Cube/Table force","source":"RigidContactView contact-force matrix plus raw contact-report impulses","synchronization":"same callback; matrix force converted with actual physics dt; raw dt=1 retained as impulse","validation_status":"PARTIAL: VERIFIED for minimal awake interval; sleep reports cease and fuller-scene support preflight fails","intended_use":"support diagnostics only until fuller-scene discrepancy is resolved"},
+    {"signal":"Cube/Wall force","source":"RigidContactView Cube/DeepWall matrix and contact reports","synchronization":"same callback, geometric gap and force/event step IDs recorded","validation_status":"PARTIAL: one loaded trial consistent; no reproducible unload and two bounded failures","intended_use":"diagnostic contact transition, not force control yet"},
+    {"signal":"Cube/Tool force","source":"isolated rigid tool proxy RigidContactView and pair reports","synchronization":"same physics-step sample and event wall timestamp","validation_status":"VERIFIED for isolated rigid proxy in 3 repeated runs","intended_use":"isolated manipulation/contact diagnostics; does not prove suction"},
+    {"signal":"Suction state","source":"gripper/suction feedback","synchronization":"not sampled in G0","validation_status":"UNOBSERVABLE","intended_use":"attachment integrity and recovery gating"}
+  ]
+}

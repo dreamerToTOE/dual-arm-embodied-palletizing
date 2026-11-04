@@ -1,0 +1,44 @@
+{
+  "study": "Stage B G0 contact observability",
+  "created_after_first_run": true,
+  "process_order_deviation": "The protocol record was reconstructed after the first bounded physics runs; tolerances were copied from existing D1/C2 code and the independently verified 0.8 kg / 7.848 N reference, not tuned to final outcomes. This deviation is part of the G0 limitation.",
+  "no_post_observation_tuning": true,
+  "environment": {
+    "isaac_sim": "4.5.0",
+    "gpu": "NVIDIA GeForce RTX 3070 8 GiB",
+    "cpu_threads": 16,
+    "memory_gib_total": 46
+  },
+  "common": {
+    "runtime_mass_kg": {"expected": 0.8, "tolerance": 0.001},
+    "gravity_world_m_s2": {"expected": [0.0, 0.0, -9.81], "tolerance": 0.001},
+    "physics_dt_s": {"min": 0.005, "max": 0.03},
+    "step_alignment": "monotonic contiguous integer step IDs; callback sample uses the same physics-step dt",
+    "contact_matrix": "shape (1,1,3), finite values; force = raw impulse / actual physics dt; dt=1 is retained only as raw impulse",
+    "motion_bounds": "abort if Cube displacement exceeds 0.30 m or speed exceeds 0.8 m/s",
+    "exit_status": "record child and wrapper status; nonzero status is evidence, not a silent omission"
+  },
+  "c1_cube_table": {
+    "awake_support": "mean normal force within 5% of m*|g| = 7.848 N over the settled awake interval",
+    "awake_momentum": "per-step unexplained impulse max <= 0.07848 N s (1% of weight over one nominal 60 Hz step); report components",
+    "sleep_semantics": "sleep frames are excluded from the active-body gravity balance; loss of continuous reports is not interpreted as loss of support",
+    "repeat_requirement": "three independent complete runs for the critical awake claim"
+  },
+  "c2_cube_deep_wall": {
+    "loaded_contact": "wall normal matrix force > 0.02 N and matching wall event impulse > 0.0002 N s with wall gap <= 1e-4 m",
+    "unloaded_contact": "only count as unloaded when wall force <= 0.02 N and separation persists for >10 samples after withdrawal",
+    "interpretation": "contact-offset/event-only samples are not loaded-contact proof"
+  },
+  "c3_tool_cube": {
+    "separation_force_N": 1e-5,
+    "transverse_fraction": 0.01,
+    "pair_impulse_force_mismatch_Ns": 1e-6,
+    "momentum_match_Ns": 1e-5,
+    "repeat_requirement": "three independent complete runs"
+  },
+  "c4_fuller_scene": {
+    "preflight_support_relative_error": 0.05,
+    "preflight_momentum_limit_Ns": 0.07848,
+    "gate": "do not transfer an observation channel to controller use when the fuller-scene preflight fails"
+  }
+}

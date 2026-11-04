@@ -1,0 +1,42 @@
+{
+  "status": "D1_PARTIAL",
+  "reason": "minimal awake support closes; earlier awake proxy-run discrepancy remains unexplained",
+  "samples": 240,
+  "events": 24,
+  "pairs": {
+    "/World/Cube_01 <-> /World/Table": 24
+  },
+  "first_sleep_step": 25,
+  "awake_samples": 24,
+  "sleeping_samples": 216,
+  "awake_force_z_mean_N": 7.847575147946675,
+  "awake_force_z_min_N": 7.838226795196533,
+  "awake_force_z_max_N": 7.848058223724365,
+  "awake_residual_sum_Ns": [
+    2.454085843231219e-10,
+    -9.298077734728842e-11,
+    1.16321903859129e-07
+  ],
+  "awake_residual_abs_max_Ns": [
+    2.7844172377933935e-10,
+    3.4342239143593523e-10,
+    1.714030933852584e-08
+  ],
+  "sleep_naive_residual_sum_Ns": [
+    -8.554090873212974e-05,
+    4.9639313522939574e-05,
+    28.252973055582984
+  ],
+  "sleep_force_z_max_N": 0.0,
+  "matrix_event_impulse_max_diff_Ns": 1.30385160446167e-08,
+  "matrix_dt_scaling_max_diff_Ns": 5.099193067792385e-09,
+  "max_speed_m_s": 0.00024734301673315096,
+  "max_position_change_m": 7.246372895419046e-08,
+  "dt_min_s": 0.01666666753590107,
+  "dt_max_s": 0.01666666753590107,
+  "pre_velocity_previous_post_max_diff_m_s": 0.0,
+  "physics_callbacks_per_app_update": {
+    "1": 240
+  },
+  "raw_sleep_balance_warning": "naively applying gravity to a sleeping body does not describe a PhysX active-body step; transition impulse is not separately exposed"
+}
