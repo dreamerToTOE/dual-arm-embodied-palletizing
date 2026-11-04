@@ -14,6 +14,7 @@ std::shared_ptr<FclObject> fclBox(const Eigen::Vector3d& xyz, const Eigen::Vecto
   t.translation() = xyz; t.linear() = rotation.toRotationMatrix();
   return std::make_shared<FclObject>(std::make_shared<fcl::Boxd>(size.x(), size.y(), size.z()), t);
 }
+std::vector<std::shared_ptr<FclObject>> extra_obstacles;
 bool cubeWorldClear(const Eigen::Isometry3d& object)
 {
   const auto cube = fclBox(object.translation(), {.12,.12,.12}, Eigen::Quaterniond(object.rotation()));
@@ -21,6 +22,11 @@ bool cubeWorldClear(const Eigen::Isometry3d& object)
     fclBox({.45,0,.1},{1.5,.8,.2}), fclBox({1.07,0,.275},{.02,.646,.15}),
     fclBox({.935,-.313,.275},{.29,.02,.15}), fclBox({.935,.313,.275},{.29,.02,.15})};
   for (const auto& obstacle : world) {
+    fcl::CollisionRequestd req; fcl::CollisionResultd res;
+    fcl::collide(cube.get(), obstacle.get(), req, res);
+    if (res.isCollision()) return false;
+  }
+  for (const auto& obstacle : extra_obstacles) {
     fcl::CollisionRequestd req; fcl::CollisionResultd res;
     fcl::collide(cube.get(), obstacle.get(), req, res);
     if (res.isCollision()) return false;
@@ -45,7 +51,7 @@ Eigen::Isometry3d interpolatePose(const Eigen::Isometry3d& a, const Eigen::Isome
 #ifndef STAGE_B_YAW_LIBRARY
 int main(int argc, char** argv)
 {
-  if (argc != 8) { std::cerr << "usage: yaw_planner URDF SRDF FIXTURE PRECONTACT_CSV OUTPUT_CSV DESIRED_YAW_DEG direct|correct\n"; return 2; }
+  if (argc < 8 || argc > 10) { std::cerr << "usage: yaw_planner URDF SRDF FIXTURE PRECONTACT_CSV OUTPUT_CSV DESIRED_YAW_DEG direct|correct [OCCUPANCY_YAML] [CONTACT_GAP_MM]\n"; return 2; }
   const auto started=std::chrono::steady_clock::now();
   int ik_attempts=0, samples=0; double joint_length=0;
   std::string phase="initial";
@@ -60,9 +66,32 @@ int main(int argc, char** argv)
     const double desired_yaw=std::stod(argv[6])*M_PI/180.;
     require(std::isfinite(desired_yaw),"non-finite desired yaw");
     const std::string mode=argv[7]; require(mode=="direct" || mode=="correct","invalid mode");
+    const std::string occupancy_path = argc >= 9 ? argv[8] : "";
+    const double desired_gap = argc >= 10 ? std::stod(argv[9]) / 1000.0 : .001;
+    require(std::isfinite(desired_gap) && desired_gap > 0.0 && desired_gap <= .003,
+            "contact gap must be in (0,3] mm");
     const auto ln=names("left"), rn=names("right");
     auto scene=std::make_shared<planning_scene::PlanningScene>(model);
     addWorld(*scene,f,true);
+    if (!occupancy_path.empty() && occupancy_path != "-") {
+      const auto occupancy = YAML::LoadFile(occupancy_path);
+      require(occupancy.IsSequence(), "occupancy must be a sequence");
+      int index = 0;
+      for (const auto& item : occupancy) {
+        require(item.IsMap(), "occupancy item must be a map");
+        std::array<double, 3> xyz{}, size{};
+        require(task28_b0::finiteArray(item["xyz_m"], xyz) && task28_b0::finiteArray(item["size_m"], size),
+                "invalid occupancy box");
+        const Eigen::Vector3d center(xyz[0], xyz[1], xyz[2]);
+        const Eigen::Vector3d dimensions(size[0], size[1], size[2]);
+        require((dimensions.array() - .12).abs().maxCoeff() < 1e-9, "occupancy must use the original Cube dimensions");
+        const std::string id = "occupied_cube_" + std::to_string(index);
+        require(!item["id"] || item["id"].as<std::string>() == id, "unexpected occupancy id");
+        addBox(*scene, id, center, dimensions);
+        extra_obstacles.push_back(fclBox(center, dimensions));
+        ++index;
+      }
+    }
     lma_kinematics_plugin::LMAKinematicsPlugin ik;
     require(ik.initialize(node,*model,"left_arm","world",{"left_fr3_side_suction_tcp"},.005),"IK init failed");
     require(ik.getJointNames()==ln,"IK joint order mismatch");
@@ -133,11 +162,17 @@ int main(int argc, char** argv)
       double d2=0; for(std::size_t j=0;j<7;++j) d2+=(next[j]-current[j])*(next[j]-current[j]);
       joint_length+=std::sqrt(d2); current=next; object=target_object;
     };
-    phase="approach_1mm";
-    for(int i=1;i<=4;++i) { auto next=tcp; next.translation()+=f.orientation*Eigen::Vector3d(0,.002*i/4,0); step(object,next); }
+    phase=std::abs(desired_gap-.001)<1e-9 ? "approach_1mm" : "approach_contact";
+    const double approach_distance = .003 - desired_gap;
+    const int approach_steps = std::max(1, static_cast<int>(std::ceil(approach_distance / .0005)));
+    for(int i=1;i<=approach_steps;++i) {
+      auto next=tcp;
+      next.translation()+=f.orientation*Eigen::Vector3d(0,approach_distance*i/approach_steps,0);
+      step(object,next);
+    }
     tcp=fk(current);
     const double attach_gap=-(f.orientation.inverse()*(tcp.translation()-f.cube)).y()-.06;
-    require(std::abs(attach_gap-.001)<.0001,"grasp gap mismatch");
+    require(std::abs(attach_gap-desired_gap)<.0001,"grasp gap mismatch");
     object_to_tcp=object.inverse()*tcp; rigid=true;
     const auto initial_object=object;
     if(mode=="correct") {
@@ -162,7 +197,7 @@ int main(int argc, char** argv)
     for(int i=1;i<=40;++i) { auto next=tcp; next.translation().z()+=.2*i/40.; step(object,next); }
     require(std::fclose(out)==0,"output write failed");
     const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
-    std::cout << "YAW_CANDIDATE_PASS assumed_virtual_1mm_attachment=1 samples=" << samples << " ik_attempts=" << ik_attempts << " precontact_samples=" << checked << " joint_length_rad=" << joint_length << " seconds=" << seconds << "\n";
+    std::cout << "YAW_CANDIDATE_PASS assumed_virtual_attachment_gap_mm=" << 1000 * desired_gap << " samples=" << samples << " ik_attempts=" << ik_attempts << " precontact_samples=" << checked << " joint_length_rad=" << joint_length << " seconds=" << seconds << "\n";
     rclcpp::shutdown(); return 0;
   } catch(const std::exception& e) {
     const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();

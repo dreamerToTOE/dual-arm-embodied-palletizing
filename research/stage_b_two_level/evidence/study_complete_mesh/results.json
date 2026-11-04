@@ -1,0 +1,2518 @@
+{
+  "study": "stage_b_two_level_selector_feasibility",
+  "scope": "CPU-only geometric/kinematic MoveIt/FCL candidate planning; no Isaac Sim, RL, force, or physical contact",
+  "workers": 8,
+  "cpu_count": 16,
+  "mem_available_kib_at_start": 36850912,
+  "ompl_seed": 28,
+  "rule_threshold_deg": 2.9415749364922186,
+  "rule_arm": "right if target y <= -0.20 m or rear_loaded > 0; otherwise left",
+  "reference_sha256": {
+    "urdf": "b141b8315c0b63849590e421624c9b40b7b50123df4056d6f7eb4217f898f66a",
+    "srdf": "1ff4e1e199415f6f219f72bc9cb280b4ab7bf3cbd68ad0ec1579366de6f1b862"
+  },
+  "precontact_results": {
+    "yaw_0": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.26,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3775,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/precontact_left.csv"
+      }
+    },
+    "yaw_m2": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2482,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3902,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/precontact_left.csv"
+      }
+    },
+    "yaw_p2": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2445,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.41,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/precontact_left.csv"
+      }
+    },
+    "yaw_m4": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2529,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3861,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/precontact_left.csv"
+      }
+    },
+    "yaw_p4": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2324,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3812,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/precontact_left.csv"
+      }
+    },
+    "yaw_m6": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2308,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3777,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/precontact_left.csv"
+      }
+    },
+    "yaw_p6": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.283,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3694,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/precontact_left.csv"
+      }
+    },
+    "wall_m235": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2959,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3249,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/precontact_right.csv"
+      }
+    },
+    "wall_m220": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2503,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3202,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/precontact_right.csv"
+      }
+    },
+    "wall_p220": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2233,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3891,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/precontact_left.csv"
+      }
+    },
+    "wall_p235": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2239,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3961,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/precontact_left.csv"
+      }
+    },
+    "rear_loaded_0": {
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3301,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3806,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/precontact_left.csv"
+      }
+    },
+    "rear_loaded_1": {
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3799,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3307,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/precontact_right.csv"
+      }
+    },
+    "rear_loaded_2": {
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3679,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3295,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/precontact_right.csv"
+      }
+    },
+    "front_after_rear": {
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3386,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3958,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/precontact_left.csv"
+      }
+    },
+    "front_before_rear": {},
+    "combined_wall_m4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2449,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.319,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/precontact_right.csv"
+      }
+    },
+    "combined_wall_p4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2446,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3362,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/precontact_right.csv"
+      }
+    },
+    "combined_occupied_m4": {
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3165,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3833,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/precontact_left.csv"
+      }
+    },
+    "combined_occupied_p4": {
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3616,
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3154,
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/precontact_right.csv"
+      }
+    }
+  },
+  "candidate_results": {
+    "yaw_0": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2347,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2382,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2504,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2668,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_correct_gap1.csv"
+      }
+    ],
+    "yaw_m2": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2259,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2303,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2422,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2532,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_correct_gap1.csv"
+      }
+    ],
+    "yaw_p2": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2884,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.291,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2993,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2994,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2516,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2592,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2807,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3003,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2067,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.5581,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5757,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5927,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_m6": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.5256,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.5263,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5281,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5708,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_correct_gap1.csv"
+      }
+    ],
+    "yaw_p6": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.377,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2119,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.283,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.286,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_correct_gap1.csv"
+      }
+    ],
+    "wall_m235": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2108,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2382,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2491,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2689,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_correct_gap1.csv"
+      }
+    ],
+    "wall_m220": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2547,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2078,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2218,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2411,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_correct_gap2.csv"
+      }
+    ],
+    "wall_p220": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2254,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.23,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2805,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2892,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_correct_gap2.csv"
+      }
+    ],
+    "wall_p235": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.256,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2252,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2608,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2727,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_correct_gap2.csv"
+      }
+    ],
+    "rear_loaded_0": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2363,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2536,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2091,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.238,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2352,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2087,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2315,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2197,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/right_correct_gap2.csv"
+      }
+    ],
+    "rear_loaded_1": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2414,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2097,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2097,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2421,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2112,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2085,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2206,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2191,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_correct_gap2.csv"
+      }
+    ],
+    "rear_loaded_2": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2055,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.207,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.196,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2351,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1896,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2336,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1885,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1932,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/right_correct_gap2.csv"
+      }
+    ],
+    "front_after_rear": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2234,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2221,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2101,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2548,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2288,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2405,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2245,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2214,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/right_correct_gap2.csv"
+      }
+    ],
+    "front_before_rear": [],
+    "combined_wall_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2017,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.1977,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2217,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2212,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_wall_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.196,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.1968,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2368,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2296,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_occupied_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2056,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2156,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2046,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.205,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2229,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2107,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2218,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2233,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_occupied_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.203,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2064,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2044,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2024,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2147,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2153,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2171,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2187,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_correct_gap2.csv"
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "yaw_0",
+      "metadata": {
+        "case_id": "yaw_0",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_aligned_control"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2347,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2347,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2347,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_0/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9901
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m2",
+      "metadata": {
+        "case_id": "yaw_m2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-2deg"
+      },
+      "yaw_deg": -2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2303,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2303,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2303,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m2/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9516
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p2",
+      "metadata": {
+        "case_id": "yaw_p2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+2deg"
+      },
+      "yaw_deg": 2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2884,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2884,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2884,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p2/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.1781
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m4",
+      "metadata": {
+        "case_id": "yaw_m4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-4deg"
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2592,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2807,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2807,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m4/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 1.0918
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p4",
+      "metadata": {
+        "case_id": "yaw_p4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+4deg"
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.5581,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5757,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5757,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p4/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 1.9332
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m6",
+      "metadata": {
+        "case_id": "yaw_m6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-6deg"
+      },
+      "yaw_deg": -6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.5263,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5708,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.5708,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_m6/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 2.1508
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p6",
+      "metadata": {
+        "case_id": "yaw_p6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+6deg"
+      },
+      "yaw_deg": 6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.377,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.286,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.286,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/yaw_p6/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 1.1579
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m235",
+      "metadata": {
+        "case_id": "wall_m235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2959,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2108,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2108,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m235/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.967
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m220",
+      "metadata": {
+        "case_id": "wall_m220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2503,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2547,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2547,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_m220/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9254
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p220",
+      "metadata": {
+        "case_id": "wall_p220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.23,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.23,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.23,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p220/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.0251
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p235",
+      "metadata": {
+        "case_id": "wall_p235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.256,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.256,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.256,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/wall_p235/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.0147
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_0",
+      "metadata": {
+        "case_id": "rear_loaded_0",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "predecessor": []
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2536,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2536,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2536,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_0/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.8321
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_1",
+      "metadata": {
+        "case_id": "rear_loaded_1",
+        "target_row": "rear",
+        "rear_loaded": 1,
+        "predecessor": [
+          "rear_minus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2414,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2112,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2112,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_1/right_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.7623
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_2",
+      "metadata": {
+        "case_id": "rear_loaded_2",
+        "target_row": "rear",
+        "rear_loaded": 2,
+        "predecessor": [
+          "rear_minus_y",
+          "rear_plus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2055,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.196,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2055,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/rear_loaded_2/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 1.6485
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "front_after_rear",
+      "metadata": {
+        "case_id": "front_after_rear",
+        "target_row": "front",
+        "rear_loaded": 3,
+        "predecessor": [
+          "rear_minus_y",
+          "rear_center",
+          "rear_plus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2234,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2288,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2234,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/front_after_rear/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.8256
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "front_before_rear",
+      "metadata": {
+        "case_id": "front_before_rear",
+        "target_row": "front",
+        "rear_loaded": 0,
+        "order_gate": "rear_must_be_complete"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "rule_m1": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "two_level_m2": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_wall_m4",
+      "metadata": {
+        "case_id": "combined_wall_m4",
+        "target_row": "rear",
+        "rear_loaded": 0
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2449,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2217,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2217,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_m4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.8423
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_wall_p4",
+      "metadata": {
+        "case_id": "combined_wall_p4",
+        "target_row": "rear",
+        "rear_loaded": 0
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2446,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2368,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2368,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_wall_p4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.8592
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_occupied_m4",
+      "metadata": {
+        "case_id": "combined_occupied_m4",
+        "target_row": "rear",
+        "rear_loaded": 1
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.2056,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2218,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2218,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_m4/right_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 1.7095
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_occupied_p4",
+      "metadata": {
+        "case_id": "combined_occupied_p4",
+        "target_row": "rear",
+        "rear_loaded": 1
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.203,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2171,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2171,
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_complete_mesh/cases/combined_occupied_p4/right_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 1.682
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    }
+  ]
+}

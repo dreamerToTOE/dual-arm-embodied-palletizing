@@ -1,0 +1,3138 @@
+{
+  "study": "stage_b_two_level_selector_feasibility",
+  "scope": "CPU-only geometric/kinematic MoveIt/FCL candidate planning; no Isaac Sim, RL, force, or physical contact",
+  "workers": 8,
+  "cpu_count": 16,
+  "mem_available_kib_at_start": 36718408,
+  "ompl_seed": 30,
+  "rule_threshold_deg": 2.9415749364922186,
+  "rule_arm": "right if target y <= -0.20 m or rear_loaded > 0; otherwise left",
+  "reference_sha256": {
+    "urdf": "b141b8315c0b63849590e421624c9b40b7b50123df4056d6f7eb4217f898f66a",
+    "srdf": "1ff4e1e199415f6f219f72bc9cb280b4ab7bf3cbd68ad0ec1579366de6f1b862"
+  },
+  "precontact_results": {
+    "yaw_0": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2804,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4371,
+        "metrics": {
+          "samples": 1209.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.065866811
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/precontact_left.csv"
+      }
+    },
+    "yaw_m2": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2797,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.405,
+        "metrics": {
+          "samples": 1205.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.047744219
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/precontact_left.csv"
+      }
+    },
+    "yaw_p2": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2995,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3943,
+        "metrics": {
+          "samples": 1213.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.084770339
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/precontact_left.csv"
+      }
+    },
+    "yaw_m4": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2797,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3955,
+        "metrics": {
+          "samples": 1201.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.030416511
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/precontact_left.csv"
+      }
+    },
+    "yaw_p4": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2958,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4153,
+        "metrics": {
+          "samples": 1218.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.104440318
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/precontact_left.csv"
+      }
+    },
+    "yaw_m6": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2734,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4637,
+        "metrics": {
+          "samples": 1198.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.013904113
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/precontact_left.csv"
+      }
+    },
+    "yaw_p6": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2795,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3971,
+        "metrics": {
+          "samples": 1222.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.124856949
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/precontact_left.csv"
+      }
+    },
+    "wall_m235": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.3308,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4359,
+        "metrics": {
+          "samples": 1453.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.302944525
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/precontact_right.csv"
+      }
+    },
+    "wall_m220": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.259,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4292,
+        "metrics": {
+          "samples": 1445.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.249512362
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/precontact_right.csv"
+      }
+    },
+    "wall_p220": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2637,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4144,
+        "metrics": {
+          "samples": 1293.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.482912652
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/precontact_left.csv"
+      }
+    },
+    "wall_p235": {
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2649,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/precontact_right.csv"
+      },
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4201,
+        "metrics": {
+          "samples": 1312.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.59273107
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/precontact_left.csv"
+      }
+    },
+    "rear_loaded_0": {
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4139,
+        "metrics": {
+          "samples": 1206.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 6.072085732
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4351,
+        "metrics": {
+          "samples": 1414.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.190891371
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/precontact_right.csv"
+      }
+    },
+    "rear_loaded_1": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2594,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4302,
+        "metrics": {
+          "samples": 1414.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.190891371
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/precontact_right.csv"
+      }
+    },
+    "rear_loaded_2": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2654,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_2/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2908,
+        "metrics": {},
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_2/precontact_right.csv"
+      }
+    },
+    "front_after_rear": {
+      "left": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4494,
+        "metrics": {
+          "samples": 1172.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 5.956137512
+        },
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4784,
+        "metrics": {
+          "samples": 1449.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.368133959
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/precontact_right.csv"
+      }
+    },
+    "front_before_rear": {},
+    "combined_wall_m4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2636,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4592,
+        "metrics": {
+          "samples": 1437.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.221920648
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/precontact_right.csv"
+      }
+    },
+    "combined_wall_p4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2931,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4272,
+        "metrics": {
+          "samples": 1455.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.291616024
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/precontact_right.csv"
+      }
+    },
+    "combined_occupied_m4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2633,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4281,
+        "metrics": {
+          "samples": 1402.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.116134663
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/precontact_right.csv"
+      }
+    },
+    "combined_occupied_p4": {
+      "left": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2568,
+        "metrics": {},
+        "arm": "left",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/precontact_left.csv"
+      },
+      "right": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.4132,
+        "metrics": {
+          "samples": 1427.0,
+          "ik_attempt": 1.0,
+          "path_length_rad": 7.267756448
+        },
+        "arm": "right",
+        "path": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/precontact_right.csv"
+      }
+    }
+  },
+  "candidate_results": {
+    "yaw_0": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2441,
+        "metrics": {
+          "samples": 228.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 0.9374,
+          "seconds": 0.115787
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2519,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.698346,
+          "seconds": 0.124429
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2592,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.694443,
+          "seconds": 0.124825
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2657,
+        "metrics": {
+          "samples": 226.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 0.933777,
+          "seconds": 0.138427
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_m2": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2442,
+        "metrics": {
+          "samples": 237.0,
+          "ik_attempts": 149.0,
+          "joint_length_rad": 0.985159,
+          "seconds": 0.116584
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2524,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.695677,
+          "seconds": 0.126495
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2534,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.69971,
+          "seconds": 0.126826
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.269,
+        "metrics": {
+          "samples": 239.0,
+          "ik_attempts": 151.0,
+          "joint_length_rad": 0.988837,
+          "seconds": 0.13567
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_correct_gap1.csv"
+      }
+    ],
+    "yaw_p2": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2268,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.693174,
+          "seconds": 0.100498
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2487,
+        "metrics": {
+          "samples": 239.0,
+          "ik_attempts": 151.0,
+          "joint_length_rad": 0.986662,
+          "seconds": 0.120483
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2746,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.697111,
+          "seconds": 0.147635
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2891,
+        "metrics": {
+          "samples": 237.0,
+          "ik_attempts": 149.0,
+          "joint_length_rad": 0.983208,
+          "seconds": 0.160461
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2176,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0563706,
+          "seconds": 0.0949253
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2195,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.0522514,
+          "seconds": 0.0934445
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.247,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.0399,
+          "seconds": 0.117812
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2513,
+        "metrics": {
+          "samples": 249.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.03651,
+          "seconds": 0.118551
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2204,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0581082,
+          "seconds": 0.0977606
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2335,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.0540377,
+          "seconds": 0.110657
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2468,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.03639,
+          "seconds": 0.119527
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2741,
+        "metrics": {
+          "samples": 249.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.03302,
+          "seconds": 0.147531
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_m6": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2312,
+        "metrics": {
+          "samples": 18.0,
+          "ik_attempts": 19.0,
+          "joint_length_rad": 0.0520734,
+          "seconds": 0.107351
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2475,
+        "metrics": {
+          "samples": 16.0,
+          "ik_attempts": 17.0,
+          "joint_length_rad": 0.0478868,
+          "seconds": 0.120546
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2487,
+        "metrics": {
+          "samples": 266.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.09036,
+          "seconds": 0.120256
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2486,
+        "metrics": {
+          "samples": 264.0,
+          "ik_attempts": 158.0,
+          "joint_length_rad": 1.08698,
+          "seconds": 0.118504
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_correct_gap2.csv"
+      }
+    ],
+    "yaw_p6": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.21,
+        "metrics": {
+          "samples": 18.0,
+          "ik_attempts": 19.0,
+          "joint_length_rad": 0.0550708,
+          "seconds": 0.0873438
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2168,
+        "metrics": {
+          "samples": 16.0,
+          "ik_attempts": 17.0,
+          "joint_length_rad": 0.0510843,
+          "seconds": 0.0931049
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2446,
+        "metrics": {
+          "samples": 263.0,
+          "ik_attempts": 158.0,
+          "joint_length_rad": 1.0831,
+          "seconds": 0.119303
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2703,
+        "metrics": {
+          "samples": 265.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.08628,
+          "seconds": 0.145099
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_correct_gap1.csv"
+      }
+    ],
+    "wall_m235": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2343,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.806071,
+          "seconds": 0.107887
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2434,
+        "metrics": {
+          "samples": 241.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.01385,
+          "seconds": 0.117081
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2593,
+        "metrics": {
+          "samples": 157.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.796039,
+          "seconds": 0.132296
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2505,
+        "metrics": {
+          "samples": 238.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 1.00338,
+          "seconds": 0.118804
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_correct_gap2.csv"
+      }
+    ],
+    "wall_m220": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2378,
+        "metrics": {
+          "samples": 153.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.765844,
+          "seconds": 0.109435
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.233,
+        "metrics": {
+          "samples": 151.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.757751,
+          "seconds": 0.105452
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2481,
+        "metrics": {
+          "samples": 234.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 0.974483,
+          "seconds": 0.120233
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2477,
+        "metrics": {
+          "samples": 232.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 0.967606,
+          "seconds": 0.121991
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_correct_gap2.csv"
+      }
+    ],
+    "wall_p220": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2293,
+        "metrics": {
+          "samples": 154.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.763596,
+          "seconds": 0.102962
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2336,
+        "metrics": {
+          "samples": 152.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.755652,
+          "seconds": 0.104332
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2404,
+        "metrics": {
+          "samples": 235.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 0.971529,
+          "seconds": 0.112873
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2428,
+        "metrics": {
+          "samples": 233.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 0.963663,
+          "seconds": 0.11388
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_correct_gap2.csv"
+      }
+    ],
+    "wall_p235": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2323,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.803884,
+          "seconds": 0.106307
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2289,
+        "metrics": {
+          "samples": 158.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.794048,
+          "seconds": 0.102702
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2445,
+        "metrics": {
+          "samples": 241.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.00992,
+          "seconds": 0.118889
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2449,
+        "metrics": {
+          "samples": 239.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 0.999662,
+          "seconds": 0.118256
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_correct_gap2.csv"
+      }
+    ],
+    "rear_loaded_0": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2298,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.719235,
+          "seconds": 0.102515
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2267,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.71564,
+          "seconds": 0.100326
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2375,
+        "metrics": {
+          "samples": 228.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 0.975432,
+          "seconds": 0.110338
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2392,
+        "metrics": {
+          "samples": 226.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 0.972167,
+          "seconds": 0.112113
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2342,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.820257,
+          "seconds": 0.104811
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2282,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.815255,
+          "seconds": 0.10085
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2448,
+        "metrics": {
+          "samples": 226.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 1.15086,
+          "seconds": 0.120194
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/right_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2497,
+        "metrics": {
+          "samples": 228.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.15477,
+          "seconds": 0.124526
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/right_correct_gap1.csv"
+      }
+    ],
+    "rear_loaded_1": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2322,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.820257,
+          "seconds": 0.107474
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2344,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.815255,
+          "seconds": 0.108625
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2437,
+        "metrics": {
+          "samples": 228.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.15477,
+          "seconds": 0.11557
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2446,
+        "metrics": {
+          "samples": 226.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 1.15086,
+          "seconds": 0.118313
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_correct_gap2.csv"
+      }
+    ],
+    "rear_loaded_2": [],
+    "front_after_rear": [
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2212,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.768056,
+          "seconds": 0.0939967
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2216,
+        "metrics": {
+          "samples": 145.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.764267,
+          "seconds": 0.0960438
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2336,
+        "metrics": {
+          "samples": 228.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.05952,
+          "seconds": 0.107009
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2357,
+        "metrics": {
+          "samples": 158.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.889537,
+          "seconds": 0.109727
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2352,
+        "metrics": {
+          "samples": 156.0,
+          "ik_attempts": 65.0,
+          "joint_length_rad": 0.882643,
+          "seconds": 0.109023
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2749,
+        "metrics": {
+          "samples": 226.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 1.05617,
+          "seconds": 0.14522
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_correct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2494,
+        "metrics": {
+          "samples": 239.0,
+          "ik_attempts": 148.0,
+          "joint_length_rad": 1.26709,
+          "seconds": 0.122812
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2766,
+        "metrics": {
+          "samples": 237.0,
+          "ik_attempts": 146.0,
+          "joint_length_rad": 1.2596,
+          "seconds": 0.149515
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/right_correct_gap2.csv"
+      }
+    ],
+    "front_before_rear": [],
+    "combined_wall_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2177,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.059885,
+          "seconds": 0.0928237
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2278,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0653395,
+          "seconds": 0.100965
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2492,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07619,
+          "seconds": 0.120622
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2501,
+        "metrics": {
+          "samples": 255.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.06839,
+          "seconds": 0.123592
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_wall_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2192,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0614129,
+          "seconds": 0.0967094
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2229,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.0551426,
+          "seconds": 0.0996957
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2539,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07572,
+          "seconds": 0.126263
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2487,
+        "metrics": {
+          "samples": 255.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.06779,
+          "seconds": 0.121026
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_occupied_m4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2191,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0713966,
+          "seconds": 0.0957418
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.223,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.0657934,
+          "seconds": 0.0947165
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2484,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.22645,
+          "seconds": 0.120157
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2455,
+        "metrics": {
+          "samples": 241.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.22147,
+          "seconds": 0.120143
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_correct_gap2.csv"
+      }
+    ],
+    "combined_occupied_p4": [
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2209,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0773012,
+          "seconds": 0.0964063
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_direct_gap1.csv"
+      },
+      {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2173,
+        "metrics": {
+          "samples": 17.0,
+          "ik_attempts": 18.0,
+          "joint_length_rad": 0.0707431,
+          "seconds": 0.0948166
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_direct_gap2.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2442,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.26769,
+          "seconds": 0.118942
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_correct_gap1.csv"
+      },
+      {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2458,
+        "metrics": {
+          "samples": 241.0,
+          "ik_attempts": 153.0,
+          "joint_length_rad": 1.26154,
+          "seconds": 0.11854
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 2,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_correct_gap2.csv"
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "yaw_0",
+      "metadata": {
+        "case_id": "yaw_0",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_aligned_control"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2519,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.698346,
+          "seconds": 0.124429
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2519,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.698346,
+          "seconds": 0.124429
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2519,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.698346,
+          "seconds": 0.124429
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_0/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.0209
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m2",
+      "metadata": {
+        "case_id": "yaw_m2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-2deg"
+      },
+      "yaw_deg": -2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2534,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.69971,
+          "seconds": 0.126826
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2534,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.69971,
+          "seconds": 0.126826
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2534,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.69971,
+          "seconds": 0.126826
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m2/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.019
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p2",
+      "metadata": {
+        "case_id": "yaw_p2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+2deg"
+      },
+      "yaw_deg": 2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2746,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.697111,
+          "seconds": 0.147635
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2746,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.697111,
+          "seconds": 0.147635
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2746,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.697111,
+          "seconds": 0.147635
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p2/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.0392
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m4",
+      "metadata": {
+        "case_id": "yaw_m4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-4deg"
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2176,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0563706,
+          "seconds": 0.0949253
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.247,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.0399,
+          "seconds": 0.117812
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.247,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.0399,
+          "seconds": 0.117812
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m4/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9354
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p4",
+      "metadata": {
+        "case_id": "yaw_p4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+4deg"
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2204,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0581082,
+          "seconds": 0.0977606
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2468,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.03639,
+          "seconds": 0.119527
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2468,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.03639,
+          "seconds": 0.119527
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p4/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9748
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m6",
+      "metadata": {
+        "case_id": "yaw_m6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-6deg"
+      },
+      "yaw_deg": -6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.2312,
+        "metrics": {
+          "samples": 18.0,
+          "ik_attempts": 19.0,
+          "joint_length_rad": 0.0520734,
+          "seconds": 0.107351
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2487,
+        "metrics": {
+          "samples": 266.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.09036,
+          "seconds": 0.120256
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2487,
+        "metrics": {
+          "samples": 266.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.09036,
+          "seconds": 0.120256
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_m6/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.976
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p6",
+      "metadata": {
+        "case_id": "yaw_p6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+6deg"
+      },
+      "yaw_deg": 6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.21,
+        "metrics": {
+          "samples": 18.0,
+          "ik_attempts": 19.0,
+          "joint_length_rad": 0.0550708,
+          "seconds": 0.0873438
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2703,
+        "metrics": {
+          "samples": 265.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.08628,
+          "seconds": 0.145099
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2703,
+        "metrics": {
+          "samples": 265.0,
+          "ik_attempts": 160.0,
+          "joint_length_rad": 1.08628,
+          "seconds": 0.145099
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/yaw_p6/left_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9417
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m235",
+      "metadata": {
+        "case_id": "wall_m235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.3308,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2343,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.806071,
+          "seconds": 0.107887
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2343,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.806071,
+          "seconds": 0.107887
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m235/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9875
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m220",
+      "metadata": {
+        "case_id": "wall_m220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.259,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2378,
+        "metrics": {
+          "samples": 153.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.765844,
+          "seconds": 0.109435
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2378,
+        "metrics": {
+          "samples": 153.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.765844,
+          "seconds": 0.109435
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_m220/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9666
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p220",
+      "metadata": {
+        "case_id": "wall_p220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2293,
+        "metrics": {
+          "samples": 154.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.763596,
+          "seconds": 0.102962
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2293,
+        "metrics": {
+          "samples": 154.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.763596,
+          "seconds": 0.102962
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2293,
+        "metrics": {
+          "samples": 154.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.763596,
+          "seconds": 0.102962
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p220/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9461
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p235",
+      "metadata": {
+        "case_id": "wall_p235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2323,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.803884,
+          "seconds": 0.106307
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2323,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.803884,
+          "seconds": 0.106307
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2323,
+        "metrics": {
+          "samples": 160.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.803884,
+          "seconds": 0.106307
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/wall_p235/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9506
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_0",
+      "metadata": {
+        "case_id": "rear_loaded_0",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "predecessor": []
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2298,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.719235,
+          "seconds": 0.102515
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2298,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.719235,
+          "seconds": 0.102515
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2298,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.719235,
+          "seconds": 0.102515
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_0/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.8901
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_1",
+      "metadata": {
+        "case_id": "rear_loaded_1",
+        "target_row": "rear",
+        "rear_loaded": 1,
+        "predecessor": [
+          "rear_minus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2594,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2322,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.820257,
+          "seconds": 0.107474
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2322,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.820257,
+          "seconds": 0.107474
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/rear_loaded_1/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.9549
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_2",
+      "metadata": {
+        "case_id": "rear_loaded_2",
+        "target_row": "rear",
+        "rear_loaded": 2,
+        "predecessor": [
+          "rear_minus_y",
+          "rear_plus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2654,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "result": "REJECT",
+        "reason": "right pre-contact: REJECT",
+        "elapsed_s": 0.2908,
+        "arm": "right"
+      },
+      "two_level_m2": {
+        "result": "INCONCLUSIVE",
+        "reason": "no complete candidate was executable",
+        "elapsed_s": 0.0
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "front_after_rear",
+      "metadata": {
+        "case_id": "front_after_rear",
+        "target_row": "front",
+        "rear_loaded": 3,
+        "predecessor": [
+          "rear_minus_y",
+          "rear_center",
+          "rear_plus_y"
+        ]
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2212,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.768056,
+          "seconds": 0.0939967
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2357,
+        "metrics": {
+          "samples": 158.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.889537,
+          "seconds": 0.109727
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/right_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2212,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.768056,
+          "seconds": 0.0939967
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/front_after_rear/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.9482
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "front_before_rear",
+      "metadata": {
+        "case_id": "front_before_rear",
+        "target_row": "front",
+        "rear_loaded": 0,
+        "order_gate": "rear_must_be_complete"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "rule_m1": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "two_level_m2": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "level1_decision": "NO_SEQUENCE_SWITCH_OBSERVED",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_wall_m4",
+      "metadata": {
+        "case_id": "combined_wall_m4",
+        "target_row": "rear",
+        "rear_loaded": 0
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2636,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2492,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07619,
+          "seconds": 0.120622
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2492,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07619,
+          "seconds": 0.120622
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_m4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9448
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_wall_p4",
+      "metadata": {
+        "case_id": "combined_wall_p4",
+        "target_row": "rear",
+        "rear_loaded": 0
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2931,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2539,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07572,
+          "seconds": 0.126263
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2539,
+        "metrics": {
+          "samples": 257.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.07572,
+          "seconds": 0.126263
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_wall_p4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9447
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_occupied_m4",
+      "metadata": {
+        "case_id": "combined_occupied_m4",
+        "target_row": "rear",
+        "rear_loaded": 1
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2633,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2484,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.22645,
+          "seconds": 0.120157
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2484,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.22645,
+          "seconds": 0.120157
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_m4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.936
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "combined_occupied_p4",
+      "metadata": {
+        "case_id": "combined_occupied_p4",
+        "target_row": "rear",
+        "rear_loaded": 1
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "result": "REJECT",
+        "reason": "left pre-contact: REJECT",
+        "elapsed_s": 0.2568,
+        "arm": "left"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2442,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.26769,
+          "seconds": 0.118942
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.2442,
+        "metrics": {
+          "samples": 243.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.26769,
+          "seconds": 0.118942
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/occupancy_seed_30/cases/combined_occupied_p4/right_correct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 2,
+        "search_elapsed_s": 0.9282
+      },
+      "level1_decision": "OBSERVED_SEQUENCE_SWITCH",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE",
+      "physical_execution": "DEFERRED"
+    }
+  ]
+}

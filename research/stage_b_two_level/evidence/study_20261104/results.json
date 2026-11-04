@@ -1,0 +1,726 @@
+{
+  "study": "stage_b_two_level_selector_feasibility",
+  "scope": "CPU-only geometric/kinematic MoveIt/FCL candidate planning; no Isaac Sim, RL, force, or physical contact",
+  "workers": 8,
+  "cpu_count": 16,
+  "mem_available_kib_at_start": 36392216,
+  "ompl_seed": 28,
+  "rule_threshold_deg": 2.9415749364922186,
+  "reference_sha256": {
+    "urdf": "b141b8315c0b63849590e421624c9b40b7b50123df4056d6f7eb4217f898f66a",
+    "srdf": "1ff4e1e199415f6f219f72bc9cb280b4ab7bf3cbd68ad0ec1579366de6f1b862"
+  },
+  "results": [
+    {
+      "case": "yaw_0",
+      "metadata": {
+        "case_id": "yaw_0",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_aligned_control"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1682,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1682,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1682,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_0/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.4105
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m2",
+      "metadata": {
+        "case_id": "yaw_m2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-2deg"
+      },
+      "yaw_deg": -2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1777,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1777,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1777,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m2/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.4153
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p2",
+      "metadata": {
+        "case_id": "yaw_p2",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+2deg"
+      },
+      "yaw_deg": 2.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.164,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.164,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.164,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p2/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.3975
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m4",
+      "metadata": {
+        "case_id": "yaw_m4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-4deg"
+      },
+      "yaw_deg": -4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.1521,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1942,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1942,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m4/left_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.3309
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p4",
+      "metadata": {
+        "case_id": "yaw_p4",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+4deg"
+      },
+      "yaw_deg": 4.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.15,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p4/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1686,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p4/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1686,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p4/left_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.2707
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_m6",
+      "metadata": {
+        "case_id": "yaw_m6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_-6deg"
+      },
+      "yaw_deg": -6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.1487,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1783,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1783,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_m6/left_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.2835
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "yaw_p6",
+      "metadata": {
+        "case_id": "yaw_p6",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S2_yaw_+6deg"
+      },
+      "yaw_deg": 6.000000000000001,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "elapsed_s": 0.1481,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p6/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1695,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p6/left_correct_gap1.csv",
+        "method_sequence": "correct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1695,
+        "arm": "left",
+        "sequence": "correct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/yaw_p6/left_correct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.2667
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m235",
+      "metadata": {
+        "case_id": "wall_m235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "INCONCLUSIVE",
+        "reason": "left pre-contact unavailable",
+        "elapsed_s": 0.0
+      },
+      "rule_m1": {
+        "result": "INCONCLUSIVE",
+        "reason": "left pre-contact unavailable",
+        "elapsed_s": 0.0
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1742,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_m235/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.6763
+      },
+      "level1_decision": "INCONCLUSIVE",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_m220",
+      "metadata": {
+        "case_id": "wall_m220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_-0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "INCONCLUSIVE",
+        "reason": "left pre-contact unavailable",
+        "elapsed_s": 0.0
+      },
+      "rule_m1": {
+        "result": "INCONCLUSIVE",
+        "reason": "left pre-contact unavailable",
+        "elapsed_s": 0.0
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1552,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_m220/right_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.6427
+      },
+      "level1_decision": "INCONCLUSIVE",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p220",
+      "metadata": {
+        "case_id": "wall_p220",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.220"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1565,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1565,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p220/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1565,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p220/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.6483
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "wall_p235",
+      "metadata": {
+        "case_id": "wall_p235",
+        "target_row": "rear",
+        "rear_loaded": 0,
+        "source": "S3_y_+0.235"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1589,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1589,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p235/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1589,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/wall_p235/left_direct_gap1.csv",
+        "candidate_count": 4,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 0.6513
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_0",
+      "metadata": {
+        "case_id": "rear_loaded_0",
+        "target_row": "rear",
+        "rear_loaded": 0
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1567,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1567,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_0/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1567,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_0/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 8,
+        "search_elapsed_s": 1.2909
+      },
+      "level1_decision": "SUPPORTED",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_1",
+      "metadata": {
+        "case_id": "rear_loaded_1",
+        "target_row": "rear",
+        "rear_loaded": 1
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1464,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_1/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1464,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_1/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 0,
+        "result": "PASS",
+        "phase": null,
+        "detail": null,
+        "elapsed_s": 0.1658,
+        "arm": "right",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_1/right_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 4,
+        "search_elapsed_s": 1.2424
+      },
+      "level1_decision": "NO_ADVANTAGE",
+      "level2_decision": "SUPPORTED",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "rear_loaded_2",
+      "metadata": {
+        "case_id": "rear_loaded_2",
+        "target_row": "rear",
+        "rear_loaded": 2
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1465,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "rule_m1": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1465,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_2/left_direct_gap1.csv",
+        "method_sequence": "direct"
+      },
+      "two_level_m2": {
+        "return_code": 1,
+        "result": "REJECT",
+        "phase": "initial",
+        "detail": "precontact revalidation failed",
+        "elapsed_s": 0.1465,
+        "arm": "left",
+        "sequence": "direct",
+        "gap_mm": 1,
+        "trajectory": "research/stage_b_two_level/evidence/study_20261104/cases/rear_loaded_2/left_direct_gap1.csv",
+        "candidate_count": 8,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 1.1615
+      },
+      "level1_decision": "NO_ADVANTAGE",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    },
+    {
+      "case": "front_before_rear",
+      "metadata": {
+        "case_id": "front_before_rear",
+        "target_row": "front",
+        "rear_loaded": 0,
+        "order_gate": "rear_must_be_complete"
+      },
+      "yaw_deg": 0.0,
+      "fixed_m0": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "rule_m1": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "two_level_m2": {
+        "result": "INVALID_ORDER",
+        "reason": "rear row not complete",
+        "elapsed_s": 0.0
+      },
+      "level1_decision": "NO_ADVANTAGE",
+      "level2_decision": "NO_ADVANTAGE",
+      "physical_execution": "DEFERRED"
+    }
+  ]
+}
