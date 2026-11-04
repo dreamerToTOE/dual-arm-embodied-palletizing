@@ -1,0 +1,1832 @@
+{
+  "study": "stage_b_final_parameterized_contact",
+  "scope": "CPU-only MoveIt/FCL geometry and kinematics; no Isaac Sim, RL, force, or physical contact",
+  "workers": 8,
+  "cpu_count": 16,
+  "mem_available_kib_at_start": 35708832,
+  "rule_frozen_before_test": {
+    "yaw_threshold_deg": 2.94,
+    "arm": "right when target_y_m < 0, else left",
+    "contact_x_m": 0.0
+  },
+  "scenario_count": 36,
+  "contact_candidates_m": [
+    -0.02,
+    0.0,
+    0.02
+  ],
+  "reference_sha256": {
+    "urdf": "b141b8315c0b63849590e421624c9b40b7b50123df4056d6f7eb4217f898f66a",
+    "srdf": "1ff4e1e199415f6f219f72bc9cb280b4ab7bf3cbd68ad0ec1579366de6f1b862"
+  },
+  "results": [
+    {
+      "case": "dev_00_w430_d300_y-130_yaw+0_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2545,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.129266
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_00_w430_d300_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2545,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.129266
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_00_w430_d300_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.5788
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_01_w430_d300_y-130_yaw-4_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": -4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2656,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.04797,
+          "seconds": 0.136875
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_01_w430_d300_y-130_yaw-4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2656,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.04797,
+          "seconds": 0.136875
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_01_w430_d300_y-130_yaw-4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4438
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_02_w430_d300_y-130_yaw+4_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2521,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.125995
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_02_w430_d300_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2521,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.125995
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_02_w430_d300_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.3937
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_03_w430_d300_y130_yaw+0_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2411,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113019
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_03_w430_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2411,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113019
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_03_w430_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2411,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113019
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_03_w430_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.5048
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_04_w430_d300_y130_yaw-4_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": -4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2243,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0556117,
+          "seconds": 0.100462
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_04_w430_d300_y130_yaw-4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.3121,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01454,
+          "seconds": 0.181817
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_04_w430_d300_y130_yaw-4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.3121,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01454,
+          "seconds": 0.181817
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_04_w430_d300_y130_yaw-4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.5406
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_05_w430_d300_y130_yaw+4_occ0",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2182,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.092602
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_05_w430_d300_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2598,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.131675
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_05_w430_d300_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2598,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.131675
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_05_w430_d300_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4281
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_06_w410_d300_y-130_yaw+0_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.228,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.0982544
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_06_w410_d300_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.228,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.0982544
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_06_w410_d300_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4637
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_07_w410_d300_y-130_yaw-4_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": -4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2477,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.04797,
+          "seconds": 0.119827
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_07_w410_d300_y-130_yaw-4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2477,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.04797,
+          "seconds": 0.119827
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_07_w410_d300_y-130_yaw-4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.3705
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_08_w410_d300_y-130_yaw+4_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2467,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.117609
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_08_w410_d300_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2467,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.117609
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_08_w410_d300_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.3552
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_09_w410_d300_y130_yaw+0_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.241,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113566
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_09_w410_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.241,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113566
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_09_w410_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.241,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.113566
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_09_w410_d300_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4783
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_10_w410_d300_y130_yaw-4_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": -4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2192,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0556117,
+          "seconds": 0.0936907
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_10_w410_d300_y130_yaw-4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2586,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01454,
+          "seconds": 0.128568
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_10_w410_d300_y130_yaw-4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2586,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01454,
+          "seconds": 0.128568
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_10_w410_d300_y130_yaw-4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.431
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_11_w410_d300_y130_yaw+4_occ0",
+      "split": "dev",
+      "width_m": 0.41,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2202,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.094352
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_11_w410_d300_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2562,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.129587
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_11_w410_d300_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2562,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.129587
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/dev_11_w410_d300_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4328
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_12_w430_d300_y-130_yaw+0_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_13_w430_d300_y-130_yaw-4_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": -4.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_14_w430_d300_y-130_yaw+4_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_15_w430_d300_y130_yaw+0_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_16_w430_d300_y130_yaw-4_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": -4.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "dev_17_w430_d300_y130_yaw+4_occ1",
+      "split": "dev",
+      "width_m": 0.43,
+      "depth_m": 0.3,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 1,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_18_w390_d270_y-130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.27,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2239,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.0975761
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_18_w390_d270_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2239,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.0975761
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_18_w390_d270_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4095
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_19_w390_d270_y-130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.27,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2457,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.119937
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_19_w390_d270_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2457,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.119937
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_19_w390_d270_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.3724
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_20_w390_d270_y130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.27,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2387,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.111361
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_20_w390_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2387,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.111361
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_20_w390_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2387,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.111361
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_20_w390_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4889
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_21_w390_d270_y130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.27,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.225,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.0978568
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_21_w390_d270_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2585,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.133181
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_21_w390_d270_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2585,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.133181
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_21_w390_d270_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4471
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_22_w390_d320_y-130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.32,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.228,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.101238
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_22_w390_d320_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.228,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.101238
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_22_w390_d320_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4126
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_23_w390_d320_y-130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.32,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2695,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.142745
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_23_w390_d320_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2695,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.142745
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_23_w390_d320_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4063
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_24_w390_d320_y130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.32,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2357,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.109659
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_24_w390_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2357,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.109659
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_24_w390_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2357,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.109659
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_24_w390_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4786
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_25_w390_d320_y130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.32,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2192,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.0928613
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_25_w390_d320_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2542,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.127735
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_25_w390_d320_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2542,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.127735
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_25_w390_d320_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.43
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_26_w430_d270_y-130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.27,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2294,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.102675
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_26_w430_d270_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2294,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.102675
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_26_w430_d270_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4142
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_27_w430_d270_y-130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.27,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2474,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.120035
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_27_w430_d270_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2474,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.120035
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_27_w430_d270_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.382
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_28_w430_d270_y130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.27,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2421,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.115782
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_28_w430_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2421,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.115782
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_28_w430_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2421,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.115782
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_28_w430_d270_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4954
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_29_w430_d270_y130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.27,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.2173,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.0954171
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_29_w430_d270_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2554,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.129254
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_29_w430_d270_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2554,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.129254
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_29_w430_d270_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4292
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_30_w430_d320_y-130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.32,
+      "target_y_m": -0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2318,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.103965
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_30_w430_d320_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2318,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 146.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.713349,
+          "seconds": 0.103965
+        },
+        "arm": "right",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_30_w430_d320_y-130_yaw+0_occ0/contact_+0.00_right/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4116
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_31_w430_d320_y-130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.32,
+      "target_y_m": -0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2466,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.120505
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_31_w430_d320_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2466,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 246.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.05686,
+          "seconds": 0.120505
+        },
+        "arm": "right",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_31_w430_d320_y-130_yaw+4_occ0/contact_+0.00_right/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.41
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_32_w430_d320_y130_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.32,
+      "target_y_m": 0.13,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2339,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.107603
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_32_w430_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2339,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.107603
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_32_w430_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2339,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 147.0,
+          "ik_attempts": 67.0,
+          "joint_length_rad": 0.690839,
+          "seconds": 0.107603
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_32_w430_d320_y130_yaw+0_occ0/contact_+0.00_left/direct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 6,
+        "search_elapsed_s": 1.4824
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_33_w430_d320_y130_yaw+4_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.32,
+      "target_y_m": 0.13,
+      "yaw_deg": 4.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "REJECT",
+        "return_code": 1,
+        "elapsed_s": 0.224,
+        "phase": "insert",
+        "detail": "Cube/environment FCL collision",
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 19.0,
+          "ik_attempts": 20.0,
+          "joint_length_rad": 0.0586665,
+          "seconds": 0.0997305
+        },
+        "arm": "left",
+        "sequence": "direct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_33_w430_d320_y130_yaw+4_occ0/contact_+0.00_left/direct.csv"
+      },
+      "m1_rule": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2619,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.136148
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_33_w430_d320_y130_yaw+4_occ0/contact_+0.00_left/correct.csv"
+      },
+      "m2_two_level": {
+        "result": "PASS",
+        "return_code": 0,
+        "elapsed_s": 0.2619,
+        "phase": null,
+        "detail": null,
+        "cup_footprint_pass": true,
+        "metrics": {
+          "samples": 251.0,
+          "ik_attempts": 155.0,
+          "joint_length_rad": 1.01202,
+          "seconds": 0.136148
+        },
+        "arm": "left",
+        "sequence": "correct",
+        "trajectory": "research/stage_b_final/evidence/final_study_20261104_final/cases/test_33_w430_d320_y130_yaw+4_occ0/contact_+0.00_left/correct.csv",
+        "candidate_count": 6,
+        "candidate_pass_count": 3,
+        "search_elapsed_s": 1.4321
+      },
+      "level1_decision": "SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_34_w390_d320_y0_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.39,
+      "depth_m": 0.32,
+      "target_y_m": 0.0,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    },
+    {
+      "case": "test_35_w430_d270_y0_yaw+0_occ0",
+      "split": "test",
+      "width_m": 0.43,
+      "depth_m": 0.27,
+      "target_y_m": 0.0,
+      "yaw_deg": 0.0,
+      "occupied": 0,
+      "m0_fixed": {
+        "result": "UNAVAILABLE"
+      },
+      "m1_rule": {
+        "result": "UNAVAILABLE"
+      },
+      "m2_two_level": {
+        "result": "INCONCLUSIVE",
+        "candidate_count": 0,
+        "candidate_pass_count": 0,
+        "search_elapsed_s": 0
+      },
+      "level1_decision": "NO_SEQUENCE_ALTERNATIVE",
+      "level2_decision": "NO_ADVANTAGE_OVER_RULE"
+    }
+  ]
+}
