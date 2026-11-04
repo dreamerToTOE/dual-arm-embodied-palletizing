@@ -1,0 +1,58 @@
+{
+  "passed": [
+    {
+      "case": "S2_aligned_control",
+      "mode": "direct",
+      "result": "REPLAY_PASS samples=147 precontact_samples=1112 joint_length_rad=0.698346 closure_m=1.93757e-07 closure_rad=0.000961204"
+    },
+    {
+      "case": "S2_aligned_control",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=228 precontact_samples=1112 joint_length_rad=0.9374 closure_m=6.08427e-07 closure_rad=0.000991848"
+    },
+    {
+      "case": "S2_yaw_-2deg",
+      "mode": "direct",
+      "result": "REPLAY_PASS samples=147 precontact_samples=1119 joint_length_rad=0.69971 closure_m=1.85343e-07 closure_rad=0.000935795"
+    },
+    {
+      "case": "S2_yaw_-2deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=239 precontact_samples=1119 joint_length_rad=0.988837 closure_m=2.8253e-06 closure_rad=0.000985322"
+    },
+    {
+      "case": "S2_yaw_+2deg",
+      "mode": "direct",
+      "result": "REPLAY_PASS samples=147 precontact_samples=1106 joint_length_rad=0.697111 closure_m=2.02593e-07 closure_rad=0.000987182"
+    },
+    {
+      "case": "S2_yaw_+2deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=239 precontact_samples=1106 joint_length_rad=0.986662 closure_m=2.83297e-06 closure_rad=0.000982859"
+    },
+    {
+      "case": "S2_yaw_-4deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=251 precontact_samples=1126 joint_length_rad=1.0399 closure_m=2.8271e-06 closure_rad=0.000993093"
+    },
+    {
+      "case": "S2_yaw_+4deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=251 precontact_samples=1099 joint_length_rad=1.03639 closure_m=2.84562e-06 closure_rad=0.000973589"
+    },
+    {
+      "case": "S2_yaw_-6deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=266 precontact_samples=1133 joint_length_rad=1.09036 closure_m=2.41058e-06 closure_rad=0.000997395"
+    },
+    {
+      "case": "S2_yaw_+6deg",
+      "mode": "correct",
+      "result": "REPLAY_PASS samples=265 precontact_samples=1093 joint_length_rad=1.08628 closure_m=2.54238e-06 closure_rad=0.000970358"
+    }
+  ],
+  "negative_control": {
+    "result": "rejected",
+    "reason": "joint step exceeded"
+  }
+}

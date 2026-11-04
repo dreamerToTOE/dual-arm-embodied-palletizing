@@ -1,0 +1,63 @@
+{
+  "derived_yaw_threshold_deg": 2.9415749364922186,
+  "derivation": "0.06*(cos(yaw)+sin(|yaw|)-1) > original 0.003 m nominal acceptance",
+  "comparison": [
+    {
+      "case": "S2_aligned_control",
+      "yaw_deg": 0.0,
+      "always_direct": "PASS",
+      "rule_action": "direct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_-2deg",
+      "yaw_deg": -2.0,
+      "always_direct": "PASS",
+      "rule_action": "direct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_+2deg",
+      "yaw_deg": 2.0,
+      "always_direct": "PASS",
+      "rule_action": "direct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_-4deg",
+      "yaw_deg": -4.0,
+      "always_direct": "REJECT",
+      "rule_action": "correct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_+4deg",
+      "yaw_deg": 4.0,
+      "always_direct": "REJECT",
+      "rule_action": "correct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_-6deg",
+      "yaw_deg": -6.000000000000001,
+      "always_direct": "REJECT",
+      "rule_action": "correct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    },
+    {
+      "case": "S2_yaw_+6deg",
+      "yaw_deg": 6.000000000000001,
+      "always_direct": "REJECT",
+      "rule_action": "correct",
+      "rule_result": "PASS",
+      "physical_execution": "UNTESTED"
+    }
+  ],
+  "scope": "conditional virtual attachment plans only"
+}
