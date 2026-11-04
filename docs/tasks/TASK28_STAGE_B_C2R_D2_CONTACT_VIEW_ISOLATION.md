@@ -65,3 +65,11 @@
 PYTHONPATH=. python3 -m pytest -q offline/task28_stage_b_contact/test_d2_analysis.py offline/task28_stage_b_contact/test_d1_math.py offline/task28_stage_b_contact/test_c2r_balance.py offline/task28_stage_b_contact/test_c2_evidence.py offline/task28_stage_b_contact/test_c2_preflight.py
 python3 offline/task28_stage_b_contact/plot_d2.py offline/task28_stage_b_contact/evidence/task28_d2_view_compare_v1
 ```
+
+## 2026-11-04：一次独立复测未进入物理采样
+
+以新运行目录执行原 A/B 诊断，A 组进程以状态码 1 退出，B 组未启动；没有进行自动重试。A 组在创建场景图时因 ROS 2 bridge 初始化失败，无法创建 `isaacsim.ros2.bridge.ROS2Context`，记录的物理步和接触事件均为 0。原始 [运行记录](../../offline/task28_stage_b_contact/evidence/task28_d2_view_compare_retest_20261104/manifest.json)、[A 组摘要](../../offline/task28_stage_b_contact/evidence/task28_d2_view_compare_retest_20261104/A/summary.json)和[进程日志](../../offline/task28_stage_b_contact/evidence/task28_d2_view_compare_retest_20261104/A_process.log)已保留。
+
+日志显示 `librosidl_runtime_c.so` 无法加载；本次启动环境中 `ROS_DISTRO` 和 `LD_LIBRARY_PATH` 均未设置。该库实际存在于 `/opt/ros/humble/lib` 和 Isaac 自带的 Humble 库目录；离线检查表明，将 `/opt/ros/humble/lib` 放入 `LD_LIBRARY_PATH` 后可用 Python `ctypes` 加载该库。这支持库搜索路径是初始化失败的一个具体原因，但尚未验证完整 ROS 2 bridge 或物理复测能否成功。后续应在启动前配置 ROS Humble 环境，再单独安排新的有界物理诊断。
+
+本次重跑前离线回归 **26 passed**。由于未产生物理样本，本次不改变上文原 A/B 数值或 `D2_PARTIAL` 结论；`B_C2R_BLOCKED`、`B0_PARTIAL` 也保持不变。
