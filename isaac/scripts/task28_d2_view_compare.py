@@ -11,7 +11,6 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from isaac.scripts.task28_task27_one_pass import load_scene
 from offline.task28_stage_b_contact.c2_control import json_record
 from offline.task28_stage_b_contact.d1_math import balance
 
@@ -26,12 +25,21 @@ def xyz(v):
     return [float(v.x), float(v.y), float(v.z)]
 
 
+def validate_material_bindings(stage, prims, material_api):
+    for prim in prims:
+        targets = prim.GetRelationship('material:binding').GetTargets()
+        if not targets or any(not stage.GetPrimAtPath(p).HasAPI(material_api) for p in targets):
+            raise RuntimeError(f'PHYSICS_MATERIAL_BINDING_INVALID:{prim.GetPath()}:{targets}')
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', choices=['A', 'B'], required=True)
+    parser.add_argument('--config', choices=['A', 'B', 'C', 'D'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
+    if args.config in ('A', 'B'):
+        from isaac.scripts.task28_task27_one_pass import load_scene
     from isaacsim import SimulationApp
     app = SimulationApp({'headless': True, 'create_new_stage': True, 'renderer': 'RaytracedLighting',
                          'multi_gpu': False, 'sync_loads': True})
@@ -51,17 +59,28 @@ def main():
         UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.z)
         UsdGeom.SetStageMetersPerUnit(stage, 1.)
         UsdGeom.Xform.Define(stage, '/World')
-        load_scene()
+        if args.config in ('A', 'B'):
+            load_scene()
+        else:
+            scene_path = ROOT / 'isaac/scripts/task27_five_cube_center_insert_scene.py'
+            namespace = {'__name__': '__task28_d3_scene__'}
+            exec(compile(scene_path.read_text(encoding='utf-8'), str(scene_path), 'exec'), namespace, namespace)
+            graph = stage.GetPrimAtPath('/World/Task27ROSGraph')
+            if not graph.IsValid() or not graph.SetActive(False):
+                raise RuntimeError('DIAGNOSTIC_ROS_GRAPH_DEACTIVATION_FAILED')
         cube = stage.GetPrimAtPath(CUBE)
         table = stage.GetPrimAtPath(TABLE)
         if not cube.IsValid() or not table.IsValid() or not stage.GetPrimAtPath(SOURCE).IsValid():
             raise RuntimeError('ORIGINAL_SCENE_MISSING')
+        if args.config in ('C', 'D'):
+            validate_material_bindings(stage, (cube, table), UsdPhysics.MaterialAPI)
         cube.GetAttribute('xformOp:translate:task26_pose').Set(Gf.Vec3d(.5, 0., .26))
         cube_phys = PhysxSchema.PhysxRigidBodyAPI(cube)
         cube_phys.CreateDisableGravityAttr().Set(False)
         UsdGeom.Xform.Define(stage, '/World/Task28C2')
         layer = stage.GetRootLayer()
-        if not Sdf.CopySpec(layer, Sdf.Path(SOURCE), layer, Sdf.Path(TOOL)):
+        has_tool = args.config != 'C'
+        if has_tool and not Sdf.CopySpec(layer, Sdf.Path(SOURCE), layer, Sdf.Path(TOOL)):
             raise RuntimeError('TOOL_COPY_FAILED')
         if not Sdf.CopySpec(layer, Sdf.Path(CUBE), layer, Sdf.Path(DIAG)):
             raise RuntimeError('DIAGNOSTIC_CUBE_COPY_FAILED')
@@ -70,26 +89,28 @@ def main():
         diag_phys = PhysxSchema.PhysxRigidBodyAPI(diag)
         diag_phys.CreateDisableGravityAttr().Set(True)
         diag_phys.CreateLinearDampingAttr().Set(0.)
-        tool = stage.GetPrimAtPath(TOOL)
-        tx = UsdGeom.Xformable(tool)
-        tx.AddTranslateOp().Set(Gf.Vec3d(.5, -.218, .34))
-        tx.AddOrientOp().Set(Gf.Quatf(0., Gf.Vec3f(1., 0., 0.)))
-        UsdPhysics.RigidBodyAPI.Apply(tool)
-        UsdPhysics.MassAPI.Apply(tool).CreateMassAttr().Set(1.)
-        tool_phys = PhysxSchema.PhysxRigidBodyAPI.Apply(tool)
-        tool_phys.CreateDisableGravityAttr().Set(True)
-        tool_phys.CreateLockedPosAxisAttr().Set(5)
-        tool_phys.CreateLockedRotAxisAttr().Set(7)
+        tool = stage.GetPrimAtPath(TOOL) if has_tool else None
+        if has_tool:
+            tx = UsdGeom.Xformable(tool)
+            tx.AddTranslateOp().Set(Gf.Vec3d(.5, -.218, .34))
+            tx.AddOrientOp().Set(Gf.Quatf(0., Gf.Vec3f(1., 0., 0.)))
+            UsdPhysics.RigidBodyAPI.Apply(tool)
+            UsdPhysics.MassAPI.Apply(tool).CreateMassAttr().Set(1.)
+            tool_phys = PhysxSchema.PhysxRigidBodyAPI.Apply(tool)
+            tool_phys.CreateDisableGravityAttr().Set(True)
+            tool_phys.CreateLockedPosAxisAttr().Set(5)
+            tool_phys.CreateLockedRotAxisAttr().Set(7)
         shapes = ('vertical_support', 'lateral_support', 'vacuum_manifold',
                   'cup_r1_c1', 'cup_r1_c2', 'cup_r2_c1', 'cup_r2_c2')
         if (not cube.HasAPI(UsdPhysics.CollisionAPI) or not table.HasAPI(UsdPhysics.CollisionAPI) or
-                any(not stage.GetPrimAtPath(f'{TOOL}/{name}').HasAPI(UsdPhysics.CollisionAPI) for name in shapes)):
+                (has_tool and any(not stage.GetPrimAtPath(f'{TOOL}/{name}').HasAPI(UsdPhysics.CollisionAPI) for name in shapes))):
             raise RuntimeError('COLLISION_GEOMETRY_MISSING')
         for side in ('left', 'right'):
             if not stage.GetPrimAtPath(f'/World/{side}_fr3').SetActive(False):
                 raise RuntimeError('FR3_DEACTIVATION_FAILED')
         # Match the tool's contact reporter setup in both configurations.
-        PhysxSchema.PhysxContactReportAPI.Apply(tool).CreateThresholdAttr().Set(0)
+        if has_tool and args.config in ('A', 'B'):
+            PhysxSchema.PhysxContactReportAPI.Apply(tool).CreateThresholdAttr().Set(0)
         tool_view = (RigidContactView(CUBE, [TOOL], name='d2_cube_tool', disable_stablization=False, max_contact_count=128)
                      if args.config == 'B' else None)
         table_view = RigidContactView(CUBE, [TABLE], name='d2_cube_table', disable_stablization=False, max_contact_count=128)
@@ -137,8 +158,9 @@ def main():
         for _ in range(90):
             app.update()
         warmup_sub.unsubscribe()
-        cube_h, tool_h, diag_h = (dc.get_rigid_body(p) for p in (CUBE, TOOL, DIAG))
-        if any(h == _dynamic_control.INVALID_HANDLE for h in (cube_h, tool_h, diag_h)):
+        cube_h, diag_h = (dc.get_rigid_body(p) for p in (CUBE, DIAG))
+        tool_h = dc.get_rigid_body(TOOL) if has_tool else None
+        if any(h == _dynamic_control.INVALID_HANDLE for h in (cube_h, diag_h)) or (has_tool and tool_h == _dynamic_control.INVALID_HANDLE):
             raise RuntimeError('INVALID_RIGID_BODY_HANDLE')
         if tool_view:
             tool_view.initialize()
@@ -153,9 +175,10 @@ def main():
         dc.wake_up_rigid_body(diag_h)
         dc.set_rigid_body_linear_velocity(diag_h, (0, .0182887595, 0))
         dc.wake_up_rigid_body(cube_h)
-        dc.wake_up_rigid_body(tool_h)
+        if has_tool:
+            dc.wake_up_rigid_body(tool_h)
         initial_cube = xyz(dc.get_rigid_body_pose(cube_h).p)
-        initial_tool = xyz(dc.get_rigid_body_pose(tool_h).p)
+        initial_tool = xyz(dc.get_rigid_body_pose(tool_h).p) if has_tool else None
         initial_cube_v = xyz(dc.get_rigid_body_linear_velocity(cube_h))
         initial_cube_q = dc.get_rigid_body_pose(cube_h).r
         summary.update(runtime_mass_kg=mass, gravity_world_m_s2=gravity, warmup_app_updates=90,
@@ -166,6 +189,17 @@ def main():
                        view_order=['tool', 'table'] if tool_view else ['table'],
                        solver=PhysxSchema.PhysxSceneAPI(stage.GetPrimAtPath('/physicsScene')).GetSolverTypeAttr().Get(),
                        stabilization=PhysxSchema.PhysxSceneAPI(stage.GetPrimAtPath('/physicsScene')).GetEnableStabilizationAttr().Get())
+        if args.config in ('C', 'D'):
+            # Authored geometry/solver and material attributes provide an auditable matched control.
+            paths = [CUBE, TABLE, '/physicsScene']
+            paths += [str(p.GetPath()) for p in stage.Traverse() if p.HasAPI(UsdPhysics.MaterialAPI)]
+            summary['controls'] = {path: {'attributes': {a.GetName(): str(a.Get()) for a in stage.GetPrimAtPath(path).GetAttributes()},
+                                          'relationships': {r.GetName(): [str(t) for t in r.GetTargets()] for r in stage.GetPrimAtPath(path).GetRelationships()}}
+                                   for path in paths}
+            # USD prim deactivation alone does not guarantee the cached OmniGraph stopped executing.
+            summary.update(ros_graph_deactivated=True, tool_shapes=list(shapes) if has_tool else [],
+                           cube_contact_report=bool(cube.HasAPI(PhysxSchema.PhysxContactReportAPI)),
+                           table_contact_report=bool(table.HasAPI(PhysxSchema.PhysxContactReportAPI)))
         state['observing'] = True
 
         def pre(dt):
@@ -216,16 +250,18 @@ def main():
                 ff, _, counts, starts = table_view.get_friction_data(dt=float(dt))
                 i, n = int(np.asarray(starts)[0, 0]), int(np.asarray(counts)[0, 0])
                 friction = np.asarray(ff)[i:i+n].sum(axis=0)
-                cp, tp = dc.get_rigid_body_pose(cube_h).p, dc.get_rigid_body_pose(tool_h).p
-                cv, tv = dc.get_rigid_body_linear_velocity(cube_h), dc.get_rigid_body_linear_velocity(tool_h)
+                cp = dc.get_rigid_body_pose(cube_h).p
+                cv = dc.get_rigid_body_linear_velocity(cube_h)
+                tp = dc.get_rigid_body_pose(tool_h).p if has_tool else None
+                tv = dc.get_rigid_body_linear_velocity(tool_h) if has_tool else None
                 result = balance(mass, gravity, float(dt), state['before']['velocity'], xyz(cv),
                                  table_impulse + other_impulse, friction * dt)
                 state['early'] = {'step': state['step'], 'sim_time_s': state['sim_s'], 'dt_s': float(dt),
                                   'app_update_index': state['frame'], 'pre_monotonic_ns': state['before']['monotonic_ns'],
                                   'early_monotonic_ns': time.monotonic_ns(), 'event_monotonic_ns': [e['monotonic_ns'] for e in es],
                                   'cube_xyz_m': xyz(cp), 'cube_velocity_m_s': xyz(cv),
-                                  'pre_cube_velocity_m_s': state['before']['velocity'], 'tool_xyz_m': xyz(tp),
-                                  'tool_velocity_m_s': xyz(tv), 'sleeping': bool(sim.is_sleeping(stage_id, cube_path)),
+                                  'pre_cube_velocity_m_s': state['before']['velocity'], 'tool_xyz_m': xyz(tp) if has_tool else None,
+                                  'tool_velocity_m_s': xyz(tv) if has_tool else None, 'sleeping': bool(sim.is_sleeping(stage_id, cube_path)),
                                   'support_force_N': support.tolist(), 'support_impulse_Ns': support_raw.tolist(),
                                   'net_normal_force_N': net[0].tolist(),
                                   'tool_force_N': tool_force, 'event_table_impulse_Ns': table_impulse.tolist(),
@@ -234,7 +270,7 @@ def main():
                                   'gravity_impulse_Ns': result['gravity_impulse_Ns'],
                                   'momentum_change_Ns': result['momentum_change_Ns']}
                 state['before'] = None
-                if np.linalg.norm(np.array(xyz(tp)) - initial_tool) > .001 or np.linalg.norm(xyz(tv)) > .01:
+                if has_tool and (np.linalg.norm(np.array(xyz(tp)) - initial_tool) > .001 or np.linalg.norm(xyz(tv)) > .01):
                     raise RuntimeError('TOOL_MOVED')
                 if np.linalg.norm(np.array(xyz(cp)) - initial_cube) > .01 or np.linalg.norm(xyz(cv)) > .05:
                     raise RuntimeError('CUBE_MOTION_BOUND')

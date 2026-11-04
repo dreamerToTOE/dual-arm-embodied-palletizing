@@ -1,0 +1,2499 @@
+[Info] [carb] Logging to file: /home/ubuntu2004/isaacsim-4.5.0/kit/logs/Kit/Isaac-Sim Python/4.5/kit_20261104_102412.log
+2026-11-04 01:24:12 [0ms] [Warning] [omni.kit.app.plugin] No crash reporter present, dumps uploading isn't available.
+[0.050s] [ext: omni.kit.async_engine-0.0.1] startup
+[0.516s] [ext: omni.metrics.core-0.0.1] startup
+[0.516s] [ext: omni.client.lib-1.0.0] startup
+[0.539s] [ext: omni.blobkey-1.1.2] startup
+[0.539s] [ext: omni.stats-1.0.1] startup
+[0.540s] [ext: omni.datastore-0.0.0] startup
+[0.545s] [ext: omni.client-1.2.2] startup
+[0.549s] [ext: omni.ujitso.default-1.0.0] startup
+[0.550s] [ext: omni.hsscclient-1.1.1] startup
+2026-11-04 01:24:13 [543ms] [Warning] [omni.datastore] OmniHub is inaccessible
+[0.553s] [ext: omni.gpu_foundation.shadercache.vulkan-1.0.0] startup
+[0.556s] [ext: omni.assets.plugins-0.0.0] startup
+[0.557s] [ext: omni.gpu_foundation-0.0.0] startup
+[0.563s] [ext: carb.windowing.plugins-1.0.0] startup
+[0.570s] [ext: omni.kit.renderer.init-0.0.0] startup
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.178.04    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 3070          | Yes: 0 |     | 8438    MB | 10de      | 0          |
+|     |                                  |        |     |            | 2488      | ba060710.. |
+|     |                                  |        |     |            | 1         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-138-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101004 (1.21.1.4)
+| Processor: Intel(R) Core(TM) i7-10700F CPU @ 2.90GHz
+| Cores: 8 | Logical Cores: 16
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 48107 | Free Memory: 40343
+| Total Page/Swap (MB): 2047 | Free Page/Swap: 2047
+|---------------------------------------------------------------------------------------------|
+[1.216s] [ext: omni.kit.pipapi-0.0.0] startup
+[1.217s] [ext: omni.kit.pip_archive-0.0.0] startup
+[1.218s] [ext: omni.pip.compute-1.4.5] startup
+[1.218s] [ext: omni.materialx.libs-1.0.6] startup
+[1.226s] [ext: omni.kit.telemetry-0.5.1] startup
+[1.242s] [ext: omni.pip.cloud-1.1.7] startup
+[1.246s] [ext: omni.isaac.core_archive-2.3.3] startup
+[1.246s] [ext: omni.usd.config-1.0.5] startup
+[1.250s] [ext: omni.gpucompute.plugins-0.0.0] startup
+[1.250s] [ext: omni.usd.libs-1.0.1] startup
+[1.342s] [ext: omni.isaac.ml_archive-2.1.2] startup
+[1.342s] [ext: omni.mdl-55.0.1] startup
+[1.366s] [ext: omni.iray.libs-0.0.0] startup
+[1.371s] [ext: omni.mdl.neuraylib-0.2.10] startup
+[1.373s] [ext: omni.kit.usd.mdl-1.0.7] startup
+[1.476s] [ext: omni.kit.loop-isaac-1.2.1] startup
+[1.477s] [ext: omni.kit.test-1.1.2] startup
+[1.525s] [ext: omni.appwindow-1.1.9] startup
+[1.527s] [ext: omni.kit.renderer.core-1.0.2] startup
+[2.194s] [ext: omni.kit.renderer.capture-0.0.0] startup
+[2.196s] [ext: omni.kit.renderer.imgui-1.0.2] startup
+[2.394s] [ext: omni.ui-2.26.5] startup
+[2.404s] [ext: omni.kit.mainwindow-1.0.3] startup
+[2.405s] [ext: carb.audio-0.1.0] startup
+[2.408s] [ext: omni.uiaudio-1.0.0] startup
+[2.409s] [ext: omni.kit.uiapp-0.0.0] startup
+[2.409s] [ext: omni.usd.schema.metrics.assembler-106.5.0] startup
+[2.419s] [ext: omni.usd.schema.anim-0.0.0] startup
+[2.441s] [ext: omni.usd.schema.isaac-3.0.2] startup
+[2.441s] [ext: omni.usd.schema.geospatial-0.0.0] startup
+[2.444s] [ext: omni.usd.schema.physx-106.5.7] startup
+[2.475s] [ext: omni.usd.schema.audio-0.0.0] startup
+[2.478s] [ext: omni.usd.schema.semantics-0.0.0] startup
+[2.481s] [ext: omni.usd_resolver-1.0.0] startup
+[2.484s] [ext: usdrt.scenegraph-7.5.1] startup
+[2.528s] [ext: omni.kit.actions.core-1.0.0] startup
+[2.530s] [ext: omni.timeline-1.0.11] startup
+[2.531s] [ext: omni.usd.core-1.4.2] startup
+[2.534s] [ext: omni.resourcemonitor-107.0.0] startup
+[2.536s] [ext: omni.activity.core-1.0.1] startup
+[2.538s] [ext: omni.kit.audiodeviceenum-1.0.1] startup
+[2.539s] [ext: omni.hydra.usdrt_delegate-7.5.1] startup
+[2.550s] [ext: omni.graph.exec-0.9.4] startup
+[2.551s] [ext: omni.kit.window.popup_dialog-2.0.24] startup
+[2.554s] [ext: omni.kit.exec.core-0.13.4] startup
+[2.557s] [ext: omni.kit.widget.nucleus_connector-1.1.10] startup
+[2.559s] [ext: omni.kit.usd_undo-0.1.8] startup
+[2.559s] [ext: omni.kit.commands-1.4.9] startup
+[2.563s] [ext: omni.hydra.scene_delegate-0.3.3] startup
+[2.568s] [ext: omni.usd-1.12.4] startup
+[2.605s] [ext: omni.kit.asset_converter-2.8.3] startup
+[2.617s] [ext: omni.usd.schema.omniscripting-1.0.0] startup
+[2.623s] [ext: omni.usd.schema.omnigraph-1.0.0] startup
+[2.630s] [ext: omni.usd.schema.forcefield-106.5.7] startup
+[2.635s] [ext: isaacsim.robot.schema-3.1.2] startup
+[2.644s] [ext: omni.inspect-1.0.1] startup
+[2.646s] [ext: omni.kit.notification_manager-1.0.9] startup
+[2.647s] [ext: omni.graph.core-2.181.8] startup
+[2.649s] [ext: isaacsim.core.deprecation_manager-0.2.2] startup
+[2.650s] [ext: omni.index.libs-380600.1777.0] startup
+[2.650s] [ext: omni.ujitso.processor.texture-1.0.0] startup
+[2.651s] [ext: omni.index-1.0.1] startup
+[2.652s] [ext: omni.kit.widget.path_field-2.0.11] startup
+[2.653s] [ext: omni.volume-0.5.0] startup
+[2.659s] [ext: omni.ujitso.client-0.0.0] startup
+[2.659s] [ext: omni.hydra.rtx.shadercache.vulkan-1.0.0] startup
+[2.660s] [ext: omni.kit.widget.browser_bar-2.0.10] startup
+[2.661s] [ext: omni.kit.clipboard-1.0.5] startup
+[2.661s] [ext: omni.hydra.rtx-1.0.0] startup
+2026-11-04 01:24:15 [2,662ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+[2.687s] [ext: omni.kit.viewport.registry-104.0.6] startup
+[2.687s] [ext: omni.kit.helper.file_utils-0.1.9] startup
+[2.689s] [ext: omni.kit.widget.options_menu-1.1.6] startup
+[2.692s] [ext: omni.kit.menu.core-1.1.2] startup
+[2.693s] [ext: omni.kit.widget.filebrowser-2.10.52] startup
+[2.697s] [ext: omni.ui.scene-1.11.2] startup
+[2.702s] [ext: omni.kit.widget.options_button-1.0.3] startup
+[2.703s] [ext: omni.kit.widget.context_menu-1.2.4] startup
+[2.704s] [ext: omni.kit.viewport.legacy_gizmos-1.0.16] startup
+[2.708s] [ext: omni.kit.usd.layers-2.2.0] startup
+[2.716s] [ext: omni.kit.window.filepicker-2.11.7] startup
+[2.728s] [ext: omni.kit.hydra_texture-1.4.0] startup
+[2.732s] [ext: omni.kit.viewport.scene_camera_model-1.0.5] startup
+[2.738s] [ext: omni.kit.context_menu-1.8.3] startup
+[2.740s] [ext: omni.kit.window.file_importer-1.1.14] startup
+[2.743s] [ext: omni.kit.menu.utils-1.7.7] startup
+[2.750s] [ext: omni.kit.widget.viewport-107.0.7] startup
+[2.754s] [ext: omni.kit.window.drop_support-1.0.4] startup
+[2.755s] [ext: omni.kit.raycast.query-1.0.5] startup
+[2.761s] [ext: omni.kit.material.library-1.5.15] startup
+[2.766s] [ext: omni.hydra.engine.stats-1.0.3] startup
+[2.769s] [ext: omni.kit.viewport.window-107.0.8] startup
+[2.789s] [ext: omni.warp.core-1.5.0] startup
+[2.988s] [ext: omni.kit.viewport.utility-1.0.18] startup
+[2.989s] [ext: omni.kit.hotkeys.core-1.3.10] startup
+[2.990s] [ext: omni.kit.widget.prompt-1.0.7] startup
+[2.991s] [ext: omni.kit.usd.collect-2.2.22] startup
+[2.995s] [ext: omni.kit.window.content_browser_registry-0.0.6] startup
+[2.996s] [ext: omni.graph.tools-1.79.1] startup
+[3.032s] [ext: omni.kit.window.file_exporter-1.0.31] startup
+[3.034s] [ext: omni.kit.stage_template.core-1.1.22] startup
+[3.035s] [ext: omni.graph.image.core-0.6.0] startup
+[3.037s] [ext: omni.graph.action_core-1.1.7] startup
+[3.041s] [ext: omni.graph-1.140.2] startup
+[3.108s] [ext: omni.kit.window.file-1.3.57] startup
+[3.112s] [ext: omni.kit.widget.filter-1.1.4] startup
+[3.113s] [ext: omni.graph.image.nodes-1.3.0] startup
+[3.116s] [ext: omni.graph.action_nodes-1.40.1] startup
+[3.121s] [ext: omni.kit.window.content_browser-2.10.3] startup
+[3.149s] [ext: omni.kvdb-106.5.7] startup
+[3.151s] [ext: omni.graph.action-1.120.0] startup
+[3.153s] [ext: omni.kit.tool.collect-2.2.16] startup
+[3.165s] [ext: omni.graph.nodes-1.162.1] startup
+[3.185s] [ext: omni.kit.widget.searchfield-1.1.8] startup
+[3.189s] [ext: omni.localcache-106.5.7] startup
+[3.191s] [ext: omni.convexdecomposition-106.5.7] startup
+[3.197s] [ext: omni.kit.widget.stage_icons-1.0.6] startup
+[3.198s] [ext: omni.kit.widget.stage-2.11.6] startup
+[3.211s] [ext: omni.usdphysics-106.5.7] startup
+[3.216s] [ext: omni.physx.foundation-106.5.7] startup
+[3.218s] [ext: omni.physics.tensors-106.5.7] startup
+[3.228s] [ext: omni.kit.window.stage-2.5.11] startup
+[3.232s] [ext: omni.kit.property.adapter.core-1.0.2] startup
+[3.236s] [ext: omni.physx.cooking-106.5.7] startup
+[3.247s] [ext: omni.kit.widget.zoombar-1.0.5] startup
+[3.248s] [ext: omni.kit.widget.highlight_label-1.0.3] startup
+[3.249s] [ext: omni.kit.property.adapter.usd-1.0.2] startup
+[3.251s] [ext: omni.kit.property.adapter.fabric-1.0.3] startup
+[3.253s] [ext: omni.physx-106.5.7] startup
+[3.268s] [ext: omni.kit.browser.core-2.3.11] startup
+[3.273s] [ext: omni.kit.window.property-1.11.5] startup
+[3.276s] [ext: omni.kit.widget.text_editor-1.0.2] startup
+[3.278s] [ext: omni.kit.property.usd-4.2.16] startup
+[3.288s] [ext: omni.physx.tensors-106.5.7] startup
+[3.295s] [ext: omni.kit.menu.stage-1.2.5] startup
+[3.296s] [ext: omni.kit.browser.folder.core-1.10.1] startup
+[3.302s] [ext: omni.warp-1.5.0] startup
+[3.309s] [ext: isaacsim.examples.browser-0.1.8] startup
+[3.316s] [ext: omni.physx.stageupdate-106.5.7] startup
+[3.320s] [ext: omni.kit.numpy.common-0.1.2] startup
+[3.324s] [ext: isaacsim.core.version-2.0.2] startup
+[3.325s] [ext: omni.isaac.dynamic_control-1.3.15] startup
+2026-11-04 01:24:15 [3,328ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+[3.338s] [ext: isaacsim.storage.native-1.0.6] startup
+[3.342s] [ext: omni.kit.menu.create-1.0.17] startup
+[3.349s] [ext: isaacsim.core.utils-2.2.8] startup
+[3.358s] [ext: omni.kit.widget.searchable_combobox-1.0.6] startup
+[3.364s] [ext: omni.kit.primitive.mesh-1.0.17] startup
+[3.387s] [ext: isaacsim.core.simulation_manager-0.3.3] startup
+[4.859s] [ext: omni.kit.scripting-106.5.2] startup
+[4.865s] [ext: omni.kit.stage_templates-1.2.6] startup
+[4.869s] [ext: isaacsim.core.prims-0.3.7] startup
+[4.890s] [ext: isaacsim.replicator.behavior-1.0.8] startup
+[4.893s] [ext: isaacsim.core.api-4.2.16] startup
+[4.904s] [ext: omni.ui_query-1.1.7] startup
+[4.907s] [ext: omni.kit.manipulator.viewport-107.0.1] startup
+[4.909s] [ext: omni.kit.ui_test-1.3.3] startup
+[4.911s] [ext: omni.kit.window.extensions-1.4.25] startup
+[4.917s] [ext: omni.graph.visualization.nodes-2.1.1] startup
+[4.924s] [ext: omni.kit.tool.asset_importer-2.12.2] startup
+[4.941s] [ext: isaacsim.gui.components-1.0.9] startup
+[4.947s] [ext: omni.kit.widget.settings-1.2.2] startup
+[4.952s] [ext: omni.kit.widget.graph-1.12.17] startup
+[4.958s] [ext: omni.kit.window.preferences-1.7.0] startup
+[4.965s] [ext: omni.kit.graph.delegate.default-1.2.2] startup
+[4.966s] [ext: omni.kit.viewport.menubar.core-107.1.2] startup
+[4.980s] [ext: omni.kit.widget.material_preview-1.0.16] startup
+[4.983s] [ext: omni.kit.graph.usd.commands-1.3.1] startup
+[4.984s] [ext: omni.kit.graph.editor.core-1.5.3] startup
+[4.987s] [ext: omni.syntheticdata-0.6.10] startup
+[5.018s] [ext: omni.kit.window.material_graph-1.8.19] startup
+[5.055s] [ext: omni.graph.scriptnode-1.40.1] startup
+[5.058s] [ext: isaacsim.core.cloner-1.3.4] startup
+[5.060s] [ext: omni.replicator.core-1.11.35] startup
+2026-11-04 01:24:17 [5,147ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+[5.159s] [ext: omni.isaac.cloner-1.0.2] startup
+2026-11-04 01:24:17 [5,153ms] [Warning] [omni.isaac.cloner] omni.isaac.cloner has been deprecated in favor of isaacsim.core.cloner. Please update your code accordingly.
+[5.162s] [ext: isaacsim.core.nodes-2.1.4] startup
+[5.173s] [ext: isaacsim.asset.importer.urdf-2.3.10] startup
+[5.329s] [ext: omni.isaac.core-4.0.3] startup
+2026-11-04 01:24:17 [5,324ms] [Warning] [omni.isaac.core.physics_context.physics_context] omni.isaac.core.physics_context.physics_context has been deprecated in favor of isaacsim.core.api.physics_context.physics_context. Please update your code accordingly.
+2026-11-04 01:24:17 [5,324ms] [Warning] [omni.isaac.core.simulation_context.simulation_context] omni.isaac.core.simulation_context.simulation_context has been deprecated in favor of isaacsim.core.api.simulation_context.simulation_context. Please update your code accordingly.
+2026-11-04 01:24:17 [5,325ms] [Warning] [omni.isaac.core.world.world] omni.isaac.core.world.world has been deprecated in favor of isaacsim.core.api.world.world. Please update your code accordingly.
+2026-11-04 01:24:17 [5,325ms] [Warning] [omni.isaac.core] omni.isaac.core has been deprecated in favor of isaacsim.core.api. Please update your code accordingly.
+[5.336s] [ext: omni.isaac.core_nodes-2.0.2] startup
+2026-11-04 01:24:17 [5,334ms] [Warning] [omni.isaac.core_nodes] omni.isaac.core_nodes has been deprecated in favor of isaacsim.core.nodes. Please update your code accordingly.
+[5.344s] [ext: omni.anim.curve.core-1.2.0] startup
+[5.363s] [ext: isaacsim.robot_motion.lula-4.0.4] startup
+[5.373s] [ext: isaacsim.asset.importer.mjcf-2.3.3] startup
+[5.382s] [ext: isaacsim.robot_motion.motion_generation-8.0.6] startup
+[5.405s] [ext: isaacsim.asset.browser-1.3.4] startup
+[5.517s] [ext: isaacsim.robot.surface_gripper-2.0.6] startup
+[5.522s] [ext: omni.kit.selection-0.1.5] startup
+[5.525s] [ext: isaacsim.robot_motion.lula_test_widget-1.0.5] startup
+[5.528s] [ext: omni.isaac.assets_check-0.3.9] startup
+2026-11-04 01:24:18 [5,522ms] [Warning] [omni.isaac.assets_check] omni.isaac.assets_check has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[5.530s] [ext: isaacsim.robot.manipulators-3.0.4] startup
+[5.540s] [ext: isaacsim.sensors.physics-0.3.5] startup
+[5.550s] [ext: isaacsim.gui.menu-2.0.9] startup
+[5.573s] [ext: omni.isaac.lula_test_widget-1.0.2] startup
+2026-11-04 01:24:18 [5,567ms] [Warning] [omni.isaac.lula_test_widget] omni.isaac.lula_test_widget has been deprecated in favor of isaacsim.robot_motion.lula_test_widget. Please update your code accordingly.
+[5.576s] [ext: omni.sensors.nv.common-2.5.0-coreapi] startup
+[5.589s] [ext: omni.isaac.manipulators-3.0.3] startup
+2026-11-04 01:24:18 [5,582ms] [Warning] [omni.isaac.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,582ms] [Warning] [omni.isaac.manipulators.controllers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,582ms] [Warning] [omni.isaac.manipulators.controllers.pick_place_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.controllers.stacking_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.grippers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.grippers.gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.grippers.parallel_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.grippers.surface_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-04 01:24:18 [5,583ms] [Warning] [omni.isaac.manipulators.manipulators.single_manipulator] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+[5.592s] [ext: isaacsim.robot.policy.examples-4.0.3] startup
+[5.595s] [ext: omni.isaac.menu-1.0.2] startup
+2026-11-04 01:24:18 [5,589ms] [Warning] [omni.isaac.menu] omni.isaac.menu has been deprecated in favor of isaacsim.gui.menu. Please update your code accordingly.
+[5.598s] [ext: omni.isaac.motion_generation-8.0.2] startup
+2026-11-04 01:24:18 [5,592ms] [Warning] [omni.isaac.motion_generation] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,592ms] [Warning] [omni.isaac.motion_generation.articulation_kinematics_solver] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,592ms] [Warning] [omni.isaac.motion_generation.articulation_motion_policy] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,594ms] [Warning] [omni.isaac.motion_generation.articulation_trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,594ms] [Warning] [omni.isaac.motion_generation.kinematics_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,594ms] [Warning] [omni.isaac.motion_generation.lula] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.lula.kinematics] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.lula.motion_policies] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.lula.path_planners] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.lula.trajectory_generator] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.motion_policy_controller] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.motion_policy_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.path_planner_visualizer] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,595ms] [Warning] [omni.isaac.motion_generation.path_planning_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,596ms] [Warning] [omni.isaac.motion_generation.trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-04 01:24:18 [5,596ms] [Warning] [omni.isaac.motion_generation.world_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+[5.604s] [ext: omni.sensors.nv.materials-1.4.0-coreapi] startup
+[5.608s] [ext: omni.isaac.nucleus-1.0.3] startup
+2026-11-04 01:24:18 [5,600ms] [Warning] [omni.isaac.nucleus] omni.isaac.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+2026-11-04 01:24:18 [5,601ms] [Warning] [omni.isaac.nucleus.nucleus] omni.isaac.nucleus.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+[5.609s] [ext: omni.isaac.quadruped-3.0.2] startup
+2026-11-04 01:24:18 [5,602ms] [Warning] [omni.isaac.quadruped] omni.isaac.quadruped has been deprecated in favor of isaacsim.robot.policy.examples. Please update your code accordingly.
+[5.610s] [ext: omni.kit.manipulator.selector-1.1.1] startup
+[5.613s] [ext: omni.sensors.nv.wpm-2.4.0-coreapi] startup
+[5.616s] [ext: omni.sensors.nv.lidar-2.6.3-coreapi] startup
+[5.622s] [ext: omni.sensors.nv.ids-1.4.0-coreapi] startup
+[5.628s] [ext: isaacsim.robot.manipulators.examples-1.0.3] startup
+[5.630s] [ext: isaacsim.util.debug_draw-2.0.2] startup
+[5.636s] [ext: omni.sensors.tiled-0.0.6] startup
+[5.639s] [ext: omni.sensors.nv.radar-2.6.1-coreapi] startup
+[5.646s] [ext: omni.kit.widget.toolbar-1.7.3] startup
+[5.655s] [ext: omni.kit.manipulator.transform-106.0.1] startup
+[5.660s] [ext: isaacsim.sensors.physx-2.2.4] startup
+[5.667s] [ext: isaacsim.sensors.rtx-13.6.3] startup
+[5.677s] [ext: isaacsim.sensors.camera-0.2.9] startup
+[5.688s] [ext: isaacsim.cortex.framework-1.0.2] startup
+[5.691s] [ext: omni.kit.manipulator.tool.snap-1.5.12] startup
+[5.711s] [ext: omni.isaac.range_sensor-4.0.2] startup
+[5.714s] [ext: omni.isaac.surface_gripper-2.0.2] startup
+2026-11-04 01:24:18 [5,707ms] [Warning] [omni.isaac.surface_gripper] omni.isaac.surface_gripper has been deprecated in favor of isaacsim.robot.surface_gripper. Please update your code accordingly.
+[5.716s] [ext: omni.isaac.sensor-13.0.3] startup
+2026-11-04 01:24:18 [5,711ms] [Warning] [omni.isaac.sensor] omni.isaac.sensor has been deprecated in favor of isaacsim.sensors.camera, isaacsim.sensors.physics, isaacsim.sensors.physx, and isaacsim.sensors.rtx. Please update your code accordingly.
+2026-11-04 01:24:18 [5,711ms] [Warning] [omni.isaac.sensor.camera] omni.isaac.sensor.camera has been deprecated in favor of isaacsim.sensors.camera.camera. Please update your code accordingly.
+2026-11-04 01:24:18 [5,711ms] [Warning] [omni.isaac.sensor.camera_view] omni.isaac.sensor.camera_view has been deprecated in favor of isaacsim.sensors.camera.camera_view. Please update your code accordingly.
+2026-11-04 01:24:18 [5,712ms] [Warning] [omni.isaac.sensor.commands] omni.isaac.sensor.commands has been deprecated in favor of isaacsim.sensors.physics.commands, isaacsim.sensors.physx.commands, and isaacsim.sensors.rtx.commands. Please update your code accordingly.
+2026-11-04 01:24:18 [5,712ms] [Warning] [omni.isaac.sensor.contact_sensor] omni.isaac.sensor.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.contact_sensor. Please update your code accordingly.
+2026-11-04 01:24:18 [5,712ms] [Warning] [omni.isaac.sensor.imu_sensor] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.imu_sensor. Please update your code accordingly.
+2026-11-04 01:24:18 [5,712ms] [Warning] [omni.isaac.sensor.lidar_rtx] omni.isaac.sensor.lidar_rtx has been deprecated in favor of isaacsim.sensors.rtx.lidar_rtx. Please update your code accordingly.
+2026-11-04 01:24:18 [5,713ms] [Warning] [omni.isaac.sensor.rotating_lidar_physX] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physix.rotating_lidar_physX. Please update your code accordingly.
+2026-11-04 01:24:18 [5,713ms] [Warning] [omni.isaac.sensor.scripts.samples.contact_sensor] omni.isaac.sensor.scripts.samples.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.contact_sensor. Please update your code accordingly.
+2026-11-04 01:24:18 [5,714ms] [Warning] [omni.isaac.sensor.scripts.samples.imu_sensor] omni.isaac.sensor.scripts.samples.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.imu_sensor. Please update your code accordingly.
+2026-11-04 01:24:18 [5,714ms] [Warning] [omni.isaac.sensor.scripts.samples.lightbeam_sensor] omni.isaac.sensor.scripts.samples.lightbeam_sensor has been deprecated in favor of isaacsim.sensors.physx.scripts.samples.lightbeam_sensor. Please update your code accordingly.
+[5.723s] [ext: omni.isaac.cortex-1.0.2] startup
+2026-11-04 01:24:18 [5,718ms] [Warning] [omni.isaac.cortex] omni.isaac.cortex has been deprecated in favor of isaacsim.cortex.framework. Please update your code accordingly.
+[5.727s] [ext: omni.kit.viewport.manipulator.transform-107.0.4] startup
+[5.739s] [ext: omni.debugdraw-0.1.3] startup
+[5.744s] [ext: omni.isaac.universal_robots-1.0.2] startup
+2026-11-04 01:24:18 [5,737ms] [Warning] [omni.isaac.universal_robots] omni.isaac.universal_robots has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [5,737ms] [Warning] [omni.isaac.universal_robots.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [5,737ms] [Warning] [omni.isaac.universal_robots.ur10] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+[5.746s] [ext: omni.isaac.utils-2.0.2] startup
+[5.749s] [ext: omni.kit.manipulator.prim.core-107.0.7] startup
+[5.757s] [ext: omni.fabric.commands-1.1.5] startup
+[5.761s] [ext: omni.kit.manipulator.selection-106.0.1] startup
+[5.763s] [ext: omni.kit.viewport.actions-107.0.0] startup
+[5.769s] [ext: omni.kit.manipulator.prim.usd-107.0.3] startup
+[5.771s] [ext: omni.kit.manipulator.prim.fabric-107.0.4] startup
+[5.774s] [ext: isaacsim.cortex.behaviors-2.0.3] startup
+[5.775s] [ext: omni.kit.widget.layers-1.8.2] startup
+[5.790s] [ext: omni.kit.viewport.menubar.display-107.0.3] startup
+[5.794s] [ext: omni.kit.manipulator.prim-107.0.0] startup
+[5.796s] [ext: omni.isaac.cortex.sample_behaviors-2.0.2] startup
+2026-11-04 01:24:18 [5,788ms] [Warning] [omni.isaac.cortex.sample_behaviors] omni.isaac.cortex.sample_behaviors has been deprecated in favor of isaacsim.cortex.behaviors. Please update your code accordingly.
+[5.796s] [ext: omni.graph.ui_nodes-1.40.1] startup
+[5.802s] [ext: omni.usdphysics.ui-106.5.7] startup
+[5.838s] [ext: omni.physx.commands-106.5.7] startup
+[5.843s] [ext: omni.kit.property.camera-1.0.9] startup
+[5.845s] [ext: omni.hydra.scene_api-0.1.2] startup
+[5.851s] [ext: omni.kit.property.geometry-1.3.3] startup
+[5.856s] [ext: omni.kit.property.light-1.0.11] startup
+[5.858s] [ext: omni.physx.ui-106.5.7] startup
+[5.892s] [ext: omni.kit.property.material-1.10.17] startup
+[5.900s] [ext: omni.kit.property.render-1.1.3] startup
+[5.902s] [ext: omni.kit.property.transform-1.5.10] startup
+[5.906s] [ext: omni.kit.property.audio-1.0.16] startup
+[5.909s] [ext: isaacsim.gui.property-1.0.4] startup
+[5.911s] [ext: omni.physx.demos-106.5.7] startup
+[5.932s] [ext: omni.kit.property.physx-106.5.7] startup
+[5.982s] [ext: omni.isaac.lula-4.0.2] startup
+2026-11-04 01:24:18 [5,976ms] [Warning] [omni.isaac.lula] omni.isaac.lula has been deprecated in favor of isaacsim.robot_motion.lula. Please update your code accordingly.
+[5.985s] [ext: omni.kit.property.bundle-1.3.2] startup
+[5.986s] [ext: omni.kit.property.isaac-1.0.2] startup
+2026-11-04 01:24:18 [5,978ms] [Warning] [omni.kit.property.isaac] omni.kit.property.isaac has been deprecated in favor of isaacsim.gui.property. Please update your code accordingly.
+2026-11-04 01:24:18 [5,978ms] [Warning] [omni.kit.property.isaac.widgets] omni.kit.property.isaac.widgets has been deprecated in favor of isaacsim.gui.property.widgets. Please update your code accordingly.
+[5.987s] [ext: omni.physx.vehicle-106.5.7] startup
+[6.008s] [ext: omni.kit.viewport.menubar.camera-107.0.2] startup
+[6.016s] [ext: omni.kit.viewport.menubar.lighting-106.0.2] startup
+[6.019s] [ext: omni.kit.viewport.menubar.render-107.0.8] startup
+[6.022s] [ext: omni.kit.viewport.menubar.settings-107.0.3] startup
+[6.027s] [ext: omni.kit.window.console-0.2.14] startup
+[6.038s] [ext: omni.physx.camera-106.5.7] startup
+[6.051s] [ext: omni.kit.window.toolbar-1.6.2] startup
+[6.056s] [ext: omni.isaac.version-2.0.2] startup
+2026-11-04 01:24:18 [6,049ms] [Warning] [omni.isaac.version] omni.isaac.version has been deprecated in favor of isaacsim.core.version. Please update your code accordingly.
+[6.058s] [ext: isaacsim.robot.wheeled_robots-4.0.3] startup
+[6.063s] [ext: omni.physx.cct-106.5.7] startup
+[6.083s] [ext: omni.physx.graph-106.5.7] startup
+[6.117s] [ext: isaacsim.replicator.writers-1.0.1] startup
+[6.151s] [ext: omni.physx.supportui-106.5.7] startup
+[6.181s] [ext: omni.physx.telemetry-106.5.7] startup
+[6.187s] [ext: omni.isaac.wheeled_robots-3.0.3] startup
+2026-11-04 01:24:18 [6,180ms] [Warning] [omni.isaac.wheeled_robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,180ms] [Warning] [omni.isaac.wheeled_robots.controllers] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,180ms] [Warning] [omni.isaac.wheeled_robots.controllers.ackermann_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,180ms] [Warning] [omni.isaac.wheeled_robots.controllers.differential_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.controllers.holonomic_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.controllers.quintic_path_planner] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.controllers.stanley_control] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.controllers.wheel_base_pose_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.impl] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.robots.holonomic_robot_usd_setup] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-04 01:24:18 [6,181ms] [Warning] [omni.isaac.wheeled_robots.robots.wheeled_robot] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+[6.190s] [ext: omni.isaac.franka-1.0.2] startup
+2026-11-04 01:24:18 [6,184ms] [Warning] [omni.isaac.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-11-04 01:24:18 [6,185ms] [Warning] [omni.isaac.franka.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-11-04 01:24:18 [6,185ms] [Warning] [omni.isaac.franka.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+[6.194s] [ext: isaacsim.replicator.domain_randomization-1.0.2] startup
+[6.198s] [ext: isaacsim.replicator.examples-1.1.2] startup
+[6.202s] [ext: omni.kit.window.status_bar-0.1.7] startup
+[6.212s] [ext: omni.rtx.window.settings-0.6.17] startup
+[6.227s] [ext: omni.usd.metrics.assembler-106.5.0] startup
+[6.237s] [ext: omni.physx.bundle-106.5.7] startup
+[6.238s] [ext: isaacsim.app.about-2.0.7] startup
+[6.239s] [ext: omni.replicator.isaac-2.0.3] startup
+2026-11-04 01:24:18 [6,232ms] [Warning] [omni.replicator.isaac] omni.replicator.isaac has been deprecated in favor of isaacsim.replicator.domain_randomization, isaacsim.replicator.examples, isaacsim.replicator.writers. Please update your code accordingly.
+[6.240s] [ext: omni.replicator.replicator_yaml-2.0.10] startup
+[6.258s] [ext: omni.rtx.settings.core-0.6.3] startup
+[6.267s] [ext: omni.usd.metrics.assembler.ui-106.5.0] startup
+[6.273s] [ext: isaacsim.simulation_app-2.4.2] startup
+[6.275s] [ext: omni.isaac.window.about-2.0.2] startup
+2026-11-04 01:24:18 [6,268ms] [Warning] [omni.isaac.window.about] omni.isaac.window.about has been deprecated in favor of isaacsim.app.about. Please update your code accordingly.
+2026-11-04 01:24:18 [6,268ms] [Warning] [omni.isaac.window.about.about] omni.isaac.window.about.about has been deprecated in favor of isaacsim.app.about.about. Please update your code accordingly.
+[6.276s] [ext: semantics.schema.editor-0.3.10] startup
+[6.280s] [ext: omni.kit.ui.actions-1.0.2] startup
+[6.282s] [ext: semantics.schema.property-1.0.5] startup
+[6.284s] [ext: omni.kit.manipulator.camera-106.0.3] startup
+[6.289s] [ext: omni.isaac.kit-2.0.3] startup
+2026-11-04 01:24:18 [6,281ms] [Warning] [omni.isaac.kit] omni.isaac.kit has been deprecated in favor of isaacsim.simulation_app. Please update your code accordingly.
+[6.289s] [ext: omni.isaac.asset_browser-1.0.2] startup
+2026-11-04 01:24:18 [6,282ms] [Warning] [omni.isaac.asset_browser] omni.isaac.asset_browser has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[6.290s] [ext: isaacsim.core.throttling-2.0.2] startup
+[6.292s] [ext: omni.kit.menu.common-1.1.9] startup
+[6.295s] [ext: isaacsim.exp.base-4.5.0] startup
+[6.296s] [ext: isaacsim.exp.base.python-4.5.0] startup
+[6.297s] Simulation App Starting
+[7.239s] app ready
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit buffer size 7508933632
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : valid false, within: false
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : decrement: 167690, decrement size: 7433845248
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : New limit 9574251 (slope: 447, intercept: 13179904)
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit buffer size 4287216384
+2026-11-04 01:24:19 [7,319ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : valid true, within: true
+2026-11-04 01:24:20 [7,433ms] [Warning] [omni.usd-abi.plugin] No setting was found for '/rtx-defaults-transient/meshlights/forceDisable'
+2026-11-04 01:24:20 [7,480ms] [Warning] [omni.usd-abi.plugin] No setting was found for '/rtx-defaults/post/dlss/execMode'
+[10.477s] Simulation App Startup Complete
+[10.492s] [ext: isaacsim.ros2.bridge-4.1.15] startup
+[10.534s] Attempting to load system rclpy
+[10.534s] Could not import system rclpy: No module named 'rclpy'
+[10.534s] Attempting to load internal rclpy
+[10.562s] rclpy loaded
+2026-11-04 01:24:24 [12,027ms] [Warning] [omni.timeline.plugin] Deprecated: direct use of ITimeline callbacks is deprecated. Use ITimeline::getTimeline (Python: omni.timeline.get_timeline_interface) instead.
+2026-11-04 01:24:25 [12,525ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,525ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,525ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,525ms] [Error] [omni.graph.core.plugin] /World/Task27ROSGraph/LeftPub: [/World/Task27ROSGraph] Prim /World/left_fr3 is not an articulation
+2026-11-04 01:24:25 [12,553ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,553ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,553ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,553ms] [Error] [omni.graph.core.plugin] /World/Task27ROSGraph/RightPub: [/World/Task27ROSGraph] Prim /World/right_fr3 is not an articulation
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_01
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:scale:task26_size for /World/Task27/Supply/Cube_01
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_02
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:scale:task26_size for /World/Task27/Supply/Cube_02
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_03
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:scale:task26_size for /World/Task27/Supply/Cube_03
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_04
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:scale:task26_size for /World/Task27/Supply/Cube_04
+
+2026-11-04 01:24:25 [12,583ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_05
+
+2026-11-04 01:24:25 [12,584ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:scale:task26_size for /World/Task27/Supply/Cube_05
+
+2026-11-04 01:24:25 [12,584ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task27/Supply/Cube_01
+
+2026-11-04 01:24:25 [12,584ms] [Warning] [omni.hydra.scene_delegate.plugin] cannot find xform op xformOp:translate:task26_pose for /World/Task28C2/SleepDiagnostic
+
+2026-11-04 01:24:25 [12,621ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,621ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,621ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,621ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,621ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,621ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,632ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,632ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,632ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,632ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,632ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,632ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,642ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,643ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,643ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,643ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,643ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,643ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,648ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,648ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,648ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,648ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,648ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,648ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,658ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,658ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,658ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,658ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,658ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,658ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,665ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,665ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,665ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,665ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,665ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,665ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,675ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,675ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,675ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,675ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,675ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,675ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,682ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,682ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,682ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,682ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,682ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,682ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,692ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,692ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,692ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,692ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,692ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,692ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,699ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,699ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,699ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,699ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,699ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,699ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,708ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,708ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,708ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,708ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,708ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,708ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,715ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,715ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,715ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,715ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,715ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,715ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,725ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,725ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,725ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,725ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,725ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,725ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,732ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,732ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,732ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,732ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,732ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,732ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,742ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,742ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,742ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,742ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,742ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,742ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,749ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,749ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,749ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,749ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,749ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,749ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,758ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,758ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,758ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,758ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,758ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,758ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,766ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,766ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,766ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,766ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,766ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,766ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,776ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,776ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,776ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,776ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,776ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,776ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,783ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,783ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,783ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,783ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,783ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,783ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,792ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,792ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,792ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,792ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,792ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,792ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,800ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,800ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,800ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,800ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,800ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,800ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,809ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,809ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,809ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,809ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,809ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,809ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,816ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,816ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,816ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,816ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,816ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,816ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,826ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,826ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,826ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,826ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,826ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,826ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,833ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,833ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,833ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,833ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,833ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,833ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,842ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,842ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,842ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,842ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,842ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,843ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,850ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,850ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,850ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,850ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,850ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,850ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,859ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,859ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,859ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,859ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,859ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,859ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,867ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,867ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,867ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,867ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,867ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,867ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,876ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,876ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,876ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,876ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,876ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,876ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,884ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,884ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,884ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,884ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,884ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,884ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,893ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,893ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,893ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,893ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,893ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,893ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,900ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,900ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,900ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,900ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,900ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,900ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,910ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,910ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,910ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,910ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,910ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,910ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,917ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,917ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,917ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,917ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,917ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,917ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,926ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,926ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,926ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,926ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,926ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,926ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,934ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,934ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,934ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,934ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,934ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,934ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,943ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,943ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,943ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,943ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,943ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,943ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,952ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,952ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,952ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,952ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,952ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,952ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,959ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,959ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,959ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,959ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,959ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,959ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,968ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,968ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,968ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,968ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,968ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,968ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,977ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,977ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,977ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,977ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,977ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,977ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,986ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,986ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,986ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,986ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,986ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,986ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,994ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [12,994ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,994ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [12,994ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [12,994ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [12,994ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,003ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,003ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,003ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,003ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,003ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,003ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,011ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,011ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,011ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,011ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,011ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,011ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,020ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,020ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,020ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,020ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,020ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,020ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,028ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,028ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,028ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,028ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,028ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,028ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,036ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,036ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,036ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,036ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,036ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,037ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,044ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,045ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,045ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,045ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,045ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,045ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,053ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,053ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,053ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,054ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,054ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,054ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,062ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,062ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,062ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,062ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,062ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,062ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,070ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,070ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,070ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,070ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,070ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,070ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,078ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,078ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,078ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,078ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,078ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,078ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,087ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,087ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,087ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,087ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,087ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,087ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,095ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,095ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,095ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,095ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,095ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,095ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,104ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,104ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,104ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,104ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,104ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,104ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,112ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,112ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,112ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,112ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,112ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,112ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,121ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,121ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,121ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,121ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,121ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,121ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,129ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,129ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,129ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,129ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,129ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,129ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,138ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,138ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,138ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,138ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,138ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,138ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,146ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,146ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,146ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,146ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,146ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,146ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,154ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,154ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,154ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,154ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,154ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,154ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,163ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,163ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,163ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,163ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,163ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,163ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,171ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,171ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,171ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,171ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,171ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,171ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,179ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,179ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,179ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,180ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,180ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,180ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,188ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,188ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,188ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,188ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,188ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,188ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,196ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,196ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,196ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,196ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,196ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,196ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,205ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,205ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,205ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,205ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,205ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,205ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,213ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,213ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,213ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,213ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,213ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,213ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,222ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,222ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,222ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,222ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,222ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,222ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,230ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,230ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,230ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,230ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,230ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,230ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,238ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,238ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,238ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,238ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,239ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,239ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,247ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,247ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,247ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,247ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,247ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,247ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,255ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,255ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,255ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,255ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,255ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,255ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,263ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,263ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,263ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,263ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,263ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,263ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,272ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,272ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,272ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,272ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,272ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,272ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,280ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,280ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,280ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,280ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,280ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,280ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,289ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,289ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,289ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,289ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,289ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,289ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,297ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,297ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,297ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,297ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,297ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,297ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,306ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,306ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,306ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,306ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,306ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,306ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,314ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,314ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,314ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,314ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,314ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,314ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,323ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,323ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,323ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,323ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,323ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,323ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,331ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,331ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,331ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,331ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,331ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,331ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,339ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,339ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,340ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,340ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,340ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,340ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,348ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,348ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,348ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,348ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,348ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,348ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,356ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,356ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,356ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,356ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,356ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,356ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,364ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:25 [13,364ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,364ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:25 [13,365ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:25 [13,365ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:25 [13,365ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,407ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,407ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,407ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,407ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,407ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,407ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,430ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,430ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,430ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,430ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,430ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,430ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,441ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,441ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,441ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,441ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,441ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,441ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,446ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,446ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,446ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,446ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,446ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,446ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,457ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,457ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,457ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,457ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,457ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,457ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,463ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,463ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,463ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,463ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,463ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,463ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,474ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,474ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,474ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,474ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,474ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,474ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,480ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,480ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,480ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,480ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,480ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,480ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,490ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,490ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,490ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,490ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,490ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,490ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,497ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,497ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,497ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,497ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,497ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,497ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,507ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,507ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,507ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,507ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,508ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,508ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,514ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,514ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,514ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,514ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,514ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,514ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,525ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,525ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,525ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,526ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,526ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,526ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,532ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,532ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,532ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,532ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,532ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,532ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,543ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,543ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,543ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,543ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,543ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,543ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,549ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,549ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,549ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,549ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,549ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,549ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,559ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,559ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,559ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,560ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,560ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,560ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,566ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,566ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,566ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,566ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,566ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,566ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,576ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,576ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,576ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,576ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,576ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,576ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,583ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,583ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,583ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,583ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,583ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,583ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,593ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,593ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,593ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,593ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,593ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,593ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,600ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,600ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,600ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,600ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,600ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,600ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,610ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,610ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,610ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,610ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,610ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,610ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,616ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,616ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,616ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,616ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,616ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,616ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,627ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,627ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,627ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,627ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,627ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,627ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,633ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,633ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,633ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,633ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,633ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,633ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,644ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,644ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,644ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,644ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,644ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,644ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,650ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,650ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,650ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,650ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,650ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,650ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,661ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,661ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,661ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,661ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,661ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,661ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,667ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,667ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,667ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,667ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,667ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,667ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,677ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,677ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,677ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,677ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,677ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,677ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,683ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,683ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,683ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,684ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,684ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,684ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,694ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,694ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,694ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,694ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,694ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,694ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,700ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,700ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,700ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,701ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,701ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,701ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,711ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,711ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,711ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,711ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,711ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,711ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,717ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,717ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,717ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,717ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,717ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,717ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,727ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,727ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,727ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,727ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,727ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,727ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,737ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,737ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,737ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,738ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,738ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,738ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,742ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,742ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,742ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,742ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,742ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,742ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,753ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,753ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,753ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,753ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,753ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,753ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,759ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,759ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,759ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,759ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,759ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,759ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,769ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,769ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,769ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,769ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,769ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,769ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,776ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,776ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,776ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,776ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,776ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,776ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,786ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,786ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,786ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,786ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,786ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,786ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,793ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,793ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,793ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,793ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,793ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,793ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,802ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,802ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,802ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,802ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,802ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,802ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,810ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,810ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,810ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,810ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,810ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,810ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,819ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,819ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,819ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,819ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,819ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,819ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,827ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,827ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,827ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,827ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,827ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,827ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,839ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,839ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,839ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,839ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,839ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,839ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,845ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,845ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,845ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,845ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,845ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,845ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,854ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,854ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,854ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,854ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,854ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,854ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,862ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,862ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,862ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,862ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,862ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,862ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,871ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,871ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,871ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,871ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,871ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,871ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,879ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,879ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,879ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,879ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,879ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,879ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,888ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,888ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,888ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,888ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,888ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,888ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,896ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,896ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,896ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,896ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,896ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,896ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,905ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,905ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,905ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,905ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,905ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,905ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,912ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,912ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,912ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,913ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,913ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,913ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,922ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,922ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,922ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,922ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,922ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,922ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,929ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,929ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,929ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,929ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,929ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,929ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,938ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,938ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,938ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,938ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,938ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,938ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,946ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,946ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,946ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,946ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,946ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,946ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,955ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,955ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,955ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,955ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,955ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,955ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,963ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,963ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,963ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,963ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,963ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,963ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,972ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,972ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,972ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,972ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,972ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,972ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,980ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,980ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,980ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,980ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,980ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,980ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,989ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,989ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,989ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,989ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,989ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,989ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,996ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [13,996ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,996ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [13,997ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [13,997ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [13,997ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,006ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,006ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,006ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,006ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,006ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,006ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,013ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,013ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,013ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,014ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,014ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,014ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,022ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,022ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,022ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,022ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,022ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,022ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,030ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,030ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,030ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,030ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,030ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,030ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,040ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,040ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,040ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,040ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,040ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,040ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,047ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,047ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,047ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,047ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,047ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,047ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,056ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,056ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,056ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,056ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,056ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,056ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,064ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,064ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,064ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,065ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,065ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,065ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,073ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,073ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,073ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,073ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,073ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,073ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,081ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,081ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,081ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,081ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,081ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,081ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,090ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,090ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,090ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,090ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,090ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,090ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,098ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,098ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,098ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,098ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,098ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,098ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,106ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,107ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,107ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,107ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,107ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,107ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,114ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,114ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,114ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,115ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,115ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,115ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,123ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,123ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,123ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,123ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,123ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,123ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,131ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,131ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,131ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,131ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,131ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,131ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,140ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,140ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,140ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,140ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,140ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,140ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,148ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,148ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,148ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,148ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,148ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,148ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,157ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,157ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,157ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,157ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,157ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,157ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,165ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,165ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,165ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,165ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,165ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,165ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,174ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,174ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,174ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,174ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,174ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,174ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,182ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,182ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,182ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,182ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,182ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,182ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,191ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,191ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,191ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,191ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,191ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,191ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,199ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,199ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,199ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,199ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,199ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,199ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,208ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,208ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,208ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,208ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,208ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,208ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,215ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,215ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,215ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,216ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,216ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,216ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,224ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,224ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,224ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,224ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,224ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,224ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,232ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,232ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,232ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,232ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,232ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,232ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,241ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,241ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,241ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,241ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,241ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,241ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,249ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,249ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,249ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,249ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,249ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,249ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,258ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,258ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,258ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,258ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,258ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,258ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,266ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,266ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,266ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,266ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,266ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,266ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,275ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,275ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,275ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,275ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,275ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,275ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,283ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,283ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,283ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,283ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,283ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,283ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,292ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,292ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,292ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,292ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,292ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,292ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,300ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,300ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,300ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,300ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,300ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,300ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,309ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,309ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,309ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,309ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,309ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,309ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,317ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,317ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,317ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,317ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,317ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,317ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,326ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,326ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,326ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,326ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,326ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,326ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,334ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,334ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,334ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,334ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,334ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,334ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,343ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,344ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,344ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,344ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,344ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,344ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,351ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,351ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,351ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,351ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,351ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,351ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,360ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/left_fr3'
+2026-11-04 01:24:26 [14,360ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/left_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,360ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+2026-11-04 01:24:26 [14,360ms] [Warning] [omni.physx.tensors.plugin] Failed to find articulation at '/World/right_fr3'
+2026-11-04 01:24:26 [14,360ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/right_fr3' did not match any rigid bodies
+
+2026-11-04 01:24:26 [14,360ms] [Error] [omni.physx.tensors.plugin] Provided pattern list did not match any articulations
+
+Starting kit application with the following args:  ['/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py', '/home/ubuntu2004/isaacsim-4.5.0/apps/isaacsim.exp.base.python.kit', '--/app/tokens/exe-path=/home/ubuntu2004/isaacsim-4.5.0/kit', '--/persistent/app/viewport/displayOptions=3094', '--/rtx/materialDb/syncLoads=True', '--/rtx/hydra/materialSyncLoads=True', '--/omni.kit.plugin/syncUsdLoads=True', '--/app/renderer/resolution/width=1280', '--/app/renderer/resolution/height=720', '--/app/window/width=1440', '--/app/window/height=900', '--/renderer/multiGpu/enabled=False', '--/app/fastShutdown=True', '--/app/installSignalHandlers=0', '--ext-folder', '/home/ubuntu2004/isaacsim-4.5.0/exts', '--ext-folder', '/home/ubuntu2004/isaacsim-4.5.0/apps', '--/physics/cudaDevice=0', '--portable', '--no-window', '--/app/window/hideUi=1']
+Passing the following args to the base kit application:  ['--config', 'C', '--output', '/home/ubuntu2004/Documents/Codex/2026-10-28/github-task28-g2-p5-qp-5/work/dual-arm-embodied-palletizing/offline/task28_stage_b_contact/evidence/task28_d3_tool_isolation_v1/cd/C']
+Warp 1.5.0 initialized:
+   CUDA Toolkit 11.8, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 3070" (8 GiB, sm_86, mempool enabled)
+   Kernel cache:
+     /home/ubuntu2004/.cache/warp/1.5.0
+[Task26] 关节量程已对齐本仓库官方 FR3（joint_limits.yaml）；NVIDIA fr3.usd 的窄量程是规划/物理不一致的来源，见 _apply_official_joint_limits 注释
+
+====================================================
+Task27 truck-box side-suction scene ready
+tools: fixed 2x2 side-suction array, short L support (80 mm down + 130 mm side), TCP offset=0.155 m
+truck box: interior x=(0.91, 1.1600000000000001) y=(-0.303, 0.303), walls 0.020 m thick x 0.150 m high
+opening: -X side + top; push direction: +X
+table top z=0.200 m; FR3 official move_to_start targets are configured
+first layer cells: ((1.1, 0.243, 0.26), (1.1, -0.243, 0.26), (1.1, 0.1215, 0.26), (1.1, -0.1215, 0.26), (1.1, 0.0, 0.26))
+pre-push positions: ((0.7899999999999999, 0.06, 0.26), (0.7899999999999999, -0.06, 0.26), (0.7899999999999999, 0.1215, 0.26), (0.7899999999999999, -0.1215, 0.26), (0.7899999999999999, 0.0, 0.26))
+rails (X axis, visual only): rest x=0.650 travel=(0.45, 1.05); base y fixed (-0.6, 0.6)
+TRUCK SHIFT: 车厢/格位/预推位 X 平移 +0.100 m；滑轨行程 (0.45, 1.05)；静止位 0.650
+rails are moved by the bridge via /task27/{left,right}/rail_command
+feed: 5 batches x 1 cubes; slot A=(0.5, 0.0, 0.26) (picked first), slot B=(0.35, 0.0, 0.26); all cubes start parked at z=-5.000
+PUB: /clock, /left/joint_states, /right/joint_states
+Next: Play, then run task27_five_cube_center_insert_bridge.py
+====================================================
+TASK28_D2_CONFIG {"config": "C", "status": "RECORDED", "reason": null, "force_commands": 0, "cube_state_writes_during_measurement": 0, "runtime_mass_kg": 0.800000011920929, "gravity_world_m_s2": [0.0, 0.0, -9.8100004196167], "warmup_app_updates": 90, "warmup_physics_steps": 52, "initial_cube_xyz_m": [0.4999988377094269, -1.4981293361415737e-06, 0.25999999046325684], "initial_cube_velocity_m_s": [0.0, 0.0, 0.0], "initial_cube_quaternion_xyzw": [5.3241515161062125e-06, -3.4790336940204725e-06, -3.1355376961528236e-08, 1.0], "initial_tool_xyz_m": null, "fr3_deactivated_in_diagnostic": true, "view_order": ["table"], "solver": "TGS", "stabilization": true, "controls": {"/World/Task27/Supply/Cube_01": {"attributes": {"doubleSided": "False", "extent": "[(-1, -1, -1), (1, 1, 1)]", "orientation": "rightHanded", "physics:angularVelocity": "(0.16048938, 0.020836197, -0.0003924341)", "physics:centerOfMass": "(-inf, -inf, -inf)", "physics:collisionEnabled": "True", "physics:density": "0.0", "physics:diagonalInertia": "(0, 0, 0)", "physics:kinematicEnabled": "False", "physics:mass": "0.800000011920929", "physics:principalAxes": "(0, 0, 0, 0)", "physics:rigidBodyEnabled": "True", "physics:startsAsleep": "False", "physics:velocity": "(0.00010719213, -0.00006185805, -0.00021248311)", "physxContactReport:threshold": "0.0", "physxRigidBody:angularDamping": "0.05000000074505806", "physxRigidBody:cfmScale": "0.02500000037252903", "physxRigidBody:contactSlopCoefficient": "0.0", "physxRigidBody:disableGravity": "False", "physxRigidBody:enableCCD": "False", "physxRigidBody:enableGyroscopicForces": "True", "physxRigidBody:enableSpeculativeCCD": "False", "physxRigidBody:linearDamping": "0.0", "physxRigidBody:lockedPosAxis": "0", "physxRigidBody:lockedRotAxis": "0", "physxRigidBody:maxAngularVelocity": "5729.580078125", "physxRigidBody:maxContactImpulse": "inf", "physxRigidBody:maxDepenetrationVelocity": "3.0", "physxRigidBody:maxLinearVelocity": "inf", "physxRigidBody:retainAccelerations": "False", "physxRigidBody:sleepThreshold": "4.999999873689376e-05", "physxRigidBody:solveContact": "True", "physxRigidBody:solverPositionIterationCount": "16", "physxRigidBody:solverVelocityIterationCount": "1", "physxRigidBody:stabilizationThreshold": "9.999999747378752e-06", "primvars:displayColor": "[(0.92, 0.42, 0.18)]", "primvars:displayOpacity": "None", "purpose": "default", "size": "1.0", "visibility": "inherited", "xformOp:orient": "(1, 0.0000053241483, -0.0000034790316, -3.135536e-8)", "xformOp:scale": "(0.12, 0.12, 0.12)", "xformOp:scale:task26_size": "(0.12, 0.12, 0.12)", "xformOp:translate": "(0.4999988377094269, -0.0000014981293361415737, 0.25999999046325684)", "xformOp:translate:task26_pose": "(0.5, 0, 0.26)", "xformOpOrder": "[xformOp:translate, xformOp:orient, xformOp:scale]"}, "relationships": {"material:binding": ["/World/Task27/HighFrictionMaterial"], "physics:simulationOwner": [], "physxContactReport:reportPairs": [], "proxyPrim": []}}, "/World/Table": {"attributes": {"doubleSided": "False", "extent": "[(-1, -1, -1), (1, 1, 1)]", "orientation": "rightHanded", "physics:collisionEnabled": "True", "physxContactReport:threshold": "0.0", "primvars:displayColor": "[(0, 0.65, 0.85)]", "primvars:displayOpacity": "None", "purpose": "default", "size": "1.0", "visibility": "inherited", "xformOp:scale:task26_size": "(1.5, 0.8, 0.2)", "xformOp:translate:task26_pose": "(0.55, 0, 0.1)", "xformOpOrder": "[xformOp:translate:task26_pose, xformOp:scale:task26_size]"}, "relationships": {"material:binding": ["/World/Task27/HighFrictionMaterial"], "physics:simulationOwner": [], "physxContactReport:reportPairs": [], "proxyPrim": []}}, "/physicsScene": {"attributes": {"physics:gravityDirection": "(0, 0, 0)", "physics:gravityMagnitude": "-inf", "physxScene:bounceThreshold": "0.0", "physxScene:broadphaseType": "GPU", "physxScene:collisionSystem": "PCM", "physxScene:enableCCD": "True", "physxScene:enableEnhancedDeterminism": "False", "physxScene:enableExternalForcesEveryIteration": "False", "physxScene:enableGPUDynamics": "True", "physxScene:enableResidualReporting": "False", "physxScene:enableSceneQuerySupport": "True", "physxScene:enableStabilization": "True", "physxScene:frictionCorrelationDistance": "0.02500000037252903", "physxScene:frictionOffsetThreshold": "0.03999999910593033", "physxScene:frictionType": "patch", "physxScene:gpuCollisionStackSize": "67108864", "physxScene:gpuFoundLostAggregatePairsCapacity": "1024", "physxScene:gpuFoundLostPairsCapacity": "262144", "physxScene:gpuHeapCapacity": "67108864", "physxScene:gpuMaxDeformableSurfaceContacts": "1048576", "physxScene:gpuMaxHairContacts": "1048576", "physxScene:gpuMaxNumPartitions": "8", "physxScene:gpuMaxParticleContacts": "1048576", "physxScene:gpuMaxRigidContactCount": "524288", "physxScene:gpuMaxRigidPatchCount": "81920", "physxScene:gpuMaxSoftBodyContacts": "1048576", "physxScene:gpuTempBufferCapacity": "16777216", "physxScene:gpuTotalAggregatePairsCapacity": "1024", "physxScene:invertCollisionGroupFilter": "False", "physxScene:maxBiasCoefficient": "inf", "physxScene:maxPositionIterationCount": "255", "physxScene:maxVelocityIterationCount": "255", "physxScene:minPositionIterationCount": "1", "physxScene:minVelocityIterationCount": "0", "physxScene:reportKinematicKinematicPairs": "False", "physxScene:reportKinematicStaticPairs": "False", "physxScene:solverType": "TGS", "physxScene:timeStepsPerSecond": "60", "physxScene:updateType": "Synchronous"}, "relationships": {}}}, "ros_graph_deactivated": true, "tool_shapes": [], "cube_contact_report": true, "table_contact_report": true, "samples": 60, "events": 24}

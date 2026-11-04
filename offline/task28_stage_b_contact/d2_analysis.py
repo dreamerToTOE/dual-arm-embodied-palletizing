@@ -31,6 +31,7 @@ def compare(a, b):
                          'max_early_late_force_difference_N': max(float(np.linalg.norm(np.array(r['support_force_N']) - r['late_support_force_N'])) for r in rows),
                          'callback_order_violations': sum(not (r['pre_monotonic_ns'] <= r['early_monotonic_ns'] <= r['late_monotonic_ns'] and
                                                                all(r['pre_monotonic_ns'] <= t <= r['early_monotonic_ns'] for t in r['event_monotonic_ns'])) for r in rows),
-                         'max_tool_movement_m': max(float(np.linalg.norm(np.array(r['tool_xyz_m']) - rows[0]['tool_xyz_m'])) for r in rows)}
+                         'max_tool_movement_m': (max(float(np.linalg.norm(np.array(r['tool_xyz_m']) - rows[0]['tool_xyz_m'])) for r in rows)
+                                                 if rows[0]['tool_xyz_m'] is not None else None)}
     return {'initial_position_difference_m': start_position, 'initial_velocity_difference_m_s': start_velocity,
             'initial_states_matched': matched, 'A': metrics['A'], 'B': metrics['B']}

@@ -73,3 +73,5 @@ python3 offline/task28_stage_b_contact/plot_d2.py offline/task28_stage_b_contact
 日志显示 `librosidl_runtime_c.so` 无法加载；本次启动环境中 `ROS_DISTRO` 和 `LD_LIBRARY_PATH` 均未设置。该库实际存在于 `/opt/ros/humble/lib` 和 Isaac 自带的 Humble 库目录；离线检查表明，将 `/opt/ros/humble/lib` 放入 `LD_LIBRARY_PATH` 后可用 Python `ctypes` 加载该库。这支持库搜索路径是初始化失败的一个具体原因，但尚未验证完整 ROS 2 bridge 或物理复测能否成功。后续应在启动前配置 ROS Humble 环境，再单独安排新的有界物理诊断。
 
 本次重跑前离线回归 **26 passed**。由于未产生物理样本，本次不改变上文原 A/B 数值或 `D2_PARTIAL` 结论；`B_C2R_BLOCKED`、`B0_PARTIAL` 也保持不变。
+
+后续 ROS 环境验证与一次 D3 C/D 工具隔离记录见 [D3 报告](TASK28_STAGE_B_C2R_D3_TOOL_ISOLATION.md)。D3 两组初始和运行环境检查未全部通过，其结果仅为探索性证据；正常扩展关闭时仍发生段错误，状态不变。
