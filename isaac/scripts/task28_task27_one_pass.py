@@ -26,7 +26,7 @@ REPO = Path(__file__).resolve().parents[2]
 ISAAC_ROOT = Path("/home/ubuntu2004/isaacsim-4.5.0")
 SCENE = REPO / "isaac/scripts/task27_five_cube_center_insert_scene.py"
 TORQUE_BRIDGE = REPO / "isaac/scripts/task28_task27_torque_bridge.py"
-OUT_ROOT = REPO / "offline/task28_task27_integration/evidence"
+OUT_ROOT = REPO / "research/stage_b_vision_contact_r2b/evidence"
 # Isaac Kit mutates PYTHONPATH/LD_LIBRARY_PATH after SimulationApp starts.
 # ROS subprocesses must inherit the clean pre-Kit environment instead.
 BASE_ROS_ENV = os.environ.copy()
@@ -85,7 +85,7 @@ def capture(app, viewport, path):
 class PhysicalTrace:
     """Post-step FR3/Cube trace and PhysX pair receipts for position mode."""
 
-    def __init__(self, stage, feed_bridge, out):
+    def __init__(self, stage, feed_bridge, out, command_receipts=None):
         import omni.physx
         from pxr import PhysxSchema, PhysicsSchemaTools, UsdPhysics
 
@@ -98,6 +98,7 @@ class PhysicalTrace:
         self.time_s = 0.0
         self._PhysicsSchemaTools = PhysicsSchemaTools
         self._subs = []
+        self.command_receipts = command_receipts if command_receipts is not None else []
         prefixes = (
             "/World/Task27/Supply/Cube_01",
             "/World/Task27/TruckBox/WallDeep",
@@ -193,6 +194,9 @@ class PhysicalTrace:
                 "cube_world_m": np.asarray(cube_position, dtype=float).tolist(),
                 "cube_quaternion_wxyz": np.asarray(cube_orientation, dtype=float).tolist(),
                 "cube_velocity_m_s": cube_velocity,
+                "suction_command": {side: (None if getattr(self.feed, "_last_commanded", {}).get(side) is None else bool(self.feed._last_commanded[side])) for side in ("left", "right")},
+                "suction_state": {side: (bool(self.feed.grippers[side].is_closed()) if hasattr(self.feed, "grippers") else None) for side in ("left", "right")},
+                "controller_command": (dict(self.command_receipts[-1]) if self.command_receipts else None),
             })
         except Exception as exc:
             self.rows.append({"physics_step": self.step, "time_s": self.time_s,
@@ -418,6 +422,51 @@ def run_fixed_force_sequence(app, torque, *, transition_s=2.0, hold_s=5.0,
             "clock": "Isaac_physics", "segments": segments}
 
 
+class R2BPhysicalCamera:
+    """RGB-D capture attached to the fixed eye-to-hand camera for one run."""
+    def __init__(self, stage, viewport, out, eye, target, every_steps=6):
+        from isaacsim.core.utils.viewports import set_camera_view
+        from omni.kit.viewport.utility import capture_viewport_to_file
+        from pxr import Usd, UsdGeom
+        from isaacsim.sensors.camera import Camera
+        self.stage, self.viewport, self.out = stage, viewport, Path(out)
+        self.every_steps = max(1, int(every_steps)); self.last_step = -1; self.rows = []
+        self.out.mkdir(parents=True, exist_ok=True); (self.out / "rgb").mkdir(exist_ok=True); (self.out / "depth").mkdir(exist_ok=True)
+        self.prim_path = "/World/R2B_RearWallCamera"
+        camera = UsdGeom.Camera.Define(stage, self.prim_path)
+        camera.GetFocalLengthAttr().Set(20.0); camera.GetHorizontalApertureAttr().Set(36.0); camera.GetVerticalApertureAttr().Set(24.0); camera.GetClippingRangeAttr().Set((0.01, 100.0))
+        set_camera_view(eye=list(eye), target=list(target), camera_prim_path=self.prim_path); viewport.set_active_camera(self.prim_path)
+        try: viewport.render_mode = "RaytracedLighting"
+        except Exception: pass
+        self.camera = camera; self.eye=list(eye); self.target=list(target); self._capture=capture_viewport_to_file
+        self.depth_camera = Camera(prim_path=self.prim_path, name="r2b_rear_wall_physical", resolution=(1280,720), render_product_path=viewport.get_render_product_path())
+        self.depth_camera.initialize(); self.depth_camera.add_distance_to_image_plane_to_frame()
+        # Camera.initialize may add/reset its xform op; reapply the selected
+        # eye-to-hand pose after sensor creation and before recording extrinsics.
+        set_camera_view(eye=list(eye), target=list(target), camera_prim_path=self.prim_path); viewport.set_active_camera(self.prim_path)
+        self.world_from_camera = np.array(UsdGeom.Xformable(camera.GetPrim()).ComputeLocalToWorldTransform(Usd.TimeCode.Default()), dtype=float).tolist()
+        (self.out / "camera_metadata.json").write_text(json.dumps({"schema":"task28.r2b.physical_camera.v1","prim":self.prim_path,"eye_world_m":self.eye,"target_world_m":self.target,"focal_length_mm":20.0,"aperture_mm":[36.0,24.0],"resolution_px":[1280,720],"world_from_camera":self.world_from_camera,"capture_every_physics_steps":self.every_steps},indent=2)+"\n")
+
+    def capture_if_due(self, app, physics_trace):
+        if physics_trace.step <= 0 or physics_trace.step == self.last_step or physics_trace.step % self.every_steps:
+            return
+        step = physics_trace.step; self.last_step = step
+        rgb = self.out / "rgb" / f"frame_{step:06d}.png"; depth = self.out / "depth" / f"frame_{step:06d}.npy"
+        self._capture(self.viewport, file_path=str(rgb), is_hdr=False)
+        for _ in range(4): app.update()
+        depth_error = None
+        try:
+            depth_data = np.asarray(self.depth_camera.get_depth()); np.save(depth, depth_data); depth_ok = bool(depth_data.size)
+        except Exception as exc:
+            depth_ok = False; depth = None; depth_error = repr(exc)
+        row = {"physics_step": step, "time_s": physics_trace.time_s, "rgb": str(rgb.relative_to(self.out)), "depth": (None if depth is None else str(depth.relative_to(self.out))), "depth_ok": depth_ok}
+        if depth_error is not None: row['depth_error'] = depth_error
+        self.rows.append(row)
+
+    def close(self):
+        (self.out / "camera_timeline.jsonl").write_text("".join(json.dumps(r, allow_nan=False)+"\n" for r in self.rows))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=("smoke", "integrated"), default="smoke")
@@ -474,6 +523,10 @@ def main():
                         help="Smooth transition duration for each fixed-pose force segment.")
     parser.add_argument("--fixed-force-hold-s", type=float, default=5.0,
                         help="Steady hold duration for each fixed-pose force segment.")
+    parser.add_argument("--r2b-camera-eye", type=float, nargs=3, default=None,
+                        help="Enable R2-B fixed eye-to-hand RGB-D capture at x y z.")
+    parser.add_argument("--r2b-camera-target", type=float, nargs=3, default=[0.82, 0.0, 0.30])
+    parser.add_argument("--r2b-camera-every", type=int, default=6)
     args = parser.parse_args()
     if args.pre_torque_settle_frames < 0:
         raise ValueError("pre-torque-settle-frames must be non-negative")
@@ -574,11 +627,16 @@ def main():
         "executor_exit": None,
         "native_settle": None,
         "status": "RUNNING",
+        "r2b_camera_eye": args.r2b_camera_eye,
+        "r2b_camera_target": args.r2b_camera_target,
+        "r2b_camera_every": int(args.r2b_camera_every),
     }
     app = None
     torque = None
     moveit = executor = None
     physical_trace = None
+    r2b_camera = None
+    command_receipts = []
     supervisor = RuntimeSupervisor(out / "runtime_events.jsonl")
     supervisor.emit("RUN_STARTED", EventClass.NORMAL_OPERATION,
                      reason="bounded Stage B trial initialized",
@@ -597,6 +655,9 @@ def main():
         UsdGeom.SetStageMetersPerUnit(stage, 1.0)
         UsdGeom.Xform.Define(stage, "/World")
         load_scene()
+        if args.r2b_camera_eye is not None:
+            from research.stage_b_vision_contact_r2b.scripts.r2b_camera_observer_smoke import make_marker, MARKER_GRID
+            make_marker(stage, "/World/Task27/Supply/Cube_01", 23, 0.060, MARKER_GRID)
         if args.consistent_object_reference:
             from pxr import PhysxSchema
             for path in ("/World/Task27/Supply/Cube_01", "/World/Table"):
@@ -609,6 +670,9 @@ def main():
                 viewport.render_mode = "RaytracedLighting"
             except Exception:
                 pass
+        if args.r2b_camera_eye is not None:
+            r2b_camera = R2BPhysicalCamera(stage, viewport, out / "r2b_camera", args.r2b_camera_eye, args.r2b_camera_target, args.r2b_camera_every)
+            summary["r2b_camera_metadata"] = "r2b_camera/camera_metadata.json"
         timeline = omni.timeline.get_timeline_interface()
         timeline.play()
         # Give the original scene a short initialization window before taking
@@ -630,6 +694,12 @@ def main():
             feed_bridge = module.start_original_task27_feed_bridge()
         if feed_bridge is None or not hasattr(feed_bridge, "articulations"):
             raise RuntimeError("ORIGINAL_FEED_BRIDGE_INVALID")
+        original_apply_joint_command = feed_bridge._apply_joint_command
+        def observed_apply_joint_command(feed, side, command):
+            stamp, names, positions = command
+            command_receipts.append({"sequence": len(command_receipts) + 1, "side": side, "stamp": list(stamp), "names": list(names), "positions_rad": np.asarray(positions, dtype=float)[:7].tolist(), "time_wall_s": time.time()})
+            return original_apply_joint_command(side, command)
+        feed_bridge._apply_joint_command = observed_apply_joint_command.__get__(feed_bridge, type(feed_bridge))
         if args.live_qp:
             supervisor.emit("CONTROL_HANDOFF_LOCAL_QP", EventClass.NORMAL_OPERATION,
                              reason="explicit live-QP mode owns only the local contact controller",
@@ -672,12 +742,12 @@ def main():
             summary["control_architecture"] = "FREE_SPACE_TRAJECTORY_POSITION_DRIVE"
             if args.mode == "integrated":
                 physical_trace = PhysicalTrace(
-                    stage, feed_bridge, out / "physical_trace"
+                    stage, feed_bridge, out / "physical_trace", command_receipts
                 )
         for _ in range(60):
             app.update()
         if args.mode == "integrated":
-            ros_ws = REPO / "ros_ws"
+            ros_ws = Path(os.environ.get("TASK28_ROS_WS", str(REPO / "ros_ws")))
             moveit = start_process("ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py use_rviz:=false", out / "moveit.log", ros_ws)
             summary["moveit_started"] = True
             # Start the executor while MoveIt is still bringing up its action
@@ -704,6 +774,8 @@ def main():
             start = time.monotonic()
             while executor.poll() is None and time.monotonic() - start < args.timeout_s:
                 app.update()
+                if r2b_camera is not None and physical_trace is not None:
+                    r2b_camera.capture_if_due(app, physical_trace)
                 if getattr(torque, "_latched_error", None):
                     break
                 time.sleep(0.01)
@@ -772,6 +844,8 @@ def main():
                         )
                 app.update()
         capture(app, viewport, out / "final.png")
+        if r2b_camera is not None:
+            r2b_camera.close()
         if getattr(torque, "_latched_error", None):
             summary["status"] = "TORQUE_BRIDGE_FAIL_CLOSED"
         elif args.live_qp and int(getattr(torque, "_qp_solve_count", 0) or 0) <= 0:

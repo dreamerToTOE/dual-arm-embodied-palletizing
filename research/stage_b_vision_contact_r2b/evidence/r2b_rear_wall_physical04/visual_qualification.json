@@ -1,0 +1,283 @@
+{
+  "schema": "task28.r2b.physical_camera_qualification.v2",
+  "run_id": "r2b_rear_wall_physical04",
+  "frames": 51,
+  "detections": 44,
+  "detection_rate": 0.8627450980392157,
+  "mean_position_error_m": 0.04210850348496553,
+  "mean_orientation_error_deg": 9.406521529495224,
+  "longest_visual_dropout_s": 10.000000521540642,
+  "dropout_intervals": [
+    {
+      "start_s": 58.13333636522293,
+      "end_s": 68.13333688676357,
+      "duration_s": 10.000000521540642
+    },
+    {
+      "start_s": 70.1333369910717,
+      "end_s": 72.13333709537983,
+      "duration_s": 2.0000001043081284
+    },
+    {
+      "start_s": 74.13333719968796,
+      "end_s": 76.13333730399609,
+      "duration_s": 2.0000001043081284
+    }
+  ],
+  "phase_visibility": {
+    "cube_supply": {
+      "frames": 29,
+      "detections": 26,
+      "detection_rate": 0.896551724137931,
+      "mean_position_error_m": 0.04856589712419215,
+      "mean_orientation_error_deg": 10.843749974654967,
+      "depth_available_rate": 1.0,
+      "status": "EXECUTED_OBSERVED"
+    },
+    "dual_arm_approach": {
+      "frames": 24,
+      "detections": 24,
+      "detection_rate": 1.0,
+      "mean_position_error_m": 0.04414919230927985,
+      "mean_orientation_error_deg": 5.818181309149608,
+      "depth_available_rate": 1.0,
+      "status": "EXECUTED_OBSERVED"
+    },
+    "dual_arm_attachment": {
+      "frames": 6,
+      "detections": 2,
+      "detection_rate": 0.3333333333333333,
+      "mean_position_error_m": 0.1015663549031398,
+      "mean_orientation_error_deg": 71.15057396071929,
+      "depth_available_rate": 1.0,
+      "status": "EXECUTED_OBSERVED"
+    },
+    "coordinated_transport": {
+      "frames": 11,
+      "detections": 7,
+      "detection_rate": 0.6363636363636364,
+      "mean_position_error_m": 0.037407509637754126,
+      "mean_orientation_error_deg": 6.613182258129128,
+      "depth_available_rate": 1.0,
+      "status": "EXECUTED_OBSERVED"
+    },
+    "placement_release": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    },
+    "single_arm_recontact": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    },
+    "single_arm_insertion": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    },
+    "deep_wall_arrival": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    },
+    "auxiliary_side_compaction": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    },
+    "release_retreat": {
+      "frames": 0,
+      "detections": 0,
+      "detection_rate": null,
+      "mean_position_error_m": null,
+      "mean_orientation_error_deg": null,
+      "depth_available_rate": null,
+      "status": "NOT_EXECUTED"
+    }
+  },
+  "calibration_comparison": {
+    "authored_intrinsics_cy360": {
+      "detections": 44,
+      "detection_rate": 0.8627450980392157,
+      "mean_position_error_m": 0.04210850348496553,
+      "mean_orientation_error_deg": 9.406521529495224
+    },
+    "render_calibrated_cy341": {
+      "detections": 44,
+      "detection_rate": 0.8627450980392157,
+      "mean_position_error_m": 0.023357743281057122,
+      "mean_orientation_error_deg": 7.828298808425958
+    },
+    "render_calibrated_cy341_phase_visibility": {
+      "cube_supply": {
+        "frames": 29,
+        "detections": 26,
+        "detection_rate": 0.896551724137931,
+        "mean_position_error_m": 0.02215496601800972,
+        "mean_orientation_error_deg": 9.30750135185602,
+        "depth_available_rate": 1.0,
+        "status": "EXECUTED_OBSERVED"
+      },
+      "dual_arm_approach": {
+        "frames": 24,
+        "detections": 24,
+        "detection_rate": 1.0,
+        "mean_position_error_m": 0.018002019357678412,
+        "mean_orientation_error_deg": 4.296919372963849,
+        "depth_available_rate": 1.0,
+        "status": "EXECUTED_OBSERVED"
+      },
+      "dual_arm_attachment": {
+        "frames": 6,
+        "detections": 2,
+        "detection_rate": 0.3333333333333333,
+        "mean_position_error_m": 0.0719903259419854,
+        "mean_orientation_error_deg": 69.43448509856208,
+        "depth_available_rate": 1.0,
+        "status": "EXECUTED_OBSERVED"
+      },
+      "coordinated_transport": {
+        "frames": 11,
+        "detections": 7,
+        "detection_rate": 0.6363636363636364,
+        "mean_position_error_m": 0.023389121722793112,
+        "mean_orientation_error_deg": 5.067340687209764,
+        "depth_available_rate": 1.0,
+        "status": "EXECUTED_OBSERVED"
+      },
+      "placement_release": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      },
+      "single_arm_recontact": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      },
+      "single_arm_insertion": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      },
+      "deep_wall_arrival": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      },
+      "auxiliary_side_compaction": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      },
+      "release_retreat": {
+        "frames": 0,
+        "detections": 0,
+        "detection_rate": null,
+        "mean_position_error_m": null,
+        "mean_orientation_error_deg": null,
+        "depth_available_rate": null,
+        "status": "NOT_EXECUTED"
+      }
+    },
+    "note": "cy=341 is an evaluation-only fitted viewport principal point; online estimator remains authored cy=360 until multi-view calibration is accepted"
+  },
+  "predictors": {
+    "P0_last_valid_visual": {
+      "samples": 7,
+      "mean_error_m": 0.14697848401622285,
+      "p95_error_m": 0.3087505572062473,
+      "max_duration_s": 10.000000521540642
+    },
+    "P1_visual_velocity": {
+      "samples": 7,
+      "mean_error_m": 0.4587130922157384,
+      "p95_error_m": 0.9976140346233022,
+      "max_duration_s": 10.000000521540642
+    },
+    "P2_tcp_propagation_attachment_gated": {
+      "samples": 7,
+      "mean_error_m": 0.13034220236362073,
+      "p95_error_m": 0.16269064167119515,
+      "max_duration_s": 10.000000521540642
+    }
+  },
+  "predictors_render_calibrated_cy341": {
+    "P0_last_valid_visual": {
+      "samples": 7,
+      "mean_error_m": 0.14293166713010183,
+      "p95_error_m": 0.3012643966781043,
+      "max_duration_s": 10.000000521540642
+    },
+    "P1_visual_velocity": {
+      "samples": 7,
+      "mean_error_m": 0.4348859903764957,
+      "p95_error_m": 0.972454477272434,
+      "max_duration_s": 10.000000521540642
+    },
+    "P2_tcp_propagation_attachment_gated": {
+      "samples": 7,
+      "mean_error_m": 0.09931900498333233,
+      "p95_error_m": 0.1286932315994196,
+      "max_duration_s": 10.000000521540642
+    }
+  },
+  "prediction_policy": "uncertainty grows with dropout age; P2 UNKNOWN without independent dual suction/contact support; TCP predictor never reads Cube GT",
+  "physical_trace_summary": {
+    "schema": "task28.fr3.physical_trace.v1",
+    "frames": 9821,
+    "contact_events": 39509,
+    "tool_cube_contact_events": 31009,
+    "deep_wall_contact_events": 334,
+    "cube_displacement_m": 0.6025805799520152,
+    "contact_source": "PhysX_simulation_contact_report",
+    "state_source": "Task26BatchedFeedBridge articulation and Cube runtime state"
+  },
+  "executor_phase_receipt": {
+    "attachment": true,
+    "single_arm_push": true,
+    "side_compaction": true,
+    "batch_pass": false
+  }
+}
