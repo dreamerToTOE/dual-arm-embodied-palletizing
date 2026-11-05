@@ -1,0 +1,19 @@
+{
+  "schema": "task28.r2b.protocol.v1",
+  "base_commit": "a308882aa7e1f1a9427584ddbc469808f6ef1974",
+  "camera": {
+    "prim": "/World/R2B_Camera",
+    "resolution_px": [1280, 720],
+    "focal_length_mm": 20.0,
+    "aperture_mm": [36.0, 24.0],
+    "modalities": ["rgb", "depth"],
+    "aruco_dictionary": "DICT_4X4_50",
+    "aruco_id": 23,
+    "marker_size_m": 0.06
+  },
+  "estimator_input": ["rgb_pixels", "depth_frame", "q_actual", "dq_actual", "tcp_world", "command_id", "command_stamp", "commanded_advancement", "suction_command", "suction_state"],
+  "oracle_policy": "PhysX contacts may be stored as diagnostics only; never enter estimator_payload",
+  "v1_proxy": {"seed": 20261105, "position_noise_sigma_m": 0.001, "delay_frames": 2, "dropout_probability": 0.1},
+  "physical_variation_gate": "deferred until nominal V2 multi-frame observer and contact-force observability are validated",
+  "unchanged_constraints": "reuse Task27 collision geometry and thresholds; no synthetic jam or teleport during a measured manipulation episode"
+}

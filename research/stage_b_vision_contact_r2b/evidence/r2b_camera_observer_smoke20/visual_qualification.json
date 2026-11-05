@@ -1,0 +1,43 @@
+{
+  "schema": "task28.r2b.qualification.v1",
+  "evidence": "r2b_camera_observer_smoke20",
+  "v0_oracle": {
+    "frames": 15688,
+    "availability": 1.0,
+    "mean_position_error_m": 0.0,
+    "latency_s": 0.0
+  },
+  "v1_proxy": {
+    "frames": 15688,
+    "availability": 0.9005609382967874,
+    "delay_frames": 2,
+    "latency_s": 0.03333333507180214,
+    "position_noise_sigma_m": 0.001,
+    "mean_position_error_m": 0.0016772019622372488,
+    "p95_position_error_m": 0.0030030207412991726,
+    "seed": 20261105
+  },
+  "v2_rendered_aruco": {
+    "images": 1,
+    "present": 1,
+    "availability": 1.0,
+    "mean_reprojection_error_px": 0.066056053718738,
+    "mean_pose_error_m": 0.013408773312764508,
+    "p95_pose_error_m": 0.013408773312764508,
+    "latency_s": 0.0,
+    "marker_id": 23,
+    "depth": [
+      {
+        "path": "rgb/depth_000001.npy",
+        "shape": [
+          720,
+          1280
+        ],
+        "finite_fraction": 0.7855588107638889,
+        "finite_median_m": 0.7237232327461243
+      }
+    ],
+    "measurement": "single rendered smoke frame; no manipulation trajectory"
+  },
+  "policy": "V2 detector receives pixels only; USD/oracle values are evaluation-only"
+}

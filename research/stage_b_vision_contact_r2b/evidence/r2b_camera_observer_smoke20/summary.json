@@ -1,0 +1,63 @@
+{
+  "schema": "task28.r2b.camera_smoke.v1",
+  "status": "COMPLETED",
+  "frames": 1,
+  "captured_images": 1,
+  "detected_images": null,
+  "depth_images": 1,
+  "depth_paths": [
+    "rgb/depth_000001.npy"
+  ],
+  "depth_error": null,
+  "camera": {
+    "prim": "/World/R2B_Camera",
+    "modalities": [
+      "rgb",
+      "depth"
+    ],
+    "prim_type": "Isaac Camera",
+    "focal_length_mm": 20.0,
+    "horizontal_aperture_mm": 36.0,
+    "vertical_aperture_mm": 24.0,
+    "marker_id": 23,
+    "marker_size_m": 0.06,
+    "marker_to_cube": "top_center_z_plus_0.061m",
+    "world_from_camera": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.7727262456069157,
+        0.6347394342170972,
+        0.0
+      ],
+      [
+        0.0,
+        -0.6347394342170972,
+        0.7727262456069157,
+        0.0
+      ],
+      [
+        0.5,
+        -0.45999999999999996,
+        0.82,
+        1.0
+      ]
+    ],
+    "image_width_px": 1280,
+    "image_height_px": 720
+  },
+  "cube_oracle_eval_pose_world_m": [
+    0.5,
+    0.0,
+    0.26
+  ],
+  "scene_sha256": "74eb11999b799681ec93b124d58b854c32018f1e23219a5ff07f7918fd201801",
+  "estimator_input_policy": "visual/q/dq/tcp/commands/suction only; oracle contact records separate",
+  "fresh_physical_manipulation_episode": false,
+  "note": "perception smoke places Cube in authored slot before play; no measured manipulation"
+}
