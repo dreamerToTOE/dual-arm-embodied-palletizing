@@ -1,0 +1,26 @@
+{
+  "protocol_id": "g0r-c2-wall-unload-v1",
+  "source": "research/stage-b-contact-switch-g1a",
+  "scene": "minimal Cube/Table/DeepWall; same geometry and materials as G0",
+  "physics": {"mass_kg": 0.8, "gravity_m_s2": [0.0, 0.0, -9.81], "nominal_dt_s": 0.0166666667},
+  "force_schedule": {
+    "precontact_until_s": 0.5,
+    "excite_force_world_N": [8.0, 0.0, 0.0],
+    "loaded_hold_force_world_N": [1.0, 0.0, 0.0],
+    "loaded_hold_s": 0.6,
+    "withdraw_pulse_force_world_N": [-10.0, 0.0, 0.0],
+    "withdraw_pulse_steps": 1,
+    "post_withdraw_force_world_N": [0.0, 0.0, 0.0],
+    "separation_confirmation_steps": 12
+  },
+  "acceptance": {
+    "loaded_wall_force_min_N": 0.02,
+    "loaded_gap_max_m": 0.0001,
+    "unloaded_wall_force_max_N": 0.02,
+    "separation_gap_min_m": 0.0001,
+    "momentum_residual_max_Ns": 0.07848,
+    "motion_displacement_max_m": 0.30,
+    "motion_speed_max_m_s": 0.80
+  },
+  "freeze_note": "Frozen before G0-R physics execution. The one-step -10 N withdrawal pulse is a bounded configuration choice, not tuned after a final positive result. Any failed attempt remains evidence."
+}

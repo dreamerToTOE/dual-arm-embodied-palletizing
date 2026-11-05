@@ -1,0 +1,46 @@
+{
+  "run_id": "g0r_c4_full_diagnostic_01",
+  "execution": "ISAAC_SIM_PHYSICS",
+  "status": "FAILED",
+  "preflight": "FAILED",
+  "samples": 12,
+  "events": 60,
+  "awake_samples": 12,
+  "diag_awake_samples": 12,
+  "runtime_mass_kg": 0.800000011920929,
+  "gravity_world_m_s2": [
+    0.0,
+    0.0,
+    -9.8100004196167
+  ],
+  "solver": "TGS",
+  "stabilization": true,
+  "material": "/World/Task27/HighFrictionMaterial; static=0.90 dynamic=0.75 restitution=0",
+  "contact_pairs": {
+    "('/World/Task27/Supply/Cube_01', '/World/Table')": 12,
+    "('/World/Task28C2/Tool/cup_r1_c1', '/World/Task27/Supply/Cube_01')": 12,
+    "('/World/Task28C2/Tool/cup_r1_c2', '/World/Task27/Supply/Cube_01')": 12,
+    "('/World/Task28C2/Tool/cup_r2_c1', '/World/Task27/Supply/Cube_01')": 12,
+    "('/World/Task28C2/Tool/cup_r2_c2', '/World/Task27/Supply/Cube_01')": 12
+  },
+  "cup_pair_events": 48,
+  "cup_pair_peak_impulse_Ns": 0.0,
+  "support_matrix_event_max_diff_Ns": 0.0,
+  "step_alignment": true,
+  "age_ns_range": [
+    296683,
+    471864
+  ],
+  "support_mean_N": 3.2990115185578666,
+  "expected_weight_mean_N": 7.848000452637677,
+  "support_relative_error": 0.5796366809014283,
+  "integrated_support_deficit_Ns": 0.9097978342656146,
+  "reported_preflight_momentum_residual_Ns": [
+    -2.5088398989326672e-05,
+    7.96718811264728e-05,
+    0.9097921160326607
+  ],
+  "other_cube_contact_impulse_max_Ns": 0.0,
+  "cube_pose_writes_during_contact": 0,
+  "cause": "UNKNOWN: support deficit and residual are mathematically linked, but this bounded run does not identify their PhysX cause"
+}

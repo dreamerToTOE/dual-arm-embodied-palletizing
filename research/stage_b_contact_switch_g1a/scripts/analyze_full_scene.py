@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Audit the bounded fuller-scene diagnostic without reinterpreting the failure."""
+from __future__ import annotations
+import json
+from collections import Counter
+from pathlib import Path
+import numpy as np
+ROOT=Path(__file__).resolve().parents[1]; run='g0r_c4_full_diagnostic_01'; E=ROOT/'evidence'/run
+summary=json.loads((E/'summary.json').read_text()); rows=[json.loads(x) for x in (E/'timeseries.jsonl').read_text().splitlines()]; events=[json.loads(x) for x in (E/'contact_events.jsonl').read_text().splitlines()]
+support=np.array([r['support_force_z'] for r in rows]); expected=np.array([r['expected_weight_N'] for r in rows]); dt=np.array([r['dt_s'] for r in rows]); matrix=np.array([r['cube_table_impulse_world_Ns'] for r in rows]); event=np.array([r['support_event_z'] for r in rows])*dt; matrix_z=matrix[:,2]
+pairs=Counter(tuple(e['colliders']) for e in events); cup_events=[e for e in events if '/World/Task28C2/Tool/' in ' '.join(e['colliders'])]
+cup_imp=max((max((np.linalg.norm(p['impulse_world_Ns']) for p in e['points']),default=0.0) for e in cup_events),default=0.0)
+result={'run_id':run,'execution':'ISAAC_SIM_PHYSICS','status':summary['status'],'preflight':summary['preflight'],'samples':len(rows),'events':len(events),'awake_samples':sum(not r['cube_sleeping'] for r in rows),'diag_awake_samples':sum(not r['diag_sleeping'] for r in rows),'runtime_mass_kg':summary['cube_runtime_mass_kg'],'gravity_world_m_s2':summary['gravity_vector_m_s2'],'solver':summary['solver_type'],'stabilization':summary['enable_stabilization'],'material':summary['physics_material'],'contact_pairs':{str(k):v for k,v in pairs.items()},'cup_pair_events':len(cup_events),'cup_pair_peak_impulse_Ns':cup_imp,'support_matrix_event_max_diff_Ns':float(np.max(np.abs(matrix_z-event))),'step_alignment':all(r['sensor_step']==r['step'] and r['valid'] and r['frame']=='world' for r in rows),'age_ns_range':[min(r['age_ns'] for r in rows),max(r['age_ns'] for r in rows)],'support_mean_N':float(support.mean()),'expected_weight_mean_N':float(expected.mean()),'support_relative_error':float(abs(support.mean()-expected.mean())/expected.mean()),'integrated_support_deficit_Ns':float(np.sum((expected-support)*dt)),'reported_preflight_momentum_residual_Ns':summary['preflight_diagnostics']['momentum_residual_Ns'],'other_cube_contact_impulse_max_Ns':float(max(np.linalg.norm(r['cube_other_contact_impulse_world_Ns']) for r in rows)),'cube_pose_writes_during_contact':summary['cube_pose_writes_during_contact'],'cause':'UNKNOWN: support deficit and residual are mathematically linked, but this bounded run does not identify their PhysX cause'}
+(ROOT/'g0r_full_scene_diagnostic.json').write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n'); print(json.dumps(result,indent=2,ensure_ascii=False))

@@ -1,0 +1,55 @@
+{
+  "protocol_id": "g1a-geometry-proxy-v1",
+  "scene": "minimal Cube/Table/DeepWall; same geometry/materials as G0-R",
+  "controllers": {
+    "C0": {
+      "name": "fixed_position_advance",
+      "target_center_x_m": 0.63,
+      "kp_N_per_m": 120.0,
+      "kd_Ns_per_m": 4.0,
+      "max_force_N": 8.0,
+      "transition": "none",
+      "approach_force_N": 8.0
+    },
+    "C1": {
+      "name": "geometry_triggered_stop",
+      "target_center_x_m": 0.63,
+      "kp_N_per_m": 120.0,
+      "kd_Ns_per_m": 4.0,
+      "max_force_N": 8.0,
+      "trigger_gap_m": 0.003,
+      "trigger_speed_m_s": 0.005,
+      "transition": "hold_current_target_then_zero",
+      "approach_force_N": 8.0
+    },
+    "C2": {
+      "name": "hysteretic_smooth_geometry_transition",
+      "target_center_x_m": 0.63,
+      "kp_N_per_m": 120.0,
+      "kd_Ns_per_m": 4.0,
+      "reduced_kp_N_per_m": 30.0,
+      "reduced_kd_Ns_per_m": 5.0,
+      "max_force_N": 8.0,
+      "trigger_gap_m": 0.01,
+      "release_gap_m": 0.014,
+      "blend_steps": 12,
+      "transition": "continuous_pd_gain_and_target_blend_to_3mm_gap",
+      "approach_force_N": 8.0,
+      "trigger_speed_m_s": 0.005
+    }
+  },
+  "common": {
+    "warmup_s": 0.5,
+    "trial_max_steps": 150,
+    "settle_steps": 30,
+    "target_gap_m": 0.003,
+    "wall_left_face_x_m": 0.69,
+    "cube_half_extent_m": 0.06,
+    "gap_acceptance_m": 0.003,
+    "penetration_limit_m": 0.0001,
+    "motion_displacement_max_m": 0.3,
+    "motion_speed_max_m_s": 0.8
+  },
+  "switch_observation": "controller decisions use only geometric wall gap and Cube velocity; contact force is recorded diagnostically and is never read by the mode switch",
+  "freeze_note": "Frozen before the matched final_02 repetitions. Earlier probe and final_01 failures are retained: PD-only probe stalled; C2 final_01 had a missing trigger-speed field. The matched final_02 set uses this fixed configuration without changing thresholds after observing outcomes."
+}
