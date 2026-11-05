@@ -1,0 +1,593 @@
+{
+  "schema": "task28.r2b.multiframe_calibration.v1",
+  "camera_model_authored": {
+    "K": [
+      [
+        711.1111111111111,
+        0.0,
+        640.0
+      ],
+      [
+        0.0,
+        600.0,
+        360.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "distortion": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "resolution_px": [
+      1280,
+      720
+    ]
+  },
+  "fit_policy": {
+    "train_ids": [
+      "rear_05",
+      "rear_06",
+      "rear_09",
+      "rear_11",
+      "rear_15",
+      "rear_18"
+    ],
+    "heldout_ids": [
+      "rear_02",
+      "rear_03",
+      "rear_08",
+      "rear_12",
+      "rear_14",
+      "rear_17"
+    ],
+    "method": "fixed_authored_focal_lengths_fit_viewport_principal_point",
+    "runtime_use": "NEVER; evaluation only"
+  },
+  "K_fit": [
+    [
+      711.1111111111111,
+      0.0,
+      639.5351485169095
+    ],
+    [
+      0.0,
+      600.0,
+      340.4929634886551
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distortion_fit": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "static_train": {
+    "frames": 6,
+    "mean_reprojection_error_px": 0.28967387276223633,
+    "mean_pose_error_m": 0.04515409925239289
+  },
+  "static_holdout": {
+    "frames": 6,
+    "mean_reprojection_error_px": 0.3559851897006279,
+    "mean_pose_error_m": 0.05509046720074104,
+    "by_frame": [
+      {
+        "id": "rear_02",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.2664223497006079,
+        "pose_error_m": 0.01729142065700982,
+        "z_m": 0.8,
+        "view_angle_deg": 29.054604099077146
+      },
+      {
+        "id": "rear_03",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.2646252580027629,
+        "pose_error_m": 0.09604176959440541,
+        "z_m": 1.2,
+        "view_angle_deg": 29.054604099077146
+      },
+      {
+        "id": "rear_08",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.257335154390144,
+        "pose_error_m": 0.020160902171160837,
+        "z_m": 0.8,
+        "view_angle_deg": 29.054604099077146
+      },
+      {
+        "id": "rear_12",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.4604907752773493,
+        "pose_error_m": 0.06126625726754079,
+        "z_m": 1.2,
+        "view_angle_deg": 21.6890649646158
+      },
+      {
+        "id": "rear_14",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.060512806611808245,
+        "pose_error_m": 0.03668047593017847,
+        "z_m": 0.8,
+        "view_angle_deg": 0.0
+      },
+      {
+        "id": "rear_17",
+        "split": "static_holdout",
+        "status": "PRESENT",
+        "reprojection_error_px": 0.8265247942210956,
+        "pose_error_m": 0.09910197758415092,
+        "z_m": 0.8,
+        "view_angle_deg": 21.6890649646158
+      }
+    ]
+  },
+  "physical05_holdout": {
+    "frames": 55,
+    "detections": 55,
+    "detection_rate": 1.0,
+    "mean_reprojection_error_px": 0.22477863674388918,
+    "mean_pose_error_m": 0.03737853483196267,
+    "by_frame": [
+      {
+        "physics_step": 318,
+        "time_s": 5.400000281631947,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.07268242117755487,
+        "pose_error_m": 0.02033574210789626,
+        "depth_m": 1.3533002384517758
+      },
+      {
+        "physics_step": 336,
+        "time_s": 5.666666962206364,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 342,
+        "time_s": 5.800000302493572,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 360,
+        "time_s": 6.08333365060389,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.5045605803289647,
+        "pose_error_m": 0.02877408759935495,
+        "depth_m": 1.3629495431281058
+      },
+      {
+        "physics_step": 366,
+        "time_s": 6.166666988283396,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 372,
+        "time_s": 6.266666993498802,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.5045605803289647,
+        "pose_error_m": 0.02877408759935495,
+        "depth_m": 1.3629495431281058
+      },
+      {
+        "physics_step": 378,
+        "time_s": 6.366666998714209,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.5045605803289647,
+        "pose_error_m": 0.02877408759935495,
+        "depth_m": 1.3629495431281058
+      },
+      {
+        "physics_step": 384,
+        "time_s": 6.466667003929615,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.5045605803289647,
+        "pose_error_m": 0.02877408759935495,
+        "depth_m": 1.3629495431281058
+      },
+      {
+        "physics_step": 390,
+        "time_s": 6.566667009145021,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 396,
+        "time_s": 6.683333681896329,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 402,
+        "time_s": 6.783333687111735,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 414,
+        "time_s": 6.966667030006647,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 420,
+        "time_s": 7.0666670352220535,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 426,
+        "time_s": 7.16666704043746,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 432,
+        "time_s": 7.266667045652866,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 438,
+        "time_s": 7.366667050868273,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 444,
+        "time_s": 7.48333372361958,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 450,
+        "time_s": 7.583333728834987,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 462,
+        "time_s": 7.7666670717298985,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 468,
+        "time_s": 7.866667076945305,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 474,
+        "time_s": 7.983333749696612,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 480,
+        "time_s": 8.066667087376118,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 486,
+        "time_s": 8.183333760127425,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 498,
+        "time_s": 8.366667103022337,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 504,
+        "time_s": 8.466667108237743,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 510,
+        "time_s": 8.56666711345315,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 516,
+        "time_s": 8.666667118668556,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 522,
+        "time_s": 8.766667123883963,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 528,
+        "time_s": 8.916667131707072,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.27315261697191306,
+        "pose_error_m": 0.044282429364529176,
+        "depth_m": 1.3790541777575611
+      },
+      {
+        "physics_step": 5970,
+        "time_s": 99.56667185947299,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 5982,
+        "time_s": 99.7666718699038,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6132,
+        "time_s": 102.26667200028896,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6150,
+        "time_s": 102.58333868347108,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6156,
+        "time_s": 102.68333868868649,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6162,
+        "time_s": 102.766672026366,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6168,
+        "time_s": 102.8500053640455,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6174,
+        "time_s": 102.96667203679681,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6180,
+        "time_s": 103.06667204201221,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6186,
+        "time_s": 103.16667204722762,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6192,
+        "time_s": 103.25000538490713,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6198,
+        "time_s": 103.36667205765843,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6210,
+        "time_s": 103.56667206808925,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6216,
+        "time_s": 103.66667207330465,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6222,
+        "time_s": 103.76667207852006,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6246,
+        "time_s": 104.15000543184578,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6258,
+        "time_s": 104.3666721098125,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6264,
+        "time_s": 104.4666721150279,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6270,
+        "time_s": 104.56667212024331,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6276,
+        "time_s": 104.65000545792282,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6282,
+        "time_s": 104.76667213067412,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6288,
+        "time_s": 104.85000546835363,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6294,
+        "time_s": 104.98333880864084,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6300,
+        "time_s": 105.06667214632034,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6306,
+        "time_s": 105.15000548399985,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      },
+      {
+        "physics_step": 6312,
+        "time_s": 105.26667215675116,
+        "status": "PRESENT",
+        "reprojection_error_px": 0.1429322104267145,
+        "pose_error_m": 0.03298496225015116,
+        "depth_m": 1.1417492818977641
+      }
+    ]
+  },
+  "independence_statement": "K fit uses static sweep train views only; static holdout and physical05 are scored after fitting. T_world_camera and marker-to-Cube remain authored stage geometry and are not promoted without an external multi-view target."
+}

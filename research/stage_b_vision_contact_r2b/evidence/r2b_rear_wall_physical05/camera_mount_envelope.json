@@ -1,0 +1,47 @@
+{
+  "schema": "task28.r2b.camera_mount_envelope.v1",
+  "run_id": "r2b_rear_wall_physical05",
+  "candidates": [
+    {
+      "id": "rear_11",
+      "eye_world_m": [
+        1.7,
+        -0.35,
+        0.8
+      ],
+      "static_marker_status": "PRESENT",
+      "static_box_clearance_m": 0.3800000000000001,
+      "static_tcp_point_clearance_m": 0.4733887022224095,
+      "column_radius_m": 0.1,
+      "cable_envelope_radius_m": 0.05,
+      "recorded_tcp_to_column_center_min_m": 0.6482500827755564,
+      "recorded_tcp_to_column_surface_min_m": 0.49825008277555644,
+      "box_outer_x_m": 1.18,
+      "camera_body_x_clearance_m": 0.3700000000000001,
+      "mountability_assumption": "column center is outside +X wall and table active envelope; bracket/cable use stated radii",
+      "swept_collision_certificate": "NOT_ESTABLISHED: only TCP points from one physical trace, not full link geometry/FCL swept volume"
+    },
+    {
+      "id": "rear_17",
+      "eye_world_m": [
+        1.7,
+        0.35,
+        0.8
+      ],
+      "static_marker_status": "PRESENT",
+      "static_box_clearance_m": 0.3800000000000001,
+      "static_tcp_point_clearance_m": 0.6048887609135891,
+      "column_radius_m": 0.1,
+      "cable_envelope_radius_m": 0.05,
+      "recorded_tcp_to_column_center_min_m": 0.7216121654338074,
+      "recorded_tcp_to_column_surface_min_m": 0.5716121654338073,
+      "box_outer_x_m": 1.18,
+      "camera_body_x_clearance_m": 0.3700000000000001,
+      "mountability_assumption": "column center is outside +X wall and table active envelope; bracket/cable use stated radii",
+      "swept_collision_certificate": "NOT_ESTABLISHED: only TCP points from one physical trace, not full link geometry/FCL swept volume"
+    }
+  ],
+  "selection": "rear_11",
+  "selection_reason": "rear_11 has the same 0.380 m static box clearance as rear_17 and was physically observed at 10 Hz; rear_17 remains a static alternative. Neither is a complete bracket/column/link FCL certificate.",
+  "policy": "no collision thresholds or FCL rules changed"
+}

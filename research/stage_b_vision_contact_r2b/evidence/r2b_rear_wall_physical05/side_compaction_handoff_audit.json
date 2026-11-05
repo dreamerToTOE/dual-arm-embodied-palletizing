@@ -1,0 +1,49 @@
+{
+  "schema": "task28.r2b.side_compaction_handoff_audit.v1",
+  "run_id": "r2b_rear_wall_physical05",
+  "final_actual_state": {
+    "cube_world_m": [
+      1.0997684,
+      0.0601194,
+      0.2600618
+    ],
+    "deep_wall_gap_m": 0.001497,
+    "z_error_m": 6.3e-05,
+    "tcp_world_m": {
+      "left": [
+        0.7900658,
+        -0.3198443,
+        0.5596223
+      ],
+      "right": [
+        1.039078,
+        0.0602984,
+        0.2596363
+      ]
+    },
+    "suction_state": {
+      "left": false,
+      "right": true
+    }
+  },
+  "planner_initial_state": {
+    "event": "SIDE_HIGH_APPROACH",
+    "t_s": 0.0,
+    "pair": "right_fr3_side_suction <-> task26_cube_1",
+    "contact_position_m": [
+      0.939,
+      0.043,
+      0.277
+    ],
+    "penetration_m": 0.000444,
+    "right_link_origin_m": [
+      0.784,
+      0.06,
+      0.34
+    ]
+  },
+  "comparison": "Planner primitive geometry is already overlapping Cube at preflight while actual post-insertion state has right TCP at x=1.039 m and Cube center x=1.100 m; state/geometry handoff is inconsistent or intentionally contacting without a declared phase policy. No safe transition demonstrated.",
+  "safe_abort_is_downstream": true,
+  "fcl_changed": false,
+  "status": "PREFLIGHT_BLOCKED"
+}

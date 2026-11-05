@@ -49,7 +49,7 @@ def predictor_stats(detections, trace, variant):
         p0.append({'duration_s':age,'error_m':float(np.linalg.norm(base-gt))})
         if len(prev_valid)>=2:
             a,b=prev_valid[-2],prev_valid[-1]; vel=(np.asarray(b[pose_key])-np.asarray(a[pose_key]))/max(1e-6,b['time_s']-a['time_s']); pred=base+vel*age; p1.append({'duration_s':age,'error_m':float(np.linalg.norm(pred-gt))})
-        s=tr.get('suction_state') or {}; contact_supported=bool(s.get('left')) and bool(s.get('right'))
+        contact_supported=tr.get('attachment_confidence')=='SUCTION_CLOSED_AND_TOOL_CUBE_CONTACT'
         if contact_supported:
             anchor_tr=trace.get(int(current_anchor['physics_step']))
             if anchor_tr:
@@ -59,12 +59,40 @@ def predictor_stats(detections, trace, variant):
         ys=[x['error_m'] for x in xs if x['error_m'] is not None]; return {'samples':len(xs),'mean_error_m':(float(np.mean(ys)) if ys else None),'p95_error_m':(float(np.percentile(ys,95)) if ys else None),'max_duration_s':(float(max(x['duration_s'] for x in xs)) if xs else None)}
     return {'P0_last_valid_visual':stats(p0),'P1_visual_velocity':stats(p1),'P2_tcp_propagation_attachment_gated':stats(p2)}
 
+def blind_gap_stats(detections, trace, variant):
+    """Score long intervals with no captured image separately from dropouts."""
+    pose_key=f'{variant}_estimated_cube_world_m'; p0=[]; p1=[]; p2=[]
+    valid=[r for r in detections if r.get(f'{variant}_status')=='PRESENT' and pose_key in r]
+    def stats(xs):
+        ys=[x['error_m'] for x in xs if x['error_m'] is not None]; return {'samples':len(xs),'mean_error_m':(float(np.mean(ys)) if ys else None),'p95_error_m':(float(np.percentile(ys,95)) if ys else None),'max_duration_s':(float(max(x['duration_s'] for x in xs)) if xs else None)}
+    for i,(a,b) in enumerate(zip(valid,valid[1:])):
+        age=float(b['time_s']-a['time_s'])
+        if age<=.25: continue
+        tr=trace.get(int(b['physics_step'])); anchor=trace.get(int(a['physics_step']))
+        if not tr or not anchor: continue
+        gt=np.asarray(tr['cube_world_m']); base=np.asarray(a[pose_key]); p0.append({'duration_s':age,'error_m':float(np.linalg.norm(base-gt))})
+        if i>0:
+            prev=valid[i-1]; vel=(np.asarray(a[pose_key])-np.asarray(prev[pose_key]))/max(1e-6,a['time_s']-prev['time_s']); p1.append({'duration_s':age,'error_m':float(np.linalg.norm(base+vel*age-gt))})
+        if tr.get('attachment_confidence')=='SUCTION_CLOSED_AND_TOOL_CUBE_CONTACT':
+            tcp0=np.mean([anchor['tcp_world_m']['left'],anchor['tcp_world_m']['right']],axis=0); tcp=np.mean([tr['tcp_world_m']['left'],tr['tcp_world_m']['right']],axis=0); p2.append({'duration_s':age,'error_m':float(np.linalg.norm(base+(np.asarray(tcp)-np.asarray(tcp0))-gt)),'confidence':'SUCTION_CLOSED_AND_TOOL_CUBE_CONTACT'})
+        else: p2.append({'duration_s':age,'error_m':None,'confidence':'UNKNOWN'})
+    return {'P0_last_valid_visual':stats(p0),'P1_visual_velocity':stats(p1),'P2_tcp_propagation_attachment_gated':stats(p2)}
+
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('run',type=Path); ap.add_argument('--calibrated-cy',type=float,default=341.0,help='evaluation-only viewport principal point; estimator remains authored K'); args=ap.parse_args(); root=args.run; meta=json.loads((root/'r2b_camera/camera_metadata.json').read_text()); K=np.array([[20/36*1280,0,640],[0,20/24*720,360],[0,0,1]],float); K_cal=K.copy(); K_cal[1,2]=args.calibrated_cy; dist=np.zeros(5)
     trace={}
     with open(root/'physical_trace/physical_trace.jsonl') as f:
         for line in f:
             x=json.loads(line); trace[int(x['physics_step'])]=x
+    contact_steps=set(); contact_path=root/'physical_trace/contact_events.jsonl'
+    if contact_path.exists():
+        with open(contact_path) as f:
+            for line in f:
+                ev=json.loads(line); colliders=' '.join(ev.get('colliders',[]))
+                if 'task26_cube_1' in colliders and 'side_suction' in colliders: contact_steps.add(int(ev['physics_step']))
+    for step,tr in trace.items():
+        s=tr.get('suction_state') or {}; both=bool(s.get('left')) and bool(s.get('right'))
+        tr['attachment_confidence']='SUCTION_CLOSED_AND_TOOL_CUBE_CONTACT' if both and step in contact_steps else 'UNKNOWN'
     timeline=[json.loads(x) for x in (root/'r2b_camera/camera_timeline.jsonl').read_text().splitlines() if x.strip()]
     detections=[]
     for item in timeline:
@@ -102,6 +130,7 @@ def main():
     cal_phase_rows={}
     for name in ('cube_supply','dual_arm_approach','dual_arm_attachment','coordinated_transport','placement_release','single_arm_recontact','single_arm_insertion','deep_wall_arrival','auxiliary_side_compaction','release_retreat'):
         subset=[r for r in detections if name in r.get('phase',[])]; valid=[r for r in subset if r.get('render_calibrated_cy341_status')=='PRESENT' and 'render_calibrated_cy341_position_error_m' in r]; cal_phase_rows[name]={'frames':len(subset),'detections':len(valid),'detection_rate':(len(valid)/len(subset) if subset else None),'mean_position_error_m':(float(np.mean([r['render_calibrated_cy341_position_error_m'] for r in valid])) if valid else None),'mean_orientation_error_deg':(float(np.mean([r['render_calibrated_cy341_orientation_error_deg'] for r in valid])) if valid else None),'depth_available_rate':(float(np.mean([r.get('depth_ok',False) for r in subset])) if subset else None),'status':('EXECUTED_OBSERVED' if subset else 'NOT_EXECUTED')}
-    result={'schema':'task28.r2b.physical_camera_qualification.v2','run_id':root.name,'frames':len(detections),'detections':len(present),'detection_rate':len(present)/len(detections) if detections else 0.0,'mean_position_error_m':float(np.mean([r['position_error_m'] for r in present])) if present else None,'mean_orientation_error_deg':float(np.mean([r['orientation_error_deg'] for r in present])) if present else None,'longest_visual_dropout_s':max([d['duration_s'] for d in dropouts],default=0.0),'dropout_intervals':dropouts,'phase_visibility':phase_rows,'calibration_comparison':{'authored_intrinsics_cy360':variant_summary('authored_intrinsics'),'render_calibrated_cy341':variant_summary('render_calibrated_cy341'),'render_calibrated_cy341_phase_visibility':cal_phase_rows,'note':'cy=341 is an evaluation-only fitted viewport principal point; online estimator remains authored cy=360 until multi-view calibration is accepted'},'predictors':predictor_stats(detections,trace,'authored_intrinsics'),'predictors_render_calibrated_cy341':predictor_stats(detections,trace,'render_calibrated_cy341'),'prediction_policy':'uncertainty grows with dropout age; P2 UNKNOWN without independent dual suction/contact support; TCP predictor never reads Cube GT','physical_trace_summary':json.loads((root/'physical_trace/physical_trace_summary.json').read_text()),'executor_phase_receipt':{'attachment':('ATTACHMENT' in log_text),'single_arm_push':('PUSH' in log_text),'side_compaction':('SIDE_COMPACTION' in log_text),'batch_pass':('batch 1 PASS' in log_text)}}
+    times=np.asarray([float(r['time_s']) for r in detections]); gaps=np.diff(times) if len(times)>1 else np.asarray([]); blind=[{'start_s':float(detections[i]['time_s']),'end_s':float(detections[i+1]['time_s']),'duration_s':float(gaps[i])} for i in range(len(gaps)) if gaps[i]>.25]
+    result={'schema':'task28.r2b.physical_camera_qualification.v3','run_id':root.name,'frames':len(detections),'detections':len(present),'detection_rate':len(present)/len(detections) if detections else 0.0,'mean_position_error_m':float(np.mean([r['position_error_m'] for r in present])) if present else None,'mean_orientation_error_deg':float(np.mean([r['orientation_error_deg'] for r in present])) if present else None,'longest_visual_dropout_s':max([d['duration_s'] for d in dropouts],default=0.0),'dropout_intervals':dropouts,'observation_timing':{'capture_span_s':(float(times[-1]-times[0]) if len(times)>1 else 0.0),'median_intercapture_s':(float(np.median(gaps)) if len(gaps) else None),'achieved_rate_hz_excluding_gaps':(float(1/np.median(gaps)) if len(gaps) else None),'max_intercapture_gap_s':(float(max(gaps)) if len(gaps) else None),'unsampled_intervals':blind,'note':'unsampled intervals are not optical no-detection intervals'},'phase_visibility':phase_rows,'phase_visibility_source':'legacy geometry/Cube-GT labels; corrected executor receipts are in execution_phase_receipts.json','calibration_comparison':{'authored_intrinsics_cy360':variant_summary('authored_intrinsics'),'render_calibrated_cy341':variant_summary('render_calibrated_cy341'),'render_calibrated_cy341_phase_visibility':cal_phase_rows,'note':'cy=341 is an evaluation-only fitted viewport principal point; online estimator remains authored cy=360 until multi-view calibration is accepted'},'predictors':predictor_stats(detections,trace,'authored_intrinsics'),'predictors_render_calibrated_cy341':predictor_stats(detections,trace,'render_calibrated_cy341'),'blind_gap_predictors':{'authored_intrinsics':blind_gap_stats(detections,trace,'authored_intrinsics'),'render_calibrated_cy341':blind_gap_stats(detections,trace,'render_calibrated_cy341')},'prediction_policy':'uncertainty grows with gap age; P2 UNKNOWN unless both suction state and tool-Cube contact support the interval; TCP predictor never reads Cube GT','physical_trace_summary':json.loads((root/'physical_trace/physical_trace_summary.json').read_text()),'executor_phase_receipt':{'attachment':('ATTACHMENT' in log_text),'single_arm_push':('PUSH' in log_text),'side_compaction':('SIDE_COMPACTION' in log_text),'batch_pass':('batch 1 PASS' in log_text)}}
     (root/'visual_qualification.json').write_text(json.dumps(result,indent=2)+'\n'); (root/'visual_detections.jsonl').write_text(''.join(json.dumps(x,allow_nan=False)+'\n' for x in detections)); print(json.dumps(result,indent=2))
 if __name__=='__main__': main()
