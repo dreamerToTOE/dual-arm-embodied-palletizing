@@ -1,0 +1,191 @@
+Starting >>> fr3_dual_compact_suction_description
+Starting >>> fr3_dual_gripper_description
+Starting >>> fr3_compact_suction_description
+Starting >>> fr3_moveit_test
+Finished <<< fr3_compact_suction_description [2.96s]
+Finished <<< fr3_dual_compact_suction_description [3.00s]
+Finished <<< fr3_dual_gripper_description [2.98s]
+Starting >>> fr3_dual_palletize
+Starting >>> fr3_dual_side_suction_description
+Finished <<< fr3_dual_side_suction_description [0.61s]
+--- stderr: fr3_moveit_test
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  894 |     std::array<geometry_msgs::msg::Pose, NUM_BOXES> box_poses_{};
+      |                                                                ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/task05_bac_suction_place.cpp:894:64: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  860 |     std::array<geometry_msgs::msg::Pose, 3> cube_poses_{};
+      |                                                         ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:860:57: note: in C++11 and above a default constructor can be explicit
+In file included from /opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155,
+                 from /home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:13:
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp: In member function ‘bool SuctionThreeCubePalletize::run()’:
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_three_cube_palletize.cpp:259:46: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+  259 |             RCLCPP_INFO(node_->get_logger(), "");
+      |                                              ^~
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+ 1201 |     std::array<geometry_msgs::msg::Pose, NUM_CUBES> cube_poses_{};
+      |                                                                 ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:1201:65: note: in C++11 and above a default constructor can be explicit
+In file included from /opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21,
+                 from /opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155,
+                 from /home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:14:
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp: In member function ‘bool SuctionNineCubePalletize::run()’:
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_moveit_test/src/suction_nine_cube_palletize.cpp:310:46: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+  310 |             RCLCPP_INFO(node_->get_logger(), "");
+      |                                              ^~
+---
+[Processing: fr3_dual_palletize, fr3_moveit_test]
+Finished <<< fr3_moveit_test [52.5s]
+--- stderr: fr3_dual_palletize
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:67 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:365 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:384 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:411 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:440 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:464 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:488 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:516 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:565 (rosidl_target_interfaces)
+
+
+CMake Deprecation Warning at /opt/ros/humble/share/rosidl_cmake/cmake/rosidl_target_interfaces.cmake:32 (message):
+  Use rosidl_get_typesupport_target() and target_link_libraries() instead of
+  rosidl_target_interfaces()
+Call Stack (most recent call first):
+  CMakeLists.txt:713 (rosidl_target_interfaces)
+
+
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  235 |   std::array<geometry_msgs::msg::Pose, NUM_SMALL_CUBES> small_poses_{};
+      |                                                                      ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task15_loose_layer_stack.cpp:235:70: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  176 |   std::array<geometry_msgs::msg::Pose, NUM_BOXES> poses_{};
+      |                                                          ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task10_continuous_demo.cpp:176:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task08_candidate_demo.cpp:200:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  200 |   std::array<geometry_msgs::msg::Pose, NUM_BOXES> poses_{};
+      |                                                          ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task08_candidate_demo.cpp:200:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task08_candidate_demo.cpp:200:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task08_candidate_demo.cpp:200:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task07_parallel_demo.cpp:133:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+  133 |   std::array<geometry_msgs::msg::Pose, NUM_BOXES> poses_{};
+      |                                                          ^
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task07_parallel_demo.cpp:133:58: note: in C++11 and above a default constructor can be explicit
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task07_parallel_demo.cpp:133:58: warning: converting to ‘geometry_msgs::msg::Pose_<std::allocator<void> >’ from initializer list would use explicit constructor ‘geometry_msgs::msg::Pose_<ContainerAllocator>::Pose_(rosidl_runtime_cpp::MessageInitialization) [with ContainerAllocator = std::allocator<void>]’
+/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/ros_ws/src/fr3_dual_palletize/src/task07_parallel_demo.cpp:133:58: note: in C++11 and above a default constructor can be explicit
+---
+[Processing: fr3_dual_palletize]
+Finished <<< fr3_dual_palletize [1min 40s]
+
+Summary: 6 packages finished [1min 47s]
+  2 packages had stderr output: fr3_dual_palletize fr3_moveit_test

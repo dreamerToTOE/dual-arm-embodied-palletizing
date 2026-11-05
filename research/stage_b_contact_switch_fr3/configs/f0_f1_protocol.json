@@ -1,0 +1,64 @@
+{
+  "schema": "g1a.fr3.protocol.v1",
+  "base_commit": "20b55e065a38212eab031d1621895f1e3a670eb5",
+  "branch": "research/stage-b-contact-switch-fr3",
+  "isaac_sim": "4.5.0",
+  "physics_dt_s": 0.016666666666666666,
+  "scope": [
+    "F0 isolated actual FR3 articulation motion",
+    "F1 bounded Task27 scene planning/contact smoke attempt"
+  ],
+  "forbidden": [
+    "hardware",
+    "RL",
+    "G2-G4",
+    "direct Cube force writes",
+    "teleport during measured execution"
+  ],
+  "sources_sha256": {
+    "f0_runner": "808c909f2b5d215e7ff677ecd0bbdc995901cbbfcaffe31067b3d39315ada72f",
+    "task26_scene": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+    "task27_torque_bridge": "7283daf3f518f45b3e963a65cff6512149bd31cf3a6451e74a84f51316c590a1",
+    "task27_one_pass": "f0dd50d912da1d41d4add70358b1a687a3f08e4512e34b28ab4166ed93a49eb6"
+  },
+  "f0": {
+    "run_id": "isolated_fr3_smoke",
+    "frames": 150,
+    "transition_step": 90,
+    "control_interface": "SingleArticulation.apply_action(ArticulationAction.joint_positions)",
+    "control_mode": "position_drive_target",
+    "contact_scene": false,
+    "teleport_used": false,
+    "status": "PASS"
+  },
+  "f1": {
+    "run_ids": [
+      "g1a_fr3_f1_attempt01",
+      "g1a_fr3_f1_attempt02"
+    ],
+    "attempt01": {
+      "status": "BLOCKED_RUNTIME_EXCEPTION",
+      "reason": "MoveIt overlay install/setup.bash absent",
+      "moveit_exit": 1,
+      "qp_solve_count": 183
+    },
+    "attempt02": {
+      "status": "BLOCKED_RUNTIME_EXCEPTION",
+      "reason": "LIVE_QP_LOCAL_SWEEP_LIMIT",
+      "moveit_exit": 0,
+      "executor_exit": -15,
+      "qp_solve_count": 606,
+      "qp_status": "QP_OPTIMAL",
+      "cube_moved_verified": false,
+      "loaded_wall_contact_verified": false,
+      "contact_observability": "table_support_only; tool/cube and wall channels not connected"
+    },
+    "status": "INCONCLUSIVE"
+  },
+  "comparison": {
+    "C0": "NOT_RUN",
+    "C1": "NOT_RUN",
+    "C2": "NOT_RUN",
+    "advantage": "INCONCLUSIVE"
+  }
+}

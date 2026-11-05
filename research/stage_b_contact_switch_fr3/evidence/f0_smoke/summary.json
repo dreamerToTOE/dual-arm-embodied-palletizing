@@ -1,0 +1,58 @@
+{
+  "contact_forces_used": false,
+  "control_interface": "isaacsim.core.prims.SingleArticulation.apply_action(ArticulationAction.joint_positions)",
+  "control_mode": "position_drive_target",
+  "dof_names": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1",
+    "fr3_finger_joint2"
+  ],
+  "excluded_prims": [
+    "/World/right_fr3",
+    "/World/Table",
+    "/World/Task27",
+    "/World/left_rail",
+    "/World/right_rail"
+  ],
+  "frames": 150,
+  "max_abs_joint_velocity_rad_s": 0.08046377450227737,
+  "max_abs_tracking_error_rad": 0.008568571371239765,
+  "max_target_step_rad": 0.0008333333333333387,
+  "measured_effort_any": true,
+  "physics_dt_s": 0.016666666666666666,
+  "q0_rad": [
+    -3.379562258487567e-05,
+    -0.7480996251106262,
+    8.545926539227366e-05,
+    -0.7655295133590698,
+    -7.674180233152583e-05,
+    1.407042145729065,
+    0.7718231678009033
+  ],
+  "q_final_rad": [
+    0.04986113682389259,
+    -0.7491053938865662,
+    8.455161878373474e-05,
+    -0.767207145690918,
+    -3.9648846723139286e-05,
+    1.4070310592651367,
+    0.7718231678009033
+  ],
+  "scene_entry": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-contact-switch-fr3/isaac/scripts/task26_truck_box_scene.py",
+  "schema": "g1a.fr3.f0.smoke.v1",
+  "status": "PASS",
+  "tcp_displacement_m": 0.004815326666146465,
+  "teleport_used": false,
+  "transition": {
+    "from": "move",
+    "objective": "stationary_position_target",
+    "step": 90,
+    "to": "stationary_hold"
+  }
+}
