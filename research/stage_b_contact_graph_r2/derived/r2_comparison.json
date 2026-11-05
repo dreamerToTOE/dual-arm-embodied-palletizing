@@ -1,0 +1,175 @@
+{
+  "schema": "task28.r2.estimator_comparison.v1",
+  "episode_count": 1,
+  "frame_count": 15688,
+  "input_policy": "oracle contact labels excluded from estimator input",
+  "labels": "PhysX contact report reference labels; one correlated episode, not independent ground truth",
+  "E0": {
+    "state_counts": {
+      "FREE_SPACE_APPROACH": 4383,
+      "TOOL_CONTACT": 4065,
+      "NORMAL_ADVANCEMENT": 786,
+      "DEEP_WALL_ARRIVAL": 6454
+    },
+    "edge_reference_agreement": {
+      "LEFT_TOOL_CUBE": {
+        "accuracy": 0.9933707292197859,
+        "precision": 0.9794520547945206,
+        "recall": 0.9940782698249228,
+        "tp": 3861,
+        "fp": 81,
+        "fn": 23,
+        "tn": 11723
+      },
+      "RIGHT_TOOL_CUBE": {
+        "accuracy": 0.9840642529321775,
+        "precision": 0.9976114649681529,
+        "recall": 0.9638461538461538,
+        "tp": 6265,
+        "fp": 15,
+        "fn": 235,
+        "tn": 9173
+      },
+      "CUBE_TABLE": {
+        "accuracy": 0.9912034676185619,
+        "precision": 0.9999280420234583,
+        "recall": 0.9902372977980475,
+        "tp": 13896,
+        "fp": 1,
+        "fn": 137,
+        "tn": 1654
+      },
+      "CUBE_DEEP_WALL": {
+        "accuracy": 0.9998725140234574,
+        "precision": 0.9996901146575767,
+        "recall": 1.0,
+        "tp": 6452,
+        "fp": 2,
+        "fn": 0,
+        "tn": 9234
+      }
+    },
+    "tool_contact_event": {
+      "accuracy": 0.8403238143804181,
+      "precision": 0.9956709956709957,
+      "recall": 0.660377358490566,
+      "tp": 4830,
+      "fp": 21,
+      "fn": 2484,
+      "tn": 8353
+    },
+    "deep_wall_event": {
+      "accuracy": 0.9998725140234574,
+      "precision": 0.9996901146575767,
+      "recall": 1.0,
+      "tp": 6452,
+      "fp": 2,
+      "fn": 0,
+      "tn": 9234
+    },
+    "tool_delay": {
+      "frames": -21,
+      "seconds": -0.35000001825392246,
+      "truth_step": 2152,
+      "pred_step": 2131
+    },
+    "deep_wall_delay": {
+      "frames": -1,
+      "seconds": -0.01666666753590107,
+      "truth_step": 9236,
+      "pred_step": 9235
+    }
+  },
+  "E1": {
+    "state_counts": {
+      "UNKNOWN": 2,
+      "FREE_SPACE_APPROACH": 4383,
+      "TOOL_CONTACT": 4065,
+      "NORMAL_ADVANCEMENT": 786,
+      "DEEP_WALL_ARRIVAL": 6452
+    },
+    "edge_reference_agreement": {
+      "LEFT_TOOL_CUBE": {
+        "accuracy": 0.9933707292197859,
+        "precision": 0.9794520547945206,
+        "recall": 0.9940782698249228,
+        "tp": 3861,
+        "fp": 81,
+        "fn": 23,
+        "tn": 11723
+      },
+      "RIGHT_TOOL_CUBE": {
+        "accuracy": 0.9840642529321775,
+        "precision": 0.9976114649681529,
+        "recall": 0.9638461538461538,
+        "tp": 6265,
+        "fp": 15,
+        "fn": 235,
+        "tn": 9173
+      },
+      "CUBE_TABLE": {
+        "accuracy": 0.9912034676185619,
+        "precision": 0.9999280420234583,
+        "recall": 0.9902372977980475,
+        "tp": 13896,
+        "fp": 1,
+        "fn": 137,
+        "tn": 1654
+      },
+      "CUBE_DEEP_WALL": {
+        "accuracy": 0.9998725140234574,
+        "precision": 0.9996901146575767,
+        "recall": 1.0,
+        "tp": 6452,
+        "fp": 2,
+        "fn": 0,
+        "tn": 9234
+      }
+    },
+    "tool_contact_event": {
+      "accuracy": 0.8405787863335034,
+      "precision": 0.9960832817975676,
+      "recall": 0.6606508066721356,
+      "tp": 4832,
+      "fp": 19,
+      "fn": 2482,
+      "tn": 8355
+    },
+    "deep_wall_event": {
+      "accuracy": 0.9998725140234574,
+      "precision": 0.999845009299442,
+      "recall": 0.999845009299442,
+      "tp": 6451,
+      "fp": 1,
+      "fn": 1,
+      "tn": 9235
+    },
+    "tool_delay": {
+      "frames": -19,
+      "seconds": -0.3166666831821203,
+      "truth_step": 2152,
+      "pred_step": 2133
+    },
+    "deep_wall_delay": {
+      "frames": 1,
+      "seconds": 0.01666666753590107,
+      "truth_step": 9236,
+      "pred_step": 9237
+    }
+  },
+  "unknown_policy": {
+    "side_wall": "UNKNOWN",
+    "suction": "UNKNOWN",
+    "commanded_advancement": "UNKNOWN",
+    "tracking_error": "UNKNOWN"
+  },
+  "premature_blockage": {
+    "label_available": false,
+    "observed_in_episode": false,
+    "reason": "no synchronized commanded advancement and no independent jam label"
+  },
+  "complex_estimator": {
+    "status": "UNPROVEN",
+    "reason": "one nominal episode and no independent abnormal-contact labels"
+  }
+}

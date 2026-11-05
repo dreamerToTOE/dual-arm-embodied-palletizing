@@ -1,0 +1,31 @@
+{
+  "schema": "stage_b.event_supervisor.r0.r1.sweep_diagnosis.v1",
+  "source_run": "g1a_fr3_f1_attempt02",
+  "guard_limit_m": 0.02,
+  "anchor_relative_tcp_m": [
+    0.5385850151737177,
+    -0.8484625644260343,
+    4.2775766150415784e-05
+  ],
+  "last_logged_frame": {
+    "physics_step": 606,
+    "time_s": 10.1,
+    "left_local_m": 0.0106028332,
+    "right_local_m": 0.00582690177,
+    "relative_m": 0.0191997238,
+    "clock_scale": 2.3921041112,
+    "reference_age_steps": 0,
+    "qp_status": "QP_OPTIMAL"
+  },
+  "first_relative_gt_18mm": {
+    "physics_step": 605,
+    "time_s": 10.0833333,
+    "relative_m": 0.0180513873
+  },
+  "guard_stop_step": 607,
+  "guard_stop_reason": "LOCAL_SWEEP_LIMIT",
+  "first_exceeded_axis": "relative_tcp",
+  "solver_infeasible": false,
+  "cause_class": "EXPECTED_FREE_SPACE_TRAJECTORY_TRAVEL",
+  "interpretation": "固定全局锚点相对 TCP 累积位移在下一帧越过 20 mm；不是 QP 不可行、单边漂移或时间戳陈旧。"
+}

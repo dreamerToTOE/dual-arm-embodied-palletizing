@@ -1,0 +1,36 @@
+{
+  "schema": "task28.r2.protocol.v1",
+  "branch": "research/stage-b-contact-graph-r2",
+  "baseline_commit": "5a1f448ab9c23bf4fa74b9104d17dcecaabc63b7",
+  "new_physical_episodes": 0,
+  "analyzed_completed_nominal_episodes": 1,
+  "r2_s4_valid_perturbation_episodes": 0,
+  "resources": {
+    "cpu_logical": 16,
+    "memory_available_gib": 35,
+    "worker_count_used": 1,
+    "reason": "single compressed trace replay; no need for parallel workers"
+  },
+  "thresholds": {
+    "tool_distance_m": 0.085,
+    "deep_wall_nominal_gap_m": 0.012,
+    "advancement_speed_m_s": 0.01,
+    "tracking_error_m": 0.03,
+    "e1_activation_frames": 3,
+    "e1_release_frames": 3,
+    "table_gap_m": 0.004
+  },
+  "source_sha256": {
+    "estimator/r2_contact_estimator.py": "177af40158f03e4bbf5b670db80c25530f2eaa36644d3ebe8c5bcba585815567",
+    "estimator/live_adapter.py": "34d7a2c8a323f96f9f1fbcad7d745c2c1fb664c232df207f50110329792c7be6",
+    "scripts/build_r2_dataset.py": "2286265547ab789731be303b4b1c57ccdc3b04ad1e5d7767bd9ff5bfec979e66",
+    "scripts/replay_estimators.py": "b34675c3c82c5063777b9b70ef333dac956c7b4035812f0e3c0e306e2b46f9b0",
+    "scripts/plot_r2_timeline.py": "7fbb62fd2396fcb4b98509f37c3827e0ed45ff508994f30dec469191cbba1974"
+  },
+  "raw_sha256": {
+    "physical_trace.jsonl.gz": "e6b37db09f714660b2f1c87468da0c88ed7fa8ee6ab232c25c40efde3c403eb9",
+    "contact_events.jsonl.gz": "b4630092b9c721a8703aa59366c7a274a8e6e083c13f32f33063ede74602e4af"
+  },
+  "status": "R2_CONTACT_ESTIMATOR_OFFLINE_PASS",
+  "physical_recovery": "DEFERRED"
+}
