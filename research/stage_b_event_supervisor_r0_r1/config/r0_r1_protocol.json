@@ -1,0 +1,59 @@
+{
+  "schema": "stage_b.event_supervisor.r0.r1.protocol.v1",
+  "baseline_commit": "548492a92a76fcfe497872c8a40cd380d2ac656a",
+  "branch": "research/stage-b-event-supervisor-r0-r1",
+  "isaac_sim": "4.5.0",
+  "resource_check": {
+    "cpu_logical": 16,
+    "memory_available_gib": 35,
+    "gpu": "NVIDIA GeForce RTX 3070",
+    "gpu_memory_gib": 8
+  },
+  "preserved_limits": {
+    "local_qp_sweep_limit_m": 0.02,
+    "push_jam_tolerance_m": 0.02,
+    "wall_gap_acceptance_m": 0.003,
+    "push_torque_limit_Nm": 80.0,
+    "cube_observation_stale_s": 0.5
+  },
+  "source_sha256": {
+    "isaac/scripts/task28_task27_one_pass.py": "a44701983bfb64ef548950f9cd9cc84b91dbcf808d7be8981d4db30718582d60",
+    "isaac/scripts/task28_runtime_events.py": "9ebac991828f6a5c24ed6bea1f3e25139fdba4e77dd99e155b666c06ca504080",
+    "isaac/scripts/task28_task27_torque_bridge.py": "7283daf3f518f45b3e963a65cff6512149bd31cf3a6451e74a84f51316c590a1",
+    "ros_ws/src/fr3_dual_palletize/src/task26_truck_box_push_in.cpp": "c2bc405d20f768bac17498fd1d98ca1e922df7262399de04e0955b242bfd9be5"
+  },
+  "runs": [
+    {
+      "id": "r3_position_precontact03",
+      "status": "COMPLETED",
+      "scope": "free-space precontact",
+      "evidence": "evidence/r3_position_precontact03/summary.json"
+    },
+    {
+      "id": "r4_physical_push02",
+      "status": "COMPLETED",
+      "scope": "prior physical contact receipt",
+      "evidence": "evidence/r4_physical_push02/summary.json"
+    },
+    {
+      "id": "r1_event_supervisor_physical_push01",
+      "status": "COMPLETED",
+      "scope": "bounded R1 physical contact smoke",
+      "evidence": "evidence/r1_event_supervisor_physical_push01/summary.json"
+    }
+  ],
+  "failed_attempts_preserved": [
+    "r3_position_precontact01",
+    "r3_position_precontact02",
+    "g1a_fr3_f1_attempt02"
+  ],
+  "control_architecture": {
+    "free_space": "FREE_SPACE_TRAJECTORY_POSITION_DRIVE",
+    "local_contact": "LOCAL_CONTACT_QP",
+    "handoff": "explicit mode boundary; automatic mid-run QP handoff remains unimplemented"
+  },
+  "status": {
+    "R0": "R0_GATE_REFACTOR_PARTIAL",
+    "R1": "R1_DEEP_WALL_CONTACT_PASS"
+  }
+}

@@ -363,6 +363,39 @@ constexpr double kPushTorqueLimit = 80.0;
 // 推进分段数：每段结束后检查「Cube 是否跟着走」与「力矩是否越限」。
 constexpr int kPushSlices = 16;
 
+// Stage B runtime events are explicit so a recoverable task anomaly is not
+// confused with a controller fault or an invalid observation.
+enum class RuntimeEventClass
+{
+  NORMAL_OPERATION,
+  RECOVERABLE_TASK_EVENT,
+  CONTROL_FEASIBILITY_EVENT,
+  OBSERVATION_UNAVAILABLE,
+  FATAL_EXECUTION_ERROR,
+};
+
+const char* runtimeEventClassName(RuntimeEventClass value)
+{
+  switch (value)
+  {
+    case RuntimeEventClass::NORMAL_OPERATION: return "NORMAL_OPERATION";
+    case RuntimeEventClass::RECOVERABLE_TASK_EVENT: return "RECOVERABLE_TASK_EVENT";
+    case RuntimeEventClass::CONTROL_FEASIBILITY_EVENT: return "CONTROL_FEASIBILITY_EVENT";
+    case RuntimeEventClass::OBSERVATION_UNAVAILABLE: return "OBSERVATION_UNAVAILABLE";
+    case RuntimeEventClass::FATAL_EXECUTION_ERROR: return "FATAL_EXECUTION_ERROR";
+  }
+  return "FATAL_EXECUTION_ERROR";
+}
+
+void logRuntimeEvent(const rclcpp::Node::SharedPtr& node, RuntimeEventClass classification,
+                    const char* event, const char* state, const char* next_state,
+                    const std::string& reason)
+{
+  RCLCPP_INFO(node->get_logger(),
+    "[RUNTIME_EVENT] class=%s event=%s state=%s next=%s reason=%s",
+    runtimeEventClassName(classification), event, state, next_state, reason.c_str());
+}
+
 // 两个预推行仍位于 y=±0.060；每一件先由双臂紧协调搬到该中央安全行，
 // 后续由另一臂压到对应侧墙。每行按深格再浅格的顺序，避免浅格挡住深格的 +X 推入。
 #ifdef TASK27_FIVE_CUBE
@@ -658,6 +691,16 @@ public:
   {
     std::lock_guard<std::mutex> lock(mutex_);
     return {poses_.at(index), revision_};
+  }
+
+  bool latest(std::size_t index, geometry_msgs::msg::Pose* pose, Receipt* receipt) const
+  {
+    if (!pose) return false;
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!ready_ || poses_.size() != expected_count_) return false;
+    *pose = poses_.at(index);
+    if (receipt) *receipt = receipt_;
+    return true;
   }
 
   bool waitNew(std::size_t index, std::uint64_t previous, double timeout_sec,
@@ -2597,12 +2640,19 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
       actual.position.x, actual.position.y, actual.position.z, error * 1000.0,
       x_gap * 1000.0, plus_gap * 1000.0, minus_gap * 1000.0,
       (plus_gap + minus_gap) * 1000.0);
-    return error <= kPlacementTolerance && std::abs(x_gap) <= kWallFlushTolerance &&
-           plus_gap >= -0.0005 && minus_gap >= -0.0005 &&
-           plus_gap <= kCenterMaxSideGap && minus_gap <= kCenterMaxSideGap &&
-           std::abs((plus_gap + minus_gap) - kExpectedCenterTotalGap) <= kCenterTotalGapTolerance &&
-           std::abs(plus_gap - minus_gap) <= kCenterGapBalanceTolerance &&
-           std::abs(actual.position.y) <= kCenterOffsetTolerance;
+    const bool accepted = error <= kPlacementTolerance && std::abs(x_gap) <= kWallFlushTolerance &&
+      plus_gap >= -0.0005 && minus_gap >= -0.0005 &&
+      plus_gap <= kCenterMaxSideGap && minus_gap <= kCenterMaxSideGap &&
+      std::abs((plus_gap + minus_gap) - kExpectedCenterTotalGap) <= kCenterTotalGapTolerance &&
+      std::abs(plus_gap - minus_gap) <= kCenterGapBalanceTolerance &&
+      std::abs(actual.position.y) <= kCenterOffsetTolerance;
+    logRuntimeEvent(node, accepted ? RuntimeEventClass::NORMAL_OPERATION
+                                  : RuntimeEventClass::RECOVERABLE_TASK_EVENT,
+      accepted ? "WALL_SEATED" : "WALL_NOT_SEATED", "INSERTION",
+      accepted ? "INSERTION" : "HOLD",
+      accepted ? "final center placement satisfies wall gaps"
+               : "final center placement is outside the documented acceptance" );
+    return accepted;
 #endif
   }
   const double side_gap = measuredSideSupportGap(task, actual, cubes);
@@ -2612,17 +2662,24 @@ bool validCellPlacement(const rclcpp::Node::SharedPtr& node, const OfflineTask& 
     task.id, task.cell.position.x, task.cell.position.y, task.cell.position.z,
     actual.position.x, actual.position.y, actual.position.z, error * 1000.0,
     xSupportName(task), x_gap * 1000.0, sideSupportName(task), side_gap * 1000.0);
-  return error <= kPlacementTolerance &&
-         std::abs(x_gap) <= kWallFlushTolerance &&
+  const bool accepted = error <= kPlacementTolerance &&
+    std::abs(x_gap) <= kWallFlushTolerance &&
 #ifdef TASK27_FIVE_CUBE
-         (isInnerReferenceTask(task)
-           // PhysX/Ros GT 经 float32 后在 1.5 mm 边界可多出约 38 nm。
-           // 100 nm 仅用于数值比较，不修改目标几何或毫米级验收阈值。
-           ? (side_gap >= -0.0005 - 1e-7 && side_gap <= 0.0015 + 1e-7)
-           : std::abs(side_gap) <= kWallFlushTolerance);
+    (isInnerReferenceTask(task)
+      // PhysX/Ros GT 经 float32 后在 1.5 mm 边界可多出约 38 nm。
+      // 100 nm 仅用于数值比较，不修改目标几何或毫米级验收阈值。
+      ? (side_gap >= -0.0005 - 1e-7 && side_gap <= 0.0015 + 1e-7)
+      : std::abs(side_gap) <= kWallFlushTolerance);
 #else
-         std::abs(side_gap) <= kWallFlushTolerance;
+    std::abs(side_gap) <= kWallFlushTolerance;
 #endif
+  logRuntimeEvent(node, accepted ? RuntimeEventClass::NORMAL_OPERATION
+                                : RuntimeEventClass::RECOVERABLE_TASK_EVENT,
+    accepted ? "WALL_SEATED" : "WALL_NOT_SEATED", "INSERTION",
+    accepted ? "INSERTION" : "HOLD",
+    accepted ? "final placement satisfies wall gaps"
+             : "final placement is outside the documented acceptance");
+  return accepted;
 }
 
 // 分段推进并逐段监督：Cube 必须跟着命令走，且关节力矩不得越限。
@@ -2640,6 +2697,9 @@ bool executePushWithSupervision(
 {
   const double duration = pointTime(left_push.points.back());
   double peak_torque = 0.0;
+  double previous_commanded_x = std::numeric_limits<double>::quiet_NaN();
+  double previous_actual_x = std::numeric_limits<double>::quiet_NaN();
+  int suspected_stall_slices = 0;
   for (int slice = 1; slice <= kPushSlices; ++slice)
   {
     const double t0 = duration * static_cast<double>(slice - 1) / kPushSlices;
@@ -2650,24 +2710,29 @@ bool executePushWithSupervision(
         !sliceTrajectory(right_hold, t0, t1, &right_slice) ||
         !executeSync(left, left_slice, right, right_slice))
     {
+      logRuntimeEvent(node, RuntimeEventClass::CONTROL_FEASIBILITY_EVENT,
+        "PUSH_EXECUTION_FAILED", "INSERTION", "HOLD",
+        "push slice did not reach a verified controlled state");
       RCLCPP_ERROR(node->get_logger(), "%s PUSH slice %d/%d execution failed.",
         task.id, slice, kPushSlices);
       return false;
     }
     const Eigen::Vector3d tcp = linkPosition(
       model, eef_link, left_slice.joint_names, finalPositions(left_slice));
-    // 推入臂持 -X 面：Cube 中心 = TCP_x + (半件 + 间隙)。
-    // tcp 来自 FK，是**模型系**坐标（滑轨搬站位后已整体偏移 -g_world_shift_x）；
-    // 而下面的 pose 是 Isaac Ground Truth，属**仿真系**。不把偏移加回去，lag 会凭空
-    // 多出 Δ —— 实测 Δ=0.100 时第一片就报 "lag=100.65 mm" 并误判卡死。
+    // FK is in the shifted MoveIt model frame; Cube Ground Truth is in the
+    // Isaac world frame, so restore the measured rail shift before comparing.
     const double commanded_cube_x = tcp.x() + kPushCupOffsetX + g_world_shift_x;
     geometry_msgs::msg::Pose pose;
+    CubeBuffer::Receipt receipt;
 #ifdef TASK27_FIVE_CUBE
     if (b0_snapshots)
     {
       task28_b0::Snapshot sample;
       if (!b0_snapshots->waitAfter(wallNowNs(), 2.0, &sample))
       {
+        logRuntimeEvent(node, RuntimeEventClass::OBSERVATION_UNAVAILABLE,
+          "PUSH_CUBE_OBSERVATION_UNAVAILABLE", "INSERTION", "HOLD",
+          "B0 snapshot missing or stale after push slice");
         RCLCPP_ERROR(node->get_logger(), "TASK28_B0_PUSH_SNAPSHOT unavailable after slice.");
         return false;
       }
@@ -2676,29 +2741,83 @@ bool executePushWithSupervision(
     else
 #endif
     {
-      pose = cubes.get(task.cube_index).first;
+      if (!cubes.latest(task.cube_index, &pose, &receipt) ||
+          receipt.received_wall_ns <= 0)
+      {
+        logRuntimeEvent(node, RuntimeEventClass::OBSERVATION_UNAVAILABLE,
+          "PUSH_CUBE_OBSERVATION_UNAVAILABLE", "INSERTION", "HOLD",
+          "Cube pose receipt is missing");
+        RCLCPP_ERROR(node->get_logger(), "%s PUSH stopped: Cube Ground Truth receipt unavailable.", task.id);
+        return false;
+      }
+      const auto now_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+      const double age_s = static_cast<double>(now_ns - receipt.received_wall_ns) * 1e-9;
+      if (!std::isfinite(age_s) || age_s < 0.0 || age_s > 0.50)
+      {
+        logRuntimeEvent(node, RuntimeEventClass::OBSERVATION_UNAVAILABLE,
+          "PUSH_CUBE_OBSERVATION_STALE", "INSERTION", "HOLD",
+          "Cube pose receipt is older than 0.50 s");
+        RCLCPP_ERROR(node->get_logger(), "%s PUSH stopped: Cube Ground Truth stale (%.1f ms).",
+          task.id, age_s * 1000.0);
+        return false;
+      }
     }
     const double lag = std::abs(commanded_cube_x - pose.position.x);
     const double torque = std::max(left_forces.peak(), right_forces.peak());
     peak_torque = std::max(peak_torque, torque);
+    const double command_advance = std::isfinite(previous_commanded_x)
+      ? commanded_cube_x - previous_commanded_x : 0.0;
+    const double measured_advance = std::isfinite(previous_actual_x)
+      ? pose.position.x - previous_actual_x : 0.0;
+    const bool wall_seated = std::abs(pose.position.x - task.cell.position.x) <= kWallFlushTolerance;
+    const bool lagging = lag > kPushJamTolerance && command_advance > 0.0 &&
+      measured_advance < 0.001;
+    if (lagging) ++suspected_stall_slices;
+    else suspected_stall_slices = 0;
     RCLCPP_INFO(node->get_logger(),
-      "%s PUSH slice %d/%d: commanded_cube_x=%.4f, actual=%.4f, lag=%.2f mm, peak_torque=%.2f Nm.",
-      task.id, slice, kPushSlices, commanded_cube_x, pose.position.x, lag * 1000.0, torque);
-    if (lag > kPushJamTolerance)
+      "%s PUSH slice %d/%d: commanded_cube_x=%.4f, actual=%.4f, lag=%.2f mm, "
+      "advance=(%.2f, %.2f) mm, peak_torque=%.2f Nm.",
+      task.id, slice, kPushSlices, commanded_cube_x, pose.position.x, lag * 1000.0,
+      command_advance * 1000.0, measured_advance * 1000.0, torque);
+    if (wall_seated)
     {
+      logRuntimeEvent(node, RuntimeEventClass::NORMAL_OPERATION,
+        "WALL_SEATED", "INSERTION", "INSERTION",
+        "Cube is at the intended deep-wall x target");
+    }
+    else if (lag > kPushJamTolerance && suspected_stall_slices == 1)
+    {
+      logRuntimeEvent(node, RuntimeEventClass::RECOVERABLE_TASK_EVENT,
+        "SUSPECTED_STALL", "INSERTION", "HOLD",
+        "one lag sample exceeded 20 mm; waiting for a second synchronized sample");
+    }
+    if (!wall_seated && suspected_stall_slices >= 2)
+    {
+      logRuntimeEvent(node, RuntimeEventClass::RECOVERABLE_TASK_EVENT,
+        "SUSPECTED_STALL_CONFIRMED", "INSERTION", "HOLD",
+        "two consecutive fresh samples exceeded 20 mm with <1 mm Cube advance");
       RCLCPP_ERROR(node->get_logger(),
-        "%s PUSH stopped: Cube Ground Truth lagged %.1f mm (limit %.1f mm) — 卡死或没有跟着走。",
+        "%s PUSH stopped after a sustained suspected stall: lag %.1f mm (limit %.1f mm).",
         task.id, lag * 1000.0, kPushJamTolerance * 1000.0);
       return false;
     }
     if (torque > kPushTorqueLimit)
     {
+      logRuntimeEvent(node, RuntimeEventClass::CONTROL_FEASIBILITY_EVENT,
+        "PUSH_TORQUE_LIMIT", "INSERTION", "HOLD",
+        "joint torque exceeded the preserved Task27 limit");
       RCLCPP_ERROR(node->get_logger(),
         "%s PUSH stopped: joint torque %.1f Nm exceeded %.1f Nm.",
         task.id, torque, kPushTorqueLimit);
       return false;
     }
+    previous_commanded_x = commanded_cube_x;
+    previous_actual_x = pose.position.x;
   }
+  logRuntimeEvent(node, RuntimeEventClass::NORMAL_OPERATION,
+    "PUSH_COMPLETE", "INSERTION", "INSERTION",
+    "all push slices completed with fresh Cube observations");
   RCLCPP_INFO(node->get_logger(), "%s PUSH complete: peak_torque=%.2f Nm.",
     task.id, peak_torque);
   return true;

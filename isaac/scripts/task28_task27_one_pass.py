@@ -20,6 +20,8 @@ import time
 
 import numpy as np
 
+from isaac.scripts.task28_runtime_events import EventClass, RuntimeSupervisor, SupervisorState
+
 REPO = Path(__file__).resolve().parents[2]
 ISAAC_ROOT = Path("/home/ubuntu2004/isaacsim-4.5.0")
 SCENE = REPO / "isaac/scripts/task27_five_cube_center_insert_scene.py"
@@ -78,6 +80,157 @@ def capture(app, viewport, path):
         app.update()
     if not path.is_file() or path.stat().st_size == 0:
         raise RuntimeError(f"VIEWPORT_CAPTURE_MISSING:{path}")
+
+
+class PhysicalTrace:
+    """Post-step FR3/Cube trace and PhysX pair receipts for position mode."""
+
+    def __init__(self, stage, feed_bridge, out):
+        import omni.physx
+        from pxr import PhysxSchema, PhysicsSchemaTools, UsdPhysics
+
+        self.stage = stage
+        self.feed = feed_bridge
+        self.out = Path(out)
+        self.rows = []
+        self.contacts = []
+        self.step = 0
+        self.time_s = 0.0
+        self._PhysicsSchemaTools = PhysicsSchemaTools
+        self._subs = []
+        prefixes = (
+            "/World/Task27/Supply/Cube_01",
+            "/World/Task27/TruckBox/WallDeep",
+            "/World/left_fr3/fr3_link8/side_suction_tool",
+            "/World/right_fr3/fr3_link8/side_suction_tool",
+        )
+        for prim in stage.Traverse():
+            path = str(prim.GetPath())
+            if path.startswith(prefixes):
+                try:
+                    PhysxSchema.PhysxContactReportAPI.Apply(prim).CreateThresholdAttr().Set(0.0)
+                except Exception:
+                    pass
+        self._subs.append(
+            omni.physx.get_physx_simulation_interface().subscribe_contact_report_events(
+                self._contact_report
+            )
+        )
+        self._subs.append(
+            omni.physx.get_physx_interface().subscribe_physics_on_step_events(
+                self._post_step, False, 0
+            )
+        )
+
+    @staticmethod
+    def _interesting(paths):
+        cube = any("/World/Task27/Supply/Cube_01" in p for p in paths)
+        tool = any("/fr3_link8/side_suction_tool/" in p for p in paths)
+        wall = any("/World/Task27/TruckBox/WallDeep" in p for p in paths)
+        table = any("/World/Table" in p for p in paths)
+        return cube and (tool or wall or table)
+
+    def _contact_report(self, headers, data):
+        for header in headers:
+            paths = [
+                str(self._PhysicsSchemaTools.intToSdfPath(p))
+                for p in (header.collider0, header.collider1)
+            ]
+            if not self._interesting(paths):
+                continue
+            points = []
+            for index in range(header.contact_data_offset,
+                               header.contact_data_offset + header.num_contact_data):
+                point = data[index]
+                points.append({
+                    "position_world_m": list(point.position),
+                    "normal_world": list(point.normal),
+                    "impulse_world_Ns": list(point.impulse),
+                    "separation_m": float(point.separation),
+                })
+            self.contacts.append({
+                "physics_step": self.step,
+                "time_s": self.time_s,
+                "colliders": paths,
+                "points": points,
+                "impulse_world_Ns": np.sum(
+                    [p["impulse_world_Ns"] for p in points], axis=0
+                ).tolist() if points else [0.0, 0.0, 0.0],
+            })
+
+    def _tcp(self, side):
+        from pxr import Usd, UsdGeom
+        path = f"/World/{side}_fr3/fr3_link8/side_suction_tool/side_suction_tcp"
+        prim = self.stage.GetPrimAtPath(path)
+        matrix = UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+        point = matrix.ExtractTranslation()
+        return [float(point[i]) for i in range(3)]
+
+    def _post_step(self, dt):
+        try:
+            self.step += 1
+            self.time_s += float(dt)
+            q, dq = {}, {}
+            tcp = {}
+            for side in ("left", "right"):
+                articulation = self.feed.articulations[side]
+                q[side] = np.asarray(articulation.get_joint_positions(), dtype=float)[:7].tolist()
+                dq[side] = np.asarray(articulation.get_joint_velocities(), dtype=float)[:7].tolist()
+                tcp[side] = self._tcp(side)
+            cube_position, cube_orientation = self.feed.rigids[0].get_world_pose()
+            cube_velocity = None
+            if hasattr(self.feed.rigids[0], "get_linear_velocity"):
+                cube_velocity = np.asarray(self.feed.rigids[0].get_linear_velocity(), dtype=float).tolist()
+            self.rows.append({
+                "physics_step": self.step,
+                "time_s": self.time_s,
+                "dt_s": float(dt),
+                "control_owner": "Task26BatchedFeedBridge",
+                "control_mode": "FREE_SPACE_TRAJECTORY_POSITION_DRIVE",
+                "q_actual_rad": q,
+                "dq_actual_rad_s": dq,
+                "tcp_world_m": tcp,
+                "cube_world_m": np.asarray(cube_position, dtype=float).tolist(),
+                "cube_quaternion_wxyz": np.asarray(cube_orientation, dtype=float).tolist(),
+                "cube_velocity_m_s": cube_velocity,
+            })
+        except Exception as exc:
+            self.rows.append({"physics_step": self.step, "time_s": self.time_s,
+                              "trace_error": repr(exc)})
+
+    def close(self):
+        for sub in self._subs:
+            try:
+                sub.unsubscribe()
+            except Exception:
+                pass
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "physical_trace.jsonl").write_text(
+            "".join(json.dumps(row, allow_nan=False) + "\n" for row in self.rows),
+            encoding="utf-8",
+        )
+        (self.out / "contact_events.jsonl").write_text(
+            "".join(json.dumps(row, allow_nan=False) + "\n" for row in self.contacts),
+            encoding="utf-8",
+        )
+        cube = [row["cube_world_m"] for row in self.rows if "cube_world_m" in row]
+        displacement = None
+        if len(cube) >= 2:
+            displacement = float(np.linalg.norm(np.asarray(cube[-1]) - np.asarray(cube[0])))
+        tool_cube = [row for row in self.contacts if any(
+            "/fr3_link8/side_suction_tool/" in p for p in row["colliders"])]
+        wall = [row for row in self.contacts if any(
+            "/World/Task27/TruckBox/WallDeep" in p for p in row["colliders"])]
+        (self.out / "physical_trace_summary.json").write_text(json.dumps({
+            "schema": "task28.fr3.physical_trace.v1",
+            "frames": len(self.rows),
+            "contact_events": len(self.contacts),
+            "tool_cube_contact_events": len(tool_cube),
+            "deep_wall_contact_events": len(wall),
+            "cube_displacement_m": displacement,
+            "contact_source": "PhysX_simulation_contact_report",
+            "state_source": "Task26BatchedFeedBridge articulation and Cube runtime state",
+        }, indent=2) + "\n", encoding="utf-8")
 
 
 def wait_native_settle(app, feed_bridge, *, max_frames=360,
@@ -425,6 +578,11 @@ def main():
     app = None
     torque = None
     moveit = executor = None
+    physical_trace = None
+    supervisor = RuntimeSupervisor(out / "runtime_events.jsonl")
+    supervisor.emit("RUN_STARTED", EventClass.NORMAL_OPERATION,
+                     reason="bounded Stage B trial initialized",
+                     details={"control_architecture": summary.get("control_architecture")})
     try:
         from isaacsim import SimulationApp
         app = SimulationApp({"headless": False, "create_new_stage": True, "renderer": "RaytracedLighting", "multi_gpu": False, "anti_aliasing": 2, "sync_loads": True})
@@ -463,42 +621,59 @@ def main():
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        feed_bridge = None
+        import builtins
+        # The scene publishes state but deliberately does not own the Python
+        # feed bridge.  Start/reuse exactly one original position-drive sink;
+        # live-QP may replace its arm callback, while FREE_SPACE keeps it.
+        feed_bridge = getattr(builtins, "_task26_batched_feed_bridge", None)
+        if feed_bridge is None:
+            feed_bridge = module.start_original_task27_feed_bridge()
+        if feed_bridge is None or not hasattr(feed_bridge, "articulations"):
+            raise RuntimeError("ORIGINAL_FEED_BRIDGE_INVALID")
         if args.live_qp:
-            import builtins
-            # The original Task27 scene normally creates its feed bridge as
-            # part of scene construction.  Reuse that exact instance so
-            # startup settling does not tear down and recreate ROS/PhysX
-            # ownership.  A direct start is only a recovery path for a scene
-            # that did not register one.
-            feed_bridge = getattr(builtins, "_task26_batched_feed_bridge", None)
-            if feed_bridge is None:
-                feed_bridge = module.start_original_task27_feed_bridge()
-            if feed_bridge is None or not hasattr(feed_bridge, "articulations"):
-                raise RuntimeError("ORIGINAL_FEED_BRIDGE_INVALID")
+            supervisor.emit("CONTROL_HANDOFF_LOCAL_QP", EventClass.NORMAL_OPERATION,
+                             reason="explicit live-QP mode owns only the local contact controller",
+                             next_state=SupervisorState.TOOL_CONTACT,
+                             details={"local_sweep_limit_m": float(args.local_sweep_limit_m)})
             summary["native_settle"] = wait_native_settle(
                 app, feed_bridge, max_frames=max(1, int(args.pre_torque_settle_frames))
             )
-        torque = module.start_task27_torque_bridge(
-            output=torque_log, live_qp=bool(args.live_qp), experiment=args.experiment,
-            task_mode=args.task_mode,
-            internal_force_target_N=float(args.internal_force_target_n),
-            internal_force_weight=float(args.internal_force_weight),
-            internal_force_kp=float(args.internal_force_kp),
-            internal_force_change_s=float(args.internal_force_change_s),
-            internal_force_after_N=float(args.internal_force_after_n),
-            feed_bridge=feed_bridge, record_joint_reactions=args.record_joint_reactions,
-            assumed_internal_contact_load=args.assume_internal_contact_load,
-            object_reference=args.consistent_object_reference,
-            stage_b0_only=args.stage_b0_only,
-        )
-        torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
-        torque._log({
-            "event": "LOCAL_SWEEP_LIMIT_CONFIGURED",
-            "limit_m": float(args.local_sweep_limit_m),
-            "source": "runner_argument",
-            "simulation_only": True,
-        })
+        torque = None
+        if args.live_qp:
+            torque = module.start_task27_torque_bridge(
+                output=torque_log, live_qp=True, experiment=args.experiment,
+                task_mode=args.task_mode,
+                internal_force_target_N=float(args.internal_force_target_n),
+                internal_force_weight=float(args.internal_force_weight),
+                internal_force_kp=float(args.internal_force_kp),
+                internal_force_change_s=float(args.internal_force_change_s),
+                internal_force_after_N=float(args.internal_force_after_n),
+                feed_bridge=feed_bridge, record_joint_reactions=args.record_joint_reactions,
+                assumed_internal_contact_load=args.assume_internal_contact_load,
+                object_reference=args.consistent_object_reference,
+                stage_b0_only=args.stage_b0_only,
+            )
+            torque._qp_sweep_limit_m = float(args.local_sweep_limit_m)
+            torque._log({
+                "event": "LOCAL_SWEEP_LIMIT_CONFIGURED",
+                "limit_m": float(args.local_sweep_limit_m),
+                "source": "runner_argument",
+                "simulation_only": True,
+            })
+            summary["control_architecture"] = "LOCAL_CONTACT_QP"
+        else:
+            supervisor.emit("FREE_SPACE_POSITION_DRIVE", EventClass.NORMAL_OPERATION,
+                             reason="original position feed bridge remains sole arm owner",
+                             next_state=SupervisorState.FREE_SPACE)
+            # The original feed bridge remains the sole arm owner in this
+            # mode.  Starting Task28TorqueBridge with live_qp=False still
+            # changes the seven arm DOFs to force mode and captures targets
+            # without applying them, which is the failed R3 behavior.
+            summary["control_architecture"] = "FREE_SPACE_TRAJECTORY_POSITION_DRIVE"
+            if args.mode == "integrated":
+                physical_trace = PhysicalTrace(
+                    stage, feed_bridge, out / "physical_trace"
+                )
         for _ in range(60):
             app.update()
         if args.mode == "integrated":
@@ -606,7 +781,32 @@ def main():
     except Exception as exc:
         summary["status"] = "BLOCKED_RUNTIME_EXCEPTION"
         summary["exception"] = repr(exc)
+        classification = RuntimeSupervisor.classify_exception(exc)
+        if classification is EventClass.OBSERVATION_UNAVAILABLE:
+            supervisor.emit("OBSERVATION_UNAVAILABLE", classification,
+                             reason="runtime exception requires a validated observation",
+                             next_state=SupervisorState.HOLD, recoverable=False,
+                             details={"exception": repr(exc)})
+        elif classification is EventClass.RECOVERABLE_TASK_EVENT:
+            supervisor.emit("RECOVERABLE_TASK_EVENT", classification,
+                             reason="task event stopped the incompatible motion before diagnosis",
+                             next_state=SupervisorState.HOLD, recoverable=True,
+                             details={"exception": repr(exc)})
+        elif classification is EventClass.CONTROL_FEASIBILITY_EVENT:
+            supervisor.emit("CONTROL_FEASIBILITY_EVENT", classification,
+                             reason="control command was stopped after a feasibility violation",
+                             next_state=SupervisorState.STOPPED, recoverable=False,
+                             details={"exception": repr(exc)})
+        else:
+            supervisor.stop("FATAL_EXECUTION_ERROR", reason="unrecoverable runtime exception",
+                            fatal=True, details={"exception": repr(exc)})
     finally:
+        if physical_trace is not None:
+            try:
+                physical_trace.close()
+                summary["physical_trace"] = "physical_trace/physical_trace_summary.json"
+            except Exception as exc:
+                summary["physical_trace_error"] = repr(exc)
         summary["torque_latched_error"] = getattr(torque, "_latched_error", None)
         summary["torque_steps"] = getattr(torque, "_step", None)
         summary["torque_writes"] = getattr(torque, "_writes", None)
@@ -614,6 +814,12 @@ def main():
         summary["qp_solve_count"] = getattr(torque, "_qp_solve_count", None)
         summary["qp_status_counts"] = getattr(torque, "_qp_status_counts", None)
         summary["qp_stop_reason"] = getattr(torque, "_qp_stop_reason", None)
+        if summary.get("status") == "COMPLETED":
+            supervisor.emit("TRIAL_COMPLETED", EventClass.NORMAL_OPERATION,
+                             reason="bounded run reached its requested endpoint",
+                             next_state=SupervisorState.STOPPED)
+        summary["runtime_event_log"] = "runtime_events.jsonl"
+        summary["runtime_event_count"] = len(supervisor.events)
         summary["moveit_exit"] = stop_process(moveit)
         summary["executor_exit"] = stop_process(executor)
         # Persist the endpoint status before closing Kit; Isaac shutdown can
