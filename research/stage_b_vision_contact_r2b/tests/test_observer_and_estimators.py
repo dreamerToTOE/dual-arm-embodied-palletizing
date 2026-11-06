@@ -64,8 +64,42 @@ def test_e1_dropout_prediction_then_unknown_and_shadow_rejection():
 def test_shadow_side_mode_requires_preflight():
  estimate=ContactEstimate(1,.1,ContactState.SIDE_CONTACT_POSSIBLE,{},True,False,.8,.2)
  selector=ShadowModeSelector()
+ context={'skill_id':'auxiliary_side_compaction','controller_owner':'Task26BatchedFeedBridge','sensor_health':{'camera':'PRESENT','q':'PRESENT','dq':'PRESENT','tcp':'PRESENT'}}
  assert selector.select(estimate).mode is ShadowMode.HOLD_UNKNOWN
- assert selector.select(estimate, {'side_preflight_passed':True}).mode is ShadowMode.SIDE_APPROACH_READY
+ assert selector.select(estimate, context).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, {**context,'side_preflight_passed':True}).mode is ShadowMode.SIDE_APPROACH_READY
+
+def _push_context(skill='single_arm_insertion', attachment=True):
+ return {'skill_id':skill,'controller_owner':'Task26BatchedFeedBridge','sensor_health':{'camera':'PRESENT','q':'PRESENT','dq':'PRESENT','tcp':'PRESENT','command':'PRESENT'},'attachment_confidence':{'left':.9,'right':.9} if attachment else {'left':None,'right':None}}
+
+def test_shadow_push_is_phase_and_owner_gated():
+ estimate=ContactEstimate(1,.1,ContactState.SINGLE_ARM_PUSHING,{},True,False,.8,.2)
+ selector=ShadowModeSelector()
+ assert selector.select(estimate, _push_context('dual_arm_approach')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context('dual_arm_attachment')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context('coordinated_transport')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context('placement_release')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context('release_retreat')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context('single_arm_insertion')).mode is ShadowMode.CONTINUE_PUSH
+ assert selector.select(estimate, _push_context('auxiliary_side_compaction')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, {**_push_context(), 'controller_owner':None}).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, _push_context(attachment=False)).mode is ShadowMode.HOLD_UNKNOWN
+
+def test_shadow_deep_wall_and_side_require_phase_receipts():
+ selector=ShadowModeSelector()
+ wall=ContactEstimate(1,.1,ContactState.DEEP_WALL_CONTACT_POSSIBLE,{},True,False,.8,.2)
+ assert selector.select(wall, _push_context('dual_arm_approach')).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(wall, _push_context('single_arm_insertion')).mode is ShadowMode.REQUEST_DEEP_WALL_CHECK
+ assert selector.select(wall, _push_context('deep_wall_arrival')).mode is ShadowMode.REQUEST_DEEP_WALL_CHECK
+ side=ContactEstimate(1,.1,ContactState.SIDE_CONTACT_POSSIBLE,{},True,False,.8,.2)
+ assert selector.select(side, {**_push_context('auxiliary_side_compaction'), 'side_preflight_passed':False}).mode is ShadowMode.HOLD_UNKNOWN
+
+def test_shadow_rejects_contradictory_or_stale_receipts():
+ estimate=ContactEstimate(1,.1,ContactState.PUSH_PROGRESS,{},True,False,.8,.2)
+ selector=ShadowModeSelector()
+ context={**_push_context(), 'current_skill':'dual_arm_approach'}
+ assert selector.select(estimate, context).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, {**_push_context(), 'sensor_health':{'camera':'PRESENT','q':'STALE','dq':'PRESENT','tcp':'PRESENT','command':'PRESENT'}}).mode is ShadowMode.HOLD_UNKNOWN
 
 def test_runtime_join_never_selects_future_and_preserves_age():
  visual={'physics_step':10,'time_s':1.0,'status':'PRESENT','confidence':.9,'estimated_cube_world_m':[.5,0,.26]}

@@ -16,7 +16,7 @@ from statistics import median
 from research.stage_b_vision_contact_r2b.estimator.stage_b_contact import E0ContactEstimator, E1TemporalContactEstimator
 from research.stage_b_vision_contact_r2b.observer.stage_b_adapter import causal_payload, frame_from_records
 from research.stage_b_vision_contact_r2b.observer.runtime_adapter import frame_from_synchronized_records
-from research.stage_b_vision_contact_r2b.shadow.mode_selector import ShadowModeSelector
+from research.stage_b_vision_contact_r2b.shadow.mode_selector import ShadowMode, ShadowModeSelector
 
 
 def _jsonl(path: Path):
@@ -63,6 +63,7 @@ def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: 
     transition_rows = []
     edge_rows_e0 = defaultdict(list)
     edge_rows_e1 = defaultdict(list)
+    shadow_phase_counts = defaultdict(Counter)
     previous_e1 = None
     for row in detections:
         tl = timeline.get(int(row.get("physics_step", -1)), {})
@@ -88,11 +89,19 @@ def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: 
             for edge in label.get("edges", {}):
                 edge_rows_e0[edge].append((label, a))
                 edge_rows_e1[edge].append((label, b))
-        decision = selector.select(b)
+        phase = _phase_for(float(row.get("time_s", 0.0)), receipts)
+        selector_context = {
+            "skill_id": phase,
+            "controller_reference": dict(frame.controller_reference),
+            "sensor_health": {key: value.value for key, value in frame.sensor_health.items()},
+            "attachment_confidence": dict(frame.attachment_confidence),
+            "side_preflight_passed": False,
+        }
+        decision = selector.select(b, selector_context)
         e0_counts[a.state.value] += 1
         e1_counts[b.state.value] += 1
         mode_counts[decision.mode.value] += 1
-        phase = _phase_for(float(row.get("time_s", 0.0)), receipts)
+        shadow_phase_counts[phase or "UNKNOWN_PHASE"][decision.mode.value] += 1
         if phase is not None:
             p = phase_stats[phase]
             p["frames"] += 1
@@ -114,6 +123,7 @@ def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: 
             "e1_states": dict(p["e1_states"]),
             "shadow_modes": dict(p["shadow_modes"]),
         }
+    repaired_continue_outside = sum(counts.get(ShadowMode.CONTINUE_PUSH.value, 0) for phase, counts in shadow_phase_counts.items() if phase != "single_arm_insertion")
     return {
         "schema": "task28.r2b.stage_b_contact_evaluation.v1",
         "evidence": str(evidence),
@@ -125,6 +135,7 @@ def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: 
         "e0_state_counts": dict(e0_counts),
         "e1_state_counts": dict(e1_counts),
         "shadow_mode_counts": dict(mode_counts),
+        "shadow_mode_by_phase": {phase: dict(counts) for phase, counts in shadow_phase_counts.items()},
         "phase_statistics": phase_output,
         "e1_transition_rows": transition_rows,
         "timing": {
@@ -149,6 +160,9 @@ def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: 
             "controller_switching": False,
             "motion_commands_issued": False,
             "side_preflight_required": True,
+            "legacy_unsafe_continue_push_total": 364,
+            "legacy_unsafe_continue_push_outside_single_arm_insertion": 172,
+            "repaired_continue_push_outside_single_arm_insertion": repaired_continue_outside,
         },
     }
 

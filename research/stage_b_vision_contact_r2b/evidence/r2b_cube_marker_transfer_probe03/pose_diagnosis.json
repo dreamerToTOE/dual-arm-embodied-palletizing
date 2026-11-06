@@ -1,0 +1,1468 @@
+{
+  "schema": "task28.r2b.single_marker_pose_diagnosis.v1",
+  "evidence": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-pose-diagnosis/research/stage_b_vision_contact_r2b/evidence/r2b_cube_marker_transfer_probe03",
+  "calibration": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-pose-diagnosis/research/stage_b_vision_contact_r2b/evidence/r2b_camera_precision_cal24/calibration_result.json",
+  "camera_world_position_m": [
+    1.7000000000000002,
+    -0.35,
+    0.8000000000000003
+  ],
+  "camera_axes_world_from_opencv": [
+    [
+      0.36956942338645415,
+      0.4338283090868444,
+      -0.8217125041841906
+    ],
+    [
+      0.9292031216573715,
+      -0.1725453502049945,
+      0.32681747325507576
+    ],
+    [
+      0.0,
+      -0.8843195691363421,
+      -0.46688210465010826
+    ]
+  ],
+  "intrinsics": [
+    [
+      718.0975867696234,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      720.0462039914794,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "marker_size_m": 0.06,
+  "diagnostic_only_ground_truth_scoring": true,
+  "depth_evidence": {
+    "status": "UNAVAILABLE_FOR_PROBE03",
+    "reason": "probe03 saved RGB only; physical07 depth belongs to a different legacy episode and was not fused"
+  },
+  "method_summary": {
+    "ITERATIVE": {
+      "solutions": 6,
+      "translation_error_median": 0.04718929729318955,
+      "translation_error_p95": 0.05429433102066513,
+      "rotation_error_deg_median": 1.6490467431742295,
+      "depth_error_median": 8.163020052601166e-05,
+      "reprojection_mean_px_median": 0.3069078622657763
+    },
+    "IPPE_SQUARE": {
+      "solutions": 6,
+      "translation_error_median": 0.05123059198350677,
+      "translation_error_p95": 0.10173520445903428,
+      "rotation_error_deg_median": 1.7841201375622224,
+      "depth_error_median": -0.0010196549913445152,
+      "reprojection_mean_px_median": 0.3079721181418479
+    },
+    "SQPNP": {
+      "solutions": 6,
+      "translation_error_median": 0.12102305936297497,
+      "translation_error_p95": 0.18788913008494273,
+      "rotation_error_deg_median": 124.26616520849538,
+      "depth_error_median": -0.04873991239064335,
+      "reprojection_mean_px_median": 4.914211916840538
+    },
+    "IPPE_GENERIC": {
+      "solutions": 12,
+      "translation_error_median": 0.08040869122910264,
+      "translation_error_p95": 0.12203519506527355,
+      "rotation_error_deg_median": 58.29879475979425,
+      "depth_error_median": -0.0013074873520170782,
+      "reprojection_mean_px_median": 0.47311116129969927
+    },
+    "SQPNP_GENERIC": {
+      "solutions": 6,
+      "translation_error_median": 0.12102305936297497,
+      "translation_error_p95": 0.18788913008494273,
+      "rotation_error_deg_median": 124.26616520849538,
+      "depth_error_median": -0.04873991239064335,
+      "reprojection_mean_px_median": 4.914211916840538
+    }
+  },
+  "views": [
+    {
+      "name": "single_arm_recontact",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -1.8287359466763746,
+          0.6074701375671339
+        ],
+        [
+          -1.7316178538106897,
+          -0.43735519994970673
+        ],
+        [
+          1.2174316660326667,
+          -0.8005977291439876
+        ],
+        [
+          -0.1655492822595761,
+          -0.2198386371432548
+        ]
+      ],
+      "corner_residual_mean_px": 1.361318171314069,
+      "corner_residual_max_px": 1.9269912118902277,
+      "marker_width_px": 21.2602916254693,
+      "marker_height_px": 33.37663853655727,
+      "camera_to_marker_distance_m": 1.122756429507309,
+      "camera_to_marker_optical_depth_m": 1.1210026085490963,
+      "incidence_angle_deg": 64.74620810640546,
+      "projected_center_bias_px": [
+        -0.6271178541785503,
+        -0.21258035716743962
+      ],
+      "expected_projected_corners_px": [
+        [
+          673.8287359466764,
+          317.39252986243287
+        ],
+        [
+          689.7316178538107,
+          332.4373551999497
+        ],
+        [
+          653.7825683339673,
+          338.800597729144
+        ],
+        [
+          639.1655492822596,
+          323.21983863714325
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          672.0,
+          318.0
+        ],
+        [
+          688.0,
+          332.0
+        ],
+        [
+          655.0,
+          338.0
+        ],
+        [
+          639.0,
+          323.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.2892836041523851,
+            "reprojection_max_px": 0.3081808783838691,
+            "translation_error_m": 0.05375668981603369,
+            "translation_error_xyz_m": [
+              -0.04557151634001022,
+              0.017125917170433366,
+              -0.022797402473108574
+            ],
+            "rotation_error_deg": 3.053694236417968,
+            "depth_error_m": 0.014314547357754004,
+            "camera_center_marker_error_m": 0.08069814253521498,
+            "rvec": [
+              1.7706379710232245,
+              1.166110709996213,
+              -0.6738256557230744
+            ],
+            "tvec": [
+              0.03844469090156119,
+              -0.05291600105431379,
+              1.1750675017234906
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.2902653598419166,
+            "reprojection_max_px": 0.29891987557669963,
+            "translation_error_m": 0.052901112412247445,
+            "translation_error_xyz_m": [
+              -0.044847606362590664,
+              0.016830841289791232,
+              -0.02244866765483458
+            ],
+            "rotation_error_deg": 3.0094414495730364,
+            "depth_error_m": 0.013253099020585246,
+            "camera_center_marker_error_m": 0.07947133038632306,
+            "rvec": [
+              1.769854827851149,
+              1.1663936105622483,
+              -0.6749535337838545
+            ],
+            "tvec": [
+              0.03841791594408039,
+              -0.05287930751401518,
+              1.174250482534215
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 4.440969603273813,
+            "reprojection_max_px": 6.026966189761499,
+            "translation_error_m": 0.11655827606889813,
+            "translation_error_xyz_m": [
+              -0.07309986616706643,
+              0.047463378115877905,
+              0.07739165991461644
+            ],
+            "rotation_error_deg": 125.05422825677071,
+            "depth_error_m": 0.06396158277620195,
+            "camera_center_marker_error_m": 2.0076823421478327,
+            "rvec": [
+              -1.7419941134952583,
+              -1.0108149413447254,
+              -0.2753538097183701
+            ],
+            "tvec": [
+              0.03781451436138802,
+              -0.05184353890370264,
+              1.1633586537627392
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.2902653598419166,
+            "reprojection_max_px": 0.29891987557669963,
+            "translation_error_m": 0.052901112412247445,
+            "translation_error_xyz_m": [
+              -0.044847606362590664,
+              0.016830841289791232,
+              -0.02244866765483458
+            ],
+            "rotation_error_deg": 3.0094414495730364,
+            "depth_error_m": 0.013253099020585246,
+            "camera_center_marker_error_m": 0.07947133038632306,
+            "rvec": [
+              1.769854827851149,
+              1.1663936105622483,
+              -0.6749535337838545
+            ],
+            "tvec": [
+              0.03841791594408039,
+              -0.05287930751401518,
+              1.174250482534215
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 0.463599918640443,
+            "reprojection_max_px": 0.4773441923423503,
+            "translation_error_m": 0.12198878840032373,
+            "translation_error_xyz_m": [
+              -0.08594873820429616,
+              0.03862941252248983,
+              0.07747159082293087
+            ],
+            "rotation_error_deg": 129.99306655643863,
+            "depth_error_m": 0.012387771676416581,
+            "camera_center_marker_error_m": 2.0824426262960354,
+            "rvec": [
+              -1.7040576394532965,
+              -1.075035644051502,
+              -0.6537905379617286
+            ],
+            "tvec": [
+              0.03836971126705057,
+              -0.052269878910718784,
+              1.1736469388747437
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 4.440969603273813,
+            "reprojection_max_px": 6.026966189761499,
+            "translation_error_m": 0.11655827606889813,
+            "translation_error_xyz_m": [
+              -0.07309986616706643,
+              0.047463378115877905,
+              0.07739165991461644
+            ],
+            "rotation_error_deg": 125.05422825677071,
+            "depth_error_m": 0.06396158277620195,
+            "camera_center_marker_error_m": 2.0076823421478327,
+            "rvec": [
+              -1.7419941134952583,
+              -1.0108149413447254,
+              -0.2753538097183701
+            ],
+            "tvec": [
+              0.03781451436138802,
+              -0.05184353890370264,
+              1.1633586537627392
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.05161045486092001,
+        0.06508497999444492
+      ]
+    },
+    {
+      "name": "insertion_entry",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -0.7158030302043699,
+          0.9840898525495732
+        ],
+        [
+          -2.0672964002187655,
+          -0.4851416487588267
+        ],
+        [
+          0.30813629034321366,
+          -1.03357637475591
+        ],
+        [
+          0.34493308180344684,
+          -0.005362448624509852
+        ]
+      ],
+      "corner_residual_mean_px": 1.190962010755217,
+      "corner_residual_max_px": 2.123458694139799,
+      "marker_width_px": 20.518284528683193,
+      "marker_height_px": 34.36568055487916,
+      "camera_to_marker_distance_m": 1.1070867174706782,
+      "camera_to_marker_optical_depth_m": 1.1053900709695967,
+      "incidence_angle_deg": 64.36305950063621,
+      "projected_center_bias_px": [
+        -0.5325075145691471,
+        -0.13499765489740412
+      ],
+      "expected_projected_corners_px": [
+        [
+          678.7158030302044,
+          322.0159101474504
+        ],
+        [
+          695.0672964002188,
+          337.4851416487588
+        ],
+        [
+          658.6918637096568,
+          344.0335763747559
+        ],
+        [
+          643.6550669181966,
+          328.0053624486245
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          678.0,
+          323.0
+        ],
+        [
+          693.0,
+          337.0
+        ],
+        [
+          659.0,
+          343.0
+        ],
+        [
+          644.0,
+          328.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.32453212037916757,
+            "reprojection_max_px": 0.34592191728482846,
+            "translation_error_m": 0.05447354475554228,
+            "translation_error_xyz_m": [
+              -0.045182514895901305,
+              0.01889434129273128,
+              -0.023851861416449543
+            ],
+            "rotation_error_deg": 1.1715711899962777,
+            "depth_error_m": 0.004105839438933279,
+            "camera_center_marker_error_m": 0.059731528256672536,
+            "rvec": [
+              1.7517237994201809,
+              1.1921526006094139,
+              -0.7233000103058396
+            ],
+            "tvec": [
+              0.04604949942303093,
+              -0.044219820284050596,
+              1.160826021875787
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.32567887644177923,
+            "reprojection_max_px": 0.3357677141552667,
+            "translation_error_m": 0.053437688685341406,
+            "translation_error_xyz_m": [
+              -0.04431402614667712,
+              0.01852917585694612,
+              -0.023420574304774122
+            ],
+            "rotation_error_deg": 1.1974265618871567,
+            "depth_error_m": 0.002922456364767234,
+            "camera_center_marker_error_m": 0.05902038213037163,
+            "rvec": [
+              1.7508666380634388,
+              1.1924680500080689,
+              -0.7245281119776293
+            ],
+            "tvec": [
+              0.046009987697352796,
+              -0.04418207063082119,
+              1.1598322053647228
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 5.387454230407263,
+            "reprojection_max_px": 7.195601347306571,
+            "translation_error_m": 0.11446298022420213,
+            "translation_error_xyz_m": [
+              -0.06948648216389264,
+              0.04838323473756517,
+              0.07702249823670215
+            ],
+            "rotation_error_deg": 123.47810216022006,
+            "depth_error_m": 0.07059483122777027,
+            "camera_center_marker_error_m": 1.9630523045982557,
+            "rvec": [
+              -1.7508682064600778,
+              -1.0269551786394164,
+              -0.22793793938271936
+            ],
+            "tvec": [
+              0.04511090113108388,
+              -0.04304663796183679,
+              1.144201708580612
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.32567887644177923,
+            "reprojection_max_px": 0.3357677141552667,
+            "translation_error_m": 0.053437688685341406,
+            "translation_error_xyz_m": [
+              -0.04431402614667712,
+              0.01852917585694612,
+              -0.023420574304774122
+            ],
+            "rotation_error_deg": 1.1974265618871567,
+            "depth_error_m": 0.002922456364767234,
+            "camera_center_marker_error_m": 0.05902038213037163,
+            "rvec": [
+              1.7508666380634388,
+              1.1924680500080689,
+              -0.7245281119776293
+            ],
+            "tvec": [
+              0.046009987697352796,
+              -0.04418207063082119,
+              1.1598322053647228
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 0.4790360437361273,
+            "reprojection_max_px": 0.49493585836261345,
+            "translation_error_m": 0.12209191432243444,
+            "translation_error_xyz_m": [
+              -0.08700900162135816,
+              0.03874234595681651,
+              0.07638651588816908
+            ],
+            "rotation_error_deg": 129.85940951963957,
+            "depth_error_m": 0.0021223597805366534,
+            "camera_center_marker_error_m": 2.0547079469233624,
+            "rvec": [
+              -1.7011495890754778,
+              -1.096978055948212,
+              -0.6843693416672663
+            ],
+            "tvec": [
+              0.04596993761210546,
+              -0.0435750095501725,
+              1.1592688042488553
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 5.387454230407263,
+            "reprojection_max_px": 7.195601347306571,
+            "translation_error_m": 0.11446298022420213,
+            "translation_error_xyz_m": [
+              -0.06948648216389264,
+              0.04838323473756517,
+              0.07702249823670215
+            ],
+            "rotation_error_deg": 123.47810216022006,
+            "depth_error_m": 0.07059483122777027,
+            "camera_center_marker_error_m": 1.9630523045982557,
+            "rvec": [
+              -1.7508682064600778,
+              -1.0269551786394164,
+              -0.22793793938271936
+            ],
+            "tvec": [
+              0.04511090113108388,
+              -0.04304663796183679,
+              1.144201708580612
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.05601818955754423,
+        0.06718042350145649
+      ]
+    },
+    {
+      "name": "insertion_mid",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -0.8970664012781526,
+          0.6895181232375194
+        ],
+        [
+          -2.527207784450866,
+          -0.3346564719323055
+        ],
+        [
+          -1.2159537861384706,
+          -1.8066819668492258
+        ],
+        [
+          0.03207387679708518,
+          -0.008787730115670911
+        ]
+      ],
+      "corner_residual_mean_px": 1.472932352480226,
+      "corner_residual_max_px": 2.5492693345339625,
+      "marker_width_px": 25.495097567963924,
+      "marker_height_px": 36.6742416417845,
+      "camera_to_marker_distance_m": 1.0185975652827768,
+      "camera_to_marker_optical_depth_m": 1.0150016955093357,
+      "incidence_angle_deg": 61.94918771045737,
+      "projected_center_bias_px": [
+        -1.1520385237677147,
+        -0.3651520114149207
+      ],
+      "expected_projected_corners_px": [
+        [
+          708.8970664012782,
+          351.3104818767625
+        ],
+        [
+          729.5272077844509,
+          369.3346564719323
+        ],
+        [
+          691.2159537861385,
+          377.8066819668492
+        ],
+        [
+          671.9679261232029,
+          359.00878773011567
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          708.0,
+          352.0
+        ],
+        [
+          727.0,
+          369.0
+        ],
+        [
+          690.0,
+          376.0
+        ],
+        [
+          672.0,
+          359.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.18722514039423763,
+            "reprojection_max_px": 0.19268837494640687,
+            "translation_error_m": 0.03986148978097162,
+            "translation_error_xyz_m": [
+              -0.031941925377294234,
+              0.014423107285779765,
+              -0.018990148682218322
+            ],
+            "rotation_error_deg": 1.7836738322293715,
+            "depth_error_m": -0.005069992608926488,
+            "camera_center_marker_error_m": 0.05237694788259928,
+            "rvec": [
+              1.7561183485445713,
+              1.1718324584100615,
+              -0.7233655862547754
+            ],
+            "tvec": [
+              0.08709231265428015,
+              0.005524331635085472,
+              1.056208444132676
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.18754712260697592,
+            "reprojection_max_px": 0.19573696742332186,
+            "translation_error_m": 0.03963881512655493,
+            "translation_error_xyz_m": [
+              -0.03175744299850691,
+              0.014360528498712277,
+              -0.018880564082448814
+            ],
+            "rotation_error_deg": 1.7805310642598218,
+            "depth_error_m": -0.0049617663474562645,
+            "camera_center_marker_error_m": 0.05222075583313422,
+            "rvec": [
+              1.7564224328422646,
+              1.1719562531615442,
+              -0.7238857563091575
+            ],
+            "tvec": [
+              0.08707278732101965,
+              0.005523069678270368,
+              1.0559753538525907
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 6.851404690783851,
+            "reprojection_max_px": 9.10110504598087,
+            "translation_error_m": 0.20322163031161752,
+            "translation_error_xyz_m": [
+              -0.16312446706400008,
+              0.09549541565263447,
+              -0.07463286716272038
+            ],
+            "rotation_error_deg": 33.6990856676981,
+            "depth_error_m": 0.518969604758553,
+            "camera_center_marker_error_m": 0.6592867540311176,
+            "rvec": [
+              2.2695465773668295,
+              1.509417238587379,
+              -0.7558041457379905
+            ],
+            "tvec": [
+              0.09827108479400284,
+              0.006431301475883816,
+              1.1940418988352135
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.18754712260697592,
+            "reprojection_max_px": 0.19573696742332186,
+            "translation_error_m": 0.03963881512655493,
+            "translation_error_xyz_m": [
+              -0.03175744299850691,
+              0.014360528498712277,
+              -0.018880564082448814
+            ],
+            "rotation_error_deg": 1.7805310642598218,
+            "depth_error_m": -0.0049617663474562645,
+            "camera_center_marker_error_m": 0.05222075583313422,
+            "rvec": [
+              1.7564224328422646,
+              1.1719562531615442,
+              -0.7238857563091575
+            ],
+            "tvec": [
+              0.08707278732101965,
+              0.005523069678270368,
+              1.0559753538525907
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 0.5447595546491526,
+            "reprojection_max_px": 0.5684375938522404,
+            "translation_error_m": 0.11491888332943244,
+            "translation_error_xyz_m": [
+              -0.07661089735129434,
+              0.03724133872411817,
+              0.07713755792575133
+            ],
+            "rotation_error_deg": 125.37268258902682,
+            "depth_error_m": -0.005460747292433121,
+            "camera_center_marker_error_m": 1.8459483643688643,
+            "rvec": [
+              -1.7888014669387282,
+              -1.0664133731817445,
+              -0.5626379604570387
+            ],
+            "tvec": [
+              0.08698584599132456,
+              0.0061985956954523054,
+              1.0552797600067836
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 6.851404690783851,
+            "reprojection_max_px": 9.10110504598087,
+            "translation_error_m": 0.20322163031161752,
+            "translation_error_xyz_m": [
+              -0.16312446706400008,
+              0.09549541565263447,
+              -0.07463286716272038
+            ],
+            "rotation_error_deg": 33.6990856676981,
+            "depth_error_m": 0.518969604758553,
+            "camera_center_marker_error_m": 0.6592867540311176,
+            "rvec": [
+              2.2695465773668295,
+              1.509417238587379,
+              -0.7558041457379905
+            ],
+            "tvec": [
+              0.09827108479400284,
+              0.006431301475883816,
+              1.1940418988352135
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.039492763218860485,
+        0.11794991995938238
+      ]
+    },
+    {
+      "name": "deep_wall_near",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -1.336590936611742,
+          0.5186339801113036
+        ],
+        [
+          -3.503803900257253,
+          -1.0850228909927182
+        ],
+        [
+          -1.6038184117454648,
+          -2.192831422040854
+        ],
+        [
+          -1.3787038629346853,
+          -0.6318087410799649
+        ]
+      ],
+      "corner_residual_mean_px": 2.333743502571399,
+      "corner_residual_max_px": 3.6679580757467956,
+      "marker_width_px": 30.4138126514911,
+      "marker_height_px": 42.579337712087536,
+      "camera_to_marker_distance_m": 0.9127655777909247,
+      "camera_to_marker_optical_depth_m": 0.899961944923549,
+      "incidence_angle_deg": 58.346648441022595,
+      "projected_center_bias_px": [
+        -1.9557292778873716,
+        -0.8477572685005725
+      ],
+      "expected_projected_corners_px": [
+        [
+          759.3365909366117,
+          397.4813660198887
+        ],
+        [
+          782.5038039002573,
+          421.0850228909927
+        ],
+        [
+          738.6038184117455,
+          430.19283142204085
+        ],
+        [
+          717.3787038629347,
+          405.63180874107996
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          758.0,
+          398.0
+        ],
+        [
+          779.0,
+          420.0
+        ],
+        [
+          737.0,
+          428.0
+        ],
+        [
+          716.0,
+          405.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.47641278107081536,
+            "reprojection_max_px": 0.5171766703529213,
+            "translation_error_m": 0.025303648496957588,
+            "translation_error_xyz_m": [
+              -0.019573030043873674,
+              0.00904112386979572,
+              -0.013244968906351295
+            ],
+            "rotation_error_deg": 1.7164833758474396,
+            "depth_error_m": -0.008789201009465952,
+            "camera_center_marker_error_m": 0.039013077544557656,
+            "rvec": [
+              1.7221816842418523,
+              1.2334945952468677,
+              -0.7588086626850737
+            ],
+            "tvec": [
+              0.13860373475118173,
+              0.06744101736446553,
+              0.926633130580969
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.47959254291827397,
+            "reprojection_max_px": 0.5013276342386891,
+            "translation_error_m": 0.02414063714782735,
+            "translation_error_xyz_m": [
+              -0.018679883153948973,
+              0.008585064419134078,
+              -0.012654208634963832
+            ],
+            "rotation_error_deg": 1.787709210864623,
+            "depth_error_m": -0.009905303203721683,
+            "camera_center_marker_error_m": 0.03927376536608256,
+            "rvec": [
+              1.7213598002499224,
+              1.2339975802670007,
+              -0.7613287205106849
+            ],
+            "tvec": [
+              0.13843682148903777,
+              0.06736001376747613,
+              0.9255235471162676
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 7.535989767255154,
+            "reprojection_max_px": 9.658516281159828,
+            "translation_error_m": 0.14189162940491842,
+            "translation_error_xyz_m": [
+              0.02164955147906711,
+              -0.002145459985665399,
+              0.1402138667086385
+            ],
+            "rotation_error_deg": 130.96575663160843,
+            "depth_error_m": -0.24417018912725827,
+            "camera_center_marker_error_m": 1.5834068610960463,
+            "rvec": [
+              -1.6769148907509561,
+              -0.8514752656424963,
+              -0.16668510489587834
+            ],
+            "tvec": [
+              0.12320371376077628,
+              0.060890691143345416,
+              0.8260802049622074
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.47959254291827397,
+            "reprojection_max_px": 0.5013276342386891,
+            "translation_error_m": 0.02414063714782735,
+            "translation_error_xyz_m": [
+              -0.018679883153948973,
+              0.008585064419134078,
+              -0.012654208634963832
+            ],
+            "rotation_error_deg": 1.787709210864623,
+            "depth_error_m": -0.009905303203721683,
+            "camera_center_marker_error_m": 0.03927376536608256,
+            "rvec": [
+              1.7213598002499224,
+              1.2339975802670007,
+              -0.7613287205106849
+            ],
+            "tvec": [
+              0.13843682148903777,
+              0.06736001376747613,
+              0.9255235471162676
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 0.5842829424462885,
+            "reprojection_max_px": 0.5912275565930304,
+            "translation_error_m": 0.10737969377286388,
+            "translation_error_xyz_m": [
+              -0.06508752037549748,
+              0.03726919079561031,
+              0.07684413278555247
+            ],
+            "rotation_error_deg": 118.37931730599244,
+            "depth_error_m": -0.010563729232342056,
+            "camera_center_marker_error_m": 1.589379674012421,
+            "rvec": [
+              -1.8729270741962376,
+              -1.1039842741066588,
+              -0.4039423311909248
+            ],
+            "tvec": [
+              0.13829359586900866,
+              0.06815354440013247,
+              0.9250268911053771
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 7.535989767255154,
+            "reprojection_max_px": 9.658516281159828,
+            "translation_error_m": 0.14189162940491842,
+            "translation_error_xyz_m": [
+              0.02164955147906711,
+              -0.002145459985665399,
+              0.1402138667086385
+            ],
+            "rotation_error_deg": 130.96575663160843,
+            "depth_error_m": -0.24417018912725827,
+            "camera_center_marker_error_m": 1.5834068610960463,
+            "rvec": [
+              -1.6769148907509561,
+              -0.8514752656424963,
+              -0.16668510489587834
+            ],
+            "tvec": [
+              0.12320371376077628,
+              0.060890691143345416,
+              0.8260802049622074
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.026310031631218155,
+        0.06881564979817394
+      ]
+    },
+    {
+      "name": "deep_wall_arrival",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -2.52195494219211,
+          -0.43691710040371845
+        ],
+        [
+          -3.479222259143853,
+          -1.9396769604480255
+        ],
+        [
+          -0.8531793213614947,
+          -1.9306669126413567
+        ],
+        [
+          0.19091876030233834,
+          -1.2353429545563017
+        ]
+      ],
+      "corner_residual_mean_px": 2.4759231547832417,
+      "corner_residual_max_px": 3.9833822612718137,
+      "marker_width_px": 35.38361202590826,
+      "marker_height_px": 41.0,
+      "camera_to_marker_distance_m": 0.877291855655802,
+      "camera_to_marker_optical_depth_m": 0.8588763197143393,
+      "incidence_angle_deg": 56.90707883609641,
+      "projected_center_bias_px": [
+        -1.6658594405987515,
+        -1.3856509820123506
+      ],
+      "expected_projected_corners_px": [
+        [
+          778.5219549421921,
+          416.4369171004037
+        ],
+        [
+          805.4792222591439,
+          441.939676960448
+        ],
+        [
+          760.8531793213615,
+          452.93066691264136
+        ],
+        [
+          735.8090812396977,
+          426.2353429545563
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          776.0,
+          416.0
+        ],
+        [
+          802.0,
+          440.0
+        ],
+        [
+          760.0,
+          451.0
+        ],
+        [
+          736.0,
+          425.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.2431471569591898,
+            "reprojection_max_px": 0.25014564622734514,
+            "translation_error_m": 0.04984493115196049,
+            "translation_error_xyz_m": [
+              -0.03693265323685435,
+              0.021445582730568624,
+              -0.025701814484123287
+            ],
+            "rotation_error_deg": 1.0740937150355934,
+            "depth_error_m": 0.03257771319684427,
+            "camera_center_marker_error_m": 0.05133004758095649,
+            "rvec": [
+              1.7813917289591703,
+              1.1974678057654462,
+              -0.7037770080928681
+            ],
+            "tvec": [
+              0.16228711923685926,
+              0.0915271237265352,
+              0.9076551587109275
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.2438771992672577,
+            "reprojection_max_px": 0.2729878696788713,
+            "translation_error_m": 0.0495600715547661,
+            "translation_error_xyz_m": [
+              -0.03674217647983191,
+              0.021257479247909647,
+              -0.02557992838268147
+            ],
+            "rotation_error_deg": 1.0856272225844388,
+            "depth_error_m": 0.031487469816471936,
+            "camera_center_marker_error_m": 0.051166479829492156,
+            "rvec": [
+              1.7801307757964073,
+              1.1969387299713703,
+              -0.7029959332335701
+            ],
+            "tvec": [
+              0.16224882881233826,
+              0.09150466293023128,
+              0.9074364190002128
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 4.082053365687326,
+            "reprojection_max_px": 5.621131536649687,
+            "translation_error_m": 0.03155083720812741,
+            "translation_error_xyz_m": [
+              0.020368611368534406,
+              -0.01997074776181692,
+              0.013481254885404859
+            ],
+            "rotation_error_deg": 12.0005218482372,
+            "depth_error_m": -0.16144140755748865,
+            "camera_center_marker_error_m": 0.18214867239468446,
+            "rvec": [
+              1.5958864618373465,
+              1.091277636103504,
+              -0.683948152904888
+            ],
+            "tvec": [
+              0.15015781534331465,
+              0.08458247940107648,
+              0.8395506342143386
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.2438771992672577,
+            "reprojection_max_px": 0.2729878696788713,
+            "translation_error_m": 0.0495600715547661,
+            "translation_error_xyz_m": [
+              -0.03674217647983191,
+              0.021257479247909647,
+              -0.02557992838268147
+            ],
+            "rotation_error_deg": 1.0856272225844388,
+            "depth_error_m": 0.031487469816471936,
+            "camera_center_marker_error_m": 0.051166479829492156,
+            "rvec": [
+              1.7801307757964073,
+              1.1969387299713703,
+              -0.7029959332335701
+            ],
+            "tvec": [
+              0.16224882881233826,
+              0.09150466293023128,
+              0.9074364190002128
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 1.0360078485310282,
+            "reprojection_max_px": 1.0688217464040874,
+            "translation_error_m": 0.1130570419806999,
+            "translation_error_xyz_m": [
+              -0.08042907874557081,
+              0.05200154862818815,
+              0.06007409569718625
+            ],
+            "rotation_error_deg": 113.58814807001546,
+            "depth_error_m": 0.029240648157680738,
+            "camera_center_marker_error_m": 1.5074947243511614,
+            "rvec": [
+              -1.9676780090330612,
+              -1.0519654648253387,
+              -0.25810602862039295
+            ],
+            "tvec": [
+              0.16181265995533106,
+              0.09220850538485825,
+              0.9055686130110785
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 4.082053365687326,
+            "reprojection_max_px": 5.621131536649687,
+            "translation_error_m": 0.03155083720812741,
+            "translation_error_xyz_m": [
+              0.020368611368534406,
+              -0.01997074776181692,
+              0.013481254885404859
+            ],
+            "rotation_error_deg": 12.0005218482372,
+            "depth_error_m": -0.16144140755748865,
+            "camera_center_marker_error_m": 0.18214867239468446,
+            "rvec": [
+              1.5958864618373465,
+              1.091277636103504,
+              -0.683948152904888
+            ],
+            "tvec": [
+              0.15015781534331465,
+              0.08458247940107648,
+              0.8395506342143386
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.050284284323466155,
+        0.057133998002100936
+      ]
+    },
+    {
+      "name": "side_contact_approach",
+      "detected": true,
+      "corner_residual_vectors_px": [
+        [
+          -1.1735076222515772,
+          1.2203457087787797
+        ],
+        [
+          -2.815398016627455,
+          -0.009968628110584632
+        ],
+        [
+          -0.3249823360472419,
+          -0.8257368489591954
+        ],
+        [
+          -0.6585825592374022,
+          0.05818899998365623
+        ]
+      ],
+      "corner_residual_mean_px": 1.5142460759691907,
+      "corner_residual_max_px": 2.8154156647955584,
+      "marker_width_px": 25.238858928247925,
+      "marker_height_px": 32.55764119219941,
+      "camera_to_marker_distance_m": 1.1103337336134578,
+      "camera_to_marker_optical_depth_m": 1.0953054175091543,
+      "incidence_angle_deg": 64.44344352627584,
+      "projected_center_bias_px": [
+        -1.243117633540919,
+        0.11070730792317818
+      ],
+      "expected_projected_corners_px": [
+        [
+          762.1735076222516,
+          324.7796542912212
+        ],
+        [
+          784.8153980166275,
+          340.0099686281106
+        ],
+        [
+          751.3249823360472,
+          347.8257368489592
+        ],
+        [
+          729.6585825592374,
+          331.94181100001634
+        ]
+      ],
+      "detected_corners_px": [
+        [
+          761.0,
+          326.0
+        ],
+        [
+          782.0,
+          340.0
+        ],
+        [
+          751.0,
+          347.0
+        ],
+        [
+          729.0,
+          332.0
+        ]
+      ],
+      "methods": {
+        "ITERATIVE": [
+          {
+            "reprojection_mean_px": 0.47853860345799354,
+            "reprojection_max_px": 0.5125882463832426,
+            "translation_error_m": 0.044533663434418606,
+            "translation_error_xyz_m": [
+              -0.035105117171341016,
+              0.01870692582763281,
+              -0.020023207868769072
+            ],
+            "rotation_error_deg": 1.5816101105010196,
+            "depth_error_m": -0.003942579037881255,
+            "camera_center_marker_error_m": 0.05396935404703252,
+            "rvec": [
+              1.7812461549984373,
+              1.1218345910870833,
+              -0.6711646231549715
+            ],
+            "tvec": [
+              0.18377546149423143,
+              -0.03792114345146581,
+              1.1407133353828505
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_SQUARE": [
+          {
+            "reprojection_mean_px": 0.46718627886327124,
+            "reprojection_max_px": 0.47663988985893757,
+            "translation_error_m": 0.11783437638359856,
+            "translation_error_xyz_m": [
+              -0.0737475120778468,
+              0.044511895730633966,
+              0.08040482484592937
+            ],
+            "rotation_error_deg": 130.17603713951453,
+            "depth_error_m": -0.005386797057806647,
+            "camera_center_marker_error_m": 2.054660508634035,
+            "rvec": [
+              -1.757282411006376,
+              -0.8733554941264484,
+              -0.4008829488679261
+            ],
+            "tvec": [
+              0.18349291811451074,
+              -0.03729317383655776,
+              1.1393150867336874
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "SQPNP": [
+          {
+            "reprojection_mean_px": 4.413043988691208,
+            "reprojection_max_px": 6.246831649340748,
+            "translation_error_m": 0.12548784265705182,
+            "translation_error_xyz_m": [
+              -0.004444271782956033,
+              -0.0060599046944382895,
+              0.1252626227497035
+            ],
+            "rotation_error_deg": 141.07423100765726,
+            "depth_error_m": -0.23831590545978995,
+            "camera_center_marker_error_m": 2.0495547154873868,
+            "rvec": [
+              -1.6051715437135536,
+              -0.8493355950702947,
+              -0.6761429316067934
+            ],
+            "tvec": [
+              0.1700717712224015,
+              -0.03448516896598708,
+              1.055176400115506
+            ],
+            "hypothesis_index": 0
+          }
+        ],
+        "IPPE_GENERIC": [
+          {
+            "reprojection_mean_px": 0.46718627886327124,
+            "reprojection_max_px": 0.47663988985893757,
+            "translation_error_m": 0.11783437638359856,
+            "translation_error_xyz_m": [
+              -0.0737475120778468,
+              0.044511895730633966,
+              0.08040482484592937
+            ],
+            "rotation_error_deg": 130.17603713951453,
+            "depth_error_m": -0.005386797057806647,
+            "camera_center_marker_error_m": 2.054660508634035,
+            "rvec": [
+              -1.757282411006376,
+              -0.8733554941264484,
+              -0.4008829488679261
+            ],
+            "tvec": [
+              0.18349291811451074,
+              -0.03729317383655776,
+              1.1393150867336874
+            ],
+            "hypothesis_index": 0
+          },
+          {
+            "reprojection_mean_px": 0.4806631755490592,
+            "reprojection_max_px": 0.49855632251338994,
+            "translation_error_m": 0.04332761916581815,
+            "translation_error_xyz_m": [
+              -0.03414305272116325,
+              0.018189832314523757,
+              -0.01951062617722832
+            ],
+            "rotation_error_deg": 1.5378051042799543,
+            "depth_error_m": -0.00473733448457081,
+            "camera_center_marker_error_m": 0.052586032926777965,
+            "rvec": [
+              1.7805777242704728,
+              1.1228476206242641,
+              -0.6734812093314395
+            ],
+            "tvec": [
+              0.1835859635691849,
+              -0.03788222744351582,
+              1.1395408094336799
+            ],
+            "hypothesis_index": 1
+          }
+        ],
+        "SQPNP_GENERIC": [
+          {
+            "reprojection_mean_px": 4.413043988691208,
+            "reprojection_max_px": 6.246831649340748,
+            "translation_error_m": 0.12548784265705182,
+            "translation_error_xyz_m": [
+              -0.004444271782956033,
+              -0.0060599046944382895,
+              0.1252626227497035
+            ],
+            "rotation_error_deg": 141.07423100765726,
+            "depth_error_m": -0.23831590545978995,
+            "camera_center_marker_error_m": 2.0495547154873868,
+            "rvec": [
+              -1.6051715437135536,
+              -0.8493355950702947,
+              -0.6761429316067934
+            ],
+            "tvec": [
+              0.1700717712224015,
+              -0.03448516896598708,
+              1.055176400115506
+            ],
+            "hypothesis_index": 0
+          }
+        ]
+      },
+      "iterative_0_25px_perturbation_translation_p50_p95_m": [
+        0.045316981141207024,
+        0.06099954704372367
+      ]
+    }
+  ]
+}
