@@ -430,7 +430,12 @@ class R2BPhysicalCamera:
         from pxr import Usd, UsdGeom
         from isaacsim.sensors.camera import Camera
         self.stage, self.viewport, self.out = stage, viewport, Path(out)
-        self.every_steps = max(1, int(every_steps)); self.last_step = -1; self.rows = []
+        self.every_steps = max(1, int(every_steps)); self.last_step = -1
+        self.next_capture_step = self.every_steps; self.rows = []
+        self._closed = False
+        self.requested_frames = 0; self.successful_frames = 0
+        self.failed_frames = 0; self.missed_deadlines = 0
+        self.capture_errors = []; self.depth_errors = []
         self.out.mkdir(parents=True, exist_ok=True); (self.out / "rgb").mkdir(exist_ok=True); (self.out / "depth").mkdir(exist_ok=True)
         self.prim_path = "/World/R2B_RearWallCamera"
         camera = UsdGeom.Camera.Define(stage, self.prim_path)
@@ -445,26 +450,127 @@ class R2BPhysicalCamera:
         # eye-to-hand pose after sensor creation and before recording extrinsics.
         set_camera_view(eye=list(eye), target=list(target), camera_prim_path=self.prim_path); viewport.set_active_camera(self.prim_path)
         self.world_from_camera = np.array(UsdGeom.Xformable(camera.GetPrim()).ComputeLocalToWorldTransform(Usd.TimeCode.Default()), dtype=float).tolist()
-        (self.out / "camera_metadata.json").write_text(json.dumps({"schema":"task28.r2b.physical_camera.v1","prim":self.prim_path,"eye_world_m":self.eye,"target_world_m":self.target,"focal_length_mm":20.0,"aperture_mm":[36.0,24.0],"resolution_px":[1280,720],"world_from_camera":self.world_from_camera,"capture_every_physics_steps":self.every_steps},indent=2)+"\n")
+        (self.out / "camera_metadata.json").write_text(json.dumps({"schema":"task28.r2b.physical_camera.v2","prim":self.prim_path,"eye_world_m":self.eye,"target_world_m":self.target,"focal_length_mm":20.0,"aperture_mm":[36.0,24.0],"resolution_px":[1280,720],"world_from_camera":self.world_from_camera,"capture_every_physics_steps":self.every_steps,"scheduler":"physics_step_threshold","nested_render_updates_per_capture":4,"max_nested_render_updates_per_capture":15},indent=2)+"\n")
+
+    def activate(self, physics_trace):
+        """Start the step schedule at the first observed physics state."""
+        step = int(physics_trace.step)
+        if step > 0 and not self.rows:
+            self.next_capture_step = ((step // self.every_steps) + 1) * self.every_steps
 
     def capture_if_due(self, app, physics_trace):
-        if physics_trace.step <= 0 or physics_trace.step == self.last_step or physics_trace.step % self.every_steps:
+        step = int(physics_trace.step)
+        if step <= 0 or step == self.last_step or step < self.next_capture_step:
             return
-        step = physics_trace.step; self.last_step = step
+        scheduled_step = self.next_capture_step
+        scheduled_wall_s = time.monotonic()
+        due_slots = ((step - scheduled_step) // self.every_steps) + 1
+        self.requested_frames += due_slots
+        self.missed_deadlines += max(0, due_slots - 1)
+        self.last_step = step
+        # app.update() can advance several physics ticks, so modulo checks can
+        # skip a due boundary forever. Keep the schedule phase and record lag.
+        self.next_capture_step = ((step // self.every_steps) + 1) * self.every_steps
         rgb = self.out / "rgb" / f"frame_{step:06d}.png"; depth = self.out / "depth" / f"frame_{step:06d}.npy"
-        self._capture(self.viewport, file_path=str(rgb), is_hdr=False)
-        for _ in range(4): app.update()
-        depth_error = None
+        physics_receipt_wall_s = time.monotonic()
+        physics_receipt_time_s = float(physics_trace.time_s)
+        capture_request_wall_s = time.monotonic()
+        capture_error = None
         try:
-            depth_data = np.asarray(self.depth_camera.get_depth()); np.save(depth, depth_data); depth_ok = bool(depth_data.size)
+            self._capture(self.viewport, file_path=str(rgb), is_hdr=False)
         except Exception as exc:
-            depth_ok = False; depth = None; depth_error = repr(exc)
-        row = {"physics_step": step, "time_s": physics_trace.time_s, "rgb": str(rgb.relative_to(self.out)), "depth": (None if depth is None else str(depth.relative_to(self.out))), "depth_ok": depth_ok}
+            capture_error = repr(exc)
+        render_request_return_wall_s = time.monotonic()
+        # The viewport writer is asynchronous. These updates are explicitly
+        # recorded below so their physics-time drift cannot be mistaken for the
+        # measurement receipt associated with the RGB/depth pair. Four updates
+        # are the common case; the bounded tail matches the existing capture
+        # helper when the writer needs more render turns.
+        render_wait_updates = 0
+        for _ in range(4):
+            app.update(); render_wait_updates += 1
+        if capture_error is None and not rgb.is_file():
+            for _ in range(11):
+                app.update()
+                render_wait_updates += 1
+                if rgb.is_file():
+                    break
+        rendered_sensor_frame_wall_s = time.monotonic()
+        depth_error = None
+        depth_acquisition_wall_s = None
+        depth_ok = False
+        if capture_error is None:
+            try:
+                depth_acquisition_wall_s = time.monotonic()
+                depth_data = np.asarray(self.depth_camera.get_depth()); np.save(depth, depth_data); depth_ok = bool(depth_data.size)
+            except Exception as exc:
+                depth_ok = False; depth = None; depth_error = repr(exc)
+        writer_complete_wall_s = time.monotonic()
+        if capture_error is None and (not rgb.is_file() or rgb.stat().st_size == 0):
+            capture_error = f"VIEWPORT_CAPTURE_MISSING:{rgb}"
+        if capture_error is not None:
+            depth = None
+        if depth_error is not None:
+            self.depth_errors.append(depth_error)
+        if capture_error is None and not depth_ok:
+            self.failed_frames += 1
+        elif capture_error is not None:
+            self.failed_frames += 1
+            self.capture_errors.append(capture_error)
+        elif depth_ok:
+            self.successful_frames += 1
+        row = {"physics_step": step, "scheduled_physics_step": scheduled_step,
+               "scheduler_lag_steps": step - scheduled_step,
+               "scheduler_skipped_intervals": max(0, (step - scheduled_step) // self.every_steps),
+               "scheduled_acquisition_wall_s": scheduled_wall_s,
+               "physics_state_receipt_wall_s": physics_receipt_wall_s,
+               "capture_request_wall_s": capture_request_wall_s,
+               "render_request_return_wall_s": render_request_return_wall_s,
+               "render_wait_updates": render_wait_updates,
+               "rendered_sensor_frame_wall_s": rendered_sensor_frame_wall_s,
+               "writer_complete_wall_s": writer_complete_wall_s,
+               "physics_state_time_s": physics_receipt_time_s,
+               "physics_step_after_render_wait": int(physics_trace.step),
+               "physics_time_after_render_wait_s": float(physics_trace.time_s),
+               "time_s": physics_receipt_time_s, "rgb": (None if capture_error is not None else str(rgb.relative_to(self.out))),
+               "depth": (None if depth is None else str(depth.relative_to(self.out))),
+               "depth_ok": depth_ok, "frame_pair_ok": capture_error is None and depth_ok,
+               "depth_acquisition_wall_s": depth_acquisition_wall_s}
         if depth_error is not None: row['depth_error'] = depth_error
+        if capture_error is not None: row['capture_error'] = capture_error
         self.rows.append(row)
 
     def close(self):
+        if self._closed:
+            return
+        self._closed = True
         (self.out / "camera_timeline.jsonl").write_text("".join(json.dumps(r, allow_nan=False)+"\n" for r in self.rows))
+        writer_times = [r["writer_complete_wall_s"] for r in self.rows]
+        gaps = [b - a for a, b in zip(writer_times, writer_times[1:])]
+        latencies = [r["writer_complete_wall_s"] - r["capture_request_wall_s"] for r in self.rows]
+        physics_times = [r["physics_state_time_s"] for r in self.rows]
+        physics_gaps = [b - a for a, b in zip(physics_times, physics_times[1:])]
+        successful_times = [r["writer_complete_wall_s"] for r in self.rows if r["frame_pair_ok"]]
+        attempted_span = writer_times[-1] - writer_times[0] if len(writer_times) > 1 else 0.0
+        successful_span = successful_times[-1] - successful_times[0] if len(successful_times) > 1 else 0.0
+        summary = {"schema":"task28.r2b.camera_acquisition_summary.v1",
+                   "scheduler":"physics_step_threshold",
+                   "period_steps":self.every_steps,
+                   "requested_frames":self.requested_frames,
+                   "successful_frames":self.successful_frames,
+                   "failed_frames":self.failed_frames,
+                   "missed_deadlines":self.missed_deadlines,
+                   "actual_frame_rate_hz":((len(successful_times) - 1) / successful_span if successful_span > 0 else None),
+                   "attempted_frame_rate_hz":((len(writer_times) - 1) / attempted_span if attempted_span > 0 else None),
+                   "actual_physics_receipt_rate_hz":((len(physics_times) - 1) / (physics_times[-1] - physics_times[0]) if len(physics_times) > 1 and physics_times[-1] > physics_times[0] else None),
+                   "max_acquisition_gap_wall_s":(max(gaps) if gaps else None),
+                   "median_acquisition_gap_wall_s":(float(np.median(gaps)) if gaps else None),
+                   "max_physics_receipt_gap_s":(max(physics_gaps) if physics_gaps else None),
+                   "max_writer_latency_wall_s":(max(latencies) if latencies else None),
+                   "capture_errors":self.capture_errors,
+                   "depth_errors":self.depth_errors,
+                   "physics_step_after_render_wait_is_diagnostic_only":True}
+        (self.out / "camera_acquisition_summary.json").write_text(json.dumps(summary, indent=2)+"\n")
 
 
 def main():
@@ -673,6 +779,8 @@ def main():
         if args.r2b_camera_eye is not None:
             r2b_camera = R2BPhysicalCamera(stage, viewport, out / "r2b_camera", args.r2b_camera_eye, args.r2b_camera_target, args.r2b_camera_every)
             summary["r2b_camera_metadata"] = "r2b_camera/camera_metadata.json"
+            summary["r2b_camera_timeline"] = "r2b_camera/camera_timeline.jsonl"
+            summary["r2b_camera_acquisition_summary"] = "r2b_camera/camera_acquisition_summary.json"
         timeline = omni.timeline.get_timeline_interface()
         timeline.play()
         # Give the original scene a short initialization window before taking
@@ -744,8 +852,12 @@ def main():
                 physical_trace = PhysicalTrace(
                     stage, feed_bridge, out / "physical_trace", command_receipts
                 )
+                if r2b_camera is not None:
+                    r2b_camera.activate(physical_trace)
         for _ in range(60):
             app.update()
+            if r2b_camera is not None and physical_trace is not None:
+                r2b_camera.capture_if_due(app, physical_trace)
         if args.mode == "integrated":
             ros_ws = Path(os.environ.get("TASK28_ROS_WS", str(REPO / "ros_ws")))
             moveit = start_process("ros2 launch fr3_dual_side_suction_description moveit_dual_side_suction.launch.py use_rviz:=false", out / "moveit.log", ros_ws)
@@ -757,6 +869,8 @@ def main():
             # original feed bridge before the rail handshake is observed.
             for _ in range(120):
                 app.update()
+                if r2b_camera is not None and physical_trace is not None:
+                    r2b_camera.capture_if_due(app, physical_trace)
                 if moveit.poll() is not None:
                     raise RuntimeError(f"MOVEIT_EXIT_EARLY:{moveit.returncode}")
                 time.sleep(0.02)
@@ -881,6 +995,13 @@ def main():
                 summary["physical_trace"] = "physical_trace/physical_trace_summary.json"
             except Exception as exc:
                 summary["physical_trace_error"] = repr(exc)
+        if r2b_camera is not None:
+            try:
+                r2b_camera.close()
+                summary["r2b_camera_timeline"] = "r2b_camera/camera_timeline.jsonl"
+                summary["r2b_camera_acquisition_summary"] = "r2b_camera/camera_acquisition_summary.json"
+            except Exception as exc:
+                summary["r2b_camera_close_error"] = repr(exc)
         summary["torque_latched_error"] = getattr(torque, "_latched_error", None)
         summary["torque_steps"] = getattr(torque, "_step", None)
         summary["torque_writes"] = getattr(torque, "_writes", None)

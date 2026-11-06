@@ -96,7 +96,14 @@ def main():
     timeline=[json.loads(x) for x in (root/'r2b_camera/camera_timeline.jsonl').read_text().splitlines() if x.strip()]
     detections=[]
     for item in timeline:
-        tr=trace.get(int(item['physics_step'])); im=cv2.imread(str(root/'r2b_camera'/item['rgb'])); dets={'authored_intrinsics':detect_aruco(im,K,dist,.06,23),'render_calibrated_cy341':detect_aruco(im,K_cal,dist,.06,23)}; det=dets['authored_intrinsics']; rec={'physics_step':item['physics_step'],'time_s':item['time_s'],'rgb':item['rgb'],'depth':item['depth'],'depth_ok':item['depth_ok'],'status':det.status,'confidence':det.confidence,'reprojection_error_px':det.reprojection_error_px}
+        tr=trace.get(int(item['physics_step']))
+        rgb_path=root/'r2b_camera'/item['rgb'] if item.get('rgb') else None
+        if not item.get('frame_pair_ok', True) or rgb_path is None or not rgb_path.is_file():
+            rec={'physics_step':item['physics_step'],'time_s':item['time_s'],'rgb':item.get('rgb'),'depth':item.get('depth'),'depth_ok':bool(item.get('depth_ok')),'status':'UNAVAILABLE','confidence':'NONE','reprojection_error_px':None,'phase':phase(tr,'') if tr else []}
+            rec.update({'authored_intrinsics_status':'UNAVAILABLE','render_calibrated_cy341_status':'UNAVAILABLE'})
+            detections.append(rec)
+            continue
+        im=cv2.imread(str(rgb_path)); dets={'authored_intrinsics':detect_aruco(im,K,dist,.06,23),'render_calibrated_cy341':detect_aruco(im,K_cal,dist,.06,23)}; det=dets['authored_intrinsics']; rec={'physics_step':item['physics_step'],'time_s':item['time_s'],'rgb':item['rgb'],'depth':item['depth'],'depth_ok':item['depth_ok'],'status':det.status,'confidence':det.confidence,'reprojection_error_px':det.reprojection_error_px}
         if item['depth']:
             d=np.load(root/'r2b_camera'/item['depth']); rec['depth_finite_fraction']=float(np.isfinite(d).mean())
         for variant,vdet in dets.items():

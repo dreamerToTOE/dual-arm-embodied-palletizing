@@ -15,7 +15,7 @@ PHASES = [
     ('single_arm_recontact','REGRASP_NEG_X batch=1 candidates=','after REGRASP:','COMPLETED'),
     ('single_arm_insertion','PUSH slice 1/16','PUSH complete:','COMPLETED'),
     ('deep_wall_arrival','PUSH complete:','+X support seat','COMPLETED'),
-    ('auxiliary_side_compaction','EXECUTION SIDE_HIGH_APPROACH candidates=','cannot preflight a safe SIDE_COMPACTION chain','PREFLIGHT_BLOCKED'),
+    ('auxiliary_side_compaction','EXECUTION SIDE_HIGH_APPROACH candidates=','SIDE_COMPACTION LIFT execution failed','PREFLIGHT_BLOCKED'),
 ]
 
 def parse_log(path):
@@ -56,6 +56,8 @@ def main():
         cams=[r for r in timeline if lo is not None and lo<=float(r['time_s'])<=hi]
         valid=[r for r in detections if r.get('status')=='PRESENT' and lo is not None and lo<=float(r['time_s'])<=hi]
         step_lo=min((int(r['physics_step']) for r in trace if lo is not None and lo<=r['time_s']<=hi),default=None); step_hi=max((int(r['physics_step']) for r in trace if lo is not None and lo<=r['time_s']<=hi),default=None)
+        if skill == 'auxiliary_side_compaction' and e and 'LIFT execution failed' in e['text']:
+            status = 'EXECUTION_FAILED'
         observed='EXECUTED_WITH_CAMERA_SAMPLES' if cams and status=='COMPLETED' else ('EXECUTED_WITHOUT_CAMERA_SAMPLES' if status=='COMPLETED' else status)
         rec={'skill_id':skill,'start_event':s['text'],'end_event':(e['text'] if e else None),'start_wall_time_s':s['wall_time_s'],'end_wall_time_s':(e['wall_time_s'] if e else None),'start_sim_time_s':ssim,'end_sim_time_s':esim,'physics_step_interval':[step_lo,step_hi],'execution_status':observed,'executor_receipt_status':status,'controller_owner':'Task26BatchedFeedBridge / task27 executor','robot_cube_state_receipt':'physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only','camera_samples':len(cams),'camera_detections':len(valid),'camera_detection_rate':(len(valid)/len(cams) if cams else None),'phase_source':'executor log event receipts; no Cube-GT threshold labels'}
         if skill=='auxiliary_side_compaction':

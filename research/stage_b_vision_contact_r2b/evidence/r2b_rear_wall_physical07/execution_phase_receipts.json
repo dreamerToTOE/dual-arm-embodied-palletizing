@@ -1,0 +1,230 @@
+{
+  "schema": "task28.r2b.execution_phase_receipts.v1",
+  "run_id": "r2b_rear_wall_physical07",
+  "mapping_method": "least-squares wall timestamp to simulation time using recorded controller command receipt times; phase boundaries remain executor-log receipts",
+  "mapping_pairs": 13615,
+  "receipts": [
+    {
+      "skill_id": "cube_supply",
+      "start_event": "########## Task27 batch 1/1: Cube_01 ##########",
+      "end_event": "task27_plus_outer selected LEFT_CANDIDATE_1/8: HIGH_PRE_CONTACT -> OUTER_DESCENT -> CONTACT FCL PASS.",
+      "start_wall_time_s": 1793930489.5707273,
+      "end_wall_time_s": 1793930491.2317412,
+      "start_sim_time_s": 32.160515785217285,
+      "end_sim_time_s": 33.43996810913086,
+      "physics_step_interval": [
+        1930,
+        2006
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 7,
+      "camera_detections": 7,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "dual_arm_approach",
+      "start_event": "task27_plus_outer selected LEFT_CANDIDATE_1/8: HIGH_PRE_CONTACT -> OUTER_DESCENT -> CONTACT FCL PASS.",
+      "end_event": "task27_plus_outer COMMON_LIFT synchronized FCL PASS, samples=257.",
+      "start_wall_time_s": 1793930491.2317412,
+      "end_wall_time_s": 1793930549.4552329,
+      "start_sim_time_s": 33.43996810913086,
+      "end_sim_time_s": 78.28859305381775,
+      "physics_step_interval": [
+        2007,
+        4697
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 267,
+      "camera_detections": 265,
+      "camera_detection_rate": 0.9925093632958801,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "dual_arm_attachment",
+      "start_event": "task27_plus_outer COMMON_LIFT synchronized FCL PASS, samples=257.",
+      "end_event": "task27_plus_outer COMMON_LIFT GT=(0.500, 0.000, 0.539), suction=(left:CLOSED right:CLOSED).",
+      "start_wall_time_s": 1793930549.4552329,
+      "end_wall_time_s": 1793930562.0779257,
+      "start_sim_time_s": 78.28859305381775,
+      "end_sim_time_s": 88.0116515159607,
+      "physics_step_interval": [
+        4698,
+        5280
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 58,
+      "camera_detections": 18,
+      "camera_detection_rate": 0.3103448275862069,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "coordinated_transport",
+      "start_event": "task27_plus_outer COMMON_X_TRAVEL synchronized FCL PASS, samples=263.",
+      "end_event": "task27_plus_outer COMMON_Y_ALIGN GT=(0.771, 0.060, 0.539), suction=(left:CLOSED right:CLOSED).",
+      "start_wall_time_s": 1793930562.1727908,
+      "end_wall_time_s": 1793930580.7712567,
+      "start_sim_time_s": 88.08472466468811,
+      "end_sim_time_s": 102.41082572937012,
+      "physics_step_interval": [
+        5286,
+        6144
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 86,
+      "camera_detections": 3,
+      "camera_detection_rate": 0.03488372093023256,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "placement_release",
+      "start_event": "task27_plus_outer COMMON_DROP_TO_TABLE synchronized FCL PASS, samples=49.",
+      "end_event": "Task26 after COMMON_DROP_TO_TABLE: release for settling: both side suctions are OPEN.",
+      "start_wall_time_s": 1793930598.62221,
+      "end_wall_time_s": 1793930603.108882,
+      "start_sim_time_s": 116.16112971305847,
+      "end_sim_time_s": 119.61714124679565,
+      "physics_step_interval": [
+        6970,
+        7177
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 21,
+      "camera_detections": 21,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "release_retreat",
+      "start_event": "task27_plus_outer PREPLANNED_COMMON_RETREAT synchronized FCL PASS, samples=608.",
+      "end_event": "task27_plus_outer 双臂共同退出已使推入臂到达高位；不重复执行 REGRASP_LIFT。",
+      "start_wall_time_s": 1793930603.2657356,
+      "end_wall_time_s": 1793930629.6512687,
+      "start_sim_time_s": 119.73796319961548,
+      "end_sim_time_s": 140.062317609787,
+      "physics_step_interval": [
+        7185,
+        8403
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 120,
+      "camera_detections": 120,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "single_arm_recontact",
+      "start_event": "right task27_plus_outer REGRASP_NEG_X batch=1 candidates=8, shortest_joint_travel=6.953.",
+      "end_event": "task27_plus_outer after REGRASP: cube=(0.771, 0.060, 0.260), drift since regrasp start=0.00 mm.",
+      "start_wall_time_s": 1793930633.6369965,
+      "end_wall_time_s": 1793930669.5001729,
+      "start_sim_time_s": 143.1324601173401,
+      "end_sim_time_s": 170.75729155540466,
+      "physics_step_interval": [
+        8588,
+        10245
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 157,
+      "camera_detections": 157,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "single_arm_insertion",
+      "start_event": "task27_plus_outer PUSH slice 1/16: commanded_cube_x=0.7769, actual=0.7770, lag=0.06 mm, peak_torque=28.68 Nm.",
+      "end_event": "task27_plus_outer PUSH complete: peak_torque=31.09 Nm.",
+      "start_wall_time_s": 1793930672.5304801,
+      "end_wall_time_s": 1793930715.0235898,
+      "start_sim_time_s": 173.0914888381958,
+      "end_sim_time_s": 205.82325196266174,
+      "physics_step_interval": [
+        10386,
+        12349
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 197,
+      "camera_detections": 197,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "deep_wall_arrival",
+      "start_event": "task27_plus_outer PUSH complete: peak_torque=31.09 Nm.",
+      "end_event": "task27_plus_outer +X support seat (+X deep wall): gap=+0.169 mm (target 0), z_error=0.118 mm.",
+      "start_wall_time_s": 1793930715.0235898,
+      "end_wall_time_s": 1793930716.523661,
+      "start_sim_time_s": 205.82325196266174,
+      "end_sim_time_s": 206.97873258590698,
+      "physics_step_interval": [
+        12350,
+        12418
+      ],
+      "execution_status": "EXECUTED_WITH_CAMERA_SAMPLES",
+      "executor_receipt_status": "COMPLETED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 6,
+      "camera_detections": 6,
+      "camera_detection_rate": 1.0,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels"
+    },
+    {
+      "skill_id": "auxiliary_side_compaction",
+      "start_event": "left task27_plus_outer EXECUTION SIDE_HIGH_APPROACH candidates=8, shortest_joint_travel=3.020.",
+      "end_event": "task27_plus_outer SIDE_COMPACTION LIFT execution failed.",
+      "start_wall_time_s": 1793930717.459676,
+      "end_wall_time_s": 1793930824.553629,
+      "start_sim_time_s": 207.69973015785217,
+      "end_sim_time_s": 290.1924901008606,
+      "physics_step_interval": [
+        12462,
+        15479
+      ],
+      "execution_status": "EXECUTION_FAILED",
+      "executor_receipt_status": "EXECUTION_FAILED",
+      "controller_owner": "Task26BatchedFeedBridge / task27 executor",
+      "robot_cube_state_receipt": "physical_trace q_actual,dq_actual,tcp_world_m,cube_world_m,suction_state; Cube field evaluation-only",
+      "camera_samples": 298,
+      "camera_detections": 191,
+      "camera_detection_rate": 0.6409395973154363,
+      "phase_source": "executor log event receipts; no Cube-GT threshold labels",
+      "failure_root_cause": {
+        "fcl_pair": null,
+        "contact": null,
+        "safe_abort_message": "both side suctions are OPEN is downstream safe-abort handling"
+      }
+    }
+  ],
+  "denominator_policy": "Each skill has its own executor interval. Camera frame counts are interval-local and may overlap only when explicitly marked; they are not summed as a global total.",
+  "status_separation": {
+    "runner_finished": "COMPLETED",
+    "executor_exit": -15,
+    "manipulation_result": "FAILED_OR_BLOCKED",
+    "camera_observation_result": "SEE_INTERVAL_COUNTS"
+  }
+}
