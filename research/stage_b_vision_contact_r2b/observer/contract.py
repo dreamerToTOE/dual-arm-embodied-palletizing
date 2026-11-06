@@ -53,6 +53,7 @@ class StageBObserverFrame:
     oracle_contact_pairs: tuple[Mapping[str, Any], ...] = ()
     sensor_health: Mapping[str, Health] = field(default_factory=dict)
     uncertainty: Mapping[str, float] = field(default_factory=dict)
+    attachment_confidence: Mapping[str, Optional[float]] = field(default_factory=dict)
 
     def validate(self) -> None:
         if self.physics_step < 1 or not math.isfinite(self.sim_time_s) or self.dt_s <= 0:
@@ -66,6 +67,9 @@ class StageBObserverFrame:
             raise ValueError("commanded advancement must be finite or None")
         if self.visual_cube.confidence < 0.0 or self.visual_cube.confidence > 1.0:
             raise ValueError("visual confidence outside [0,1]")
+        for side, value in self.attachment_confidence.items():
+            if value is not None and (not math.isfinite(float(value)) or not 0.0 <= float(value) <= 1.0):
+                raise ValueError(f"attachment confidence outside [0,1] for {side}")
 
     def estimator_payload(self) -> dict[str, Any]:
         """Return deployable fields only; oracle contacts are intentionally absent."""
@@ -87,6 +91,7 @@ class StageBObserverFrame:
             "suction_state": dict(self.suction_state),
             "sensor_health": {k: v.value for k, v in self.sensor_health.items()},
             "uncertainty": dict(self.uncertainty),
+            "attachment_confidence": dict(self.attachment_confidence),
         }
 
     def to_dict(self) -> dict[str, Any]:

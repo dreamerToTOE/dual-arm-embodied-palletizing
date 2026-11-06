@@ -1,0 +1,481 @@
+{
+  "schema": "task28.r2b.stage_b_contact_evaluation.v1",
+  "evidence": "research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07",
+  "input_policy": "causal RGB detection + camera timing only; q/dq/TCP/commands/suction absent from physical07 export are UNKNOWN",
+  "marker_configuration": "legacy single marker ID23; incompatible with cal24 four-marker board",
+  "frames": 1550,
+  "visual_present_frames": 1296,
+  "visual_availability": 0.8361290322580646,
+  "e0_state_counts": {
+    "UNKNOWN": 255,
+    "FREE_OR_RECONTACT": 1157,
+    "DEEP_WALL_NEAR": 138
+  },
+  "e1_state_counts": {
+    "UNKNOWN": 276,
+    "FREE_OR_RECONTACT": 1119,
+    "DEEP_WALL_NEAR": 155
+  },
+  "shadow_mode_counts": {
+    "HOLD_UNKNOWN": 1550
+  },
+  "phase_statistics": {
+    "cube_supply": {
+      "frames": 7,
+      "detections": 7,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 7
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 7
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 7
+      }
+    },
+    "dual_arm_approach": {
+      "frames": 267,
+      "detections": 265,
+      "detection_rate": 0.9925093632958801,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 265,
+        "UNKNOWN": 2
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 264,
+        "UNKNOWN": 3
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 267
+      }
+    },
+    "dual_arm_attachment": {
+      "frames": 58,
+      "detections": 18,
+      "detection_rate": 0.3103448275862069,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 18,
+        "UNKNOWN": 40
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 18,
+        "UNKNOWN": 40
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 58
+      }
+    },
+    "coordinated_transport": {
+      "frames": 86,
+      "detections": 3,
+      "detection_rate": 0.03488372093023256,
+      "e0_states": {
+        "UNKNOWN": 83,
+        "FREE_OR_RECONTACT": 3
+      },
+      "e1_states": {
+        "UNKNOWN": 84,
+        "FREE_OR_RECONTACT": 2
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 86
+      }
+    },
+    "placement_release": {
+      "frames": 21,
+      "detections": 21,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 21
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 21
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 21
+      }
+    },
+    "release_retreat": {
+      "frames": 120,
+      "detections": 120,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 120
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 120
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 120
+      }
+    },
+    "single_arm_recontact": {
+      "frames": 157,
+      "detections": 157,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 157
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 157
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 157
+      }
+    },
+    "single_arm_insertion": {
+      "frames": 197,
+      "detections": 197,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 190,
+        "UNKNOWN": 1,
+        "DEEP_WALL_NEAR": 6
+      },
+      "e1_states": {
+        "FREE_OR_RECONTACT": 192,
+        "UNKNOWN": 3,
+        "DEEP_WALL_NEAR": 2
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 197
+      }
+    },
+    "deep_wall_arrival": {
+      "frames": 6,
+      "detections": 6,
+      "detection_rate": 1.0,
+      "e0_states": {
+        "DEEP_WALL_NEAR": 5,
+        "FREE_OR_RECONTACT": 1
+      },
+      "e1_states": {
+        "DEEP_WALL_NEAR": 6
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 6
+      }
+    },
+    "auxiliary_side_compaction": {
+      "frames": 298,
+      "detections": 191,
+      "detection_rate": 0.6409395973154363,
+      "e0_states": {
+        "FREE_OR_RECONTACT": 69,
+        "DEEP_WALL_NEAR": 122,
+        "UNKNOWN": 107
+      },
+      "e1_states": {
+        "DEEP_WALL_NEAR": 142,
+        "FREE_OR_RECONTACT": 38,
+        "UNKNOWN": 118
+      },
+      "shadow_modes": {
+        "HOLD_UNKNOWN": 298
+      }
+    }
+  },
+  "e1_transition_rows": [
+    {
+      "time_s": 0.10000000521540642,
+      "from": null,
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 0.6000000312924385,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 40.4666687771678,
+      "from": "FREE_OR_RECONTACT",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 40.96666880324483,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 81.43333758041263,
+      "from": "FREE_OR_RECONTACT",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 99.60000519454479,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 99.93333854526281,
+      "from": "FREE_OR_RECONTACT",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 106.60000555962324,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 193.1500100735575,
+      "from": "FREE_OR_RECONTACT",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_missing_or_stale"
+      ]
+    },
+    {
+      "time_s": 193.65001009963453,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 205.6500107254833,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 209.98334428481758,
+      "from": "DEEP_WALL_NEAR",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 210.65001098625362,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 211.15001101233065,
+      "from": "DEEP_WALL_NEAR",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 212.15001106448472,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 215.48334457166493,
+      "from": "DEEP_WALL_NEAR",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 216.15001127310097,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 217.81667802669108,
+      "from": "DEEP_WALL_NEAR",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 218.3166780527681,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 226.1500117946416,
+      "from": "DEEP_WALL_NEAR",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 226.65001182071865,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 227.15001184679568,
+      "from": "DEEP_WALL_NEAR",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 227.81667854823172,
+      "from": "UNKNOWN",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 232.48334545828402,
+      "from": "DEEP_WALL_NEAR",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 232.98334548436105,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 233.48334551043808,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 233.98334553651512,
+      "from": "DEEP_WALL_NEAR",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 234.65001223795116,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 236.48334566690028,
+      "from": "FREE_OR_RECONTACT",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    },
+    {
+      "time_s": 239.8166791740805,
+      "from": "UNKNOWN",
+      "to": "FREE_OR_RECONTACT",
+      "reason": [
+        "no_tool_contact_geometry",
+        "hysteresis_transition",
+        "short_horizon_causal_prediction"
+      ]
+    },
+    {
+      "time_s": 240.48334587551653,
+      "from": "FREE_OR_RECONTACT",
+      "to": "DEEP_WALL_NEAR",
+      "reason": [
+        "geometric_wall_proximity_only",
+        "hysteresis_transition"
+      ]
+    },
+    {
+      "time_s": 242.9833460059017,
+      "from": "DEEP_WALL_NEAR",
+      "to": "UNKNOWN",
+      "reason": [
+        "visual_dropout_exceeded_prediction_horizon"
+      ]
+    }
+  ],
+  "timing": {
+    "camera_age_sim_s_median": 0.13333334028720856,
+    "camera_age_sim_s_max": 0.20000001043081284,
+    "writer_latency_wall_s_median": 0.16626376899967,
+    "writer_latency_wall_s_max": 0.7308474640003624
+  },
+  "independent_contact_labels": {
+    "status": "UNAVAILABLE",
+    "reason": "execution phase receipts identify executed intervals but do not label per-frame loaded contact; Cube/PhysX fields remain offline evaluation only",
+    "confusion_matrix": null,
+    "precision_recall_f1": null,
+    "false_positive_contact_events": null,
+    "false_stalled_events": null,
+    "transition_detection_delay_s": null
+  },
+  "safety": {
+    "selector_is_read_only": true,
+    "controller_switching": false,
+    "motion_commands_issued": false,
+    "side_preflight_required": true
+  }
+}

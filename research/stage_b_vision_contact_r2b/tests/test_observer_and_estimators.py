@@ -3,6 +3,9 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from observer.contract import *
 from estimator.contact_estimators import *
+from estimator.stage_b_contact import ContactEstimate, ContactState, E0ContactEstimator, E1TemporalContactEstimator
+from observer.stage_b_adapter import causal_payload, frame_from_records
+from shadow.mode_selector import ShadowMode, ShadowModeSelector
 
 def frame(step):
  return StageBObserverFrame(step,step/60,1/60,{'q':SourceStamp('sim',step/60,0,'articulation',Health.PRESENT)},
@@ -26,3 +29,33 @@ def test_multilabel_and_e2_occlusion():
  r=e0.estimate(f); assert r.edges[Edge.LEFT_TOOL_CUBE]>.5 and r.edges[Edge.RIGHT_TOOL_CUBE]<.5 and r.mode is Mode.DUAL_ATTACHED
  e2=E2PhysicsConstrained(); r=e2.estimate(f); assert r.causes==('bayesian_update',)
  f['physics_step']=2; f['visual_health']='UNKNOWN'; f['visual_confidence']=0.; r=e2.estimate(f); assert r.causes==('prediction_only',) and r.uncertainty>.01
+
+def test_causal_adapter_excludes_oracle_channel():
+ f=frame_from_records({'physics_step':1,'time_s':.1,'status':'PRESENT','confidence':.9,'estimated_cube_world_m':[.5,0,.26],'marker_id':23}, runtime_record={'oracle_contact_pairs':[{'pair':'Cube/Table'}], 'attachment_confidence':{'left':.8}})
+ assert 'oracle_contact_pairs' not in causal_payload(f)
+ assert f.to_dict()['oracle_contact_pairs'] == [{'pair':'Cube/Table'}]
+ assert f.estimator_payload()['attachment_confidence']['left'] == .8
+
+def test_new_e0_distinguishes_possible_from_confirmed_contact():
+ e=E0ContactEstimator()
+ r=e.estimate({'physics_step':1,'time_s':.1,'cube_position_m':(.80,0,.26),'visual_available':True,'visual_confidence':.95,'tcp_world_m':{'left':(.74,0,.26),'right':None},'commanded_advancement_m':.01,'observed_cube_velocity_x_m_s':.02})
+ assert r.state is ContactState.PUSH_PROGRESS
+ assert r.contact_possible and not r.contact_confirmed_from_available_evidence
+
+def test_e1_dropout_prediction_then_unknown_and_shadow_rejection():
+ e=E1TemporalContactEstimator(dwell_frames=2,max_prediction_s=.20)
+ first={'physics_step':1,'time_s':.0,'cube_position_m':(.80,0,.26),'visual_available':True,'visual_confidence':.95,'tcp_world_m':{'left':(.74,0,.26),'right':None},'commanded_advancement_m':.01}
+ assert e.estimate(first).state is ContactState.UNKNOWN
+ pending=e.estimate({**first,'physics_step':2,'time_s':.1,'cube_position_m':(.802,0,.26),'observed_cube_velocity_x_m_s':.02})
+ assert pending.causes and 'candidate_pending' in pending.causes
+ predicted=e.estimate({'physics_step':3,'time_s':.2,'visual_available':False,'visual_confidence':0.0,'tcp_world_m':{'left':(.74,0,.26),'right':None},'commanded_advancement_m':.01})
+ assert 'short_horizon_causal_prediction' in predicted.causes
+ stale=e.estimate({'physics_step':4,'time_s':.6,'visual_available':False,'visual_confidence':0.0,'tcp_world_m':{'left':(.74,0,.26),'right':None},'commanded_advancement_m':.01})
+ decision=ShadowModeSelector().select(stale)
+ assert decision.mode is ShadowMode.HOLD_UNKNOWN
+
+def test_shadow_side_mode_requires_preflight():
+ estimate=ContactEstimate(1,.1,ContactState.SIDE_CONTACT_POSSIBLE,{},True,False,.8,.2)
+ selector=ShadowModeSelector()
+ assert selector.select(estimate).mode is ShadowMode.HOLD_UNKNOWN
+ assert selector.select(estimate, {'side_preflight_passed':True}).mode is ShadowMode.SIDE_APPROACH_READY
