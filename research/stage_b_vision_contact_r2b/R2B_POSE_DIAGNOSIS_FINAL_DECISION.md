@@ -3,7 +3,7 @@
 最终状态：**R2B_POSE_DIAGNOSIS_PARTIAL**。
 
 交付分支：`research/stage-b-r2b-pose-diagnosis`；交付 SHA：
-`3fa69d4d3b0eadeb8c62f1346ed09704d85cee25`。
+`3fa69d4d3b0eadeb8c62f1346ed09704d85cee25`（实现提交；后续仅补充文档）。
 
 已建立可信根因：60 mm 顶面共面 marker 在 rear_11 的 56.9–64.7° 入射角和约
 20–42 px 边长下，对 1–3 px 角点误差高度敏感；ITERATIVE、IPPE 和 SQPnP 均不能
