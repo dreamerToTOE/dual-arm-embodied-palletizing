@@ -15,6 +15,7 @@ from statistics import median
 
 from research.stage_b_vision_contact_r2b.estimator.stage_b_contact import E0ContactEstimator, E1TemporalContactEstimator
 from research.stage_b_vision_contact_r2b.observer.stage_b_adapter import causal_payload, frame_from_records
+from research.stage_b_vision_contact_r2b.observer.runtime_adapter import frame_from_synchronized_records
 from research.stage_b_vision_contact_r2b.shadow.mode_selector import ShadowModeSelector
 
 
@@ -32,10 +33,27 @@ def _phase_for(time_s: float, receipts: list[dict]) -> str | None:
     return None
 
 
-def evaluate(evidence: Path) -> dict:
+def _edge_metrics(rows: list[tuple[dict, object]], edge: str, truth: str) -> dict:
+    counts = Counter()
+    for label, estimate in rows:
+        edge_label = label.get("edges", {}).get(edge, {})
+        if edge_label.get("status", "").startswith("UNAVAILABLE"):
+            continue
+        expected = bool(edge_label.get("pair_present")) if truth == "possible" else edge_label.get("status") == "LOADED_SUPPORTED"
+        predicted = float(estimate.edge_probabilities.get(edge, 0.5)) > 0.55
+        counts[(expected, predicted)] += 1
+    tp, fp, fn, tn = (counts[(True, True)], counts[(False, True)], counts[(True, False)], counts[(False, False)])
+    precision = tp / (tp + fp) if tp + fp else None
+    recall = tp / (tp + fn) if tp + fn else None
+    return {"samples": sum(counts.values()), "tp": tp, "fp": fp, "fn": fn, "tn": tn, "precision": precision, "recall": recall, "f1": None if precision is None or recall is None or precision + recall == 0 else 2 * precision * recall / (precision + recall)}
+
+
+def evaluate(evidence: Path, runtime_trace: Path | None = None, contact_labels: Path | None = None) -> dict:
     detections = list(_jsonl(evidence / "visual_detections.jsonl"))
     timeline = {int(row["physics_step"]): row for row in _jsonl(evidence / "r2b_camera/camera_timeline.jsonl")}
     receipts = json.loads((evidence / "execution_phase_receipts.json").read_text(encoding="utf-8"))["receipts"]
+    runtime_records = list(_jsonl(runtime_trace)) if runtime_trace else []
+    labels = {int(row["physics_step"]): row for row in _jsonl(contact_labels)} if contact_labels else {}
     e0, e1, selector = E0ContactEstimator(), E1TemporalContactEstimator(), ShadowModeSelector()
     e0_counts, e1_counts, mode_counts = Counter(), Counter(), Counter()
     phase_stats = defaultdict(lambda: {"frames": 0, "detections": 0, "e0_states": Counter(), "e1_states": Counter(), "shadow_modes": Counter()})
@@ -43,6 +61,8 @@ def evaluate(evidence: Path) -> dict:
     timing_age = []
     writer_latency = []
     transition_rows = []
+    edge_rows_e0 = defaultdict(list)
+    edge_rows_e1 = defaultdict(list)
     previous_e1 = None
     for row in detections:
         tl = timeline.get(int(row.get("physics_step", -1)), {})
@@ -58,11 +78,16 @@ def evaluate(evidence: Path) -> dict:
             },
             "uncertainty": {"writer_latency_s": writer_latency[-1] if writer_latency else None},
         }
-        frame = frame_from_records(row, timeline_record=tl, runtime_record=runtime)
+        frame = frame_from_synchronized_records(row, runtime_records, timeline_record=tl) if runtime_trace else frame_from_records(row, timeline_record=tl, runtime_record=runtime)
         causal_payload(frame)
         if row.get("status") == "PRESENT":
             causal_frames += 1
         a, b = e0.estimate(frame), e1.estimate(frame)
+        if int(row.get("physics_step", -1)) in labels:
+            label = labels[int(row["physics_step"])]
+            for edge in label.get("edges", {}):
+                edge_rows_e0[edge].append((label, a))
+                edge_rows_e1[edge].append((label, b))
         decision = selector.select(b)
         e0_counts[a.state.value] += 1
         e1_counts[b.state.value] += 1
@@ -92,7 +117,7 @@ def evaluate(evidence: Path) -> dict:
     return {
         "schema": "task28.r2b.stage_b_contact_evaluation.v1",
         "evidence": str(evidence),
-        "input_policy": "causal RGB detection + camera timing only; q/dq/TCP/commands/suction absent from physical07 export are UNKNOWN",
+        "input_policy": "causal RGB plus latest-past physical trace; controller command receipts retain UNKNOWN when absent and PhysX labels stay in the offline oracle channel",
         "marker_configuration": "legacy single marker ID23; incompatible with cal24 four-marker board",
         "frames": len(detections),
         "visual_present_frames": causal_frames,
@@ -109,10 +134,12 @@ def evaluate(evidence: Path) -> dict:
             "writer_latency_wall_s_max": max(writer_latency) if writer_latency else None,
         },
         "independent_contact_labels": {
-            "status": "UNAVAILABLE",
-            "reason": "execution phase receipts identify executed intervals but do not label per-frame loaded contact; Cube/PhysX fields remain offline evaluation only",
-            "confusion_matrix": None,
-            "precision_recall_f1": None,
+            "status": "AVAILABLE_OFFLINE_ONLY" if contact_labels else "UNAVAILABLE",
+            "reason": "per-step PhysX labels are scored only after causal estimation; they are never included in estimator_payload",
+            "e0_possible_pair": {edge: _edge_metrics(rows, edge, "possible") for edge, rows in edge_rows_e0.items()} if contact_labels else None,
+            "e1_possible_pair": {edge: _edge_metrics(rows, edge, "possible") for edge, rows in edge_rows_e1.items()} if contact_labels else None,
+            "e0_loaded_supported": {edge: _edge_metrics(rows, edge, "loaded") for edge, rows in edge_rows_e0.items()} if contact_labels else None,
+            "e1_loaded_supported": {edge: _edge_metrics(rows, edge, "loaded") for edge, rows in edge_rows_e1.items()} if contact_labels else None,
             "false_positive_contact_events": None,
             "false_stalled_events": None,
             "transition_detection_delay_s": None,
@@ -130,8 +157,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--evidence", type=Path, default=Path("research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07"))
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--runtime-trace", type=Path)
+    parser.add_argument("--contact-labels", type=Path)
     args = parser.parse_args()
-    result = evaluate(args.evidence)
+    result = evaluate(args.evidence, args.runtime_trace, args.contact_labels)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))

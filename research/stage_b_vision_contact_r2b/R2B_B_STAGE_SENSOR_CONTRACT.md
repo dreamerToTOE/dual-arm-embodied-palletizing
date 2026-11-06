@@ -38,3 +38,11 @@ physical07 当前导出包含 RGB detections、camera timeline 和 execution pha
 - `PYTHONPATH=. python3 -m pytest -q research/stage_b_vision_contact_r2b/tests`：17 passed。
 
 该接口完成的是可审计的传感器契约，不等于 runtime observer 已经接入 cal24，也不等于 physical07 已经具备完整本体状态流。
+
+## 2026-11-06 runtime integration addendum
+
+上述段落记录的是基线导出状态。当前独立 runtime 分支已从保留的 physical07
+`physical_trace.jsonl` 生成 latest-past causal observations：1,550/1,550 相机帧
+匹配 q/dq/TCP/suction 行，203 帧 command receipt 仍为 UNKNOWN，attachment
+confidence 仍为 UNKNOWN。该接入没有改变本契约的缺失字段语义；详见
+`R2B_STAGE_B_RUNTIME_SENSOR_INTEGRATION.md`。

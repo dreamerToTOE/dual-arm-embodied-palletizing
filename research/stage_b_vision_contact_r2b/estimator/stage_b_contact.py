@@ -116,6 +116,26 @@ class E0ContactEstimator:
             return ContactEstimate(step, time_s, ContactState.UNKNOWN, {edge.value: 0.5 for edge in ContactEdge}, False, False, 0.0, 1.0, ("cube_pose_missing",), age)
         x, y, z = (float(v) for v in position[:3])
         tcp = f.get("tcp_world_m") or {}
+        sensor_health = f.get("sensor_health") or {}
+        tcp_health_value = sensor_health.get("tcp")
+        tcp_health = getattr(tcp_health_value, "value", tcp_health_value)
+        valid_tcp = {
+            side: tcp.get(side) is not None and len(tcp.get(side)) >= 3
+            for side in ("left", "right")
+        }
+        if tcp_health in ("UNKNOWN", "STALE", "FAILED") or not all(valid_tcp.values()):
+            return ContactEstimate(
+                step,
+                time_s,
+                ContactState.UNKNOWN,
+                {edge.value: 0.5 for edge in ContactEdge},
+                False,
+                False,
+                0.0,
+                1.0,
+                ("tcp_missing_or_stale",),
+                age,
+            )
         distances = {}
         for side in ("left", "right"):
             point = tcp.get(side)

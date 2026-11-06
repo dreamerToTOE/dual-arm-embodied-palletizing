@@ -47,4 +47,12 @@ E1 在 E0 外包一层因果时间逻辑：保存上一帧位置和时间，计�
 
 当前 receipts 只描述阶段区间，没有每帧 loaded-contact、stalled/jam 或 side-contact truth。故 confusion matrix、precision、recall、F1、transition delay、false-positive contact 和 false-stalled 数值均为 `UNAVAILABLE`；没有把 Cube/PhysX 字段转成在线标签，也没有发明 jam case。该单 episode 不能同时作为 unrestricted tuning 和独立 ground truth。
 
+## 2026-11-06 runtime integration addendum
+
+基线报告的 `UNAVAILABLE` 指当时没有接入 raw physical trace。当前分支已生成独立
+oracle sidecar，并在 causal E0/E1 输出后离线计算 possible-pair 与
+`LOADED_SUPPORTED` 指标；这些数字不进入在线输入。严格 loaded 标签下 E1 F1
+仍低（right tool 0.004、deep wall 0.086），所以结论仍不是接触识别 PASS。详见
+`R2B_CONTACT_ORACLE_LABEL_AUDIT.md` 与 `R2B_E0_E1_SHADOW_EVALUATION.md`。
+
 结论：E0/E1 已在真实导出的因果 RGB/timestamp 输入上运行并能按不确定性 abstain，但科学上尚未完成“接触识别性能”验证。

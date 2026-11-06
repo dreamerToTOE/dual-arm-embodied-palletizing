@@ -34,3 +34,9 @@
 ## 决策
 
 该组件具备 shadow-only 的接口和拒绝边界，但尚未满足“在独立真实接触标签上评估模式转换”的门。下一步必须先接入同时间轴 q/dq/TCP/commands/suction，再用独立加载接触标签比较提议模式、延迟和 premature transition；在此之前保持只读。
+
+## 2026-11-06 runtime integration addendum
+
+上述 physical07 段落是 runtime 接入前的基线。当前分支已完成同时间轴 q/dq/TCP/
+suction join，并生成独立 PhysX oracle；shadow 仍保持只读。严格
+`LOADED_SUPPORTED` 评分仍不足以通过模式转换门，故没有开启 live switching。

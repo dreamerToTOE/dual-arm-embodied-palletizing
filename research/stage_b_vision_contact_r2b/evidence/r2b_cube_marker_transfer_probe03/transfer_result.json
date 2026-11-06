@@ -1,0 +1,172 @@
+{
+  "schema": "task28.r2b.cube_marker_transfer_probe_result.v2",
+  "run_id": "r2b_cube_marker_transfer_probe03",
+  "marker_id": 23,
+  "marker_size_m": 0.06,
+  "quiet_zone_size_m": 0.072,
+  "views": 6,
+  "detected_views": 6,
+  "detection_rate": 1.0,
+  "geometry_max_error_m": 1.5272827615696565e-09,
+  "scene_smoke": {
+    "active_camera": "/World/R2B_RearWallCamera",
+    "render_product_path": "/Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0",
+    "renderer": "RaytracedLighting",
+    "lighting": "(True, ('Default', 'stage'))",
+    "resolution_px": [
+      1280,
+      720
+    ],
+    "physics_time_s": 7.292301000000004,
+    "timeline_state": "stopped_after_warmup",
+    "warmup_app_updates": 120,
+    "world_from_camera": [
+      [
+        0.36956942338645415,
+        0.9292031216573715,
+        0.0,
+        0.0
+      ],
+      [
+        -0.4338283090868444,
+        0.1725453502049945,
+        0.8843195691363421,
+        0.0
+      ],
+      [
+        0.8217125041841906,
+        -0.32681747325507576,
+        0.46688210465010826,
+        0.0
+      ],
+      [
+        1.7000000000000002,
+        -0.35,
+        0.8000000000000003,
+        1.0
+      ]
+    ],
+    "image": {
+      "readable": true,
+      "shape": [
+        720,
+        1280,
+        4
+      ],
+      "dtype": "uint8",
+      "min": 0,
+      "max": 255,
+      "mean": 125.95910264756944,
+      "std": 112.00417065094118,
+      "gray_mean": 83.03484266493055,
+      "gray_histogram_16": [
+        460595,
+        1155,
+        4440,
+        4981,
+        7028,
+        8521,
+        18428,
+        19917,
+        18770,
+        107643,
+        99319,
+        76253,
+        23194,
+        19354,
+        51972,
+        30
+      ]
+    },
+    "cube_world_from_local": [
+      [
+        0.11999999731779099,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.11999999731779099,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.11999999731779099,
+        0.0
+      ],
+      [
+        0.5,
+        0.0,
+        0.26,
+        1.0
+      ]
+    ]
+  },
+  "pose_errors": [
+    {
+      "index": 0,
+      "name": "single_arm_recontact",
+      "position_error_m": 0.05375668981603369,
+      "orientation_error_deg": 3.053694236417968,
+      "camera_center_marker_error_m": 0.08069814253521498,
+      "reprojection_error_px": 0.2892836034297943,
+      "distance_m": 1.176886456304423
+    },
+    {
+      "index": 1,
+      "name": "insertion_entry",
+      "position_error_m": 0.05447354475554228,
+      "orientation_error_deg": 1.1715711899962777,
+      "camera_center_marker_error_m": 0.059731528256672536,
+      "reprojection_error_px": 0.3245321214199066,
+      "distance_m": 1.1625803206518812
+    },
+    {
+      "index": 2,
+      "name": "insertion_mid",
+      "position_error_m": 0.03986148978097162,
+      "orientation_error_deg": 1.7836738322293715,
+      "camera_center_marker_error_m": 0.05237694788259928,
+      "reprojection_error_px": 0.1872251331806183,
+      "distance_m": 1.0598074667696267
+    },
+    {
+      "index": 3,
+      "name": "deep_wall_near",
+      "position_error_m": 0.025303648496957588,
+      "orientation_error_deg": 1.7164833758474396,
+      "camera_center_marker_error_m": 0.039013077544557656,
+      "reprojection_error_px": 0.4764127731323242,
+      "distance_m": 0.9393658737682656
+    },
+    {
+      "index": 4,
+      "name": "deep_wall_arrival",
+      "position_error_m": 0.04984493115196049,
+      "orientation_error_deg": 1.0740937150355934,
+      "camera_center_marker_error_m": 0.05133004758095649,
+      "reprojection_error_px": 0.24314716458320618,
+      "distance_m": 0.9265809250046161
+    },
+    {
+      "index": 5,
+      "name": "side_contact_approach",
+      "position_error_m": 0.044533663434418606,
+      "orientation_error_deg": 1.5816101105010196,
+      "camera_center_marker_error_m": 0.05396935404703252,
+      "reprojection_error_px": 0.4785386025905609,
+      "distance_m": 1.1560442668377158
+    }
+  ],
+  "online_status": "STATIC_TRANSFER_ONLY",
+  "manipulation_episode": false,
+  "contact_confirmation": false,
+  "position_error_median": 0.04718929729318955,
+  "position_error_p95": 0.05429433102066513,
+  "orientation_error_deg_median": 1.6490467431742295,
+  "reprojection_error_px_median": 0.30690786242485046,
+  "distance_error_median": 0.053173150964815896
+}

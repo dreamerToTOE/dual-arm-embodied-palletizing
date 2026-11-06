@@ -11,8 +11,10 @@ from .contract import Health, SourceStamp, StageBObserverFrame, VisualPose
 
 
 def _health(value: Any) -> Health:
+    if isinstance(value, Health):
+        return value
     try:
-        return Health(str(value))
+        return Health(value.value if hasattr(value, "value") else str(value))
     except ValueError:
         return Health.UNKNOWN
 
@@ -80,6 +82,8 @@ def frame_from_records(
         "q": _stamp("q", runtime.get("source_stamps", {}).get("q"), time_s),
         "dq": _stamp("dq", runtime.get("source_stamps", {}).get("dq"), time_s),
         "tcp": _stamp("tcp", runtime.get("source_stamps", {}).get("tcp"), time_s),
+        "suction": _stamp("suction", runtime.get("source_stamps", {}).get("suction"), time_s),
+        "command": _stamp("command", runtime.get("source_stamps", {}).get("command"), time_s),
     }
     stamps["camera"] = SourceStamp(
         stamps["camera"].source,
@@ -90,14 +94,19 @@ def frame_from_records(
     )
     sensor_health = {
         "camera": _health(camera_health),
+        "physics": stamps["physics"].health,
         "q": stamps["q"].health,
         "dq": stamps["dq"].health,
         "tcp": stamps["tcp"].health,
+        "suction": stamps["suction"].health,
+        "command": stamps["command"].health,
     }
     uncertainty = dict(runtime.get("uncertainty") or {})
     uncertainty.setdefault("visual_confidence", max(0.0, 1.0 - visual.confidence))
     if stamps["camera"].age_s is not None:
         uncertainty.setdefault("camera_age_s", max(0.0, stamps["camera"].age_s))
+    if runtime.get("runtime_age_s") is not None:
+        uncertainty.setdefault("runtime_age_s", max(0.0, float(runtime["runtime_age_s"])))
     if not present:
         uncertainty.setdefault("missing_visual", 1.0)
     controller_reference = dict(runtime.get("controller_reference") or {})
