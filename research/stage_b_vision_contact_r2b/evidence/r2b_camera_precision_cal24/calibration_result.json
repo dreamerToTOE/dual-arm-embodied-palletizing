@@ -1,0 +1,2298 @@
+{
+  "schema": "task28.r2b.camera_precision_calibration_result.v1",
+  "run_id": "r2b_camera_precision_cal24",
+  "calibration_model": "pinhole_with_5_distortion_coefficients",
+  "train_views": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "holdout_views": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "marker_ids": [
+    10,
+    11,
+    12,
+    13
+  ],
+  "marker_size_m": 0.06,
+  "calibration_rms_px": 1.03774271899169,
+  "K_authored": [
+    [
+      711.1111111111111,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      600.0,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distortion_authored": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "K_calibrated": [
+    [
+      718.0975867696234,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      720.0462039914794,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distortion_calibrated": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "baseline": {
+    "train": {
+      "views": 8,
+      "camera_center_error_median": 0.10360288904853898,
+      "camera_center_error_p95": 0.12083099376442798,
+      "camera_rotation_error_deg_median": 10.649329276814658,
+      "camera_rotation_error_deg_p95": 11.560536125303733,
+      "reprojection_error_px_median": 7.223573684692383,
+      "reprojection_error_px_p95": 10.02231569290161,
+      "camera_center_error_axis_mean_m": [
+        -0.06036034282604677,
+        -0.0525558926684567,
+        -0.0558318212842599
+      ],
+      "camera_center_error_axis_median_abs_m": [
+        0.06923288699531072,
+        0.055936293660732384,
+        0.05816018136493517
+      ]
+    },
+    "holdout": {
+      "views": 4,
+      "camera_center_error_median": 0.09297317233200374,
+      "camera_center_error_p95": 0.11320091199722301,
+      "camera_rotation_error_deg_median": 10.339734840711216,
+      "camera_rotation_error_deg_p95": 11.45466070005578,
+      "reprojection_error_px_median": 6.418280243873596,
+      "reprojection_error_px_p95": 11.041343069076538,
+      "camera_center_error_axis_mean_m": [
+        -0.048631537917804,
+        -0.04895125917789264,
+        -0.05711101114832068
+      ],
+      "camera_center_error_axis_median_abs_m": [
+        0.054965822039520607,
+        0.050013986936531335,
+        0.05594465327107406
+      ]
+    }
+  },
+  "calibrated": {
+    "train": {
+      "views": 8,
+      "camera_center_error_median": 0.005342709918002655,
+      "camera_center_error_p95": 0.013655790448842154,
+      "camera_rotation_error_deg_median": 0.2956953188677577,
+      "camera_rotation_error_deg_p95": 1.2009795871178137,
+      "reprojection_error_px_median": 0.9140788316726685,
+      "reprojection_error_px_p95": 1.103989166021347,
+      "camera_center_error_axis_mean_m": [
+        -0.0036619103829333144,
+        0.0002162880375893017,
+        0.005377183642012409
+      ],
+      "camera_center_error_axis_median_abs_m": [
+        0.0034024530514817908,
+        0.0010043845197716672,
+        0.003922887736380443
+      ]
+    },
+    "holdout": {
+      "views": 4,
+      "camera_center_error_median": 0.005011031958549744,
+      "camera_center_error_p95": 0.010862467479327266,
+      "camera_rotation_error_deg_median": 0.34503631774978594,
+      "camera_rotation_error_deg_p95": 0.9244789068706463,
+      "reprojection_error_px_median": 1.0799130499362946,
+      "reprojection_error_px_p95": 1.2363583505153657,
+      "camera_center_error_axis_mean_m": [
+        -0.0036629245554150036,
+        -0.00024492406201960526,
+        0.003924020095543962
+      ],
+      "camera_center_error_axis_median_abs_m": [
+        0.003945217859216421,
+        0.0008510726052430584,
+        0.002815198202522129
+      ]
+    }
+  },
+  "per_view_baseline": [
+    {
+      "index": 0,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 7.107421875,
+      "reprojection_error_px_p95": 11.306495904922485,
+      "reprojection_error_px_max": 13.018312454223633,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              451.0,
+              114.0
+            ],
+            [
+              545.0,
+              109.0
+            ],
+            [
+              550.0,
+              201.0
+            ],
+            [
+              461.0,
+              210.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              739.0,
+              98.0
+            ],
+            [
+              812.0,
+              93.0
+            ],
+            [
+              804.0,
+              174.0
+            ],
+            [
+              733.0,
+              182.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              484.0,
+              396.0
+            ],
+            [
+              561.0,
+              382.0
+            ],
+            [
+              565.0,
+              446.0
+            ],
+            [
+              492.0,
+              462.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              723.0,
+              352.0
+            ],
+            [
+              785.0,
+              339.0
+            ],
+            [
+              779.0,
+              399.0
+            ],
+            [
+              720.0,
+              412.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.08099690922313818,
+        -0.06799878569085754,
+        -0.06431774947552615
+      ],
+      "camera_center_error_m": 0.12377845958295411,
+      "camera_rotation_error_deg": 11.572320458832595
+    },
+    {
+      "index": 1,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 7.339725494384766,
+      "reprojection_error_px_p95": 10.984965801239014,
+      "reprojection_error_px_max": 12.811235427856445,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              438.0,
+              91.0
+            ],
+            [
+              542.0,
+              84.0
+            ],
+            [
+              548.0,
+              187.0
+            ],
+            [
+              450.0,
+              197.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              755.0,
+              75.0
+            ],
+            [
+              833.0,
+              72.0
+            ],
+            [
+              821.0,
+              159.0
+            ],
+            [
+              747.0,
+              168.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              474.0,
+              393.0
+            ],
+            [
+              557.0,
+              378.0
+            ],
+            [
+              560.0,
+              444.0
+            ],
+            [
+              482.0,
+              461.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              728.0,
+              347.0
+            ],
+            [
+              794.0,
+              334.0
+            ],
+            [
+              786.0,
+              394.0
+            ],
+            [
+              724.0,
+              408.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.06914857767451554,
+        -0.058565051300914606,
+        -0.058329793334012225
+      ],
+      "camera_center_error_m": 0.10776713700695517,
+      "camera_rotation_error_deg": 10.749796555583437
+    },
+    {
+      "index": 2,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 9.629047393798828,
+      "reprojection_error_px_p95": 16.46942400932312,
+      "reprojection_error_px_max": 18.006467819213867,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              409.0,
+              61.0
+            ],
+            [
+              524.0,
+              51.0
+            ],
+            [
+              536.0,
+              163.0
+            ],
+            [
+              431.0,
+              176.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              750.0,
+              36.0
+            ],
+            [
+              834.0,
+              29.0
+            ],
+            [
+              827.0,
+              127.0
+            ],
+            [
+              749.0,
+              136.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              471.0,
+              402.0
+            ],
+            [
+              560.0,
+              381.0
+            ],
+            [
+              569.0,
+              456.0
+            ],
+            [
+              484.0,
+              477.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              745.0,
+              339.0
+            ],
+            [
+              816.0,
+              322.0
+            ],
+            [
+              812.0,
+              392.0
+            ],
+            [
+              745.0,
+              409.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.07541911865814988,
+        -0.0554871499482405,
+        -0.04393328716662048
+      ],
+      "camera_center_error_m": 0.10342630704910312,
+      "camera_rotation_error_deg": 10.52103496851965
+    },
+    {
+      "index": 3,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 3,
+      "corner_count": 12,
+      "reprojection_error_px_mean": 9.382529258728027,
+      "reprojection_error_px_p95": 14.282579946517943,
+      "reprojection_error_px_max": 14.519746780395508,
+      "markers": [
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              793.0,
+              14.0
+            ],
+            [
+              885.0,
+              16.0
+            ],
+            [
+              863.0,
+              125.0
+            ],
+            [
+              777.0,
+              127.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              443.0,
+              380.0
+            ],
+            [
+              543.0,
+              368.0
+            ],
+            [
+              544.0,
+              445.0
+            ],
+            [
+              451.0,
+              461.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              747.0,
+              340.0
+            ],
+            [
+              822.0,
+              330.0
+            ],
+            [
+              807.0,
+              401.0
+            ],
+            [
+              736.0,
+              413.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.06724556690618222,
+        -0.05155270748571672,
+        -0.059921037151869694
+      ],
+      "camera_center_error_m": 0.10377947104797486,
+      "camera_rotation_error_deg": 11.538650934464417
+    },
+    {
+      "index": 4,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 6.500143051147461,
+      "reprojection_error_px_p95": 10.636116027832031,
+      "reprojection_error_px_max": 11.833723068237305,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              469.0,
+              166.0
+            ],
+            [
+              562.0,
+              152.0
+            ],
+            [
+              572.0,
+              242.0
+            ],
+            [
+              484.0,
+              259.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              751.0,
+              124.0
+            ],
+            [
+              821.0,
+              113.0
+            ],
+            [
+              817.0,
+              193.0
+            ],
+            [
+              751.0,
+              206.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              515.0,
+              443.0
+            ],
+            [
+              592.0,
+              420.0
+            ],
+            [
+              598.0,
+              484.0
+            ],
+            [
+              527.0,
+              505.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              749.0,
+              374.0
+            ],
+            [
+              808.0,
+              357.0
+            ],
+            [
+              806.0,
+              415.0
+            ],
+            [
+              749.0,
+              433.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.08224988418852419,
+        -0.05638543737322427,
+        -0.057990569395858116
+      ],
+      "camera_center_error_m": 0.11535712867287948,
+      "camera_rotation_error_deg": 10.548861998045881
+    },
+    {
+      "index": 5,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 3.0757029056549072,
+      "reprojection_error_px_p95": 4.2282439231872555,
+      "reprojection_error_px_max": 4.363739013671875,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              477.0,
+              315.0
+            ],
+            [
+              567.0,
+              305.0
+            ],
+            [
+              568.0,
+              379.0
+            ],
+            [
+              483.0,
+              392.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              757.0,
+              286.0
+            ],
+            [
+              828.0,
+              279.0
+            ],
+            [
+              813.0,
+              348.0
+            ],
+            [
+              745.0,
+              356.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.025922464372605036,
+        -0.041625080477757315,
+        -0.06302487900724274
+      ],
+      "camera_center_error_m": 0.079854598225815,
+      "camera_rotation_error_deg": 9.007831043787396
+    },
+    {
+      "index": 6,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 10.234075546264648,
+      "reprojection_error_px_p95": 16.964975833892822,
+      "reprojection_error_px_max": 19.74531364440918,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              379.0,
+              108.0
+            ],
+            [
+              497.0,
+              98.0
+            ],
+            [
+              513.0,
+              211.0
+            ],
+            [
+              402.0,
+              226.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              731.0,
+              75.0
+            ],
+            [
+              818.0,
+              66.0
+            ],
+            [
+              813.0,
+              163.0
+            ],
+            [
+              732.0,
+              177.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              449.0,
+              455.0
+            ],
+            [
+              543.0,
+              429.0
+            ],
+            [
+              552.0,
+              506.0
+            ],
+            [
+              465.0,
+              532.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              733.0,
+              380.0
+            ],
+            [
+              804.0,
+              360.0
+            ],
+            [
+              801.0,
+              431.0
+            ],
+            [
+              733.0,
+              450.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.06931719631610589,
+        -0.05663862500081768,
+        -0.04634754286744891
+      ],
+      "camera_center_error_m": 0.10080130096858288,
+      "camera_rotation_error_deg": 10.805921966516836
+    },
+    {
+      "index": 7,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 4.097283840179443,
+      "reprojection_error_px_p95": 5.613916659355163,
+      "reprojection_error_px_max": 5.9931254386901855,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              400.0,
+              344.0
+            ],
+            [
+              513.0,
+              331.0
+            ],
+            [
+              516.0,
+              424.0
+            ],
+            [
+              409.0,
+              438.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              745.0,
+              310.0
+            ],
+            [
+              829.0,
+              301.0
+            ],
+            [
+              811.0,
+              382.0
+            ],
+            [
+              733.0,
+              392.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.012583025269153225,
+        -0.03219430407012497,
+        -0.052789711875500855
+      ],
+      "camera_center_error_m": 0.06309959920143876,
+      "camera_rotation_error_deg": 8.981860957038805
+    },
+    {
+      "index": 8,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 3,
+      "corner_count": 12,
+      "reprojection_error_px_mean": 3.9430534839630127,
+      "reprojection_error_px_p95": 6.729825067520139,
+      "reprojection_error_px_max": 8.504525184631348,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              414.0,
+              24.0
+            ],
+            [
+              519.0,
+              14.0
+            ],
+            [
+              532.0,
+              120.0
+            ],
+            [
+              434.0,
+              135.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              471.0,
+              339.0
+            ],
+            [
+              553.0,
+              321.0
+            ],
+            [
+              560.0,
+              389.0
+            ],
+            [
+              483.0,
+              409.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              724.0,
+              283.0
+            ],
+            [
+              787.0,
+              269.0
+            ],
+            [
+              783.0,
+              331.0
+            ],
+            [
+              720.0,
+              348.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.05579836550168071,
+        -0.06356931441690267,
+        -0.07683971145249535
+      ],
+      "camera_center_error_m": 0.11427535422914657,
+      "camera_rotation_error_deg": 11.431014385106986
+    },
+    {
+      "index": 9,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 8.89350700378418,
+      "reprojection_error_px_p95": 13.3654203414917,
+      "reprojection_error_px_max": 16.003108978271484,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              439.0,
+              116.0
+            ],
+            [
+              548.0,
+              117.0
+            ],
+            [
+              551.0,
+              223.0
+            ],
+            [
+              449.0,
+              228.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              773.0,
+              118.0
+            ],
+            [
+              855.0,
+              119.0
+            ],
+            [
+              839.0,
+              210.0
+            ],
+            [
+              762.0,
+              214.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              464.0,
+              443.0
+            ],
+            [
+              554.0,
+              429.0
+            ],
+            [
+              555.0,
+              503.0
+            ],
+            [
+              470.0,
+              517.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              742.0,
+              406.0
+            ],
+            [
+              813.0,
+              395.0
+            ],
+            [
+              804.0,
+              460.0
+            ],
+            [
+              736.0,
+              473.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.06546086796654027,
+        -0.058710971374791365,
+        -0.06116342148622178
+      ],
+      "camera_center_error_m": 0.1071124060163229,
+      "camera_rotation_error_deg": 11.45883357916439
+    },
+    {
+      "index": 10,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 3.7229273319244385,
+      "reprojection_error_px_p95": 6.030975317955017,
+      "reprojection_error_px_max": 6.274933338165283,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              441.0,
+              386.0
+            ],
+            [
+              545.0,
+              363.0
+            ],
+            [
+              557.0,
+              445.0
+            ],
+            [
+              461.0,
+              468.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              763.0,
+              317.0
+            ],
+            [
+              846.0,
+              298.0
+            ],
+            [
+              837.0,
+              375.0
+            ],
+            [
+              759.0,
+              395.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.019133639625634524,
+        -0.03220774842160523,
+        -0.050725885055926345
+      ],
+      "camera_center_error_m": 0.06305989722811256,
+      "camera_rotation_error_deg": 8.564307582514827
+    },
+    {
+      "index": 11,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 11.42037296295166,
+      "reprojection_error_px_p95": 18.38329792022705,
+      "reprojection_error_px_max": 21.32342529296875,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              379.0,
+              50.0
+            ],
+            [
+              522.0,
+              51.0
+            ],
+            [
+              526.0,
+              187.0
+            ],
+            [
+              396.0,
+              195.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              786.0,
+              57.0
+            ],
+            [
+              876.0,
+              60.0
+            ],
+            [
+              857.0,
+              169.0
+            ],
+            [
+              767.0,
+              176.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              424.0,
+              464.0
+            ],
+            [
+              534.0,
+              441.0
+            ],
+            [
+              538.0,
+              528.0
+            ],
+            [
+              435.0,
+              553.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              747.0,
+              399.0
+            ],
+            [
+              824.0,
+              384.0
+            ],
+            [
+              812.0,
+              459.0
+            ],
+            [
+              739.0,
+              477.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.0541332785773605,
+        -0.041317002498271305,
+        -0.039715026598639236
+      ],
+      "camera_center_error_m": 0.07883393864768458,
+      "camera_rotation_error_deg": 9.248455296315447
+    }
+  ],
+  "per_view_calibrated": [
+    {
+      "index": 0,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 0.7616347074508667,
+      "reprojection_error_px_p95": 1.4129634499549866,
+      "reprojection_error_px_max": 1.7657982110977173,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              451.0,
+              114.0
+            ],
+            [
+              545.0,
+              109.0
+            ],
+            [
+              550.0,
+              201.0
+            ],
+            [
+              461.0,
+              210.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              739.0,
+              98.0
+            ],
+            [
+              812.0,
+              93.0
+            ],
+            [
+              804.0,
+              174.0
+            ],
+            [
+              733.0,
+              182.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              484.0,
+              396.0
+            ],
+            [
+              561.0,
+              382.0
+            ],
+            [
+              565.0,
+              446.0
+            ],
+            [
+              492.0,
+              462.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              723.0,
+              352.0
+            ],
+            [
+              785.0,
+              339.0
+            ],
+            [
+              779.0,
+              399.0
+            ],
+            [
+              720.0,
+              412.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.0017577813298310652,
+        -0.0005817444388457882,
+        0.002594453619400694
+      ],
+      "camera_center_error_m": 0.0031873831553253886,
+      "camera_rotation_error_deg": 0.13823010767468044
+    },
+    {
+      "index": 1,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 0.8338664770126343,
+      "reprojection_error_px_p95": 1.8465133011341095,
+      "reprojection_error_px_max": 1.9654604196548462,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              438.0,
+              91.0
+            ],
+            [
+              542.0,
+              84.0
+            ],
+            [
+              548.0,
+              187.0
+            ],
+            [
+              450.0,
+              197.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              755.0,
+              75.0
+            ],
+            [
+              833.0,
+              72.0
+            ],
+            [
+              821.0,
+              159.0
+            ],
+            [
+              747.0,
+              168.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              474.0,
+              393.0
+            ],
+            [
+              557.0,
+              378.0
+            ],
+            [
+              560.0,
+              444.0
+            ],
+            [
+              482.0,
+              461.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              728.0,
+              347.0
+            ],
+            [
+              794.0,
+              334.0
+            ],
+            [
+              786.0,
+              394.0
+            ],
+            [
+              724.0,
+              408.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.002434535992810627,
+        6.492225979604083e-05,
+        0.004837867249844585
+      ],
+      "camera_center_error_m": 0.005416284697763427,
+      "camera_rotation_error_deg": 0.2620802626411091
+    },
+    {
+      "index": 2,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 1.0966156721115112,
+      "reprojection_error_px_p95": 1.7637785077095032,
+      "reprojection_error_px_max": 2.0185649394989014,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              409.0,
+              61.0
+            ],
+            [
+              524.0,
+              51.0
+            ],
+            [
+              536.0,
+              163.0
+            ],
+            [
+              431.0,
+              176.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              750.0,
+              36.0
+            ],
+            [
+              834.0,
+              29.0
+            ],
+            [
+              827.0,
+              127.0
+            ],
+            [
+              749.0,
+              136.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              471.0,
+              402.0
+            ],
+            [
+              560.0,
+              381.0
+            ],
+            [
+              569.0,
+              456.0
+            ],
+            [
+              484.0,
+              477.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              745.0,
+              339.0
+            ],
+            [
+              816.0,
+              322.0
+            ],
+            [
+              812.0,
+              392.0
+            ],
+            [
+              745.0,
+              409.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.0016658717601192308,
+        0.001717296113479705,
+        0.0024793648568399718
+      ],
+      "camera_center_error_m": 0.0034455021050448275,
+      "camera_rotation_error_deg": 0.477379402691909
+    },
+    {
+      "index": 3,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 3,
+      "corner_count": 12,
+      "reprojection_error_px_mean": 0.6108559370040894,
+      "reprojection_error_px_p95": 1.0881576538085938,
+      "reprojection_error_px_max": 1.1149711608886719,
+      "markers": [
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              793.0,
+              14.0
+            ],
+            [
+              885.0,
+              16.0
+            ],
+            [
+              863.0,
+              125.0
+            ],
+            [
+              777.0,
+              127.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              443.0,
+              380.0
+            ],
+            [
+              543.0,
+              368.0
+            ],
+            [
+              544.0,
+              445.0
+            ],
+            [
+              451.0,
+              461.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              747.0,
+              340.0
+            ],
+            [
+              822.0,
+              330.0
+            ],
+            [
+              807.0,
+              401.0
+            ],
+            [
+              736.0,
+              413.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.005090103592849893,
+        -0.0023613564844299217,
+        0.0033130425696199506
+      ],
+      "camera_center_error_m": 0.006516242022869975,
+      "camera_rotation_error_deg": 0.23337969264423267
+    },
+    {
+      "index": 4,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 1.005622148513794,
+      "reprojection_error_px_p95": 1.517550766468048,
+      "reprojection_error_px_max": 1.5737804174423218,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              469.0,
+              166.0
+            ],
+            [
+              562.0,
+              152.0
+            ],
+            [
+              572.0,
+              242.0
+            ],
+            [
+              484.0,
+              259.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              751.0,
+              124.0
+            ],
+            [
+              821.0,
+              113.0
+            ],
+            [
+              817.0,
+              193.0
+            ],
+            [
+              751.0,
+              206.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              515.0,
+              443.0
+            ],
+            [
+              592.0,
+              420.0
+            ],
+            [
+              598.0,
+              484.0
+            ],
+            [
+              527.0,
+              505.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              749.0,
+              374.0
+            ],
+            [
+              808.0,
+              357.0
+            ],
+            [
+              806.0,
+              415.0
+            ],
+            [
+              749.0,
+              433.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.0026546356882299893,
+        -0.0004135539827090917,
+        0.004532732903140935
+      ],
+      "camera_center_error_m": 0.005269135138241883,
+      "camera_rotation_error_deg": 0.32931037509440625
+    },
+    {
+      "index": 5,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 0.667155385017395,
+      "reprojection_error_px_p95": 0.9887205868959427,
+      "reprojection_error_px_max": 0.9954870343208313,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              477.0,
+              315.0
+            ],
+            [
+              567.0,
+              305.0
+            ],
+            [
+              568.0,
+              379.0
+            ],
+            [
+              483.0,
+              392.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              757.0,
+              286.0
+            ],
+            [
+              828.0,
+              279.0
+            ],
+            [
+              813.0,
+              348.0
+            ],
+            [
+              745.0,
+              356.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.004514217145045629,
+        0.0036699432743088622,
+        0.01383114418928566
+      ],
+      "camera_center_error_m": 0.015004905519665202,
+      "camera_rotation_error_deg": 1.2977649846100254
+    },
+    {
+      "index": 6,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 1.107959508895874,
+      "reprojection_error_px_p95": 2.1458951830863953,
+      "reprojection_error_px_max": 2.2280070781707764,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              379.0,
+              108.0
+            ],
+            [
+              497.0,
+              98.0
+            ],
+            [
+              513.0,
+              211.0
+            ],
+            [
+              402.0,
+              226.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              731.0,
+              75.0
+            ],
+            [
+              818.0,
+              66.0
+            ],
+            [
+              813.0,
+              163.0
+            ],
+            [
+              732.0,
+              177.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              449.0,
+              455.0
+            ],
+            [
+              543.0,
+              429.0
+            ],
+            [
+              552.0,
+              506.0
+            ],
+            [
+              465.0,
+              532.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              733.0,
+              380.0
+            ],
+            [
+              804.0,
+              360.0
+            ],
+            [
+              801.0,
+              431.0
+            ],
+            [
+              733.0,
+              450.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.004150270414733592,
+        -0.0011869857402143635,
+        0.002811280225716306
+      ],
+      "camera_center_error_m": 0.005151405261711478,
+      "camera_rotation_error_deg": 0.20704061379683353
+    },
+    {
+      "index": 7,
+      "split": "train",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 0.9942911863327026,
+      "reprojection_error_px_p95": 1.7327266991138457,
+      "reprojection_error_px_max": 1.7563177347183228,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              400.0,
+              344.0
+            ],
+            [
+              513.0,
+              331.0
+            ],
+            [
+              516.0,
+              424.0
+            ],
+            [
+              409.0,
+              438.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              745.0,
+              310.0
+            ],
+            [
+              829.0,
+              301.0
+            ],
+            [
+              811.0,
+              382.0
+            ],
+            [
+              733.0,
+              392.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.007027867139846489,
+        0.0008217832993289709,
+        0.008617583522251171
+      ],
+      "camera_center_error_m": 0.011150291031599353,
+      "camera_rotation_error_deg": 1.0212352774894211
+    },
+    {
+      "index": 8,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 3,
+      "corner_count": 12,
+      "reprojection_error_px_mean": 0.9653205275535583,
+      "reprojection_error_px_p95": 1.7113521575927735,
+      "reprojection_error_px_max": 1.7221318483352661,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              414.0,
+              24.0
+            ],
+            [
+              519.0,
+              14.0
+            ],
+            [
+              532.0,
+              120.0
+            ],
+            [
+              434.0,
+              135.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              471.0,
+              339.0
+            ],
+            [
+              553.0,
+              321.0
+            ],
+            [
+              560.0,
+              389.0
+            ],
+            [
+              483.0,
+              409.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              724.0,
+              283.0
+            ],
+            [
+              787.0,
+              269.0
+            ],
+            [
+              783.0,
+              331.0
+            ],
+            [
+              720.0,
+              348.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        0.0010342518329142791,
+        0.00085165298662504,
+        0.0012390466659081278
+      ],
+      "camera_center_error_m": 0.0018248907648985306,
+      "camera_rotation_error_deg": 0.45999584671653604
+    },
+    {
+      "index": 9,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 1.1945055723190308,
+      "reprojection_error_px_p95": 1.9940188527107239,
+      "reprojection_error_px_max": 2.2378246784210205,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              439.0,
+              116.0
+            ],
+            [
+              548.0,
+              117.0
+            ],
+            [
+              551.0,
+              223.0
+            ],
+            [
+              449.0,
+              228.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              773.0,
+              118.0
+            ],
+            [
+              855.0,
+              119.0
+            ],
+            [
+              839.0,
+              210.0
+            ],
+            [
+              762.0,
+              214.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              464.0,
+              443.0
+            ],
+            [
+              554.0,
+              429.0
+            ],
+            [
+              555.0,
+              503.0
+            ],
+            [
+              470.0,
+              517.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              742.0,
+              406.0
+            ],
+            [
+              813.0,
+              395.0
+            ],
+            [
+              804.0,
+              460.0
+            ],
+            [
+              736.0,
+              473.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.004371664003702147,
+        -0.0016386855031197967,
+        0.0030569090994553294
+      ],
+      "camera_center_error_m": 0.005580450661168223,
+      "camera_rotation_error_deg": 0.2300767887830359
+    },
+    {
+      "index": 10,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 2,
+      "corner_count": 8,
+      "reprojection_error_px_mean": 0.4512462615966797,
+      "reprojection_error_px_p95": 0.7097284764051437,
+      "reprojection_error_px_max": 0.7602846026420593,
+      "markers": [
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              441.0,
+              386.0
+            ],
+            [
+              545.0,
+              363.0
+            ],
+            [
+              557.0,
+              445.0
+            ],
+            [
+              461.0,
+              468.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              763.0,
+              317.0
+            ],
+            [
+              846.0,
+              298.0
+            ],
+            [
+              837.0,
+              375.0
+            ],
+            [
+              759.0,
+              395.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.007795514336141451,
+        0.0006578284922774125,
+        0.008826637311223462
+      ],
+      "camera_center_error_m": 0.011794588094296512,
+      "camera_rotation_error_deg": 1.0064465057213718
+    },
+    {
+      "index": 11,
+      "split": "holdout",
+      "status": "PRESENT",
+      "marker_count": 4,
+      "corner_count": 16,
+      "reprojection_error_px_mean": 1.243744134902954,
+      "reprojection_error_px_p95": 2.514918327331543,
+      "reprojection_error_px_max": 4.670188903808594,
+      "markers": [
+        {
+          "marker_id": 10,
+          "corners": [
+            [
+              379.0,
+              50.0
+            ],
+            [
+              522.0,
+              51.0
+            ],
+            [
+              526.0,
+              187.0
+            ],
+            [
+              396.0,
+              195.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 11,
+          "corners": [
+            [
+              786.0,
+              57.0
+            ],
+            [
+              876.0,
+              60.0
+            ],
+            [
+              857.0,
+              169.0
+            ],
+            [
+              767.0,
+              176.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 12,
+          "corners": [
+            [
+              424.0,
+              464.0
+            ],
+            [
+              534.0,
+              441.0
+            ],
+            [
+              538.0,
+              528.0
+            ],
+            [
+              435.0,
+              553.0
+            ]
+          ]
+        },
+        {
+          "marker_id": 13,
+          "corners": [
+            [
+              747.0,
+              399.0
+            ],
+            [
+              824.0,
+              384.0
+            ],
+            [
+              812.0,
+              459.0
+            ],
+            [
+              739.0,
+              477.0
+            ]
+          ]
+        }
+      ],
+      "camera_center_error_xyz_m": [
+        -0.003518771714730695,
+        -0.0008504922238610768,
+        0.0025734873055889285
+      ],
+      "camera_center_error_m": 0.004441613255931264,
+      "camera_rotation_error_deg": 0.17749345073916625
+    }
+  ],
+  "policy": "rendered multi-marker target; no Cube ground truth or per-frame correction"
+}
