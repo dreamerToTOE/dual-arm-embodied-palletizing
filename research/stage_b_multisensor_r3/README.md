@@ -154,3 +154,58 @@ API/裁剪失败和 calibration03 无效完整数据都保留，不能拿其没�
 source hash 时，把对应 snapshot 放回原模块路径的隔离 checkout 后运行新的 run-id。
 producer `code_bits()` 未变，当前接口只增加区间输出与拒绝不确定帧；
 `measurement_time_s=null`、`online_fusion_eligible=false`。
+
+## P2A-R2：同帧 Cube 场景状态绑定
+
+报告：`R3_P2A_R2_SCENE_TIME_BINDING.md`，入口：`R2_EXPERIMENT_MANIFEST.json`。
+判定 PARTIAL：独立留出 180 个唯一帧，176 个候选集合输出；42 个可独立定时的运动帧
+支持一 tick 最坏界，138 个仍不可独立定时。没有导出单点或中点时间。
+V0/V1/V2 用相同图像和相同 RGB-D Cube 估计；V1 因 fingerprint 不同仅为冻结数值参考。
+
+已提交 raw ROI 同时包含原渲染时间码和 Cube。离线重放：
+
+```bash
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r2_scene_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/r2_calibration02 \
+  --binding research/stage_b_multisensor_r3/config/r2_scene_binding_frozen.json \
+  --out /tmp/r2_calibration_replay
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r2_scene_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/r2_holdout01 \
+  --binding research/stage_b_multisensor_r3/config/r2_scene_binding_frozen.json \
+  --out /tmp/r2_holdout_replay
+```
+
+新的独立重采流程（本轮已用完三次预算；这里只记录复现命令，不自动续跑）：
+
+```bash
+python3 research/stage_b_multisensor_r3/scripts/build_r1_fabric.py \
+  --isaac-root /home/ubuntu2004/isaacsim-4.5.0
+DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
+  research/stage_b_multisensor_r3/scripts/capture_r2_scene_binding.py \
+  --run-id NEW_R2_CALIBRATION --split calibration
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r2_scene_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/NEW_R2_CALIBRATION \
+  --out /tmp/new_r2_calibration_analysis --freeze /tmp/new_r2_scene_binding.json
+DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
+  research/stage_b_multisensor_r3/scripts/capture_r2_scene_binding.py \
+  --run-id NEW_R2_HOLDOUT --split holdout --binding /tmp/new_r2_scene_binding.json
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r2_scene_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/NEW_R2_HOLDOUT \
+  --out /tmp/new_r2_holdout_analysis --binding /tmp/new_r2_scene_binding.json
+```
+
+不覆盖已有 run/out/frozen 文件。当前 capture 的 probes、较大 ROI writer 改变了观测
+条件，不能把其零延迟回填 R1。Capture 只写受控桌面 Cube；没有机器人控制器命令。
+机器接口在 `time_binding_interface.jsonl`，完整历史候选含 physics_step/time_s，未确认时
+唯一时间/步为空，旧 SDK 0/−2 tick 假设另列。它依赖时间码和受控刺激，不是通用
+在线时间修复。更换 pixel helper/config 后须重新校准，不可改源码再套用旧 binding。
+
+P2B 仅具备时间候选/视觉离线回放基础；FK/vision 融合仍需配对 q/dq/FK。原任务
+runtime shadow 和 online fusion 均未准入。R2 到此停止。
+
+R2 正式候选保留完整因果历史中的重复 pose 别名，最大跨度 7150 ms；
+`clock_conditioned_candidates` 的相邻两步只是局部先验。局部窗口产生的 74 帧结论
+保留为诊断，不能代替最终全历史 42 帧证据。
+
+R2 图表可用 `python3 research/stage_b_multisensor_r3/scripts/plot_r2_results.py`
+从已提交结果重建；该命令不启动 Isaac。

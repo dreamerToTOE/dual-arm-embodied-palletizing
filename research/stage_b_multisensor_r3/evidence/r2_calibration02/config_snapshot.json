@@ -1,0 +1,136 @@
+{
+  "schema": "r3.p2a_r2.scene_time_experiment.v1",
+  "baseline_sha": "52209eca08afceacce3de293d338a7183b56b804",
+  "physics_hz": 60,
+  "updates": 180,
+  "clock_bits": 16,
+  "clock_first_pixel": [
+    340,
+    180
+  ],
+  "clock_cell_spacing_px": 20,
+  "clock_cell_size_px": 16,
+  "clock_depth_zero_m": 0.85,
+  "clock_depth_one_m": 0.89,
+  "pattern_check_codes": [
+    0,
+    65535,
+    43690,
+    21845,
+    4660,
+    32769
+  ],
+  "pattern_updates": 6,
+  "calibration": [
+    [
+      0.4,
+      0
+    ],
+    [
+      0.6,
+      0.06
+    ],
+    [
+      0.6,
+      -0.06
+    ],
+    [
+      0.3,
+      0
+    ],
+    [
+      0.5,
+      0.12
+    ],
+    [
+      0.5,
+      -0.12
+    ],
+    [
+      0.4,
+      0
+    ],
+    [
+      0.4,
+      0.06
+    ],
+    [
+      0.4,
+      -0.06
+    ],
+    [
+      0.3,
+      0
+    ]
+  ],
+  "holdout": [
+    [
+      0.5,
+      0
+    ],
+    [
+      0.6,
+      -0.1
+    ],
+    [
+      0.6,
+      0.1
+    ],
+    [
+      0.25,
+      0
+    ],
+    [
+      0.5,
+      -0.16
+    ],
+    [
+      0.5,
+      0.16
+    ],
+    [
+      0.3,
+      0
+    ],
+    [
+      0.4,
+      0.1
+    ],
+    [
+      0.4,
+      -0.1
+    ],
+    [
+      0.35,
+      0
+    ]
+  ],
+  "calibration_start_x_m": 0.82,
+  "holdout_start_x_m": 0.86,
+  "camera_eye": [
+    1.7,
+    -0.35,
+    0.8
+  ],
+  "camera_target": [
+    0.82,
+    0.0,
+    0.3
+  ],
+  "resolution": [
+    1280,
+    720
+  ],
+  "scope": "Stage-B tabletop kinematic stimulus and noncolliding camera-facing timing target; no camera relocation or controller changes",
+  "acceptance": "Independent Cube pixel estimate and isolated PhysX/Fabric state; keep unresolved time candidates explicit; no midpoint or GT input to pixel estimator. At most calibration + holdout + one corrective retry.",
+  "clipping_range_m": [
+    0.01,
+    100.0
+  ],
+  "capture_roi": [
+    320,
+    150,
+    900,
+    510
+  ]
+}

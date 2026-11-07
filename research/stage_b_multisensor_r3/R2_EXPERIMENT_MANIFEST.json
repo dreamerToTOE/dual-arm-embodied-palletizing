@@ -1,0 +1,166 @@
+{
+  "schema": "r3.p2a_r2.experiment_manifest.v1",
+  "starting_head": "52209eca08afceacce3de293d338a7183b56b804",
+  "branch": "research/stage-b-r3-multisensor-plan",
+  "decision": "PARTIAL",
+  "experiment_count": 3,
+  "budget": "one primary calibration + one corrective calibration retry + one independent holdout; STOP",
+  "runs": [
+    {
+      "run": "r2_calibration01",
+      "role": "PRIMARY_CALIBRATION_PROBE_DIAGNOSTIC",
+      "raw_rgb_depth_pairs": 216,
+      "dynamic_captures": 180,
+      "manifest_sha256": "d6ad061338ae0cf5d1840cc9cf24f4fdefbb587a7756b60d3ae02808edb49acb",
+      "capture_snapshot_sha256": "a535a843d157264c00de8b9b626642f3527f215c2ea869fe94165c833a40ee37",
+      "log_sha256": "d25e1a20fbeec95aa373e51907e1e3b9cf99ea8203ab96bdf0d2f27a1df892a8",
+      "configuration_fingerprint": "c24a7bd29d4683f295b5ad9e1cfc48f9d0d98727e7ae7abc4e441796c2bfdb40",
+      "completion": "R3_R2_COMPLETE",
+      "errors": []
+    },
+    {
+      "run": "r2_calibration02",
+      "role": "ONLY_CORRECTIVE_RETRY_AND_FROZEN_CALIBRATION",
+      "raw_rgb_depth_pairs": 216,
+      "dynamic_captures": 180,
+      "manifest_sha256": "b593f2c5e5a1937632b2b3b84ae6a328104a46d59dc5b0489f64b39ed5b910ba",
+      "capture_snapshot_sha256": "7bc388630422b62fc06e8e56ae824d311f5427441534394a1350f451fdd8cd01",
+      "log_sha256": "496bdee4a649261bf36af0071a4919d22fcf8875a9cbef51abcb1653bfcf402e",
+      "configuration_fingerprint": "7c4d63599e0ef1258699c495d551d95d5b4a931ad2d71813284d7202c47488bd",
+      "completion": "R3_R2_COMPLETE",
+      "errors": []
+    },
+    {
+      "run": "r2_holdout01",
+      "role": "INDEPENDENT_HOLDOUT",
+      "raw_rgb_depth_pairs": 216,
+      "dynamic_captures": 180,
+      "manifest_sha256": "1852c8105ca4a5b81f97d56f9e852273e49e4f56359bede3d980667ac0f1fbb1",
+      "capture_snapshot_sha256": "7bc388630422b62fc06e8e56ae824d311f5427441534394a1350f451fdd8cd01",
+      "log_sha256": "3aab078effb5eb040b4888dcc4bd65c29b095a0e9b67cd3588b3f969e4c757ab",
+      "configuration_fingerprint": "7c4d63599e0ef1258699c495d551d95d5b4a931ad2d71813284d7202c47488bd",
+      "completion": "R3_R2_COMPLETE",
+      "errors": []
+    }
+  ],
+  "frozen_configurations": {
+    "config/r2_scene_time_experiment.json": "3e36953c369216477d7e948eb90e11a897aeb10c0ee37ab23c8edb9ac28eb784",
+    "config/r2_calibration_frozen.json": "ebab5b0bf90ff83e59df380eb8c6e353bc557a466f73fe5613cac187df635c38",
+    "config/r2_holdout_frozen.json": "c752f478a23b7e50c6365e16b7791c253490799ee994826007c86c3cc8b7cef2",
+    "config/r2_scene_binding_frozen.json": "fc578cdb042ccf7a70060a105a7b220f78c1a9ad1c73e3cf33b9b0f33d3729c9"
+  },
+  "holdout_metrics": {
+    "unique_dynamic_frames": 180,
+    "cube_qualified_time_interfaces": 176,
+    "cube_timing_observable_frames": 42,
+    "cube_timing_unresolved_frames": 138,
+    "point_timestamps_exported": 0,
+    "paired_clock_captures": 216,
+    "sdk_minus_clock_ticks": {
+      "0.0": 179
+    },
+    "comparisons": {
+      "V0": {
+        "matched_common_xy_frames": 176,
+        "xy_error_min_mm": {
+          "median": 0.0007167429792404421,
+          "p95": 0.0008085171392789316,
+          "max": 0.0008330040432874545
+        },
+        "xy_error_max_mm": {
+          "median": 0.0007167429792404421,
+          "p95": 0.0008085171392789316,
+          "max": 0.0008330040432874545
+        },
+        "time_observable_frames": 42,
+        "timestamp_set_min_distance_ms": {
+          "median": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timestamp_supported_worst_error_ms": {
+          "median": 16.66666753590107,
+          "p95": 16.66666753590107,
+          "max": 16.66666753590107
+        }
+      },
+      "V1": {
+        "matched_common_xy_frames": 176,
+        "xy_error_min_mm": {
+          "median": 0.0007167429792404421,
+          "p95": 0.0008085171392789316,
+          "max": 0.0008330040432874545
+        },
+        "xy_error_max_mm": {
+          "median": 3.0000066974238724,
+          "p95": 5.333369694036421,
+          "max": 5.333383516852922
+        },
+        "time_observable_frames": 42,
+        "timestamp_set_min_distance_ms": {
+          "median": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timestamp_supported_worst_error_ms": {
+          "median": 33.33333507180214,
+          "p95": 33.33333507180214,
+          "max": 33.33333507180214
+        }
+      },
+      "V2": {
+        "matched_common_xy_frames": 176,
+        "xy_error_min_mm": {
+          "median": 0.0007167429792404421,
+          "p95": 0.0008080850723553477,
+          "max": 0.0008330040432874545
+        },
+        "xy_error_max_mm": {
+          "median": 0.0007167429792404421,
+          "p95": 0.0008085171392789316,
+          "max": 0.0008341795725655177
+        },
+        "time_observable_frames": 42,
+        "timestamp_set_min_distance_ms": {
+          "median": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timestamp_supported_worst_error_ms": {
+          "median": 16.66666753590107,
+          "p95": 16.66666753590107,
+          "max": 16.66666753590107
+        }
+      }
+    },
+    "v2_candidate_span_ms": {
+      "median": 1366.6667379438877,
+      "p95": 6858.33369102329,
+      "max": 7150.000372901559
+    },
+    "clock_conditioned_candidate_span_ms": {
+      "median": 16.66666753590107,
+      "p95": 16.66666753590107,
+      "max": 16.66666753590107
+    },
+    "interfaces_with_historical_aliases": 134,
+    "p2b_readiness": {
+      "offline_fusion": "LIMITED_READY: timing/vision candidate replay only; synchronized q/dq/FK data is still required for FK-vision fusion",
+      "shadow_evaluation": "NOT_READY: original task without timing cells has not been qualified; offline shadow replay is possible",
+      "online_fusion": "NOT_READY"
+    }
+  },
+  "report": "R3_P2A_R2_SCENE_TIME_BINDING.md",
+  "replay_entry": "scripts/evaluate_r2_scene_binding.py",
+  "timestamp_interface": "evidence/r2_holdout01_analysis/time_binding_interface.jsonl",
+  "cpu_tests": "evidence/r2_cpu_tests.txt",
+  "historical_p0_p1_p2a_r1_files_changed": false,
+  "controller_files_changed": false,
+  "limits": [
+    "Only 42 holdout frames have a unique causal pose group; 138 remain unresolved, with historical candidate spans up to 7150 ms.",
+    "No render-latched Fabric history is exposed by the tested readback path.",
+    "The exact controlled trajectory and ideal depth geometry are not generic task runtime qualification."
+  ],
+  "local_window_diagnostic": "evidence/r2_holdout01_local_window_diagnostic: 74 local-only frames are not the final independent count",
+  "staged_only_replay": "evidence/r2_index_replay.json"
+}
