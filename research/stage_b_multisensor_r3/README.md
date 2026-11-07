@@ -101,3 +101,56 @@ python3 -c "import json; from pathlib import Path; p=Path('research/stage_b_mult
 Isaac关闭可能掩盖Python异常，所以退出码0不能替代完成manifest；检查failure.json、
 callback errors及图像几何。scene只施加受控kinematic桌面刺激与小幅腕部目标，
 不是Task27任务成功或真实推入实验。host arrival/writer时间不能当render时间。
+
+## P2A-R1：独立图像时钟
+
+结论 **PARTIAL**，报告 `R3_P2A_R1_TIME_BINDING.md`；入口
+`R1_EXPERIMENT_MANIFEST.json`。SDK/Fabric 映射一致，但图像 epoch 时差在 0/33.333 ms
+间变化；先冻结、后独立留出的区间覆盖 136/136 帧，宽 50 ms、最坏半宽 25 ms。
+没有授权在线融合，旧 P2A 的 30 个 UNCERTAIN 时间戳保持原样。
+
+只用 Git 中的原始时钟 ROI 重放，不启动 Isaac：
+
+```bash
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r1_time_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/r1_calibration04 \
+  --binding research/stage_b_multisensor_r3/config/r1_time_binding_frozen.json \
+  --out /tmp/r1_calibration_replay
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r1_time_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/r1_holdout01 \
+  --binding research/stage_b_multisensor_r3/config/r1_time_binding_frozen.json \
+  --out /tmp/r1_holdout_replay
+```
+
+如需新的有界 Isaac 重采，先绑定安装包实际 C++ RationalTime。这里系统已有 g++、
+`/usr/include/pybind11` 和 Python 3.10 headers，不新增 Python 包；换 SDK/ABI 必须
+重新核查，不拷贝本机二进制到别处。
+
+```bash
+python3 research/stage_b_multisensor_r3/scripts/build_r1_fabric.py \
+  --isaac-root /home/ubuntu2004/isaacsim-4.5.0
+DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
+  research/stage_b_multisensor_r3/scripts/capture_r1_time_binding.py \
+  --run-id NEW_R1_CALIBRATION --split calibration
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r1_time_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/NEW_R1_CALIBRATION \
+  --out /tmp/new_r1_calibration_analysis --freeze /tmp/new_r1_binding.json
+DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
+  research/stage_b_multisensor_r3/scripts/capture_r1_time_binding.py \
+  --run-id NEW_R1_HOLDOUT --split holdout --binding /tmp/new_r1_binding.json
+python3 research/stage_b_multisensor_r3/scripts/evaluate_r1_time_binding.py \
+  --run research/stage_b_multisensor_r3/evidence/NEW_R1_HOLDOUT \
+  --out /tmp/new_r1_holdout_analysis --binding /tmp/new_r1_binding.json
+```
+
+run、out、freeze 路径必须不存在；不得覆盖已提交的冻结文件。脚本最多 180 次 dynamic
+updates，另有固定 warmup/pattern control；检查 completion manifest、errors 和图像码。
+`--updates N` 只供启动诊断，短于完整 phase coverage 的运行不能替代完整结论。
+原始时钟用 scene cells 在 RGB 和 depth 中独立编码，不是 writer 叠字；默认 near=1 m
+导致早期码不可见，最终显式设 near=.01 m，未移动相机。
+
+API/裁剪失败和 calibration03 无效完整数据都保留，不能拿其没有有效时间码的图像
+拟合时间偏移。每个有效 run 保存 capture/config/helper snapshot；精确复现历史
+source hash 时，把对应 snapshot 放回原模块路径的隔离 checkout 后运行新的 run-id。
+producer `code_bits()` 未变，当前接口只增加区间输出与拒绝不确定帧；
+`measurement_time_s=null`、`online_fusion_eligible=false`。

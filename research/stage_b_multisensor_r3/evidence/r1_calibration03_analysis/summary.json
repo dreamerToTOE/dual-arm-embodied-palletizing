@@ -1,0 +1,69 @@
+{
+  "schema": "r3.p2a_r1.time_evaluation.v1",
+  "decision": "INCONCLUSIVE",
+  "run": "r1_calibration03",
+  "split": "calibration",
+  "counts": {
+    "rgb_depth_paired_captures": 0,
+    "settled_pattern_checks": 18,
+    "settled_pattern_correct": 0,
+    "dynamic_captures": 180,
+    "duplicate_dynamic_captures": 16
+  },
+  "unique_dynamic_frames": 164,
+  "valid_unique_dynamic_frames": 0,
+  "pattern_control_pass": false,
+  "full_phase_coverage": false,
+  "independent_holdout": false,
+  "rejection_reasons": {
+    "rgb_depth_unpaired": 164,
+    "duplicate": 16
+  },
+  "physics_tick_s": 0.01666666753590107,
+  "offset_histogram_ticks": {},
+  "offset_ms": null,
+  "sdk_fabric_max_difference_s": 0.0,
+  "callback_core_minus_sdk_max_s": 0.0,
+  "reference_dispatcher_all_equal": true,
+  "phase_coverage": [],
+  "post_minus_app_tick_histogram": {},
+  "empirical_interval_contains_visual_interval": {
+    "covered": 0,
+    "total": 0
+  },
+  "candidate_midpoint_vs_visual_interval_midpoint_error_ms": null,
+  "worst_midpoint_error_bound_ms": null,
+  "frozen_interval_width_ms": null,
+  "arrival_minus_sdk_ms": null,
+  "all_dynamic_arrival_minus_sdk_ms": {
+    "median": 33.33333507180214,
+    "p95": 66.66667014360428,
+    "max": 66.66667014360428
+  },
+  "arrival_minus_image_epoch_ms": null,
+  "callback_to_arrival_wall_ms": null,
+  "writer_duration_wall_ms": null,
+  "scope_oracle": {
+    "oracle_used_only_after_prediction_export": true,
+    "z_range_m": [
+      0.25999999046325684,
+      0.25999999046325684
+    ],
+    "all_kinematic": true,
+    "max_quaternion_distance_from_identity": 0.0,
+    "x_range_m": [
+      0.800000011920929,
+      0.8479999899864197
+    ],
+    "command_vs_next_two_physics_steps_error_m": {
+      "median": 2.6156286022935076e-08,
+      "p95": 2.9736102517982758e-08,
+      "max": 3.1319745285096374e-08
+    }
+  },
+  "prediction_sha256": "e4c169d107b6b805002959959ceb9738dd2f20015f62dc47cf42b9df438dd6f4",
+  "manifest_sha256": "876b22c36193e919d4b61f7924fa2938cccff702afac19c302d3c9887e272c2c",
+  "binding_sha256": null,
+  "no_cube_oracle_in_calibration": true,
+  "note": "Interval is empirical, configuration-specific, and includes one tick of visual-code quantization. Point measurement_time_s remains null; online_fusion_eligible remains false."
+}

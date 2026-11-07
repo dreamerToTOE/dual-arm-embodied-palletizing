@@ -1,0 +1,5 @@
+{
+  "error": "AttributeError(\"module 'cv2.aruco' has no attribute 'DetectorParameters_create'\")",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/scripts/capture_r1_time_binding.py\", line 154, in main\n    app.update();capture('dynamic')\n  File \"/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/scripts/capture_r1_time_binding.py\", line 141, in capture\n    det=detect_aruco(cv2.cvtColor(rgba,cv2.COLOR_RGBA2BGR),K,np.zeros(5),.06,23) if label=='dynamic' else None\n  File \"/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_vision_contact_r2b/visual/aruco_pose.py\", line 21, in detect_aruco\n    params = cv2.aruco.DetectorParameters_create()\nAttributeError: module 'cv2.aruco' has no attribute 'DetectorParameters_create'\n",
+  "frames": 36
+}

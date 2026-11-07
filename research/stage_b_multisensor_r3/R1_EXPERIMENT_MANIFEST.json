@@ -1,0 +1,96 @@
+{
+  "schema": "r3.p2a_r1.experiment_manifest.v1",
+  "starting_head": "607a9ee5feb4e997bb5d91379a19cafa9705f72d",
+  "branch": "research/stage-b-r3-multisensor-plan",
+  "decision": "PARTIAL",
+  "runs": [
+    {
+      "run": "r1_calibration01",
+      "status": "FAILED_IMPORT",
+      "raw_clock_rgb_depth_pairs": 0,
+      "receipts_sha256": {
+        "failure.json": "2a6693ae68647421253c8639cd671f0c87d56f6a6a66290d80f03a6f84bfb7f7",
+        "capture_failure_snapshot.py": "150aead08f5386e9c15d5f6547e6d5ddbb93b89283bf90d84954a9c08e5afc65",
+        "isaac.log": "21019b1e540dba5df0ada06945de1bbcfacb8b2ed7f0db8809ce76e2e6dc7857"
+      }
+    },
+    {
+      "run": "r1_api_inventory",
+      "status": "API_INVENTORY",
+      "raw_clock_rgb_depth_pairs": 0,
+      "receipts_sha256": {
+        "isaac.log": "53f0544addfb3332cda0ead0f271564e3dd3b948e24702ba7686b583efe37df4",
+        "python_exports.json": "79b0ca0c3c758871ad928fa8c5c2f16d1957aef7fe2168941dd760118d6d5f57",
+        "probe_source.py": "5a84e81791cd69f2244da8da71f51d91627cc92b07410486a493d3613ce3420d"
+      }
+    },
+    {
+      "run": "r1_calibration02",
+      "status": "FAILED_INCIDENTAL_CV2",
+      "raw_clock_rgb_depth_pairs": 36,
+      "receipts_sha256": {
+        "failure.json": "a2a7c01030ce8fd1d52a5c2c5b127675a8eee367a9e7e8410ff1b3a21fc28cdd",
+        "capture_failure_snapshot.py": "d49601cd6131d43b42b01d213e301f4b7f55c2a1b4c522fea861c72a9e3c0cc6",
+        "isaac.log": "88a465ef3cd2bc6e876cc65235c2d4e861b90d9560918b57b39c9004c38317f1"
+      }
+    },
+    {
+      "run": "r1_calibration03",
+      "status": "INCONCLUSIVE_CLIPPED_CLOCK",
+      "raw_clock_rgb_depth_pairs": 216,
+      "receipts_sha256": {
+        "manifest.json": "876b22c36193e919d4b61f7924fa2938cccff702afac19c302d3c9887e272c2c",
+        "capture_snapshot.py": "ffe43e353390fbc551b502ceef4b5b54063763b6dfc3cf5bd6ffddd9e71b6115",
+        "config_snapshot.json": "c7b97d7ff2272f70fb44b5427abef2a812757fefb309842872f6b6cbb9d1f1dd",
+        "isaac.log": "09acc96470528cfcbead76db7d4f4f74d773c83ed29ffdf661438434e9cccbdb"
+      }
+    },
+    {
+      "run": "r1_calibration04",
+      "status": "PARTIAL_CALIBRATION",
+      "raw_clock_rgb_depth_pairs": 216,
+      "receipts_sha256": {
+        "manifest.json": "71f9ba32de34cb9f6804b8048ccd50e2bf4c466ce133d74f106e58c42e2b98d4",
+        "capture_snapshot.py": "efd769c6db7bfca5422ad24601788984ae2b3dc1066974bfe09fa39a350763da",
+        "config_snapshot.json": "bc6c6a64b68ff90de619b2b2da975fdd14e5a436a83d5f5c43e90a8053319da7",
+        "r1_time_code_snapshot.py": "31d450596b8dfd25e39e22a3c814f9fa6e537d63d505354dbe0fda5c51592e91",
+        "isaac.log": "146872986e8fb00d9327b2456d3c79ec54cac4213d60c38db1393bdf76fa04d3"
+      }
+    },
+    {
+      "run": "r1_holdout01",
+      "status": "PARTIAL_INDEPENDENT_HOLDOUT",
+      "raw_clock_rgb_depth_pairs": 216,
+      "receipts_sha256": {
+        "manifest.json": "3a800840a41503bfd8ba207c1f35d47578a51f8bc860df063d4048fc2ee82d8e",
+        "capture_snapshot.py": "efd769c6db7bfca5422ad24601788984ae2b3dc1066974bfe09fa39a350763da",
+        "config_snapshot.json": "bc6c6a64b68ff90de619b2b2da975fdd14e5a436a83d5f5c43e90a8053319da7",
+        "r1_time_code_snapshot.py": "eaa9ea81349da988bcc805f264a4338171a2b45ca5e6c39da6f54e939c0de811",
+        "isaac.log": "5a2d93be35e9602b960703a296b28528bbfcd6e1986ef9663a5695054c3aab8e"
+      }
+    }
+  ],
+  "frozen_binding_sha256": "54a2f54fe2dd1a17acba1947b3ffc1b7bd03fe5b395e996c666b309a01b31fbf",
+  "configuration_fingerprint": "34a697054f61b61119ffe215c26be160c78b0718541a501cf046eb4a273cbff6",
+  "numerical_result": {
+    "calibration_valid_unique_dynamic_frames": 143,
+    "holdout_valid_unique_dynamic_frames": 136,
+    "holdout_interval_coverage": "136/136",
+    "sdk_fabric_max_difference_s": 0,
+    "observed_sdk_minus_image_post_epoch_ms": [
+      0,
+      33.33333507180214
+    ],
+    "frozen_measurement_interval_width_ms": 50.00000260770321,
+    "worst_midpoint_error_bound_ms": 25.000001303851604,
+    "target_error_ms": 16.66666753590107,
+    "point_measurement_time_s": null,
+    "online_fusion_eligible": false
+  },
+  "scope": "Stage B tabletop; independent visual clocks; no changes to original Task26/27 behavior; stop after P2A-R1",
+  "report": "R3_P2A_R1_TIME_BINDING.md",
+  "cpu_tests": "evidence/r1_cpu_tests.txt",
+  "replay_entry": "scripts/evaluate_r1_time_binding.py",
+  "prior_p2a_files_modified": false,
+  "staged_only_replay": "evidence/r1_index_replay.json"
+}

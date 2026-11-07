@@ -1,0 +1,149 @@
+{
+  "schema": "r3.p2a_r1.time_evaluation.v1",
+  "decision": "PARTIAL",
+  "run": "r1_holdout01",
+  "split": "holdout",
+  "counts": {
+    "rgb_depth_paired_captures": 216,
+    "settled_pattern_checks": 18,
+    "settled_pattern_correct": 18,
+    "dynamic_captures": 180,
+    "duplicate_dynamic_captures": 43
+  },
+  "unique_dynamic_frames": 137,
+  "valid_unique_dynamic_frames": 136,
+  "pattern_control_pass": true,
+  "full_phase_coverage": true,
+  "independent_holdout": true,
+  "rejection_reasons": {
+    "code_not_in_dynamic_history": 1,
+    "duplicate": 43
+  },
+  "physics_tick_s": 0.01666666753590107,
+  "offset_histogram_ticks": {
+    "0.0": 3,
+    "2.0": 133
+  },
+  "offset_ms": {
+    "median": 33.33333507180214,
+    "p95": 33.33333507180214,
+    "max": 33.33333507180214
+  },
+  "sdk_fabric_max_difference_s": 0.0,
+  "callback_core_minus_sdk_max_s": 0.0,
+  "reference_dispatcher_all_equal": true,
+  "phase_coverage": [
+    {
+      "phase": 0,
+      "velocity_m_s": 0.0,
+      "unique_frames": 12
+    },
+    {
+      "phase": 1,
+      "velocity_m_s": -0.06,
+      "unique_frames": 16
+    },
+    {
+      "phase": 2,
+      "velocity_m_s": 0.0,
+      "unique_frames": 6
+    },
+    {
+      "phase": 3,
+      "velocity_m_s": 0.1,
+      "unique_frames": 12
+    },
+    {
+      "phase": 4,
+      "velocity_m_s": 0.0,
+      "unique_frames": 9
+    },
+    {
+      "phase": 5,
+      "velocity_m_s": -0.1,
+      "unique_frames": 22
+    },
+    {
+      "phase": 6,
+      "velocity_m_s": 0.0,
+      "unique_frames": 4
+    },
+    {
+      "phase": 7,
+      "velocity_m_s": 0.06,
+      "unique_frames": 17
+    },
+    {
+      "phase": 8,
+      "velocity_m_s": 0.0,
+      "unique_frames": 10
+    },
+    {
+      "phase": 9,
+      "velocity_m_s": 0.0,
+      "unique_frames": 28
+    }
+  ],
+  "post_minus_app_tick_histogram": {
+    "2": 136
+  },
+  "empirical_interval_contains_visual_interval": {
+    "covered": 136,
+    "total": 136
+  },
+  "candidate_midpoint_vs_visual_interval_midpoint_error_ms": {
+    "median": 16.66666753590107,
+    "p95": 16.66666753590107,
+    "max": 16.66666753590107
+  },
+  "worst_midpoint_error_bound_ms": 25.000001303851604,
+  "frozen_interval_width_ms": 50.00000260770321,
+  "arrival_minus_sdk_ms": {
+    "median": 33.33333507180214,
+    "p95": 33.33333507180214,
+    "max": 33.33333507180214
+  },
+  "all_dynamic_arrival_minus_sdk_ms": {
+    "median": 33.33333507180214,
+    "p95": 66.66667014360428,
+    "max": 66.66667014360428
+  },
+  "arrival_minus_image_epoch_ms": {
+    "median": 66.66667014360428,
+    "p95": 66.66667014360428,
+    "max": 66.66667014360428
+  },
+  "callback_to_arrival_wall_ms": {
+    "median": 26.44960399993579,
+    "p95": 39.452836748751,
+    "max": 59.81160300143529
+  },
+  "writer_duration_wall_ms": {
+    "median": 6.528406500365236,
+    "p95": 7.264426250003453,
+    "max": 60.54866300110007
+  },
+  "scope_oracle": {
+    "oracle_used_only_after_prediction_export": true,
+    "z_range_m": [
+      0.25999999046325684,
+      0.25999999046325684
+    ],
+    "all_kinematic": true,
+    "max_quaternion_distance_from_identity": 0.0,
+    "x_range_m": [
+      0.7630000114440918,
+      0.8529999852180481
+    ],
+    "command_vs_next_two_physics_steps_error_m": {
+      "median": 1.495711430830372e-08,
+      "p95": 2.7976921897743173e-08,
+      "max": 3.1206333230257356e-08
+    }
+  },
+  "prediction_sha256": "7c48f1a41f8e9f5c0c11a70a3ec6b93e31ed879955d0ff69ea915e5767ab9d72",
+  "manifest_sha256": "3a800840a41503bfd8ba207c1f35d47578a51f8bc860df063d4048fc2ee82d8e",
+  "binding_sha256": "54a2f54fe2dd1a17acba1947b3ffc1b7bd03fe5b395e996c666b309a01b31fbf",
+  "no_cube_oracle_in_calibration": true,
+  "note": "Interval is empirical, configuration-specific, and includes one tick of visual-code quantization. Point measurement_time_s remains null; online_fusion_eligible remains false."
+}
