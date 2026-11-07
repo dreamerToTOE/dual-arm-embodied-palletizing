@@ -1,0 +1,192 @@
+{
+  "schema": "r3.p2b0_r1.frozen.v1",
+  "starting_head": "3128c6340e0a43cd7c5021b5633157103cb1a8bb",
+  "physics_hz": 60,
+  "updates": 180,
+  "warmup_updates": 90,
+  "robot_wrist_amplitude_rad": 0.015,
+  "robot_wrist_period_s": 3.0,
+  "capture_every_updates": 2,
+  "max_interpolation_bracket_s": 0.034,
+  "history_max_samples": 1200,
+  "max_stale_arrival_s": 0.15,
+  "broad_candidate_span_s": 0.05,
+  "fk_position_tolerance_m": 1e-05,
+  "fk_rotation_tolerance_rad": 0.0001,
+  "interpolation_q_tolerance_rad": 0.0002,
+  "interpolation_dq_tolerance_rad_s": 0.001,
+  "interpolation_tcp_tolerance_m": 2e-05,
+  "interpolation_rotation_tolerance_rad": 0.0002,
+  "scope": "Stage B table-supported kinematic Cube + genuine measured FR3 +/-15mrad wrist motion; sync probe, no suction/contact validation",
+  "split": "predeclared_holdout_no_parameter_fit",
+  "time_policy": "Record live initialized robot state before creating each fresh camera RP. Causal epoch lower bound requires fresh RP creation AND newly authored decoded RGB/depth birth token. Keep entire [epoch_birth,callback_entry] interval; no transfer offset.",
+  "sensor_dropout_test": "offline hide RGB-D observations over 1s, never delete robot history",
+  "unavailable_channels": [
+    "suction_closed_feedback",
+    "suction_pressure",
+    "attachment_confidence",
+    "tool_contact_sensor",
+    "wall_contact_sensor",
+    "measured_contact_force"
+  ],
+  "r2_visual_source": "r2_scene_binding.estimate_cube_pixels, unchanged",
+  "table_height_m": 0.2,
+  "cube_size_m": 0.12,
+  "clock_bits": 16,
+  "clock_first_pixel": [
+    340,
+    180
+  ],
+  "clock_cell_spacing_px": 20,
+  "clock_cell_size_px": 16,
+  "clock_depth_zero_m": 0.85,
+  "clock_depth_one_m": 0.89,
+  "pattern_check_codes": [
+    0,
+    65535,
+    43690,
+    21845,
+    4660,
+    32769
+  ],
+  "pattern_updates": 6,
+  "camera_eye": [
+    1.7,
+    -0.35,
+    0.8
+  ],
+  "camera_target": [
+    0.82,
+    0.0,
+    0.3
+  ],
+  "resolution": [
+    1280,
+    720
+  ],
+  "clipping_range_m": [
+    0.01,
+    100.0
+  ],
+  "capture_roi": [
+    320,
+    150,
+    900,
+    510
+  ],
+  "holdout": [
+    [
+      0.5,
+      0
+    ],
+    [
+      0.6,
+      -0.1
+    ],
+    [
+      0.6,
+      0.1
+    ],
+    [
+      0.25,
+      0
+    ],
+    [
+      0.5,
+      -0.16
+    ],
+    [
+      0.5,
+      0.16
+    ],
+    [
+      0.3,
+      0
+    ],
+    [
+      0.4,
+      0.1
+    ],
+    [
+      0.4,
+      -0.1
+    ],
+    [
+      0.35,
+      0
+    ]
+  ],
+  "holdout_start_x_m": 0.86,
+  "baseline_sha": "3128c6340e0a43cd7c5021b5633157103cb1a8bb",
+  "epoch_restart_at_update": 90,
+  "stream_settle_updates": 6,
+  "command_every_updates": 3,
+  "methods": [
+    "linear",
+    "hermite",
+    "exact"
+  ],
+  "holdout_parities": [
+    0,
+    1
+  ],
+  "birth_codes": [
+    41809,
+    23718
+  ],
+  "trajectory": [
+    [
+      0.4,
+      0.0
+    ],
+    [
+      1.0,
+      0.006
+    ],
+    [
+      0.5,
+      0.0
+    ],
+    [
+      1.2,
+      -0.009
+    ],
+    [
+      0.4,
+      0.0
+    ],
+    [
+      1.1,
+      0.008
+    ],
+    [
+      0.6,
+      0.0
+    ],
+    [
+      0.8,
+      -0.005
+    ]
+  ],
+  "transition_near_ticks": 1,
+  "stable_motion_min_speed_rad_s": 0.001,
+  "method_policy": "Freeze linear q/dq and cubic Hermite q with analytic derivative dq; evaluate both unfiltered and command-constant brackets. Exact lookup never snaps. Only fully passing independent moving strata can be eligible for interpolation; no threshold relaxation.",
+  "original_config_sha256": "fa96ed1dbd66fbad8f32297c75db12b931749274e256e43ef60e9e62cd33d021",
+  "camera_matrix_reference": [
+    [
+      711.111083984375,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      711.111083984375,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

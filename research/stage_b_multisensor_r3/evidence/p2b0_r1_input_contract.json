@@ -1,0 +1,26 @@
+{
+  "schema": "r3.p2b0_r1.restricted_input.v1",
+  "recommended_option": "A",
+  "robot_query": "ReadinessHistory.exact_at(identity,time_s)",
+  "robot_values": "actual measured q/dq plus recomputed URDF FK; no nearest-step snapping",
+  "continuous_time_candidates": "Full visual closed interval retained; non-grid robot values UNKNOWN, never silently collapsed to grid",
+  "empirically_validated_interpolation": "Linear unchanged-command 33.333ms brackets:251/251 within original thresholds on new recorded holdout, including131 stable-motion targets; scope is this local wrist probe only, not automatic transfer to a different controller/trajectory",
+  "unverified_interpolation": [
+    "linear command-transition brackets",
+    "Hermite q/dq from installed PhysX endpoints",
+    "all interpolation outside validated probe scope"
+  ],
+  "default_interpolation_enabled": false,
+  "software_feedback": "Surface_Gripper.is_closed is software feedback, not independent physical attachment verification",
+  "fk_to_cube": "Forbidden without explicitly established attachment condition",
+  "unavailable": [
+    "suction_closed_feedback",
+    "suction_pressure",
+    "attachment_confidence",
+    "tool_contact_sensor",
+    "wall_contact_sensor",
+    "measured_contact_force"
+  ],
+  "measurement_time_s": null,
+  "online_fusion_eligible": false
+}

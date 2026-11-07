@@ -1,0 +1,430 @@
+{
+  "checks": {
+    "complete_acquisition": true,
+    "exact_never_fabricates_withheld_values": true,
+    "fk": true,
+    "no_capture_errors": true,
+    "no_missing_robot_steps": true,
+    "retired_buffers_rejected": true,
+    "same_source_clocks": true
+  },
+  "continuous_candidate_policy": "Full visual interval retained. Exact lookup supports physics samples only; no snapping and no inferred continuous q/dq. Acquisition coverage is not continuous interpolation validation.",
+  "coverage": {
+    "accepted_frames": 96,
+    "full_grid_coverage_frames": 96,
+    "grid_candidates": 8970,
+    "per_epoch": {
+      "0": {
+        "first_time_s": 2.2666667848825455,
+        "last_time_s": 5.466666951775551,
+        "missing_steps": 0,
+        "robot_samples": 193
+      },
+      "1": {
+        "first_time_s": 5.466666951775551,
+        "last_time_s": 8.666667118668556,
+        "missing_steps": 0,
+        "robot_samples": 193
+      }
+    },
+    "raw_frames": 96,
+    "rejected_frames": 0,
+    "rejection_reasons": {},
+    "supported_grid_candidates": 8970,
+    "unsupported_acquisition_duration_s": {
+      "max": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "visual_uncertainty_width_s": {
+      "max": 3.100000161677599,
+      "median": 1.5333334133028984,
+      "p95": 2.9666668213903904
+    }
+  },
+  "decision": "PARTIAL",
+  "dynamic_interpolation": "PARTIAL",
+  "exact_full_history": {
+    "independent_fk_scoring": "fk field",
+    "lookup_acceptance": 386,
+    "lookup_samples": 386,
+    "q_dq_self_consistency_only": true
+  },
+  "fk": {
+    "arm_samples": 772,
+    "position_error_mm": {
+      "max": 0.00046542194966141086,
+      "median": 0.00023453510070443407,
+      "p95": 0.0003812887392137838
+    },
+    "rotation_error_rad": {
+      "max": 9.619510023236515e-07,
+      "median": 5.446421653036418e-07,
+      "p95": 8.058737595440271e-07
+    }
+  },
+  "methods": {
+    "exact": {
+      "constant_command_guarded": {
+        "accepted": 0,
+        "all_queries": 370,
+        "dq_error_rad_s": null,
+        "q_error_rad": null,
+        "queries": 251,
+        "rejected": 251,
+        "rejected_by_guard": 119,
+        "rotation_error_rad": null,
+        "tcp_error_mm": null,
+        "within_frozen_thresholds": 0
+      },
+      "strata": {
+        "stable_hold": {
+          "accepted": 0,
+          "dq_error_rad_s": null,
+          "q_error_rad": null,
+          "queries": 60,
+          "rejected": 60,
+          "rotation_error_rad": null,
+          "tcp_error_mm": null,
+          "within_frozen_thresholds": 0
+        },
+        "stable_motion": {
+          "accepted": 0,
+          "dq_error_rad_s": null,
+          "q_error_rad": null,
+          "queries": 131,
+          "rejected": 131,
+          "rotation_error_rad": null,
+          "tcp_error_mm": null,
+          "within_frozen_thresholds": 0
+        },
+        "transition": {
+          "accepted": 0,
+          "dq_error_rad_s": null,
+          "q_error_rad": null,
+          "queries": 179,
+          "rejected": 179,
+          "rotation_error_rad": null,
+          "tcp_error_mm": null,
+          "within_frozen_thresholds": 0
+        }
+      },
+      "unfiltered": {
+        "accepted": 0,
+        "dq_error_rad_s": null,
+        "q_error_rad": null,
+        "queries": 370,
+        "rejected": 370,
+        "rotation_error_rad": null,
+        "tcp_error_mm": null,
+        "within_frozen_thresholds": 0
+      }
+    },
+    "hermite": {
+      "constant_command_guarded": {
+        "accepted": 251,
+        "all_queries": 370,
+        "dq_error_rad_s": {
+          "max": 0.01606297748940788,
+          "median": 0.016050950856879354,
+          "p95": 0.016051232572795504
+        },
+        "q_error_rad": {
+          "max": 1.5257270491453312e-06,
+          "median": 6.723546286391269e-08,
+          "p95": 3.290783883724835e-07
+        },
+        "queries": 251,
+        "rejected": 0,
+        "rejected_by_guard": 119,
+        "rotation_error_rad": {
+          "max": 1.7440667073950661e-06,
+          "median": 6.282726939343055e-07,
+          "p95": 9.200576942435899e-07
+        },
+        "tcp_error_mm": {
+          "max": 0.0007830632263277666,
+          "median": 0.00028806329653059513,
+          "p95": 0.00042458952694278217
+        },
+        "within_frozen_thresholds": 0
+      },
+      "strata": {
+        "stable_hold": {
+          "accepted": 60,
+          "dq_error_rad_s": {
+            "max": 0.016055956889935444,
+            "median": 0.016050951438955963,
+            "p95": 0.016050997318234294
+          },
+          "q_error_rad": {
+            "max": 6.694598564394028e-07,
+            "median": 9.149833635202498e-08,
+            "p95": 3.877645611882747e-07
+          },
+          "queries": 60,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 1.0068913685978508e-06,
+            "median": 5.833560937944215e-07,
+            "p95": 9.448830732944387e-07
+          },
+          "tcp_error_mm": {
+            "max": 0.00045352337606821373,
+            "median": 0.00029660447114802577,
+            "p95": 0.000428684239279005
+          },
+          "within_frozen_thresholds": 0
+        },
+        "stable_motion": {
+          "accepted": 131,
+          "dq_error_rad_s": {
+            "max": 0.01606297748940788,
+            "median": 0.016050952253863215,
+            "p95": 0.01605102326720953
+          },
+          "q_error_rad": {
+            "max": 3.732197305650331e-07,
+            "median": 5.793637936069018e-08,
+            "p95": 1.3164494483408617e-07
+          },
+          "queries": 131,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 1.0309251005231033e-06,
+            "median": 6.287763138382028e-07,
+            "p95": 8.314735791628574e-07
+          },
+          "tcp_error_mm": {
+            "max": 0.000463103561470713,
+            "median": 0.0002786565278792601,
+            "p95": 0.00040850950582255776
+          },
+          "within_frozen_thresholds": 0
+        },
+        "transition": {
+          "accepted": 179,
+          "dq_error_rad_s": {
+            "max": 0.018445874156087373,
+            "median": 0.01605094945989549,
+            "p95": 0.01605298307244647
+          },
+          "q_error_rad": {
+            "max": 7.49073244478149e-05,
+            "median": 3.9162701526151977e-07,
+            "p95": 3.737152064542393e-05
+          },
+          "queries": 179,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 7.498806460510745e-05,
+            "median": 9.524812087777112e-07,
+            "p95": 3.7519697494292105e-05
+          },
+          "tcp_error_mm": {
+            "max": 0.027194415429969435,
+            "median": 0.00040939302865535253,
+            "p95": 0.005968281260527613
+          },
+          "within_frozen_thresholds": 0
+        }
+      },
+      "unfiltered": {
+        "accepted": 370,
+        "dq_error_rad_s": {
+          "max": 0.018445874156087373,
+          "median": 0.016050950856879354,
+          "p95": 0.016051680532637946
+        },
+        "q_error_rad": {
+          "max": 7.49073244478149e-05,
+          "median": 8.780607052560896e-08,
+          "p95": 3.717839122361899e-05
+        },
+        "queries": 370,
+        "rejected": 0,
+        "rotation_error_rad": {
+          "max": 7.498806460510745e-05,
+          "median": 6.795277279930853e-07,
+          "p95": 3.7059023194949906e-05
+        },
+        "tcp_error_mm": {
+          "max": 0.027194415429969435,
+          "median": 0.0003232660915524319,
+          "p95": 0.005847919789425769
+        },
+        "within_frozen_thresholds": 0
+      }
+    },
+    "linear": {
+      "constant_command_guarded": {
+        "accepted": 251,
+        "all_queries": 370,
+        "dq_error_rad_s": {
+          "max": 0.0001860181801021099,
+          "median": 6.435741670429707e-05,
+          "p95": 0.00012632599100470543
+        },
+        "q_error_rad": {
+          "max": 1.8596649169921875e-05,
+          "median": 6.4373016357421875e-06,
+          "p95": 1.2606382369995117e-05
+        },
+        "queries": 251,
+        "rejected": 0,
+        "rejected_by_guard": 119,
+        "rotation_error_rad": {
+          "max": 1.876989942546185e-05,
+          "median": 6.705027816051505e-06,
+          "p95": 1.310637444485182e-05
+        },
+        "tcp_error_mm": {
+          "max": 0.007409006984294169,
+          "median": 0.001201454584086116,
+          "p95": 0.0023124096029887237
+        },
+        "within_frozen_thresholds": 251
+      },
+      "strata": {
+        "stable_hold": {
+          "accepted": 60,
+          "dq_error_rad_s": {
+            "max": 0.0001574861817061901,
+            "median": 1.981187961064279e-05,
+            "p95": 0.00010705720633268355
+          },
+          "q_error_rad": {
+            "max": 1.576542854309082e-05,
+            "median": 1.9818544387817383e-06,
+            "p95": 1.0642409324645993e-05
+          },
+          "queries": 60,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 1.60190019525552e-05,
+            "median": 2.4002234552019894e-06,
+            "p95": 1.2094513134744434e-05
+          },
+          "tcp_error_mm": {
+            "max": 0.007024778736068696,
+            "median": 0.0005740685826698467,
+            "p95": 0.002754875944674006
+          },
+          "within_frozen_thresholds": 60
+        },
+        "stable_motion": {
+          "accepted": 131,
+          "dq_error_rad_s": {
+            "max": 0.0001208942849189043,
+            "median": 6.738351657986641e-05,
+            "p95": 0.00011609657667577267
+          },
+          "q_error_rad": {
+            "max": 1.2069940567016602e-05,
+            "median": 6.735324859619141e-06,
+            "p95": 1.1593103408813477e-05
+          },
+          "queries": 131,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 1.2542032918741224e-05,
+            "median": 6.963419667219157e-06,
+            "p95": 1.1995971661140245e-05
+          },
+          "tcp_error_mm": {
+            "max": 0.0020730399831181746,
+            "median": 0.001245957725066225,
+            "p95": 0.0019345529274206893
+          },
+          "within_frozen_thresholds": 131
+        },
+        "transition": {
+          "accepted": 179,
+          "dq_error_rad_s": {
+            "max": 0.008780586445936933,
+            "median": 0.00013402197510004044,
+            "p95": 0.004333143820986152
+          },
+          "q_error_rad": {
+            "max": 0.00013685226440429688,
+            "median": 1.0520219802856445e-05,
+            "p95": 6.163418292999267e-05
+          },
+          "queries": 179,
+          "rejected": 0,
+          "rotation_error_rad": {
+            "max": 0.00013662707780807734,
+            "median": 1.0686018327310753e-05,
+            "p95": 6.152858070443798e-05
+          },
+          "tcp_error_mm": {
+            "max": 0.02124553631926723,
+            "median": 0.0019326784007424919,
+            "p95": 0.009617702550181054
+          },
+          "within_frozen_thresholds": 98
+        }
+      },
+      "unfiltered": {
+        "accepted": 370,
+        "dq_error_rad_s": {
+          "max": 0.008780586445936933,
+          "median": 7.596402429044247e-05,
+          "p95": 0.0038829040713608265
+        },
+        "q_error_rad": {
+          "max": 0.00013685226440429688,
+          "median": 7.554888725280762e-06,
+          "p95": 5.480647087097168e-05
+        },
+        "queries": 370,
+        "rejected": 0,
+        "rotation_error_rad": {
+          "max": 0.00013662707780807734,
+          "median": 7.54610651325158e-06,
+          "p95": 5.484574301408801e-05
+        },
+        "tcp_error_mm": {
+          "max": 0.02124553631926723,
+          "median": 0.00136894514505139,
+          "p95": 0.008628020598781965
+        },
+        "within_frozen_thresholds": 289
+      }
+    }
+  },
+  "motion_peak_to_peak_rad": {
+    "left": [
+      1.8901118892244995e-05,
+      0.001063227653503418,
+      6.931877578608692e-05,
+      0.0005705356597900391,
+      0.00010043337533716112,
+      2.7418136596679688e-06,
+      0.01076054573059082
+    ],
+    "right": [
+      1.7229514924110845e-05,
+      0.001052260398864746,
+      5.4575208196183667e-05,
+      0.0005176067352294922,
+      8.921236440073699e-05,
+      6.4373016357421875e-06,
+      0.010760128498077393
+    ]
+  },
+  "online_fusion_eligible": false,
+  "p2b1_input_option": "A",
+  "restricted_readiness": "PASS_EXACT_ONLY_A",
+  "robot_samples": 386,
+  "schema": "r3.p2b0_r1.readiness.v1",
+  "unavailable_channels": [
+    "suction_closed_feedback",
+    "suction_pressure",
+    "attachment_confidence",
+    "tool_contact_sensor",
+    "wall_contact_sensor",
+    "measured_contact_force"
+  ],
+  "validated_interpolation_granted": false
+}
