@@ -1,0 +1,67 @@
+{
+  "case_plan": {
+    "connected": [
+      "fully_visible",
+      "short",
+      "long",
+      "recovery"
+    ],
+    "loss": [
+      "fully_visible",
+      "loss_hidden"
+    ],
+    "slip": [
+      "fully_visible",
+      "short"
+    ],
+    "verification": [
+      "fully_visible",
+      "short",
+      "long",
+      "recovery"
+    ]
+  },
+  "masks": {
+    "fully_visible": [],
+    "short": [
+      [
+        4.0,
+        4.7
+      ]
+    ],
+    "long": [
+      [
+        3.0,
+        17.533334
+      ]
+    ],
+    "recovery": [
+      [
+        5.0,
+        8.0
+      ]
+    ],
+    "loss_hidden": [
+      [
+        3.0,
+        17.533334
+      ]
+    ]
+  },
+  "correction_threshold_m": 0.003,
+  "recovery_window_s": 2.0,
+  "connection_label_definition": "enabled controlled PhysX fixed joint, verified independently against Cube/link relative transforms; not suction seal/contact certification",
+  "velocity_scope": "No time point image assignment; full intervals retained; Gaussian approximation of uniformly distributed delayed correction is a modelling assumption, not timing certification",
+  "measurement_source": "same-RP RGB-D, rear wall unchanged; no forced simulator contact input",
+  "strict_missed_disconnection": "label DISCONNECTED and predicted state not DISCONNECTED, includes UNKNOWN",
+  "initial_pose_registration": "image-only initial Cube pose with static supported FK history, no Cube GT calibration",
+  "offline_history_max_samples": 4096,
+  "independent_corrected_holdout_conditions": [
+    "verification"
+  ],
+  "development_after_fix_conditions": [
+    "connected",
+    "loss",
+    "slip"
+  ]
+}

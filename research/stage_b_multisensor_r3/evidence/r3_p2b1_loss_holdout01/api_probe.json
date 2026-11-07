@@ -1,0 +1,27 @@
+{
+  "RationalTime_doc": null,
+  "cpp_type": "omni::fabric::RationalTime from installed header; local Python binding required",
+  "native_build": {
+    "command": [
+      "g++",
+      "-O2",
+      "-shared",
+      "-std=c++17",
+      "-fPIC",
+      "-fabi-version=11",
+      "-I/usr/include/pybind11",
+      "-I/usr/include/python3.10",
+      "-I/home/ubuntu2004/isaacsim-4.5.0/kit/dev/include",
+      "-I/home/ubuntu2004/isaacsim-4.5.0/kit/dev/fabric/include",
+      "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/native/r1_fabric.cpp",
+      "-o",
+      "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/native/build/_r1_fabric.cpython-310-x86_64-linux-gnu.so"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "source_sha256": "6101b3f64c5606da16a525873bf67c43aa8859fa3090899a8088b5678ee59d77",
+    "installed_header_sha256": "8e2684b24bfe13de213c6ab2238a2d18c398163b1e92d1bae740ac36fadb7bd5"
+  },
+  "constructed_type": "<class '_r1_fabric.RationalTime'>",
+  "constructed_repr": "<_r1_fabric.RationalTime object at 0x7afd2d7d19b0>"
+}

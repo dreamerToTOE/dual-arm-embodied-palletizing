@@ -1,0 +1,388 @@
+{
+  "schema": "r3.p2b1.frozen_experiment.v1",
+  "starting_head": "3128c6340e0a43cd7c5021b5633157103cb1a8bb",
+  "physics_hz": 60,
+  "updates": 600,
+  "warmup_updates": 90,
+  "robot_wrist_amplitude_rad": 0.015,
+  "robot_wrist_period_s": 3.0,
+  "capture_every_updates": 2,
+  "max_interpolation_bracket_s": 0.034,
+  "history_max_samples": 1200,
+  "max_stale_arrival_s": 0.15,
+  "broad_candidate_span_s": 0.05,
+  "fk_position_tolerance_m": 1e-05,
+  "fk_rotation_tolerance_rad": 0.0001,
+  "interpolation_q_tolerance_rad": 0.0002,
+  "interpolation_dq_tolerance_rad_s": 0.001,
+  "interpolation_tcp_tolerance_m": 2e-05,
+  "interpolation_rotation_tolerance_rad": 0.0002,
+  "scope": "Stage B table-supported controlled PhysX fixed-joint fixture attachment; genuine FR3 position-drive motion; NOT a physical suction-contact validation",
+  "split": "predeclared_holdout_no_parameter_fit",
+  "time_policy": "Record live initialized robot state before creating each fresh camera RP. Causal epoch lower bound requires fresh RP creation AND newly authored decoded RGB/depth birth token. Keep entire [epoch_birth,callback_entry] interval; no transfer offset.",
+  "sensor_dropout_test": "offline hide RGB-D observations over 1s, never delete robot history",
+  "unavailable_channels": [
+    "suction_closed_feedback",
+    "suction_pressure",
+    "attachment_confidence",
+    "tool_contact_sensor",
+    "wall_contact_sensor",
+    "measured_contact_force"
+  ],
+  "r2_visual_source": "r2_scene_binding.estimate_cube_pixels, unchanged",
+  "table_height_m": 0.2,
+  "cube_size_m": 0.12,
+  "clock_bits": 16,
+  "clock_first_pixel": [
+    340,
+    180
+  ],
+  "clock_cell_spacing_px": 20,
+  "clock_cell_size_px": 16,
+  "clock_depth_zero_m": 0.85,
+  "clock_depth_one_m": 0.89,
+  "pattern_check_codes": [
+    0,
+    65535,
+    43690,
+    21845,
+    4660,
+    32769
+  ],
+  "pattern_updates": 6,
+  "camera_eye": [
+    1.7,
+    -0.35,
+    0.8
+  ],
+  "camera_target": [
+    0.82,
+    0.0,
+    0.3
+  ],
+  "resolution": [
+    1280,
+    720
+  ],
+  "clipping_range_m": [
+    0.01,
+    100.0
+  ],
+  "capture_roi": [
+    320,
+    150,
+    900,
+    510
+  ],
+  "holdout": [
+    [
+      0.5,
+      0
+    ],
+    [
+      0.6,
+      -0.1
+    ],
+    [
+      0.6,
+      0.1
+    ],
+    [
+      0.25,
+      0
+    ],
+    [
+      0.5,
+      -0.16
+    ],
+    [
+      0.5,
+      0.16
+    ],
+    [
+      0.3,
+      0
+    ],
+    [
+      0.4,
+      0.1
+    ],
+    [
+      0.4,
+      -0.1
+    ],
+    [
+      0.35,
+      0
+    ]
+  ],
+  "holdout_start_x_m": 0.86,
+  "baseline_sha": "5f02408764029b723e561e0611220b972f05b232",
+  "epoch_restart_at_update": 90,
+  "stream_settle_updates": 6,
+  "command_every_updates": 3,
+  "methods": [
+    "linear",
+    "hermite",
+    "exact"
+  ],
+  "holdout_parities": [
+    0,
+    1
+  ],
+  "birth_codes": [
+    41809,
+    23718
+  ],
+  "trajectory": [
+    [
+      0.4,
+      0.0
+    ],
+    [
+      1.0,
+      0.006
+    ],
+    [
+      0.5,
+      0.0
+    ],
+    [
+      1.2,
+      -0.009
+    ],
+    [
+      0.4,
+      0.0
+    ],
+    [
+      1.1,
+      0.008
+    ],
+    [
+      0.6,
+      0.0
+    ],
+    [
+      0.8,
+      -0.005
+    ]
+  ],
+  "transition_near_ticks": 1,
+  "stable_motion_min_speed_rad_s": 0.001,
+  "method_policy": "Freeze linear q/dq and cubic Hermite q with analytic derivative dq; evaluate both unfiltered and command-constant brackets. Exact lookup never snaps. Only fully passing independent moving strata can be eligible for interpolation; no threshold relaxation.",
+  "original_config_sha256": "fa96ed1dbd66fbad8f32297c75db12b931749274e256e43ef60e9e62cd33d021",
+  "camera_matrix_reference": [
+    [
+      711.111083984375,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      711.111083984375,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "conditions": {
+    "fixture_check": {
+      "cube_start_m": [
+        0.86,
+        0.06,
+        0.26
+      ],
+      "left_initial_q": [
+        0.22129464381286765,
+        -0.6563036257170861,
+        0.9348986354445704,
+        -2.2882201714512047,
+        0.5313849375116283,
+        1.8212044427492207,
+        1.6827694112098093
+      ],
+      "left_end_q": [
+        0.20158791005801993,
+        -0.5995338266143128,
+        0.9203601035922147,
+        -2.2749362948617553,
+        0.48580982835581243,
+        1.848407923825752,
+        1.6694364009123916
+      ],
+      "period_s": 8.0,
+      "loss_time_s": null,
+      "slip_velocity_m_s": 0.0
+    },
+    "connected": {
+      "cube_start_m": [
+        0.87,
+        0.06,
+        0.26
+      ],
+      "left_initial_q": [
+        0.21182507579374787,
+        -0.6350593355843993,
+        0.9300316872787346,
+        -2.2832854074580764,
+        0.5146194356513673,
+        1.8316481058946914,
+        1.6760359476063855
+      ],
+      "left_end_q": [
+        0.1413233799264374,
+        -0.5925525379264387,
+        0.9423711875323665,
+        -2.2599617860586707,
+        0.48903789088816213,
+        1.8484492433891857,
+        1.6332479223344971
+      ],
+      "period_s": 9.0,
+      "loss_time_s": null,
+      "slip_velocity_m_s": 0.0
+    },
+    "loss": {
+      "cube_start_m": [
+        0.855,
+        0.06,
+        0.26
+      ],
+      "left_initial_q": [
+        0.22630024484813638,
+        -0.6665365981503331,
+        0.9372130568029301,
+        -2.2904644937818213,
+        0.5394188547575988,
+        1.8160374637009988,
+        1.6865206330463403
+      ],
+      "left_end_q": [
+        0.16869779118034786,
+        -0.5998334073908682,
+        0.9335254719221533,
+        -2.2677407657211206,
+        0.49101206965892824,
+        1.84654515062293,
+        1.6492413845551008
+      ],
+      "period_s": 11.0,
+      "loss_time_s": 8.0,
+      "slip_velocity_m_s": 0.0
+    },
+    "slip": {
+      "cube_start_m": [
+        0.88,
+        0.06,
+        0.26
+      ],
+      "left_initial_q": [
+        0.20918520884692743,
+        -0.6084051216117409,
+        0.9208297341060038,
+        -2.2782365641050304,
+        0.49227087159717825,
+        1.8446038942769052,
+        1.6741657804079055
+      ],
+      "left_end_q": [
+        0.15667964030711756,
+        -0.5633321479934251,
+        0.9260726163622407,
+        -2.257059746936631,
+        0.46186928213243417,
+        1.8623754265478916,
+        1.6438555516211644
+      ],
+      "period_s": 7.5,
+      "loss_time_s": 8.0,
+      "slip_velocity_m_s": 0.4
+    },
+    "verification": {
+      "cube_start_m": [
+        0.873,
+        0.06,
+        0.26
+      ],
+      "left_initial_q": [
+        0.21029244375913844,
+        -0.6276116770192617,
+        0.9277602498287523,
+        -2.281783132034095,
+        0.5084974342837806,
+        1.8352909291132333,
+        1.674970091690043
+      ],
+      "left_end_q": [
+        0.1394652567089744,
+        -0.5722798543920159,
+        0.9366925552450667,
+        -2.2550899445204218,
+        0.4721937174926539,
+        1.8575051081000546,
+        1.6335009938432017
+      ],
+      "period_s": 10.3,
+      "loss_time_s": 9.0,
+      "slip_velocity_m_s": 0.4
+    }
+  },
+  "episode_s": 20.0,
+  "initial_static_s": 2.0,
+  "settle_robot_updates": 60,
+  "masks": {
+    "fully_visible": [],
+    "short": [
+      [
+        4.0,
+        4.7
+      ]
+    ],
+    "long": [
+      [
+        3.0,
+        17.533334
+      ]
+    ],
+    "recovery": [
+      [
+        5.0,
+        8.0
+      ]
+    ],
+    "loss_hidden": [
+      [
+        3.0,
+        17.533334
+      ]
+    ]
+  },
+  "visual_sigma_m": 0.003,
+  "process_acceleration_sigma_m_s2": 0.02,
+  "connection_residual_threshold_m": 0.009,
+  "connection_confirmations": 2,
+  "unresolved_between_step_padding_m": 0.003,
+  "initial_connection_assumption": "K1 conditional baseline only; primary F1 must infer or UNKNOWN",
+  "method_names": [
+    "V1",
+    "K1",
+    "F1"
+  ],
+  "ablation_names": [
+    "F1_no_robot",
+    "F1_no_visual",
+    "F1_naive_sdk_time"
+  ],
+  "holdout_conditions": [
+    "connected",
+    "loss",
+    "slip"
+  ],
+  "development_condition": "fixture_check",
+  "table_support_z_tolerance_m": 0.004,
+  "table_tilt_limit_deg": 5.0
+}

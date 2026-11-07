@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/scripts/evaluate_p2b1.py", line 154, in <module>
+    print(json.dumps(evaluate(a.runs,a.out),indent=2))
+  File "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r3-multisensor-plan/research/stage_b_multisensor_r3/scripts/evaluate_p2b1.py", line 129, in evaluate
+    first=states[0]['physics_step'];C0=np.eye(4);C0[:3,:3]=Rotation.from_quat(np.roll(truth[first]['cube_quaternion_wxyz'],-1)).as_matrix();C0[:3,3]=truth[first]['cube_xyz_m']
+KeyError: 220
