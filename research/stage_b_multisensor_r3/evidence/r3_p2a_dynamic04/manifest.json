@@ -1,0 +1,149 @@
+{
+  "schema": "r3.p2a.dynamic_capture.v1",
+  "baseline_commit": "c01e18a1e30e7118a77e8e51f0856c304a74d08f",
+  "config_sha256": "9f11a1a7682938dcf43a887c8b4782044efe424c611390469e415a040f17d9cf",
+  "source_sha256": {
+    "research/stage_b_multisensor_r3/scripts/capture_p2a_dynamic.py": "339ee1b10bfacca08417e44bce62e65716d07a19421acba5a37db0e5c2d8f4d9",
+    "research/stage_b_multisensor_r3/time_alignment.py": "8be289e15642b429b6eac542edc55d802ef19479ded635028bcbad369eba831c",
+    "isaac/scripts/task26_truck_box_scene.py": "43aa7c2eb6a5667da5e94eaaef347229fe6178ec58d6a10d12dddf14ba2aa9e7",
+    "offline/task28_g1_1/task28_validator/model.py": "38ec5d2cd2fc348ce9c67737a3a59b8194eaaf84331165ff5b2e3a4adb5b4dfa"
+  },
+  "installed_camera_source": "/home/ubuntu2004/isaacsim-4.5.0/exts/isaacsim.sensors.camera/isaacsim/sensors/camera/camera.py",
+  "installed_camera_sha256": "0780286d6882527500062200f986a97ea8c705fcd94211b9dae37dfac12023b4",
+  "K": [
+    [
+      711.111083984375,
+      0.0,
+      640.0
+    ],
+    [
+      0.0,
+      711.111083984375,
+      360.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "world_from_camera": [
+    [
+      0.36956942338645415,
+      0.9292031216573715,
+      0.0,
+      0.0
+    ],
+    [
+      -0.4338283090868444,
+      0.1725453502049945,
+      0.8843195691363421,
+      0.0
+    ],
+    [
+      0.8217125041841906,
+      -0.32681747325507576,
+      0.46688210465010826,
+      0.0
+    ],
+    [
+      1.7000000000000002,
+      -0.35,
+      0.8000000000000003,
+      1.0
+    ]
+  ],
+  "render_product": "/Render/OmniverseKit/HydraTextures/Replicator",
+  "joint_names": {
+    "left": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ],
+    "right": [
+      "fr3_joint1",
+      "fr3_joint2",
+      "fr3_joint3",
+      "fr3_joint4",
+      "fr3_joint5",
+      "fr3_joint6",
+      "fr3_joint7",
+      "fr3_finger_joint1",
+      "fr3_finger_joint2"
+    ]
+  },
+  "tool_local": {
+    "left": [
+      [
+        3.5937560337530224e-19,
+        0.9999999999999999,
+        3.7222460752365943e-19,
+        -2.220446049250313e-16
+      ],
+      [
+        -1.0,
+        1.011390952145361e-16,
+        6.296992632083668e-20,
+        -0.15500000000000014
+      ],
+      [
+        1.583283703048474e-19,
+        4.3110799158645395e-20,
+        1.0,
+        0.08000000000000007
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "right": [
+      [
+        3.0665858857421883e-17,
+        -0.9999999999999999,
+        2.35792876998417e-18,
+        -1.1102230246251565e-16
+      ],
+      [
+        1.0,
+        1.8820256239483608e-16,
+        -9.317830712808174e-18,
+        0.15500000000000003
+      ],
+      [
+        -6.973460946862807e-17,
+        5.811912163242136e-17,
+        1.0,
+        0.0799999999999999
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "updates": 240,
+  "physics_steps": 662,
+  "physics_start_s": 3.0333334915339947,
+  "physics_end_s": 11.033333908766508,
+  "frames": 30,
+  "errors": [],
+  "suction_semantics": "No Surface_Gripper instance in this isolated probe; observations/commands explicitly UNAVAILABLE, not inferred OPEN",
+  "stimulus": "Kinematic tabletop Cube pose commands and +/-15mrad wrist drive. Not a physical pushing or Task27 success experiment.",
+  "oracle_policy": "Cube/PhysX TCP oracle written separately; no oracle read by RobotHistory or P1 estimator",
+  "data_sha256": {
+    "observations.jsonl": "edec11aba554906e6248018f0b6587fc7683361885fa022fc5c807c1b8c549cb",
+    "robot_history.jsonl": "375f6280fe4ff40103061d4b35d1bc6e488e08b265448f5b3ac2f7581ae3640d",
+    "oracle.jsonl": "c48cce990ed9545a3411c501aaa879a93ffee1a539b6ad937b45e652d56ff13b"
+  }
+}

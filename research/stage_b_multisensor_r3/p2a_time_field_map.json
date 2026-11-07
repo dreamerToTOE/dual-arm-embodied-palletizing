@@ -1,0 +1,142 @@
+{
+  "schema": "r3.p2a.verified_time_field_map.v1",
+  "baseline_commit": "c01e18a1e30e7118a77e8e51f0856c304a74d08f",
+  "rows": [
+    {
+      "field": "legacy.physics_step/time_s",
+      "producer": "PhysicalTrace._post_step",
+      "physical_meaning": "Post-step counter and accumulated dt; ~60Hz, not exposure",
+      "consumer": "legacy runtime join/P0; historical oracle scoring"
+    },
+    {
+      "field": "legacy.physics_state_time_s",
+      "producer": "R2BPhysicalCamera.capture_if_due before request",
+      "physical_meaning": "Physics receipt snapshot before nested updates; alias time_s",
+      "consumer": "old visual/robot association; not a camera acquisition clock"
+    },
+    {
+      "field": "legacy.capture_request_wall_s",
+      "producer": "time.monotonic before viewport capture call",
+      "physical_meaning": "Host request submission time",
+      "consumer": "latency audit only"
+    },
+    {
+      "field": "legacy.rendered_sensor_frame_wall_s",
+      "producer": "retained physical07 timeline; exact historical producer revision not recorded",
+      "physical_meaning": "Median only 70 microseconds after request; NOT independently measured render completion. Current baseline code places this stamp later, so current source cannot retroactively certify old receipt semantics",
+      "consumer": "audit only, never exposure time"
+    },
+    {
+      "field": "legacy.depth_acquisition_wall_s",
+      "producer": "retained timeline / Camera.get_depth path",
+      "physical_meaning": "Median 70.3 microseconds after request; no depth frame ID or independent exposure time. Historical and current source instrumentation differ",
+      "consumer": "audit only"
+    },
+    {
+      "field": "legacy.physics_step_after_render_wait/physics_time_after_render_wait_s",
+      "producer": "PhysicalTrace sampled after nested app.update",
+      "physical_meaning": "Later state reached while writer was pending; not a proven image timestamp",
+      "consumer": "offline displacement diagnostic"
+    },
+    {
+      "field": "legacy.writer_complete_wall_s",
+      "producer": "time.monotonic after file/depth handling",
+      "physical_meaning": "Host delivery/write completion; median 166ms after request",
+      "consumer": "arrival-delay audit; never exposure time"
+    },
+    {
+      "field": "new.robot_history.time_s/physics_step",
+      "producer": "research capture physics post-step callback",
+      "physical_meaning": "Integrated physics dt; measured equal to core_nodes.get_sim_time in runs05/06",
+      "consumer": "RobotHistory indexing/interpolation"
+    },
+    {
+      "field": "new.robot_history.q/dq",
+      "producer": "SingleArticulation get_joint_positions/velocities",
+      "physical_meaning": "Actual simulated articulation joint feedback",
+      "consumer": "URDF RobotModel.fk and RobotHistory"
+    },
+    {
+      "field": "new.robot_history.tcp_fk",
+      "producer": "existing frozen-URDF RobotModel.fk(side,q)",
+      "physical_meaning": "Independent q-derived TCP, no Cube pose input",
+      "consumer": "robot_at_reported_time; P2B interface"
+    },
+    {
+      "field": "new.suction_observation/command",
+      "producer": "isolated probe has no Surface_Gripper instance",
+      "physical_meaning": "Explicit None/UNAVAILABLE in new probe; physical07 has bool feedback and command separately",
+      "consumer": "discrete past-only hold; no attachment assertion"
+    },
+    {
+      "field": "new.controller_command",
+      "producer": "research-local wrist drive stimulus before next updates",
+      "physical_meaning": "Target q plus receipt physics time, not measured q; Task26/27 executors are not running",
+      "consumer": "past-only command context"
+    },
+    {
+      "field": "new.metadata.reference_time / frame_id",
+      "producer": "Camera ReferenceTime annotator in NEW_FRAME event, shared render product",
+      "physical_meaning": "Reference numerator is SDK frame identity; denominator captured. Numerator/denominator is not automatically physics simulation seconds",
+      "consumer": "pair identity checks; SDK time lookup"
+    },
+    {
+      "field": "new.render_time_s / metadata.sdk_time_s",
+      "producer": "installed Camera._data_acquisition_callback -> core_nodes.get_sim_time_at_swh_frame(reference numerator)",
+      "physical_meaning": "SDK-reported rendered simulation time; exact physics-grid lookup verified, pixel-time equivalence NOT established",
+      "consumer": "arithmetic history lookup only; exported as reported_render_time_s"
+    },
+    {
+      "field": "new.metadata.rational_time_api_probe",
+      "producer": "installed CoreNodes.get_sim_time_at_time probe",
+      "physical_meaning": "Two-integer form raises TypeError; binding requires omni.fabric.RationalTime. Not treated as an unavailable API nor silently used as time",
+      "consumer": "diagnostic receipt only; a future adapter must use and validate actual 4.5 binding"
+    },
+    {
+      "field": "new.callback_wall_s/arrival_wall_s",
+      "producer": "monotonic in paired Camera callback / after clone",
+      "physical_meaning": "Host acquisition callback readiness versus consumer arrival",
+      "consumer": "transport/processing delay; not scene time"
+    },
+    {
+      "field": "new.writer_start_wall_s/writer_complete_wall_s",
+      "producer": "monotonic around PNG and compressed depth writes",
+      "physical_meaning": "Host serialization duration after observation arrival",
+      "consumer": "writer-delay statistics only"
+    },
+    {
+      "field": "new.RGB/depth pair_id",
+      "producer": "one Camera.get_current_frame(clone=True), RGB and distance_to_image_plane after same graph evaluation",
+      "physical_meaning": "Same render product/callback/reference; independent per-channel frame IDs are not exposed by this API",
+      "consumer": "pair metadata checks and offline marker-plane consistency"
+    },
+    {
+      "field": "new.oracle.cube_xyz_m/tcp_physx",
+      "producer": "RigidPrim.get_world_poses / articulation tensor link transforms",
+      "physical_meaning": "Independent simulation evaluation state, in separate oracle.jsonl",
+      "consumer": "offline XY/FK scoring only"
+    },
+    {
+      "field": "P2B.measurement_time_s/timing_status",
+      "producer": "research evaluator observation-only export before opening oracle",
+      "physical_meaning": "measurement_time_s=None; SDK time explicitly UNCERTAIN; no GT-derived time correction",
+      "consumer": "online_fusion_eligible=False for every exported frame; primary validation=run07"
+    },
+    {
+      "field": "new.oracle.cube_quaternion_wxyz/cube_usd_matrix/kinematic_enabled",
+      "producer": "run07 physics callback, PhysX pose and USD readback",
+      "physical_meaning": "offline verification of imposed tabletop stimulus; no support detector or online GT gate",
+      "consumer": "experiment-condition audit only"
+    }
+  ],
+  "verification": [
+    "physical07 retained timeline actual deltas",
+    "installed Camera/Replicator source and runtime runs05/06",
+    "separate oracle and observation/interface paths"
+  ],
+  "source_hashes": {
+    "isaac/scripts/task28_task27_one_pass.py": "3f5f10d27ce17d3ee954d5b2d9d8986c6583c961befa07d597a7a343ee7a80ac",
+    "research/stage_b_multisensor_r3/scripts/capture_p2a_dynamic.py": "fd73546d772663e345dad56cf97d385366b2fd2b53b78d6f5abfe93def5f5eaf",
+    "research/stage_b_multisensor_r3/time_alignment.py": "8be289e15642b429b6eac542edc55d802ef19479ded635028bcbad369eba831c"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "r3.p2a.experiment_register.v1",
+  "baseline_sha": "c01e18a1e30e7118a77e8e51f0856c304a74d08f",
+  "scope": "Stage-B supported tabletop only; P2A only",
+  "new_isaac_launches": 7,
+  "valid_dynamic_probes": 1,
+  "valid_paired_callback_frames": 30,
+  "invalid_geometry_runs": 2,
+  "startup_failures": 2,
+  "full_task27_runs": 0,
+  "real_hardware": false,
+  "new_fusion_or_classifier": false,
+  "camera_placement_changed": false,
+  "old_controller_or_success_criteria_changed": false,
+  "old_p0_p1_results_modified": false,
+  "runs": [
+    {
+      "run": "r3_p2a_dynamic01",
+      "status": "INVALID_GEOMETRY",
+      "captured_frames": 30,
+      "manifest_sha256": "74fd4db4cf3da203530e17a2443b7b5d3e515d6f5d73ae66cdfe59f953d6c230",
+      "complete_marker": true
+    },
+    {
+      "run": "r3_p2a_dynamic02",
+      "status": "STARTUP_FAILURE",
+      "captured_frames": 0,
+      "manifest_sha256": null,
+      "complete_marker": false
+    },
+    {
+      "run": "r3_p2a_dynamic03",
+      "status": "STARTUP_FAILURE",
+      "captured_frames": 0,
+      "manifest_sha256": null,
+      "complete_marker": false
+    },
+    {
+      "run": "r3_p2a_dynamic04",
+      "status": "INVALID_GEOMETRY",
+      "captured_frames": 30,
+      "manifest_sha256": "10cd48335d0c68478cb0657940b37238294b24d1b356e64dbc685f2e4a936185",
+      "complete_marker": true
+    },
+    {
+      "run": "r3_p2a_dynamic05",
+      "status": "DIAGNOSTIC_TIME_AND_TABLETOP_CONDITION_UNVERIFIED",
+      "captured_frames": 30,
+      "manifest_sha256": "5076dc15360644e91875506da7699bbedded68d44db3e9f8560d311527356d8b",
+      "complete_marker": true
+    },
+    {
+      "run": "r3_p2a_dynamic06",
+      "status": "DIAGNOSTIC_TIME_AND_TABLETOP_CONDITION_UNVERIFIED",
+      "captured_frames": 30,
+      "manifest_sha256": "3006d3d9febfe247b5d4176cb751cc5ab778cffdd815cbf18b1f3b5a4512d754",
+      "complete_marker": true
+    },
+    {
+      "run": "r3_p2a_dynamic07",
+      "status": "VALID_TABLETOP_PROBE_TIME_PARTIAL",
+      "captured_frames": 30,
+      "manifest_sha256": "33e7f8445db0d5b8c3775b94e5cbb0e721d4963f456befcf4ad63f67acb94989",
+      "complete_marker": true
+    }
+  ],
+  "cpu_tests_passed": 44,
+  "environment": {
+    "python": "3.10.12",
+    "opencv": "4.5.4",
+    "numpy": "1.24.4",
+    "scipy": "1.8.0"
+  },
+  "objective_status": {
+    "A": "PARTIAL",
+    "B": "PARTIAL",
+    "C": "PARTIAL"
+  },
+  "p2b_online_fusion_eligible": false,
+  "failures_preserved": true,
+  "diagnostic_probes_without_orientation_check": 2,
+  "condition_config_sha256": {
+    "p2a_frozen.json": "9f11a1a7682938dcf43a887c8b4782044efe424c611390469e415a040f17d9cf",
+    "p2a_blocking_probe.json": "d200a7e5a631986b3070263c943bdaab7edf67b9c0f5bbec87ecced40f8a5d7b",
+    "p2a_tabletop_repair.json": "1265301fdf3f0d3dcf00d270a648d7473da97250768eeef38111f0e21ced75b4",
+    "p2a_visual_review.json": "ce81c3a4deca5597e37f389422ff31ae61ccf0b4bc6196156c11722fe19715be"
+  }
+}

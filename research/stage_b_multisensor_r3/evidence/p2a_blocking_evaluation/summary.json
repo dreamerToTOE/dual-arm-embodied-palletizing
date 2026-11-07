@@ -1,0 +1,183 @@
+{
+  "schema": "r3.p2a.alignment_evaluation.v1",
+  "run_manifest_sha256": "3006d3d9febfe247b5d4176cb751cc5ab778cffdd815cbf18b1f3b5a4512d754",
+  "frames": 30,
+  "render_frame_strictly_monotonic": true,
+  "render_time_strictly_monotonic": true,
+  "paired_common_callback_checks_passed": 30,
+  "uncertain_measurement_time_samples": 30,
+  "missing_render_timestamp": 0,
+  "aligned_robot_frames": 30,
+  "legacy_history_unavailable": 1,
+  "off_grid_render_times_requiring_interpolation": 0,
+  "legacy_request_to_render_s": {
+    "median": 0.1666666753590107,
+    "p95": 0.1666666753590107,
+    "max": 0.1666666753590107
+  },
+  "render_to_arrival_sim_s": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "callback_to_arrival_wall_s": {
+    "median": 0.024688833999789495,
+    "p95": 0.034202801999890634,
+    "max": 0.03726059700056794
+  },
+  "writer_delay_wall_s": {
+    "median": 0.04922893649927573,
+    "p95": 0.050914114050556236,
+    "max": 0.0510121719999006
+  },
+  "render_to_nearest_physics_s": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "physics_integrated_vs_core_time_abs_s": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "legacy_xy_association_error_m": {
+    "median": 0.016666650772094727,
+    "p95": 0.016666710376739502,
+    "max": 0.039999961853027344
+  },
+  "visual_detected": 16,
+  "matched_visual_samples": 14,
+  "offline_midpoint_interpolation_checks": {
+    "queries": 479,
+    "fk_vs_interpolated_physx_tcp_m": {
+      "median": 2.2580868849623485e-07,
+      "p95": 3.31104819074125e-07,
+      "max": 4.841147531984015e-07
+    },
+    "scope": "CPU queries between real captured physics states; actual image times were on-grid"
+  },
+  "visual_accepted": 15,
+  "matched_visual_xy_error_legacy_m": {
+    "median": 0.0026387371348128587,
+    "p95": 0.013499674275403852,
+    "max": 0.014111335381614694
+  },
+  "matched_visual_xy_error_render_m": {
+    "median": 0.003048710608853926,
+    "p95": 0.01663535397186188,
+    "max": 0.03933340344602411
+  },
+  "photometric_timestamp_check": {
+    "moving_samples_with_at_most_one_tick_ambiguity": 7,
+    "distance_to_best_time_interval_s": {
+      "median": 0.03333333507180214,
+      "p95": 0.05666666962206361,
+      "max": 0.06666667014360428
+    },
+    "interval_width_s": {
+      "median": 0.01666666753590107,
+      "p95": 0.01666666753590107,
+      "max": 0.01666666753590107
+    },
+    "rows": [
+      {
+        "frame_id": 202,
+        "best_oracle_time_interval_s": [
+          2.900000151246786,
+          2.916666818782687
+        ],
+        "sdk_time_s": 2.9500001538544893,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.6632485442743286
+      },
+      {
+        "frame_id": 232,
+        "best_oracle_time_interval_s": [
+          3.1666668318212032,
+          3.1833334993571043
+        ],
+        "sdk_time_s": 3.2166668344289064,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.9948727699718185
+      },
+      {
+        "frame_id": 265,
+        "best_oracle_time_interval_s": [
+          3.4333335123956203,
+          3.4500001799315214
+        ],
+        "sdk_time_s": 3.4833335150033236,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.7352343435847191
+      },
+      {
+        "frame_id": 677,
+        "best_oracle_time_interval_s": [
+          6.900000359863043,
+          6.916667027398944
+        ],
+        "sdk_time_s": 6.950000362470746,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.7554414070165273
+      },
+      {
+        "frame_id": 931,
+        "best_oracle_time_interval_s": [
+          9.03333380445838,
+          9.05000047199428
+        ],
+        "sdk_time_s": 9.083333807066083,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.8171907543124227
+      },
+      {
+        "frame_id": 963,
+        "best_oracle_time_interval_s": [
+          9.266667149960995,
+          9.283333817496896
+        ],
+        "sdk_time_s": 9.3500004876405,
+        "abs_residual_s": 0.06666667014360428,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.7773174569115107
+      },
+      {
+        "frame_id": 993,
+        "best_oracle_time_interval_s": [
+          9.566667165607214,
+          9.583333833143115
+        ],
+        "sdk_time_s": 9.616667168214917,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 1.1360462255636734
+      }
+    ],
+    "limit": "offline GT projection diagnostic; includes corner quantization/calibration bias, excludes ambiguous stops; not an online correction"
+  },
+  "rgb_depth_marker_plane_residual_m": {
+    "median": 0.001470870996188145,
+    "p95": 0.0015645335973146768,
+    "max": 0.0015645335973146768
+  },
+  "independent_fk_vs_physx_tcp_translation_m": {
+    "median": 2.3341967199901377e-07,
+    "p95": 3.635265497115237e-07,
+    "max": 5.411361421054495e-07
+  },
+  "q_interpolation_replay_max_abs_rad": 0.0,
+  "physics_samples": 480,
+  "tabletop_stimulus_oracle_checks": null,
+  "cube_x_range_m": [
+    0.800000011920929,
+    1.0
+  ],
+  "pairing_scope": "RGB/depth fetched in one SDK NEW_FRAME callback after graph evaluation, one render product and ReferenceTime. SDK exposes no separate per-channel frame IDs; geometric plane agreement is supporting evidence, not a hardware exposure certificate.",
+  "baseline_scope": "Identical new RGB samples scored at actual pre-wait request receipts vs SDK render time. Historical physical07 exposure cannot be retroactively recovered.",
+  "suction_scope": "No Surface_Gripper instance in this isolated probe; observations/commands explicitly UNAVAILABLE, not inferred OPEN"
+}

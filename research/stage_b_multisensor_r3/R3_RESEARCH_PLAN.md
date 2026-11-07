@@ -1,16 +1,27 @@
 # R3：多源信息融合状态估计与双臂技能衔接研究规划
 
-> 状态：**APPROVED_FOR_STAGED_SIMULATION_RESEARCH / PLAN ONLY**  
+> 状态：**STAGED_SIMULATION_RESEARCH / P0 PASS / P1 PARTIAL / P2A PARTIAL**
 > 日期：2026-11-07  
 > 仓库：`dreamerToTOE/dual-arm-embodied-palletizing`  
 > 规划基线：`research/stage-b-r2b-runtime-integration`，`4e040d9ea21281762cf29499278cb57aac96e15e`  
-> 本文只规划研究任务，不代表 R3 实现、精度、接触检测或完整 Task27 已通过。
+> 本文保留分阶段规划；P0/P1/P2A 实现与数值以对应报告为准，不代表接触检测或完整 Task27 已通过。
+
+
+## 2026-11-07 用户批准的 P2A 范围修订
+
+- P0 PASS、P1 PARTIAL 的已完成报告及失败证据保持原样，不因缩小范围而升级历史结论。
+- 当前科学实验只覆盖 Cube 已落桌后的 Stage B，实验中假设持续桌面支撑；不研究
+  Stage-A 搬运恢复、小幅离桌检测或侧翻。保留 P1 平面模型及其既有门限。
+- 视觉是间歇观测，不要求连续检出；先解决动态时间对齐，再开始在线多源融合。
+- 次序为 **P2A：时序与遮挡审计 → P2B：基于带时间戳接口的桌面融合研究**。
+  本轮只授权 P2A；P2B、吸附/接触分类和技能切换均未开始。
+- 仍只在 Isaac Sim 内工作；不增加真机、Sim2Real、RL 或 live switching 要求。
 
 ## 0. 用户决定与工程边界
 
 1. Stage B 大部分时间以 FR3 关节状态和正运动学推算吸盘与 Cube 的相对位姿；视觉及可用的模拟末端力/力矩、吸盘反馈用于校验附着状态和异常恢复。**不能以 FK 所依赖的刚性附着假设再反证附着可靠**。
 2. 创新点一改为**多源信息融合的机器人—物体交互状态估计**，同时估计 Cube 位姿、吸附置信度、接触关系及不确定性。
-3. 暂不研究 Cube 侧翻及侧翻恢复。只在 Cube 被桌面稳定支撑、近似平面运动的阶段，对视觉位姿求解施加 `z=z_table+h/2`、`roll≈pitch≈0` 约束，估计 `(x,y,yaw)`；在悬空搬运、明显倾斜、离桌或约束残差过大时撤销该假设，标记不确定。
+3. 当前实验仅覆盖持续桌面支撑的 Stage B，对视觉求解保留 `z=z_table+h/2`、`roll=pitch=0`，估计 `(x,y,yaw)`。支撑是受控实验假设，不新增离桌/侧翻检测器；P1 已记录的反例和门限保持原样，缺帧/残差异常仍标记不确定。
 4. 沿用 Isaac Sim 4.5、双 FR3、原侧吸工具和 Task27 几何。遵守仓库 `AGENTS.md`（2026-10-31）：**仿真优先、功能优先**；不把真机传感器、硬件认证、Sim2Real 作为当前研究前置条件。允许有界、可重建的实际 Isaac 动作实验，保留必要碰撞、关节、力矩和数值检查，不做无止境预检。
 5. 历史 Task26/Task27 依赖 Isaac `/cube_poses` Ground Truth 完成规划和分段推入。R3 的状态估计要有**无 Cube 真值在线输入的独立实验路径**；Ground Truth/PhysX 接触回调允许作为离线评价 oracle。若把 PhysX 力值明确建模为模拟传感器输入，必须与评分标签隔离，不能用同一字段自证准确。
 6. 现有 R2-B 研究状态为 PARTIAL/BLOCKED：静态 `cal24` 四 marker 留出视图位置误差中位数 5.01 mm / P95 10.86 mm（并非 Cube 在线定位精度）；早期 ID23 Cube 静态转移曾得到 47.2 mm 中位数。`physical07` 有 1,550 组 RGB-D，writer 延迟中位数 0.166 s、最大 0.731 s，但没有曝光级对齐证明。E0/E1 对加载深墙接触的区分能力不足；不能把 proximity 当 loaded-contact。Stage B 侧压/FCL 等完整执行问题仍需保留为独立工程问题。
@@ -27,7 +38,7 @@
 
 ## 2. 状态定义及可观测性
 
-- Cube 连续状态：在桌面支撑的 Stage B 优先用 `s=(x,y,yaw,vx,vy,omega)` 和协方差/误差上界；搬运时采用 `T_WC=T_WS(q) T_SC` 及抓取变换的不确定性。
+- Cube 连续状态：在桌面支撑的 Stage B 优先用 `s=(x,y,yaw,vx,vy,omega)` 和协方差/误差上界；本轮只输出独立 q→FK 的机器人 TCP；Cube 与工具变换及融合留给 P2B，不研究搬运。
 - 吸附离散状态：`ATTACHED / SLIP_SUSPECTED / DETACHED / UNKNOWN`。可用输入包括模拟吸盘反馈、FK 预测与独立视觉残差、执行命令与负载运动一致性、可辨识的模拟受力信息。`suction_command=ON` 或 `is_closed()` 单独不足以证明无滑移刚性连接。
 - 接触状态至少区分：`FREE_PUSH / DEEP_WALL_NEAR / DEEP_WALL_LOADED / STALLED_AMBIGUOUS / UNKNOWN`。保留 Cube–Table 和 Tool–Cube 等关系边；接近墙、非零受力与真正卡滞不能同义替换。
 - 深墙几何量：对轴向对齐 Cube，可用 `g=x_wall-(x_cube+L/2)`；有 yaw 时用变换后的 Cube 支持函数/凸包最前端计算。`g≈0` 只能生成接近或接触候选；加载接触另需力/运动残差或独立模拟接触测量。
@@ -57,13 +68,26 @@
 
 **门槛**：报告 V1 相对 V0 的真实改进或退化，附失败样本及可重复脚本。不预设“必然大幅提升”；若因 K/T、marker 尺寸/位置等根因失败，做一次有界诊断和针对性修复，再如实给出 PARTIAL。旧 3 mm 最终落位门槛与感知误差评价必须分开报告。
 
-### R3-P2：FK 主导的 Cube 位姿与吸附状态融合
+### R3-P2A：动态传感器时间对齐与 Stage-B 视觉缺失审计（本轮）
 
-**动作**：在成功重吸附后建立 `T_WS(q)` 与 `T_SC`，含附着质量/不确定性；将吸盘反馈和独立可观测量引入 `ATTACHED/SLIP/DETACHED/UNKNOWN` 判定。利用平面视觉做初始化、偶发校验和异常重定位，未确认附着时不得仅用 FK 推断 Cube 随 TCP 运动。
+**动作**：逐帧审计 physical07 侧压区间 107 次未检出，区分成功采集、未检出及
+未执行的名义采样时隙，保留联系表、原图和 UNKNOWN。只以 executor receipt 定义阶段。
+核查本机 Isaac 4.5 camera/annotator 的 frame/time 语义；建立同 render-product 的
+RGB/depth 采集与有界 q/dq→独立 FK 历史，离散 suction/command 只从过去保持。
 
-**实验**：正常吸附、短时视觉遮挡、已知受控滑移/脱离（通过可复现的模拟实验操纵），检查误报、漏报、检测延迟和重定位误差。模拟吸盘 `closed` 等 API 的语义必须验证；没有独立测量则明确 UNKNOWN，不用命令回填。
+**实验**：短时、可重建的桌面 Cube 运动与停止/启动刺激，比较同一图像的旧 request
+receipt 与新 render-time 关联；GT 只在评分侧计算误差。一个 physics tick 是目标而非
+强制 PASS。保留启动、几何或渲染失败，不复跑完整 Task27、不改控制器。
 
-**交付**：估计器及与 FK-only、visual-only 的消融。可进行短、有界 Isaac 动作验证，并按 `AGENTS.md` 在失败时重建场景、诊断和复测。
+**交付**：`R3_P2A_VISUAL_OCCLUSION_ROOT_CAUSE.md`、
+`R3_P2A_DYNAMIC_TIME_ALIGNMENT.md`、时间字段映射、冻结配置、脚本、逐帧结果与最终决定。
+
+### R3-P2B：带渲染时间的 Stage-B 间歇视觉/机器人状态接口（后续，未授权执行）
+
+以 P2A 的 `frame_id/render_time/arrival_time/pair_id` 和有界 robot-history 接口为入口，
+再研究桌面平面位姿的 FK/视觉融合。q→FK 与工具几何独立核验；图像缺失时保留观测
+年龄和不确定性，不将缺帧自动等同脱附，不将 `closed` 当作附着证明。实验仍从落桌后
+开始。附着分类、加载接触分类、Stage-A 恢复及技能选择均为另行授权的后续工作。
 
 ### R3-P3：深墙加载接触和卡滞识别
 
@@ -85,13 +109,19 @@
 
 **评价**：重复的正常/异常 episode、完成率、恢复率、时间、错误技能切换、碰撞和接触指标。最终综合对比 I1/I2/I3 消融。
 
-## 4. 立即交给 Codex 的执行边界（只执行 R3-P0 和 R3-P1）
+## 4. 历史 P0/P1 执行边界（已完成，证据保留）
 
 1. 从本规划分支继续，先检查 `AGENTS.md`、基线 SHA、已有修改和 `research/stage_b_vision_contact_r2b`。不要盲目覆盖其他研究分支或未提交用户改动。
 2. 实施 P0 审计和 P1 **最小可重复对照**。优先重用现有 R2-B 图像、标记和脚本。若缺少原始 RGB/corners/对应 GT，仅执行有限的可复现 Isaac 采集补齐；不得伪造数据或以旧静态相机 holdout 替代 Cube 实验。
 3. 新增代码与报告放在 `research/stage_b_multisensor_r3/`；保留旧任务和控制器行为，不修改 Task26/27 成功判据，不开启 RL/GPU 长训、自动技能切换或真实硬件工作。
 4. 执行必要单元测试与短实验，记录输入、配置、commit、误差统计、缺失数据、失败原因与最终 PASS/PARTIAL/INCONCLUSIVE。遵循仿真功能优先，避免过度形式化门禁。
 5. 在当前 R3 工作分支提交和推送，**不合并 main 或 side-suction-palletizing**。最终以中文汇报关键数值、有效证据、未知项和下一步建议。
+
+## 4.1 当前 P2A 执行边界
+
+从 `c01e18a1e30e7118a77e8e51f0856c304a74d08f` 继续，只提交 P2A 研究文件。
+不改 Task26/27 行为、几何或成功判据，不部署融合或技能选择。记录全部尝试，完成
+必要 CPU/有界 Isaac 检查，提交推送当前 R3 分支，停止并以中文报告 P2B 建议。
 
 ## 5. 相关已有证据（不得提高历史结论级别）
 

@@ -1,0 +1,17 @@
+{
+  "schema": "r3.p2a.dynamic.v1",
+  "scope": "Stage-B tabletop only; supported Cube is an experimental assumption",
+  "physics_hz": 60,
+  "main_updates": 240,
+  "capture_every_updates": 8,
+  "legacy_wait_updates": 4,
+  "robot_history_max_samples": 240,
+  "max_interpolation_bracket_s": 0.034,
+  "resolution": [1280, 720],
+  "camera_eye": [1.7, -0.35, 0.8],
+  "camera_target": [0.82, 0.0, 0.3],
+  "robot_wrist_amplitude_rad": 0.015,
+  "cube_motion": "kinematic controlled tabletop stimulus, x=.80->1.00->.84 with stop/start; no manipulation success claim",
+  "alignment_target_s": 0.016666666666666666,
+  "no_fusion_or_live_selector": true
+}

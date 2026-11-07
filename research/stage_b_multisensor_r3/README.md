@@ -53,3 +53,51 @@ DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
 主结果：`evidence/p1_holdout_results.json`；开发数据：`p1_development_results.json`；
 代表失败图和 oracle 记录都保留。SDK K 修复前的失败在 `diagnostic_authored_k/`。
 原始 R2 文件、控制器、Task26/27 判据没有修改。
+
+## P2A：Stage-B 时间与视觉缺失
+
+结果入口：`R3_P2A_FINAL_DECISION.md`。P2A停止于PARTIAL，不自动开始P2B。
+P1模型/config未改；本轮不做离桌/侧翻/Stage-A研究。主验证是dynamic07；05/06仅诊断。
+
+CPU检查与完整本地重放（从仓库根运行）：
+
+```bash
+python3 -m pytest -q research/stage_b_multisensor_r3/tests \
+  research/stage_b_vision_contact_r2b/tests \
+  offline/task28_g1_1/tests/test_independent_fk.py
+python3 research/stage_b_multisensor_r3/scripts/evaluate_p2a_alignment.py \
+  --run research/stage_b_multisensor_r3/evidence/r3_p2a_dynamic07 \
+  --out /tmp/r3_p2a_replay
+```
+
+主验证07的30组RGB/压缩depth、history和oracle均提交，重放不依赖physical07大文件。
+输出含逐帧CSV、误差/时间诊断和无oracle的P2B接口；所有测量时间仍UNCERTAIN，
+`measurement_time_s=null`，禁止当作已批准的在线融合输入。
+
+历史107帧审计（原始大文件需本地可用，路径在P0 manifest）：
+
+```bash
+python3 research/stage_b_multisensor_r3/scripts/audit_p2a_occlusion.py \
+  --raw PHYSICAL07_RAW_ROOT --out /tmp/r3_p2a_occlusion_replay
+```
+
+`config/p2a_visual_review.json`是逐格图像审查标签，不是从detection failure推断遮挡
+的自动规则。图像hash、全部107帧联系表和代表原图已提交；19帧UNKNOWN保留。
+
+最终有界Isaac复采：
+
+```bash
+DISPLAY=:1 OMNI_KIT_ACCEPT_EULA=YES /home/ubuntu2004/isaacsim-4.5.0/python.sh \
+  research/stage_b_multisensor_r3/scripts/capture_p2a_dynamic.py --run-id NEW_P2A_RUN
+python3 -c "import json; from pathlib import Path; p=Path('research/stage_b_multisensor_r3/evidence/NEW_P2A_RUN/manifest.json'); m=json.loads(p.read_text()); assert m['frames']==30 and not m['errors']"
+```
+
+不要覆盖已有run目录。`--blocking-render`是另一采集模式，不是已通过的修复。
+不同模式/阶段的条件由`P2A_EXPERIMENT_MANIFEST.json`登记。旧01/04几何失败和
+05/06诊断raw仍在本地，Git保留日志、source snapshot、history/observations/oracle、
+联系表和代表图；其原始RGB/depth未全量提交。复现旧失败源码时，先复制对应snapshot
+到本目录的`scripts/`层级，再使用新run-id。02/03的启动失败同样保留。
+
+Isaac关闭可能掩盖Python异常，所以退出码0不能替代完成manifest；检查failure.json、
+callback errors及图像几何。scene只施加受控kinematic桌面刺激与小幅腕部目标，
+不是Task27任务成功或真实推入实验。host arrival/writer时间不能当render时间。

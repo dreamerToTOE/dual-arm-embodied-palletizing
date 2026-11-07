@@ -1,0 +1,156 @@
+{
+  "schema": "r3.p2a.alignment_evaluation.v1",
+  "run_manifest_sha256": "33e7f8445db0d5b8c3775b94e5cbb0e721d4963f456befcf4ad63f67acb94989",
+  "frames": 30,
+  "render_frame_strictly_monotonic": true,
+  "render_time_strictly_monotonic": true,
+  "paired_common_callback_checks_passed": 30,
+  "uncertain_measurement_time_samples": 30,
+  "missing_render_timestamp": 0,
+  "aligned_robot_frames": 30,
+  "legacy_history_unavailable": 1,
+  "off_grid_render_times_requiring_interpolation": 0,
+  "legacy_request_to_render_s": {
+    "median": 0.13333334028720856,
+    "p95": 0.13333334028720856,
+    "max": 0.13333334028720856
+  },
+  "render_to_arrival_sim_s": {
+    "median": 0.03333333507180214,
+    "p95": 0.03333333507180214,
+    "max": 0.03333333507180214
+  },
+  "callback_to_arrival_wall_s": {
+    "median": 0.030765189500016277,
+    "p95": 0.03400992744891482,
+    "max": 0.0360923879998154
+  },
+  "writer_delay_wall_s": {
+    "median": 0.04920151249916671,
+    "p95": 0.05333890130050349,
+    "max": 0.05462986299971817
+  },
+  "render_to_nearest_physics_s": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "physics_integrated_vs_core_time_abs_s": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "legacy_xy_association_error_m": {
+    "median": 0.004999995231628418,
+    "p95": 0.013333320617675781,
+    "max": 0.013333380222320557
+  },
+  "visual_detected": 18,
+  "matched_visual_samples": 17,
+  "offline_midpoint_interpolation_checks": {
+    "queries": 478,
+    "fk_vs_interpolated_physx_tcp_m": {
+      "median": 2.1914243125120167e-07,
+      "p95": 3.3393004375258006e-07,
+      "max": 3.859069278455252e-07
+    },
+    "scope": "CPU queries between real captured physics states; actual image times were on-grid"
+  },
+  "visual_accepted": 18,
+  "matched_visual_xy_error_legacy_m": {
+    "median": 0.0006666396722714114,
+    "p95": 0.009929720892129205,
+    "max": 0.010262759566636505
+  },
+  "matched_visual_xy_error_render_m": {
+    "median": 0.0006666396722714114,
+    "p95": 0.0035928112175745634,
+    "max": 0.004013394623545844
+  },
+  "photometric_timestamp_check": {
+    "moving_samples_with_at_most_one_tick_ambiguity": 4,
+    "distance_to_best_time_interval_s": {
+      "median": 0.03333333507180214,
+      "p95": 0.03333333507180214,
+      "max": 0.03333333507180214
+    },
+    "interval_width_s": {
+      "median": 0.01666666753590107,
+      "p95": 0.01666666753590107,
+      "max": 0.01666666753590107
+    },
+    "rows": [
+      {
+        "frame_id": 152,
+        "best_oracle_time_interval_s": [
+          2.850000148639083,
+          2.866666816174984
+        ],
+        "sdk_time_s": 2.900000151246786,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.765660608469938
+      },
+      {
+        "frame_id": 160,
+        "best_oracle_time_interval_s": [
+          3.1166668292135,
+          3.133333496749401
+        ],
+        "sdk_time_s": 3.1666668318212032,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.7173625612865321
+      },
+      {
+        "frame_id": 168,
+        "best_oracle_time_interval_s": [
+          3.383333509787917,
+          3.400000177323818
+        ],
+        "sdk_time_s": 3.4333335123956203,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.8546949384862459
+      },
+      {
+        "frame_id": 272,
+        "best_oracle_time_interval_s": [
+          6.85000035725534,
+          6.866667024791241
+        ],
+        "sdk_time_s": 6.900000359863043,
+        "abs_residual_s": 0.03333333507180214,
+        "interval_width_s": 0.01666666753590107,
+        "mean_corner_cost_px": 0.7608634895663726
+      }
+    ],
+    "limit": "offline GT projection diagnostic; includes corner quantization/calibration bias, excludes ambiguous stops; not an online correction"
+  },
+  "rgb_depth_marker_plane_residual_m": {
+    "median": 0.001470870996188145,
+    "p95": 0.0015645335973146768,
+    "max": 0.0015645335973146768
+  },
+  "independent_fk_vs_physx_tcp_translation_m": {
+    "median": 2.3228847158260116e-07,
+    "p95": 3.6229936806828234e-07,
+    "max": 4.3608591151320956e-07
+  },
+  "q_interpolation_replay_max_abs_rad": 0.0,
+  "physics_samples": 479,
+  "tabletop_stimulus_oracle_checks": {
+    "kinematic_true_rows": 479,
+    "rows": 479,
+    "orientation_angle_max_rad": 0.0,
+    "z_error_max_m": 9.536743172944284e-09,
+    "usd_scale_error_max": 2.682209010451686e-09
+  },
+  "cube_x_range_m": [
+    0.800000011920929,
+    1.0
+  ],
+  "pairing_scope": "RGB/depth fetched in one SDK NEW_FRAME callback after graph evaluation, one render product and ReferenceTime. SDK exposes no separate per-channel frame IDs; geometric plane agreement is supporting evidence, not a hardware exposure certificate.",
+  "baseline_scope": "Identical new RGB samples scored at actual pre-wait request receipts vs SDK render time. Historical physical07 exposure cannot be retroactively recovered.",
+  "suction_scope": "No Surface_Gripper instance in this isolated probe; observations/commands explicitly UNAVAILABLE, not inferred OPEN"
+}
