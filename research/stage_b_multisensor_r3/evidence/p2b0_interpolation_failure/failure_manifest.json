@@ -1,0 +1,13 @@
+{
+  "schema": "r3.p2b0.preserved_failure.v1",
+  "scope": "initial unchecked 30-Hz-to-60-Hz linear interpolation on the same measured holdout; original summary and residuals kept; original prediction manifest is a historical receipt, its paths are not files in this cropped folder",
+  "reproduction": "replay_p2b0_history.py evaluation_unchecked_linear_baseline.jsonl reproduces these residuals from original measurements and isolated PhysX TCP references; no simulator rerun or fit",
+  "diagnosis": "Position target command changes occur inside held-out brackets. First error maximum at step234 brackets233(no command) and235(first position target). Later every2-step bracket crosses a command change; measured dq is not linear. No clock shift or tolerance fit used.",
+  "corrective_policy": "Reject interpolation across unequal controller_command receipts; exact measured endpoints retained. Dynamic interpolation remains unsupported, hence overall PARTIAL.",
+  "files_sha256": {
+    "observable_prediction_manifest.json": "6cbe3f4b72354b469f39b2aea1221bf02037a9c0431d54d2be0b0b0616b0cace",
+    "evaluation_interpolation.jsonl": "c28ce1498568c4b458b305ddd6a7b9c79b681731787c8bc732a183530a7f980b",
+    "evaluation_fk.jsonl": "af249fba3d3209c58b4925c5aa5c25850a6300affd125c359721ee12b98bffd3",
+    "summary.json": "63cb9522a4d7ea250a6d347ff7c7eb42d4b0be70702388231e6c67061e9c879d"
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "association": {
+    "candidate_grid_supported": 16352,
+    "candidate_grid_total": 28502,
+    "causal_interval_width_s": {
+      "max": 8.800000458955765,
+      "median": 6.3333336636424065,
+      "p95": 8.55333377942443
+    },
+    "frames_with_full_robot_support": 0,
+    "frames_with_some_robot_support": 75,
+    "status_counts": {
+      "UNCERTAIN": 75
+    },
+    "uncertain_frames": 75,
+    "unsupported_prehistory_end_s": 2.7166668083518744
+  },
+  "checks": {
+    "compatible_same_run_clocks": true,
+    "continuous_measured_history": true,
+    "dropout_robot_continuity": true,
+    "fk_position": true,
+    "fk_rotation": true,
+    "honest_ambiguity": true,
+    "interpolation": false,
+    "rgb_depth_consistency": true
+  },
+  "decision": "PARTIAL",
+  "fk": {
+    "arm_samples": 744,
+    "position_error_mm": {
+      "max": 0.0005411361425613754,
+      "median": 0.00023759531997705733,
+      "p95": 0.00036000558433285727
+    },
+    "rotation_error_rad": {
+      "max": 1.0682385704444212e-06,
+      "median": 5.188396946470294e-07,
+      "p95": 7.717297005269245e-07
+    }
+  },
+  "injected_dropout": {
+    "hidden_visual_frames": 15,
+    "interval_s": [
+      5.533333621919155,
+      6.533333621919155
+    ],
+    "retained_robot_samples": 60,
+    "robot_step_gaps": 0,
+    "source": "offline test only, not a naturally observed dropout"
+  },
+  "interpolation": {
+    "accepted": 185,
+    "dq_error_rad_s": {
+      "max": 0.004783138632774353,
+      "median": 0.002881688065826893,
+      "p95": 0.004747143946588039
+    },
+    "heldout_actual_samples": 185,
+    "q_error_rad": {
+      "max": 8.01384449005127e-05,
+      "median": 2.7686357498168945e-05,
+      "p95": 4.597902297973633e-05
+    },
+    "rejected": 0,
+    "rotation_error_rad": {
+      "max": 0.00012229169619839994,
+      "median": 2.711599217857733e-05,
+      "p95": 4.626998967202313e-05
+    },
+    "tcp_error_mm": {
+      "max": 0.058442200021417076,
+      "median": 0.004333612963443446,
+      "p95": 0.007348777109124917
+    }
+  },
+  "online_fusion_eligible": false,
+  "run_id": "r3_p2b0_sync_holdout01",
+  "sample_continuity": {
+    "core_vs_physics_max_s": 0.0,
+    "dt_s": {
+      "max": 0.01666666753590107,
+      "median": 0.01666666753590107,
+      "p95": 0.01666666753590107
+    },
+    "first_step": 163,
+    "last_step": 534,
+    "missing_steps": 0,
+    "q_peak_to_peak_rad": {
+      "left": [
+        1.891414649435319e-05,
+        0.0010632872581481934,
+        6.93111214786768e-05,
+        0.0005705356597900391,
+        0.00010083001689054072,
+        3.4570693969726562e-06,
+        0.02936631441116333
+      ],
+      "right": [
+        1.723914101603441e-05,
+        0.0010523200035095215,
+        5.466035145218484e-05,
+        0.0005183219909667969,
+        8.93967371666804e-05,
+        6.4373016357421875e-06,
+        0.02936619520187378
+      ]
+    },
+    "samples": 372,
+    "timeline_minus_physics_s": {
+      "max": 11.577167203364745,
+      "median": 8.806337363738475,
+      "p95": 11.289185253300458
+    }
+  },
+  "scope": "Stage B table-supported kinematic Cube + genuine measured FR3 +/-15mrad wrist motion; sync probe, no suction/contact validation",
+  "unavailable_channels": [
+    "suction_closed_feedback",
+    "suction_pressure",
+    "attachment_confidence",
+    "tool_contact_sensor",
+    "wall_contact_sensor",
+    "measured_contact_force"
+  ],
+  "vision": {
+    "aruco_present": 75,
+    "callback_to_reader_sim_s": {
+      "max": 0.06666667014360428,
+      "median": 0.06666667014360428,
+      "p95": 0.06666667014360428
+    },
+    "frames": 75,
+    "paired_rgb_depth": 75,
+    "pose_status_counts": {
+      "PRESENT": 74,
+      "UNCERTAIN": 1
+    },
+    "sample_interval_s": {
+      "max": 0.06666667014360428,
+      "median": 0.06666667014360428,
+      "p95": 0.06666667014360428
+    },
+    "sdk_fabric_max_difference_s": 0.0,
+    "settled_pattern_controls": 18,
+    "settled_pattern_pass": 18,
+    "writer_duration_wall_s": {
+      "max": 0.04838219999874127,
+      "median": 0.02445365699895774,
+      "p95": 0.03098880790093972
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "clock_caveat": "Legacy receipt times/physics steps preserved; exact exposure association remains unverified. Never combine with r3_p2b0_sync_holdout01.",
+  "files_sha256": {
+    "robot_observables.jsonl": "4bda5be284fa2b4fc85d5cbd5b9886f156a1c6a2f8e6417eb68da5c5d43cd093",
+    "visual_dropout.jsonl": "55dadf5756ff1de3ed7d077609523d7bd184fe062d9eefe208871be676be26e9"
+  },
+  "prior_gap": {
+    "distinct_controller_sequences": 805,
+    "first_missing_s": 242.81667933054268,
+    "first_missing_step": 14569,
+    "last_missing_s": 257.3500134218484,
+    "last_missing_step": 15441,
+    "last_valid_to_next_valid_or_last_observed_s": 14.700000766664743,
+    "left_censored": false,
+    "missing_acquired_images": 88,
+    "observable_available_rows": {
+      "controller_command": 873,
+      "dq_actual_rad_s": 873,
+      "q_actual_rad": 873,
+      "suction_command": 873,
+      "suction_state": 873,
+      "tcp_world_m": 873
+    },
+    "observed_absence_span_s": 14.533334091305733,
+    "right_censored": true,
+    "robot_rows": 873,
+    "suction_boolean_rows": {
+      "left": 873,
+      "right": 873
+    }
+  },
+  "raw_files_sha256": {
+    "physical_trace/contact_events.jsonl": "ed9724983833ce843ddd58be31416b6f037210c279ebe36b3226272090860df9",
+    "physical_trace/physical_trace.jsonl": "3b6781b0c98be8a32332e454b80a9b7a8c29cac63f39efeced19c319b780fcee",
+    "r2b_camera/camera_timeline.jsonl": "3b38faf095944e0b2a6f28e2dc06db8aa45848525709d3151229c178a3128e47",
+    "visual_detections.jsonl": "550f264f88f7227bd40581b95863f6983e5d8a26c31228f7dc92106bf498f911"
+  },
+  "raw_root": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07",
+  "run_id": "physical07_legacy_ONLY",
+  "schema": "r3.p2b0.physical07_extract.v1",
+  "sensor_meaning": {
+    "contact_events": "PhysX pair/contact/impulse oracle ONLY; excluded from extract",
+    "force": "No independent tool/wall force sensor; impulse/dt would be an oracle-derived average, not measured force",
+    "suction_command": "last requested close/open; not measured state",
+    "suction_state": "Surface_Gripper.is_closed Boolean software attachment state; not pressure or independent seal/force measurement"
+  },
+  "source_code_reference": "isaac/scripts/task28_task27_one_pass.py PhysicalTrace; retained historical producer revision incomplete"
+}
