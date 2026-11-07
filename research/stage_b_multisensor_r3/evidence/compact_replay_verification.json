@@ -1,0 +1,22 @@
+{
+  "schema": "r3.clean_compact_replay.v1",
+  "baseline_sha": "8af7ee236f7b06afe893ca1efc7b0126b798f4c7",
+  "isolated_copy": true,
+  "raw_rgb_depth_access_required": false,
+  "scientific_metrics_exact_match": true,
+  "runtime_excluded_from_exact_match": true,
+  "datasets": [
+    "physical06_holdout",
+    "r3_static_holdout01"
+  ],
+  "source_sha256": {
+    "planar_pose_estimator.py": "48af301b7a929df2bb3a44676325b942236a48404ba297a9eb4864f17c9455a0",
+    "scripts/analyze_timing.py": "3f3f9f14068f407dc09a03cb908c3b7133c7d17f816d02b46e979e17c2591bd3",
+    "scripts/audit_projection.py": "c9f04ed8973bd65df01bdecb253ae06cf112d3cdcc830995bd60801d6e2fba1c",
+    "scripts/audit_r3_p0.py": "c538128dc94b22fa8f9aecfec3936efd6f827ed6b65c5aab6662ca06e706352b",
+    "scripts/build_pose_dataset.py": "448c3eee296d9563f576380944f9cd2ef27af13275407a5ca0e83f4c6012ae95",
+    "scripts/capture_static_holdout.py": "7663bb029e0b72e27f864a0db143ca9e7159a2d4e1b3f651b2b1f83918a5733e",
+    "scripts/evaluate_planar_pose.py": "260e05fa6d4d134a68a53ae8288736831139cffe4fa8b9bd17e0290420ea1eef"
+  },
+  "source_hash_scope": "Replay implementation; test-only legacy-PnP parity assertion added afterward and checked in 36-test CPU suite"
+}

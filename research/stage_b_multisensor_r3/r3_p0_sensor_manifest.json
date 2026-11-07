@@ -1,0 +1,507 @@
+{
+  "schema": "task28.r3.p0_sensor_lineage.v1",
+  "baseline_commit": "8af7ee236f7b06afe893ca1efc7b0126b798f4c7",
+  "generated_by": "research/stage_b_multisensor_r3/scripts/audit_r3_p0.py",
+  "runs": [
+    {
+      "run": "physical05",
+      "sample_file_checks": [
+        {
+          "physics_step": 318,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": null,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/rgb/frame_000318.png",
+            "exists": true,
+            "sha256": "0f378375c47ecb5c36c80b0132d428ab08c1cae74f1ba9cfe5777077c07d7191",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/depth/frame_000318.npy",
+            "exists": true,
+            "sha256": "dd19a014d62d9492cd3a3d38d046c65b743bd5dcd9157752eba09d72faab1013",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.4970062934027778
+          }
+        },
+        {
+          "physics_step": 522,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": null,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/rgb/frame_000522.png",
+            "exists": true,
+            "sha256": "4de3edf2df069302366ef17ec8c8826cbef80d98d7cda6a6d56f40846d08e9eb",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/depth/frame_000522.npy",
+            "exists": true,
+            "sha256": "dd19a014d62d9492cd3a3d38d046c65b743bd5dcd9157752eba09d72faab1013",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.4970062934027778
+          }
+        },
+        {
+          "physics_step": 6312,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": null,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/rgb/frame_006312.png",
+            "exists": true,
+            "sha256": "64f204aaa51dc18ea67cc83f0108ae95b797a1f41a3e7606653a0c25b2d1eab2",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05/r2b_camera/depth/frame_006312.npy",
+            "exists": true,
+            "sha256": "e5b7f9b8f79a8ade1cb7bf3aec15644e077896179983e5d241a6cd4a7f7334d3",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.5037565104166667
+          }
+        }
+      ],
+      "compact_root": "research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05",
+      "raw_root": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-calibration-phase-audit/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical05",
+      "visual_detection_rows": 55,
+      "visual_present_rows": 55,
+      "camera_timeline_rows": 55,
+      "raw_runtime_rows": 9133,
+      "runtime_fields_present_rows": {
+        "q_actual_rad": 9133,
+        "dq_actual_rad_s": 9133,
+        "tcp_world_m": 9133,
+        "suction_command": 9133,
+        "suction_state": 9133,
+        "controller_command": 8606,
+        "cube_world_m": 9133,
+        "cube_velocity_m_s": 9133
+      },
+      "runtime_trace_error_rows": 0,
+      "camera_receipt_exact_runtime_step_matches": 55,
+      "camera_receipt_exact_runtime_time_matches": 0,
+      "camera_receipt_interval_s_median_max": [
+        0.10000000521540642,
+        90.65000472776592
+      ],
+      "runtime_dt_s_median": 0.01666666753590107,
+      "raw_contact_rows": 38282,
+      "raw_rgb_files": 55,
+      "raw_depth_files": 55,
+      "runtime_sha256": "8223d3da768ea5a87f24de6312e51eb1d0160fdfd60554a532a6b12c32fff0b2",
+      "contact_sha256": "2eaf4c5e6bd37251425c2c9e70b9742602b5eaf451f5ff5a8a21da60be974b87",
+      "visual_sha256": "aadc66c27f32e9f4865b7eb208b0f07059db606db3f853a76c2b70d3d5585e0a",
+      "timeline_sha256": "482e91192eaefa11c939ba405d74fc29083cce4e65e46ba358bc7a5e9e8b65ed",
+      "time_range_s": [
+        5.400000281631947,
+        105.26667215675116
+      ],
+      "physics_step_range": [
+        318,
+        6312
+      ],
+      "writer_latency_wall_s_median": null
+    },
+    {
+      "run": "physical06",
+      "sample_file_checks": [
+        {
+          "physics_step": 314,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": false,
+          "rgb": {
+            "path": null,
+            "exists": false
+          },
+          "depth": {
+            "path": null,
+            "exists": false
+          }
+        },
+        {
+          "physics_step": 7077,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": true,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical06/r2b_camera/rgb/frame_007077.png",
+            "exists": true,
+            "sha256": "a6b7d17e19b7904e3f0b17cc84711302d857b2755372f8b96b4a82c598822e0b",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical06/r2b_camera/depth/frame_007077.npy",
+            "exists": true,
+            "sha256": "350f3595ffd92f0c9af70fcc9f8d64afcebf38d9644806dee396bc5d6742b8cc",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.48872612847222224
+          }
+        },
+        {
+          "physics_step": 14261,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": false,
+          "rgb": {
+            "path": null,
+            "exists": false
+          },
+          "depth": {
+            "path": null,
+            "exists": false
+          }
+        }
+      ],
+      "compact_root": "research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical06",
+      "raw_root": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical06",
+      "visual_detection_rows": 0,
+      "visual_present_rows": 0,
+      "camera_timeline_rows": 1492,
+      "raw_runtime_rows": 14299,
+      "runtime_fields_present_rows": {
+        "q_actual_rad": 14299,
+        "dq_actual_rad_s": 14299,
+        "tcp_world_m": 14299,
+        "suction_command": 14299,
+        "suction_state": 14299,
+        "controller_command": 12944,
+        "cube_world_m": 14299,
+        "cube_velocity_m_s": 14299
+      },
+      "runtime_trace_error_rows": 0,
+      "camera_receipt_exact_runtime_step_matches": 1492,
+      "camera_receipt_exact_runtime_time_matches": 1492,
+      "camera_receipt_interval_s_median_max": [
+        0.1666666753590107,
+        0.1666666753590107
+      ],
+      "runtime_dt_s_median": 0.01666666753590107,
+      "raw_contact_rows": 64780,
+      "raw_rgb_files": 1492,
+      "raw_depth_files": 1492,
+      "runtime_sha256": "2f365961724f06ae0a854d91e6a7d2d85f7612260eec516c6730827bbbe6ec91",
+      "contact_sha256": "f1ae23c6a8c60d9097875c3c0b51d58e88921855c5f4970478e6e568a60722fd",
+      "visual_sha256": null,
+      "timeline_sha256": "1bf79da32db23300c1f555408aca3957be8df6288bf6915a0005e5c4521b556a",
+      "time_range_s": [
+        5.233333606272936,
+        237.68334572948515
+      ],
+      "physics_step_range": [
+        314,
+        14261
+      ],
+      "writer_latency_wall_s_median": 0.16162186900010056
+    },
+    {
+      "run": "physical07",
+      "sample_file_checks": [
+        {
+          "physics_step": 6,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": true,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/rgb/frame_000006.png",
+            "exists": true,
+            "sha256": "f89f710fe61ce079c22884e2f5eb28d3e1ce75ea53f37344fe47e3a335edc6f5",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/depth/frame_000006.npy",
+            "exists": true,
+            "sha256": "9e2a7aca988afbde1d30ce97d71ef2a65a7d36dc114669de4d9f8d7700adf56e",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.49701063368055554
+          }
+        },
+        {
+          "physics_step": 7628,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": true,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/rgb/frame_007628.png",
+            "exists": true,
+            "sha256": "5cfac9319e5de298f31542dc7d5e16362e9f01b5295b44cf9cf5e21dcaf8b4e4",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/depth/frame_007628.npy",
+            "exists": true,
+            "sha256": "66862445c99b74227aec99b31909a7ea07016b9b4e42add379ab7cc31979a7c6",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.48547200520833333
+          }
+        },
+        {
+          "physics_step": 15441,
+          "depth_ok_receipt": true,
+          "frame_pair_ok_receipt": true,
+          "rgb": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/rgb/frame_015441.png",
+            "exists": true,
+            "sha256": "c3d10253667babd14b9f1e2c92acc35bd4e39a882b5ef4c4c4c4f4276931ddc4",
+            "shape": [
+              720,
+              1280,
+              4
+            ],
+            "dtype": "uint8"
+          },
+          "depth": {
+            "path": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07/r2b_camera/depth/frame_015441.npy",
+            "exists": true,
+            "sha256": "89fed1a9db1de35531e933db7fb88f8148a56a53e84f2daef73d08632448e3f8",
+            "shape": [
+              720,
+              1280
+            ],
+            "dtype": "float32",
+            "finite_fraction": 0.4868793402777778
+          }
+        }
+      ],
+      "compact_root": "research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07",
+      "raw_root": "/home/ubuntu2004/Documents/Codex/2026-11-04/important-update-before-execution-the-main/work/stage-b-r2b-sensor-pipeline-repair/research/stage_b_vision_contact_r2b/evidence/r2b_rear_wall_physical07",
+      "visual_detection_rows": 1550,
+      "visual_present_rows": 1296,
+      "camera_timeline_rows": 1550,
+      "raw_runtime_rows": 15479,
+      "runtime_fields_present_rows": {
+        "q_actual_rad": 15479,
+        "dq_actual_rad_s": 15479,
+        "tcp_world_m": 15479,
+        "suction_command": 15479,
+        "suction_state": 15479,
+        "controller_command": 13615,
+        "cube_world_m": 15479,
+        "cube_velocity_m_s": 15479
+      },
+      "runtime_trace_error_rows": 0,
+      "camera_receipt_exact_runtime_step_matches": 1550,
+      "camera_receipt_exact_runtime_time_matches": 1550,
+      "camera_receipt_interval_s_median_max": [
+        0.1666666753590107,
+        0.23333334550261497
+      ],
+      "runtime_dt_s_median": 0.01666666753590107,
+      "raw_contact_rows": 68018,
+      "raw_rgb_files": 1550,
+      "raw_depth_files": 1550,
+      "runtime_sha256": "3b6781b0c98be8a32332e454b80a9b7a8c29cac63f39efeced19c319b780fcee",
+      "contact_sha256": "ed9724983833ce843ddd58be31416b6f037210c279ebe36b3226272090860df9",
+      "visual_sha256": "550f264f88f7227bd40581b95863f6983e5d8a26c31228f7dc92106bf498f911",
+      "timeline_sha256": "3b38faf095944e0b2a6f28e2dc06db8aa45848525709d3151229c178a3128e47",
+      "time_range_s": [
+        0.10000000521540642,
+        257.3500134218484
+      ],
+      "physics_step_range": [
+        6,
+        15441
+      ],
+      "writer_latency_wall_s_median": 0.16626376899967
+    }
+  ],
+  "field_lineage": [
+    {
+      "field": "RGB image",
+      "availability": "ONLINE_OBSERVABLE",
+      "producer": "isaac/scripts/task28_task27_one_pass.py::R2BPhysicalCamera.capture_if_due -> capture_viewport_to_file",
+      "consumer": "research/stage_b_vision_contact_r2b/visual/aruco_pose.py and qualify_physical_camera.py",
+      "time": "camera_timeline.physics_state_time_s/physics_step plus writer wall stamps",
+      "oracle": false
+    },
+    {
+      "field": "Depth image",
+      "availability": "ONLINE_OPTIONAL_SIM_SENSOR",
+      "producer": "isaac/scripts/task28_task27_one_pass.py::R2BPhysicalCamera depth capture",
+      "consumer": "physical-camera qualification only; no synchronized depth fusion in R3-P1",
+      "time": "camera_timeline depth_acquisition_wall_s; exposure-level equality unproven",
+      "oracle": false
+    },
+    {
+      "field": "ArUco corners",
+      "availability": "ONLINE_OBSERVABLE",
+      "producer": "research/stage_b_vision_contact_r2b/visual/aruco_pose.py::detect_aruco",
+      "consumer": "qualify_physical_camera.py and R3-P1 V0/V1",
+      "time": "visual_detections.time_s/physics_step",
+      "oracle": false
+    },
+    {
+      "field": "K / distortion",
+      "availability": "ONLINE_CONFIGURED",
+      "producer": "camera_metadata authored aperture/focal values; calibration_result.json is evaluation artifact",
+      "consumer": "visual/aruco_pose.py and R3-P1",
+      "time": "static configuration; no per-frame timestamp",
+      "oracle": false
+    },
+    {
+      "field": "T_world_camera",
+      "availability": "ONLINE_CONFIGURED",
+      "producer": "camera_metadata.world_from_camera",
+      "consumer": "qualify_physical_camera.py::world_pose and R3-P1",
+      "time": "static configuration; camera reapplication recorded after initialize",
+      "oracle": false
+    },
+    {
+      "field": "q_actual / dq_actual",
+      "availability": "ONLINE_OBSERVABLE_IN_RUNTIME_TRACE",
+      "producer": "isaac/scripts/task28_task27_one_pass.py::PhysicalTrace._post_step",
+      "consumer": "runtime_adapter.py and controller telemetry; not Cube-GT",
+      "time": "physical_trace.physics_step/time_s",
+      "oracle": false
+    },
+    {
+      "field": "FK TCP",
+      "availability": "ONLINE_OBSERVABLE_IN_RUNTIME_TRACE",
+      "producer": "PhysicalTrace Xformable TCP readback",
+      "consumer": "Stage-B observer/E0/E1",
+      "time": "physical_trace.physics_step/time_s",
+      "oracle": false
+    },
+    {
+      "field": "suction command/state",
+      "availability": "ONLINE_OBSERVABLE_WITH_SEMANTIC_LIMIT",
+      "producer": "feed bridge _last_commanded and Surface_Gripper.is_closed() captured by PhysicalTrace",
+      "consumer": "observer; closed is not independent attachment proof",
+      "time": "runtime row time_s; initial booleans may be default state",
+      "oracle": false
+    },
+    {
+      "field": "controller command/reference",
+      "availability": "ONLINE_PARTIAL",
+      "producer": "PhysicalTrace latest command_receipts[-1]",
+      "consumer": "runtime_adapter/controller_reference and phase receipts",
+      "time": "command contains wall time but no authoritative exposure/physics-step timestamp",
+      "oracle": false
+    },
+    {
+      "field": "Cube GT pose/velocity",
+      "availability": "EVALUATION_ORACLE",
+      "producer": "PhysicalTrace Cube USD/PhysX readback",
+      "consumer": "offline scoring in R3; legacy Task26/27 controller also consumes /cube_poses GT",
+      "time": "physical_trace.physics_step/time_s",
+      "oracle": true
+    },
+    {
+      "field": "PhysX contact pairs/points/impulse/separation",
+      "availability": "EVALUATION_ORACLE",
+      "producer": "task28_task27_one_pass.py contact callback",
+      "consumer": "offline label sidecar only; never estimator_payload",
+      "time": "contact_events.physics_step/time_s",
+      "oracle": true
+    },
+    {
+      "field": "measured effort/force for physical07",
+      "availability": "UNAVAILABLE_IN_PHYSICAL07_TRACE",
+      "producer": "none in physical07 PhysicalTrace; separate task28 torque bridge exposes optional simulated channels",
+      "consumer": "not used by R3-P1",
+      "time": null,
+      "oracle": null
+    },
+    {
+      "field": "independent attachment confidence",
+      "availability": "UNAVAILABLE",
+      "producer": "none in physical07",
+      "consumer": "must remain UNKNOWN",
+      "time": null,
+      "oracle": null
+    }
+  ],
+  "causal_policy": {
+    "join": "latest runtime row with physics_step <= visual receipt step and time_s <= visual receipt time_s; receipt alignment only, not exposure alignment",
+    "future_samples": "rejected",
+    "oracle_leakage": "Cube GT and PhysX contacts excluded from causal estimator inputs",
+    "dynamic_limit": "camera writer wall latency is recorded; exposure-level RGB/depth/command synchronization is not established"
+  },
+  "audit_findings": [
+    {
+      "id": "GT_VELOCITY_LEAK",
+      "source": "research/stage_b_vision_contact_r2b/observer/runtime_adapter.py::runtime_receipt_from_trace",
+      "finding": "cube_velocity_m_s is copied to observed_cube_velocity_x_m_s and enters controller_reference; old causal payload excludes contact pairs but not this GT velocity. Prior R2 E0/E1 causal claim is qualified. R3 does not import that adapter or field."
+    },
+    {
+      "id": "GT_PHASE_LABELS",
+      "source": "research/stage_b_vision_contact_r2b/scripts/qualify_physical_camera.py::phase",
+      "finding": "visual_detections.phase is derived from Cube GT and suction. R3 discards it and only uses executor event intervals when available."
+    },
+    {
+      "id": "K_ASPECT_MISMATCH",
+      "source": "Isaac Sim 4.5 Camera.get_vertical_aperture/get_intrinsics_matrix",
+      "finding": "SDK effective vertical aperture derives from horizontal aperture times height/width. Fixed 36x24 authored metadata produces legacy fy=600, SDK square-pixel K gives fy=711.111. Bounded readback confirms."
+    },
+    {
+      "id": "MARKER_OFFSET",
+      "source": "r2b_camera_observer_smoke.py::make_marker",
+      "finding": "Legacy rendered cells have front plane +61.5mm, whereas old evaluator used +61mm. R3 freezes 61.5mm for both V0 and V1."
+    },
+    {
+      "id": "TCP_NOT_INDEPENDENT_FK",
+      "source": "PhysicalTrace._tcp",
+      "finding": "tcp_world_m reads the simulated TCP prim transform, not a fresh independent q-to-URDF FK calculation. Treat as simulated robot-link pose; FK fusion validation belongs to P2."
+    },
+    {
+      "id": "CALLBACK_TIMING",
+      "source": "PhysicalTrace._contact_report",
+      "finding": "Contact reports use current self.step/time_s; subscription ordering relative to post-step is not certified, possible one-step assignment ambiguity. Impulse and penetration proxies are not measured loaded force."
+    },
+    {
+      "id": "LEGACY_CONTROLLER_GT",
+      "source": "Task26BatchedFeedBridge._publish -> /task27/cube_poses -> C++ CubeBuffer",
+      "finding": "Existing Task27 controller consumes simulator Cube GT for planning/push; R3 A/B is a separate non-actuating path, not a GT-free Task27 controller."
+    }
+  ],
+  "raw_data_policy": "large RGB/depth/JSONL files remain in local sensor-pipeline worktrees and are not copied into Git"
+}

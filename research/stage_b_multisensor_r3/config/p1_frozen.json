@@ -1,0 +1,22 @@
+{
+  "schema": "r3.p1.frozen_model.v1",
+  "frozen_before": ["physical06_holdout", "r3_static_holdout01"],
+  "development_only": ["physical05", "physical07", "r2b_cube_marker_transfer_probe03"],
+  "K_policy": "Isaac Camera.get_intrinsics_matrix: vertical aperture = horizontal aperture * height/width, square pixels; no GT fit",
+  "K": [[711.1111111111111, 0, 640], [0, 711.1111111111111, 360], [0, 0, 1]],
+  "distortion": [0, 0, 0, 0, 0],
+  "marker_size_m": 0.06,
+  "marker_offset_m": 0.0615,
+  "marker_offset_source": "R2B make_marker cell z=.5+.001/.12 and thickness=.001/.12; outer top=.0615m",
+  "table_height_m": 0.2,
+  "cube_size_m": 0.12,
+  "deep_wall_face_x_m": 1.16,
+  "support_tolerance_m": 0.06,
+  "tilt_limit_deg": 10,
+  "residual_limit_px": 2.0,
+  "pixel_noise_sigma_px": 1.0,
+  "threshold_rationale": "Half-Cube height inconsistency, 10deg observable tilt, <=2px model residual; fixed before holdout; no force/contact certification",
+  "estimator_inputs": ["marker_corners_px", "K", "world_from_camera", "static_marker_table_geometry", "optional_executor_support_contradiction"],
+  "forbidden_estimator_inputs": ["cube_world_m", "cube_quaternion_wxyz", "cube_velocity_m_s", "PhysX_contacts", "oracle_contact_labels", "GT_table_support"],
+  "scope": "P0 and P1 only; no online controller writes or P2 FK fusion"
+}

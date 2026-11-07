@@ -1,0 +1,1195 @@
+{
+  "schema": "r3.p1.frozen_ab_results.v2",
+  "config_sha256": "165645241bffa2664b61a2394e9d5503ea13f22781500cf93069c91c2ea6b54b",
+  "runs": [
+    {
+      "dataset": "physical06_holdout",
+      "data_manifest_sha256": "40c4eaac7a9936fb3e98b9f3ff434e24b99cf96678575323efc961e010f31c20",
+      "config_sha256": "165645241bffa2664b61a2394e9d5503ea13f22781500cf93069c91c2ea6b54b",
+      "v0": {
+        "total_frames": 498,
+        "detected_frames": 294,
+        "detection_rate": 0.5903614457831325,
+        "accepted_all": 294,
+        "table_oracle_frames": 440,
+        "accepted_table_scored": 278,
+        "table_rejection_or_missing_rate": 0.36818181818181817,
+        "all_rejection_or_missing_rate": 0.40963855421686746,
+        "invalid_support_oracle_frames": 58,
+        "invalid_support_false_accepts": 16,
+        "xy_error_m": {
+          "median": 0.02259990838824611,
+          "p95": 0.03912676955126889,
+          "max": 0.08163670950708458
+        },
+        "axis_signed_mean_m": [
+          -0.02250085303289572,
+          0.008827313127619222
+        ],
+        "axis_abs_p95_m": [
+          0.03775966890967841,
+          0.01813836030967045
+        ],
+        "yaw_error_deg": {
+          "median": 0.6014602003069425,
+          "p95": 3.01467849534602,
+          "max": 143.7361754872109
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.018617894667562872,
+          "p95": 0.037332053902461526,
+          "max": 0.06928285462946206
+        },
+        "reprojection_error_px": {
+          "median": 0.2674062158433799,
+          "p95": 0.5493970962996756,
+          "max": 0.9519698280521531
+        },
+        "runtime_ms_detected_only": {
+          "median": 0.33428150027248194,
+          "p95": 0.4250636506185398,
+          "max": 0.7446950003213715
+        },
+        "local_linearized_xy_sigma_m": null,
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "v1": {
+        "total_frames": 498,
+        "detected_frames": 294,
+        "detection_rate": 0.5903614457831325,
+        "accepted_all": 286,
+        "table_oracle_frames": 440,
+        "accepted_table_scored": 271,
+        "table_rejection_or_missing_rate": 0.38409090909090904,
+        "all_rejection_or_missing_rate": 0.4257028112449799,
+        "invalid_support_oracle_frames": 58,
+        "invalid_support_false_accepts": 15,
+        "xy_error_m": {
+          "median": 0.0021785586463666544,
+          "p95": 0.004483212174006296,
+          "max": 0.013670554413958298
+        },
+        "axis_signed_mean_m": [
+          -0.0023895238178100885,
+          -0.0003321738999277347
+        ],
+        "axis_abs_p95_m": [
+          0.004271201922199208,
+          0.0014255840812755435
+        ],
+        "yaw_error_deg": {
+          "median": 0.6501869943167933,
+          "p95": 2.1672999894958904,
+          "max": 4.9956828758812435
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.0017607543161527461,
+          "p95": 0.0032870588867309272,
+          "max": 0.011397783651317717
+        },
+        "reprojection_error_px": {
+          "median": 0.6711140925957056,
+          "p95": 1.7113372282488655,
+          "max": 1.9640542438856814
+        },
+        "runtime_ms_detected_only": {
+          "median": 4.1861335002977285,
+          "p95": 5.388404250106758,
+          "max": 7.08306900014577
+        },
+        "local_linearized_xy_sigma_m": {
+          "median": 0.0018454973552840745,
+          "p95": 0.0025934411801738465,
+          "max": 0.003019848526605741
+        },
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "matched_acceptance_v0": {
+        "total_frames": 498,
+        "detected_frames": 294,
+        "detection_rate": 0.5903614457831325,
+        "accepted_all": 294,
+        "table_oracle_frames": 440,
+        "accepted_table_scored": 271,
+        "table_rejection_or_missing_rate": 0.38409090909090904,
+        "all_rejection_or_missing_rate": 0.40963855421686746,
+        "invalid_support_oracle_frames": 58,
+        "invalid_support_false_accepts": 16,
+        "xy_error_m": {
+          "median": 0.022763605824216854,
+          "p95": 0.03912676955126889,
+          "max": 0.06480567017365968
+        },
+        "axis_signed_mean_m": [
+          -0.02229861168385477,
+          0.008672175865555874
+        ],
+        "axis_abs_p95_m": [
+          0.03775966890967841,
+          0.01800383346829483
+        ],
+        "yaw_error_deg": {
+          "median": 0.6014602003069425,
+          "p95": 2.7567975594946184,
+          "max": 5.922975888273984
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.018776037742383872,
+          "p95": 0.037332053902461526,
+          "max": 0.04392019571742331
+        },
+        "reprojection_error_px": {
+          "median": 0.2674062158433799,
+          "p95": 0.49836899397406187,
+          "max": 0.9519698280521531
+        },
+        "runtime_ms_detected_only": {
+          "median": 0.33428150027248194,
+          "p95": 0.4250636506185398,
+          "max": 0.7446950003213715
+        },
+        "local_linearized_xy_sigma_m": null,
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "matched_acceptance_v1": {
+        "total_frames": 498,
+        "detected_frames": 294,
+        "detection_rate": 0.5903614457831325,
+        "accepted_all": 286,
+        "table_oracle_frames": 440,
+        "accepted_table_scored": 271,
+        "table_rejection_or_missing_rate": 0.38409090909090904,
+        "all_rejection_or_missing_rate": 0.4257028112449799,
+        "invalid_support_oracle_frames": 58,
+        "invalid_support_false_accepts": 15,
+        "xy_error_m": {
+          "median": 0.0021785586463666544,
+          "p95": 0.004483212174006296,
+          "max": 0.013670554413958298
+        },
+        "axis_signed_mean_m": [
+          -0.0023895238178100885,
+          -0.0003321738999277347
+        ],
+        "axis_abs_p95_m": [
+          0.004271201922199208,
+          0.0014255840812755435
+        ],
+        "yaw_error_deg": {
+          "median": 0.6501869943167933,
+          "p95": 2.1672999894958904,
+          "max": 4.9956828758812435
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.0017607543161527461,
+          "p95": 0.0032870588867309272,
+          "max": 0.011397783651317717
+        },
+        "reprojection_error_px": {
+          "median": 0.6711140925957056,
+          "p95": 1.7113372282488655,
+          "max": 1.9640542438856814
+        },
+        "runtime_ms_detected_only": {
+          "median": 4.1861335002977285,
+          "p95": 5.388404250106758,
+          "max": 7.08306900014577
+        },
+        "local_linearized_xy_sigma_m": {
+          "median": 0.0018454973552840745,
+          "p95": 0.0025934411801738465,
+          "max": 0.003019848526605741
+        },
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "rejection_reasons_v1": {
+        "NONE": 286,
+        "marker behind camera": 4,
+        "marker_not_detected": 204,
+        "unconstrained_pose_inconsistent_with_support": 4
+      }
+    },
+    {
+      "dataset": "r3_static_holdout01",
+      "data_manifest_sha256": "3b78d8f512836f4eef1020699a8ebce855e5c44e456ac31bdad3642bd3d644b5",
+      "config_sha256": "165645241bffa2664b61a2394e9d5503ea13f22781500cf93069c91c2ea6b54b",
+      "v0": {
+        "total_frames": 16,
+        "detected_frames": 15,
+        "detection_rate": 0.9375,
+        "accepted_all": 15,
+        "table_oracle_frames": 12,
+        "accepted_table_scored": 12,
+        "table_rejection_or_missing_rate": 0.0,
+        "all_rejection_or_missing_rate": 0.0625,
+        "invalid_support_oracle_frames": 4,
+        "invalid_support_false_accepts": 3,
+        "xy_error_m": {
+          "median": 0.011342430519911947,
+          "p95": 0.03302526267413275,
+          "max": 0.04137159325206882
+        },
+        "axis_signed_mean_m": [
+          -0.008734673627818296,
+          0.0028798078998180433
+        ],
+        "axis_abs_p95_m": [
+          0.031349406293203375,
+          0.012319637233289967
+        ],
+        "yaw_error_deg": {
+          "median": 0.5159415783562609,
+          "p95": 2.0697734449369936,
+          "max": 2.4653439738881406
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.010561497825978167,
+          "p95": 0.031871896874944884,
+          "max": 0.04024357067983664
+        },
+        "reprojection_error_px": {
+          "median": 0.28921877384027234,
+          "p95": 0.4434603010030663,
+          "max": 0.48735077684898315
+        },
+        "runtime_ms_detected_only": {
+          "median": 0.31333599963545566,
+          "p95": 0.36852680050287734,
+          "max": 0.4389440000522882
+        },
+        "local_linearized_xy_sigma_m": null,
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "v1": {
+        "total_frames": 16,
+        "detected_frames": 15,
+        "detection_rate": 0.9375,
+        "accepted_all": 13,
+        "table_oracle_frames": 12,
+        "accepted_table_scored": 12,
+        "table_rejection_or_missing_rate": 0.0,
+        "all_rejection_or_missing_rate": 0.1875,
+        "invalid_support_oracle_frames": 4,
+        "invalid_support_false_accepts": 1,
+        "xy_error_m": {
+          "median": 0.0013190981278604977,
+          "p95": 0.00217897743327017,
+          "max": 0.0025019458343514883
+        },
+        "axis_signed_mean_m": [
+          -0.0013531867481811899,
+          -0.00029903707734957
+        ],
+        "axis_abs_p95_m": [
+          0.0020600326549477517,
+          0.0010175837371507884
+        ],
+        "yaw_error_deg": {
+          "median": 0.5249178023719214,
+          "p95": 1.7891934159041947,
+          "max": 2.3267785939319623
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.0017927434301037853,
+          "p95": 0.0029313738508594082,
+          "max": 0.0033848338154049973
+        },
+        "reprojection_error_px": {
+          "median": 0.6377528732070852,
+          "p95": 0.9054450603347899,
+          "max": 0.9287274565323695
+        },
+        "runtime_ms_detected_only": {
+          "median": 3.6342799994599773,
+          "p95": 4.698525100138795,
+          "max": 4.769174000102794
+        },
+        "local_linearized_xy_sigma_m": {
+          "median": 0.001543883658031845,
+          "p95": 0.0018621740795293454,
+          "max": 0.0018634667689693928
+        },
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "matched_acceptance_v0": {
+        "total_frames": 16,
+        "detected_frames": 15,
+        "detection_rate": 0.9375,
+        "accepted_all": 15,
+        "table_oracle_frames": 12,
+        "accepted_table_scored": 12,
+        "table_rejection_or_missing_rate": 0.0,
+        "all_rejection_or_missing_rate": 0.0625,
+        "invalid_support_oracle_frames": 4,
+        "invalid_support_false_accepts": 3,
+        "xy_error_m": {
+          "median": 0.011342430519911947,
+          "p95": 0.03302526267413275,
+          "max": 0.04137159325206882
+        },
+        "axis_signed_mean_m": [
+          -0.008734673627818296,
+          0.0028798078998180433
+        ],
+        "axis_abs_p95_m": [
+          0.031349406293203375,
+          0.012319637233289967
+        ],
+        "yaw_error_deg": {
+          "median": 0.5159415783562609,
+          "p95": 2.0697734449369936,
+          "max": 2.4653439738881406
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.010561497825978167,
+          "p95": 0.031871896874944884,
+          "max": 0.04024357067983664
+        },
+        "reprojection_error_px": {
+          "median": 0.28921877384027234,
+          "p95": 0.4434603010030663,
+          "max": 0.48735077684898315
+        },
+        "runtime_ms_detected_only": {
+          "median": 0.31333599963545566,
+          "p95": 0.36852680050287734,
+          "max": 0.4389440000522882
+        },
+        "local_linearized_xy_sigma_m": null,
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "matched_acceptance_v1": {
+        "total_frames": 16,
+        "detected_frames": 15,
+        "detection_rate": 0.9375,
+        "accepted_all": 13,
+        "table_oracle_frames": 12,
+        "accepted_table_scored": 12,
+        "table_rejection_or_missing_rate": 0.0,
+        "all_rejection_or_missing_rate": 0.1875,
+        "invalid_support_oracle_frames": 4,
+        "invalid_support_false_accepts": 1,
+        "xy_error_m": {
+          "median": 0.0013190981278604977,
+          "p95": 0.00217897743327017,
+          "max": 0.0025019458343514883
+        },
+        "axis_signed_mean_m": [
+          -0.0013531867481811899,
+          -0.00029903707734957
+        ],
+        "axis_abs_p95_m": [
+          0.0020600326549477517,
+          0.0010175837371507884
+        ],
+        "yaw_error_deg": {
+          "median": 0.5249178023719214,
+          "p95": 1.7891934159041947,
+          "max": 2.3267785939319623
+        },
+        "deep_wall_gap_abs_error_m": {
+          "median": 0.0017927434301037853,
+          "p95": 0.0029313738508594082,
+          "max": 0.0033848338154049973
+        },
+        "reprojection_error_px": {
+          "median": 0.6377528732070852,
+          "p95": 0.9054450603347899,
+          "max": 0.9287274565323695
+        },
+        "runtime_ms_detected_only": {
+          "median": 3.6342799994599773,
+          "p95": 4.698525100138795,
+          "max": 4.769174000102794
+        },
+        "local_linearized_xy_sigma_m": {
+          "median": 0.001543883658031845,
+          "p95": 0.0018621740795293454,
+          "max": 0.0018634667689693928
+        },
+        "uncertainty_scope": "local >=1px noise, excludes calibration/model/timing bias; no calibrated error-bound claim"
+      },
+      "rejection_reasons_v1": {
+        "NONE": 13,
+        "marker_not_detected": 1,
+        "unconstrained_pose_inconsistent_with_support": 2
+      }
+    }
+  ],
+  "representative_failures": [
+    {
+      "key": "physical06_holdout/4357",
+      "v1_xy_error_m": 0.013670554413958298,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.48692046712963233,
+          0.0036533397086155645,
+          0.26
+        ],
+        "yaw_rad": -0.030609623974018785,
+        "reprojection_error_px": 0.33518205962808617,
+        "support_residual_m": -0.006061144723578993,
+        "tilt_deg": 0.7793035266881515,
+        "runtime_ms": 3.9702410003883415,
+        "uncertainty_xy_m": 0.002622165982842541,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/4357",
+        "cube_xyz_m": [
+          0.5001224279403687,
+          0.00010477820615051314,
+          0.2659572958946228
+        ],
+        "yaw_rad": 6.678919858456813e-05,
+        "tilt_deg": 0.031856051026029786,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.5001367926597595,
+          0.00016323481395374984,
+          0.26923802495002747
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/13301",
+      "v1_xy_error_m": 0.008927636547490498,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          1.0914912388552651,
+          0.24569699550142687,
+          0.26
+        ],
+        "yaw_rad": -0.021213034383658957,
+        "reprojection_error_px": 0.5677222013638434,
+        "support_residual_m": 0.0049561875968266444,
+        "tilt_deg": 0.946490472431502,
+        "runtime_ms": 4.474483000194596,
+        "uncertainty_xy_m": 0.0013106473627990548,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/13301",
+        "cube_xyz_m": [
+          1.0991827249526978,
+          0.24116447567939758,
+          0.2641935348510742
+        ],
+        "yaw_rad": -0.0007015073216964505,
+        "tilt_deg": 0.25512368408085,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          1.0991827249526978,
+          0.24116447567939758,
+          0.2641935348510742
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/13271",
+      "v1_xy_error_m": 0.00837346397062143,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          1.0920840561751894,
+          0.24560562423067617,
+          0.26
+        ],
+        "yaw_rad": -0.004518395675955578,
+        "reprojection_error_px": 0.2780651698925618,
+        "support_residual_m": 0.002967937146153954,
+        "tilt_deg": 0.7372786058241926,
+        "runtime_ms": 4.150818999733019,
+        "uncertainty_xy_m": 0.0013093363716846287,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/13271",
+        "cube_xyz_m": [
+          1.0991827249526978,
+          0.24116447567939758,
+          0.2641935348510742
+        ],
+        "yaw_rad": -0.0007015073216964505,
+        "tilt_deg": 0.25512368408085,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          1.0991827249526978,
+          0.24116447567939758,
+          0.2641935348510742
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/4387",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.4412090926481748,
+          0.01624499121308826,
+          0.26
+        ],
+        "yaw_rad": -0.0056731313100293335,
+        "reprojection_error_px": 0.2461376776400398,
+        "support_residual_m": 0.0034685368976242748,
+        "tilt_deg": 0.21172353701310312,
+        "runtime_ms": 3.1666080003560637,
+        "uncertainty_xy_m": 0.00278881679505865,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/4387",
+        "cube_xyz_m": [
+          0.5001981854438782,
+          0.0004106049600522965,
+          0.28348398208618164
+        ],
+        "yaw_rad": -7.59967958072406e-05,
+        "tilt_deg": 0.08869625137919376,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.5001959800720215,
+          0.0005302628269419074,
+          0.2914752960205078
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/4417",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.3235529463835653,
+          0.048539707356713646,
+          0.26
+        ],
+        "yaw_rad": -0.020872507584305033,
+        "reprojection_error_px": 1.5171546595625187,
+        "support_residual_m": 0.04688143396658079,
+        "tilt_deg": 0.6469335239787903,
+        "runtime_ms": 4.453383000509348,
+        "uncertainty_xy_m": 0.0042618779843322145,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/4417",
+        "cube_xyz_m": [
+          0.5002098679542542,
+          0.001165596884675324,
+          0.3239455819129944
+        ],
+        "yaw_rad": -0.00010428011567135315,
+        "tilt_deg": 0.41736044697828856,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.500181257724762,
+          0.0014030598104000092,
+          0.3405180275440216
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5737",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7142844739758607,
+          0.08235782211333009,
+          0.26
+        ],
+        "yaw_rad": -0.012088180358540423,
+        "reprojection_error_px": 0.7664802589355947,
+        "support_residual_m": 0.01420476375813029,
+        "tilt_deg": 0.4304731737733775,
+        "runtime_ms": 4.3330959997547325,
+        "uncertainty_xy_m": 0.0020217649759906348,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5737",
+        "cube_xyz_m": [
+          0.770603358745575,
+          0.05907958745956421,
+          0.2856900095939636
+        ],
+        "yaw_rad": 3.35544749879854e-05,
+        "tilt_deg": 0.09887111998592768,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7706426978111267,
+          0.05939774587750435,
+          0.28379830718040466
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5767",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7263763592787973,
+          0.07770706942610568,
+          0.26
+        ],
+        "yaw_rad": -0.028048304961755477,
+        "reprojection_error_px": 0.4837037176361618,
+        "support_residual_m": 0.012784522709130774,
+        "tilt_deg": 1.1022961220617373,
+        "runtime_ms": 3.887554999892018,
+        "uncertainty_xy_m": 0.0019810559927499844,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5767",
+        "cube_xyz_m": [
+          0.7707122564315796,
+          0.05983470752835274,
+          0.2807173728942871
+        ],
+        "yaw_rad": 0.0008179628939149128,
+        "tilt_deg": 0.12585749884257444,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7707237601280212,
+          0.05989135429263115,
+          0.28033965826034546
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5797",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7302915727464933,
+          0.07690548835820314,
+          0.26
+        ],
+        "yaw_rad": -0.027886047609433806,
+        "reprojection_error_px": 0.5277850317282005,
+        "support_residual_m": 0.010889763645687778,
+        "tilt_deg": 1.1418834925644932,
+        "runtime_ms": 4.612818000168772,
+        "uncertainty_xy_m": 0.001969236357751894,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5797",
+        "cube_xyz_m": [
+          0.7707422971725464,
+          0.05998263135552406,
+          0.2798081636428833
+        ],
+        "yaw_rad": 0.00099939479712872,
+        "tilt_deg": 0.15096852314142903,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7707456350326538,
+          0.059995464980602264,
+          0.27973711490631104
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5827",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.729993930479156,
+          0.076146922148307,
+          0.26
+        ],
+        "yaw_rad": -0.028048075279038187,
+        "reprojection_error_px": 0.46359413678623707,
+        "support_residual_m": 0.011377493580748743,
+        "tilt_deg": 1.1788900127160096,
+        "runtime_ms": 4.084273999978905,
+        "uncertainty_xy_m": 0.001969182347396065,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5827",
+        "cube_xyz_m": [
+          0.7707468271255493,
+          0.060001131147146225,
+          0.2797085642814636
+        ],
+        "yaw_rad": 0.0010273831725052278,
+        "tilt_deg": 0.15426244044053916,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7707470059394836,
+          0.060001224279403687,
+          0.2797079384326935
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5857",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7300650896352192,
+          0.07626169615279024,
+          0.26
+        ],
+        "yaw_rad": -0.026181100637659327,
+        "reprojection_error_px": 0.7290598645496553,
+        "support_residual_m": 0.019563227815703466,
+        "tilt_deg": 1.6372497799312888,
+        "runtime_ms": 3.7422440000227652,
+        "uncertainty_xy_m": 0.0019704796089373773,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5857",
+        "cube_xyz_m": [
+          0.7707474827766418,
+          0.06000106409192085,
+          0.27970778942108154
+        ],
+        "yaw_rad": 0.001027843782471744,
+        "tilt_deg": 0.15425615527805844,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7707476019859314,
+          0.060001108795404434,
+          0.2797076106071472
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5887",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.729993930479156,
+          0.076146922148307,
+          0.26
+        ],
+        "yaw_rad": -0.028048075279038187,
+        "reprojection_error_px": 0.46359413678623707,
+        "support_residual_m": 0.011377493580748743,
+        "tilt_deg": 1.1788900127160096,
+        "runtime_ms": 3.868028999931994,
+        "uncertainty_xy_m": 0.001969182347396065,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5887",
+        "cube_xyz_m": [
+          0.7707479000091553,
+          0.060000985860824585,
+          0.27970758080482483
+        ],
+        "yaw_rad": 0.001028017941863815,
+        "tilt_deg": 0.1541753150174815,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7707480192184448,
+          0.06000091880559921,
+          0.27970755100250244
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5917",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7315359162147479,
+          0.07725887905293805,
+          0.26
+        ],
+        "yaw_rad": 0.02522897497986598,
+        "reprojection_error_px": 0.5194772102205534,
+        "support_residual_m": 0.009453683033013971,
+        "tilt_deg": 1.2641335428492675,
+        "runtime_ms": 4.002509999736503,
+        "uncertainty_xy_m": 0.001966194091333524,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5917",
+        "cube_xyz_m": [
+          0.7721750140190125,
+          0.060024507343769073,
+          0.2796691358089447
+        ],
+        "yaw_rad": 0.0013118674171613345,
+        "tilt_deg": 0.15546962908217063,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7745141983032227,
+          0.060042645782232285,
+          0.2796207368373871
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5947",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7440527134713883,
+          0.07687408736290989,
+          0.26
+        ],
+        "yaw_rad": -0.020038259911187684,
+        "reprojection_error_px": 0.8271806736383982,
+        "support_residual_m": 0.022504910822175983,
+        "tilt_deg": 1.1948324859932706,
+        "runtime_ms": 2.913074000389315,
+        "uncertainty_xy_m": 0.0019324297088048363,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5947",
+        "cube_xyz_m": [
+          0.7868860960006714,
+          0.05992904305458069,
+          0.27966269850730896
+        ],
+        "yaw_rad": 0.000138440953011635,
+        "tilt_deg": 0.1509222610827544,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7891154885292053,
+          0.05996139347553253,
+          0.27963393926620483
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/5977",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7507895625038441,
+          0.07725824429387536,
+          0.26
+        ],
+        "yaw_rad": 0.043069011827456816,
+        "reprojection_error_px": 0.8150077619581064,
+        "support_residual_m": 0.017466869298296606,
+        "tilt_deg": 2.5118811972458865,
+        "runtime_ms": 5.554732999371481,
+        "uncertainty_xy_m": 0.002224765363298853,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/5977",
+        "cube_xyz_m": [
+          0.7904838919639587,
+          0.06000567600131035,
+          0.27959179878234863
+        ],
+        "yaw_rad": 0.0006964191142921729,
+        "tilt_deg": 0.1377342247955897,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7905089855194092,
+          0.06000681221485138,
+          0.27958980202674866
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/6007",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7510319084711349,
+          0.07625383881357932,
+          0.26
+        ],
+        "yaw_rad": 0.028009781312416493,
+        "reprojection_error_px": 0.4921508962565564,
+        "support_residual_m": 0.011008676495412484,
+        "tilt_deg": 0.8619244639316159,
+        "runtime_ms": 4.2315520004194696,
+        "uncertainty_xy_m": 0.0019113682757520578,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/6007",
+        "cube_xyz_m": [
+          0.7905182242393494,
+          0.06000710651278496,
+          0.2795889973640442
+        ],
+        "yaw_rad": 0.0006987615259779368,
+        "tilt_deg": 0.13773818125052412,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7905187606811523,
+          0.06000692769885063,
+          0.27958905696868896
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/6037",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7508628365362032,
+          0.07589195086731422,
+          0.26
+        ],
+        "yaw_rad": 0.0427331468132075,
+        "reprojection_error_px": 0.5264994940558101,
+        "support_residual_m": 0.008571589191788298,
+        "tilt_deg": 1.3349941428684144,
+        "runtime_ms": 3.8473430004160036,
+        "uncertainty_xy_m": 0.0019114126651551791,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/6037",
+        "cube_xyz_m": [
+          0.7905189394950867,
+          0.06000683829188347,
+          0.27958887815475464
+        ],
+        "yaw_rad": 0.0006979163609124714,
+        "tilt_deg": 0.13768198549224406,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7905188798904419,
+          0.06000697240233421,
+          0.27958887815475464
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/6067",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7508628365362032,
+          0.07589195086731422,
+          0.26
+        ],
+        "yaw_rad": 0.0427331468132075,
+        "reprojection_error_px": 0.5264994940558101,
+        "support_residual_m": 0.008571589191788298,
+        "tilt_deg": 1.3349941428684144,
+        "runtime_ms": 4.043263000312436,
+        "uncertainty_xy_m": 0.0019114126651551791,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/6067",
+        "cube_xyz_m": [
+          0.7903285026550293,
+          0.06000610813498497,
+          0.2793925106525421
+        ],
+        "yaw_rad": 0.0007114784408533189,
+        "tilt_deg": 0.1381074128005581,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7897294759750366,
+          0.060005251318216324,
+          0.27878186106681824
+        ]
+      }
+    },
+    {
+      "key": "physical06_holdout/6097",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7580282747265261,
+          0.07100277875125618,
+          0.26
+        ],
+        "yaw_rad": -0.007784980648959383,
+        "reprojection_error_px": 0.40029285421004457,
+        "support_residual_m": 0.005498583087227116,
+        "tilt_deg": 0.9072893942624186,
+        "runtime_ms": 2.990059999319783,
+        "uncertainty_xy_m": 0.0018862857165589683,
+        "reason": null
+      },
+      "oracle": {
+        "key": "physical06_holdout/6097",
+        "cube_xyz_m": [
+          0.7823107242584229,
+          0.05997880548238754,
+          0.27124422788619995
+        ],
+        "yaw_rad": 0.0010157274795958315,
+        "tilt_deg": 0.1383332769963194,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose",
+        "cube_xyz_after_render_wait_m": [
+          0.7774347066879272,
+          0.05998775362968445,
+          0.2663736939430237
+        ]
+      }
+    },
+    {
+      "key": "r3_static_holdout01/2",
+      "v1_xy_error_m": 0.0025019458343514883,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.8107059974714252,
+          0.022001358243952496,
+          0.26
+        ],
+        "yaw_rad": -0.07189965518109398,
+        "reprojection_error_px": 0.566705196949159,
+        "support_residual_m": -0.0015318969046204667,
+        "tilt_deg": 1.3735883037373702,
+        "runtime_ms": 2.1300429998518666,
+        "uncertainty_xy_m": 0.0016928541839894495,
+        "reason": null
+      },
+      "oracle": {
+        "key": "r3_static_holdout01/2",
+        "cube_xyz_m": [
+          0.813,
+          0.023,
+          0.26
+        ],
+        "yaw_rad": -0.06981317007977318,
+        "tilt_deg": 0.0,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose"
+      }
+    },
+    {
+      "key": "r3_static_holdout01/0",
+      "v1_xy_error_m": 0.0019147305596581832,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7512756677294876,
+          0.034167611066292604,
+          0.26
+        ],
+        "yaw_rad": -0.11344336808140465,
+        "reprojection_error_px": 0.8863958270822248,
+        "support_residual_m": -0.01841126860835221,
+        "tilt_deg": 1.6014513377326098,
+        "runtime_ms": 4.3746649998865905,
+        "uncertainty_xy_m": 0.0018634667689693928,
+        "reason": null
+      },
+      "oracle": {
+        "key": "r3_static_holdout01/0",
+        "cube_xyz_m": [
+          0.753,
+          0.035,
+          0.26
+        ],
+        "yaw_rad": -0.12217304763960311,
+        "tilt_deg": 0.0,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose"
+      }
+    },
+    {
+      "key": "r3_static_holdout01/1",
+      "v1_xy_error_m": 0.0018858398984684063,
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.7771313972416561,
+          0.09374560689049238,
+          0.26
+        ],
+        "yaw_rad": 0.14333934777089086,
+        "reprojection_error_px": 0.4566969487780331,
+        "support_residual_m": 0.004608304720084555,
+        "tilt_deg": 1.3984234460720066,
+        "runtime_ms": 2.7329599997756304,
+        "uncertainty_xy_m": 0.001861116424532943,
+        "reason": null
+      },
+      "oracle": {
+        "key": "r3_static_holdout01/1",
+        "cube_xyz_m": [
+          0.779,
+          0.094,
+          0.26
+        ],
+        "yaw_rad": 0.15707963267948966,
+        "tilt_deg": 0.0,
+        "on_table": true,
+        "source": "evaluation_only_simulator_pose"
+      }
+    },
+    {
+      "key": "r3_static_holdout01/15",
+      "failure": "off_table_or_tilt_false_accept",
+      "prediction": {
+        "status": "PRESENT",
+        "cube_xyz_m": [
+          0.9128740193177478,
+          0.09821187467016043,
+          0.26
+        ],
+        "yaw_rad": -0.046715295259712075,
+        "reprojection_error_px": 0.9082353841757977,
+        "support_residual_m": 0.022170060931785363,
+        "tilt_deg": 1.6400550192309855,
+        "runtime_ms": 3.453498999988369,
+        "uncertainty_xy_m": 0.001529404254200259,
+        "reason": null
+      },
+      "oracle": {
+        "key": "r3_static_holdout01/15",
+        "cube_xyz_m": [
+          0.947,
+          0.08,
+          0.28
+        ],
+        "yaw_rad": 0.0,
+        "tilt_deg": 0.0,
+        "on_table": false,
+        "source": "evaluation_only_simulator_pose"
+      }
+    }
+  ],
+  "training": "No fitted parameters. SDK K/config fixed before physical06 and fresh static scene holdouts; physical05/07 are development diagnostics only. No random adjacent-frame split.",
+  "exposure_limit": "Historical physical06/07 score at physics receipt; RGB exposure unknown inside render-wait interval. Static holdout has no motion/latency bias."
+}

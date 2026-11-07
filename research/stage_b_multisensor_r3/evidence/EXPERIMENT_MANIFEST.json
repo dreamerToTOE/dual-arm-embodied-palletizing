@@ -1,0 +1,21 @@
+{
+  "schema": "r3.p0_p1.experiment_register.v1",
+  "baseline_branch": "research/stage-b-r3-multisensor-plan",
+  "baseline_sha": "8af7ee236f7b06afe893ca1efc7b0126b798f4c7",
+  "phases_executed": ["R3-P0", "R3-P1"],
+  "phases_not_started": ["R3-P2", "R3-P3", "R3-P4", "R3-P5"],
+  "development": ["physical05", "physical07", "legacy six Cube probe images"],
+  "independent_holdouts": ["physical06 separate episode, stride=3 fixed by index", "r3_static_holdout01: 12 new table poses plus 4 support contradictions"],
+  "random_adjacent_frame_split": false,
+  "new_isaac_runs": 1,
+  "new_static_views": 16,
+  "new_dynamic_episodes": 0,
+  "full_task27_restarts": 0,
+  "control_commands": 0,
+  "collision_geometry_modified": false,
+  "essential_missing_evidence_justifying_static_capture": "Old raw RGB-D exists, but no authoritative SDK effective-K readback nor independent diverse table/lift/tilt paired pose set. One static run provides both, no full Task27.",
+  "failure_receipts": ["diagnostic_authored_k/ab_failure.json", "p1_holdout_results.json: false support accepts and worst XY frames", "r3_static_holdout01/isaac.log: shutdown rotate-op warning"],
+  "p0_status": "PASS",
+  "p1_status": "PARTIAL",
+  "overall_status": "PARTIAL"
+}
